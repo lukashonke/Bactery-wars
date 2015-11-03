@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Unity Script: zpracovava informace klavesovem vstupu hrace (a mysi)">
+    <Position X="17.06" Y="6.994" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Vytvari a spravuje uzivatelske GUI - zobrazuje ikony skillu, tlacitka, atd.">
+    <Position X="17.107" Y="5.998" Height="0.75" Width="2.215" />
+  </Comment>
+  <Comment CommentText="Spousti GameSystem&#xD;&#xA;Spousti Update() metodu kazdy tick">
+    <Position X="13.103" Y="9.29" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Vytvari PlayerData po pripojeni hrace">
+    <Position X="13.033" Y="8.048" Height="0.492" Width="1.7" />
+  </Comment>
+  <Comment CommentText="Konkretni implementace skillu co uz neco ve hre dela">
+    <Position X="17.554" Y="3.644" Height="0.492" Width="2.754" />
+  </Comment>
+  <Comment CommentText="Implementace statusu pro hrace">
+    <Position X="6" Y="3.101" Height="0.399" Width="1.946" />
+  </Comment>
+  <Comment CommentText="Obsahuje info o skillech ktere dany Character ma (skilly se vytvareji pri nacitani ClassTemplate pro daneho hrace">
+    <Position X="17.567" Y="0.719" Height="0.672" Width="3" />
+  </Comment>
+  <Comment CommentText="Konkretni implementace classu (= typu bakterie za ktery hrac muze hrat">
+    <Position X="7.703" Y="5.624" Height="0.563" Width="2.227" />
+  </Comment>
+  <Comment CommentText="Abstraktni status spolecny pro vsechny Charactery (hrace i AI monstra)">
+    <Position X="6.004" Y="1.993" Height="0.586" Width="1.946" />
+  </Comment>
+  <Comment CommentText="Script Unity Objektu hrace - komunikuje s grafikou">
+    <Position X="10.742" Y="6.606" Height="0.609" Width="1.946" />
+  </Comment>
+  <Comment CommentText="Uklada seznam skillu a dynamicky je podle potreby pro jednotlive hrace vytvari">
+    <Position X="20.046" Y="2.485" Height="0.567" Width="2.504" />
+  </Comment>
+  <Class Name="Assets.scripts.Actor.Entity" Collapsed="true">
+    <Position X="12.25" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\Entity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.Actor.Character" Collapsed="true">
+    <Position X="12.5" Y="2.5" Width="2.25" />
+    <InheritanceLine Type="Assets.scripts.Actor.Entity" FixedToPoint="true">
+      <Path>
+        <Point X="13.5" Y="1.312" />
+        <Point X="13.5" Y="2.5" />
+      </Path>
+    </InheritanceLine>
+    <AssociationLine Name="Status" Type="Assets.scripts.Actor.Status.CharStatus" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.5" Y="2.75" />
+        <Point X="11.479" Y="2.75" />
+        <Point X="11.479" Y="2.312" />
+        <Point X="9.5" Y="2.312" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Skills" Type="Assets.scripts.Base.SkillSet" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.375" Y="2.5" />
+        <Point X="14.375" Y="1.918" />
+        <Point X="15.413" Y="1.918" />
+        <Point X="15.413" Y="1.031" />
+        <Point X="16" Y="1.031" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EAAIAAAGAAAAAAAAAAAAAAAAAABEAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\Character.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Status" />
+      <Property Name="Skills" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Actor.Player" Collapsed="true">
+    <Position X="12.5" Y="4.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <InheritanceLine Type="Assets.scripts.Actor.Character" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="13.5" Y="3.191" />
+        <Point X="13.5" Y="4.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>IAAIAAACAEAAAAAAAAAAAAAAAABAAAAAAAAQAAEAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\Player.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="data" />
+      <Property Name="Template" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Actor.PlayerClasses.Base.ClassTemplateTable" Collapsed="true">
+    <Position X="7" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAAkAQAACAAIAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\PlayerClasses\Base\ClassTemplateTable.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="types" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Actor.PlayerClasses.ClassTemplate" Collapsed="true">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAgAgAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\PlayerClasses\ClassTemplate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ClassId" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Actor.PlayerClasses.DefaultPlayerClass" Collapsed="true">
+    <Position X="10" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\PlayerClasses\DefaultPlayerClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.Actor.Status.CharStatus" Collapsed="true">
+    <Position X="8" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAwAAhAAAAAAEAAAABAAAAAAAAAAAAAAQgA=</HashCode>
+      <FileName>Assets\scripts\Actor\Status\CharStatus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.Actor.Status.PlayerStatus" Collapsed="true">
+    <Position X="8" Y="3" Width="1.25" />
+    <InheritanceLine Type="Assets.scripts.Actor.Status.CharStatus" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="2.562" />
+        <Point X="8.75" Y="3" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\Status\PlayerStatus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.Base.SkillSet" Collapsed="true">
+    <Position X="16" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Base\SkillSet.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Skills" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Assets.scripts.GameSystem" Collapsed="true">
+    <Position X="11.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIAAAAASAAAAAAAAAAAAAAAABAAAEAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\GameSystem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="instance" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Mono.PlayerControls" Collapsed="true">
+    <Position X="15.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACmQAEAAEAAAAAAAAAUAAAgAAAQAQAAEIAAA=</HashCode>
+      <FileName>Assets\scripts\Mono\PlayerControls.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="data" />
+      <Field Name="ui" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Mono.PlayerData" Collapsed="true">
+    <Position X="12.75" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAQQBAECAAAAAAAEAEAAABAAAAAAABAEBAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Mono\PlayerData.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="player" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Mono.PlayerUI" Collapsed="true">
+    <Position X="15.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EASAABAQACCAAAAAAAAAAgAAAAAEAAAAAABQAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Mono\PlayerUI.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="data" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Skills.Base.SkillTable" Collapsed="true">
+    <Position X="18.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAgBAAAAAAEAAAEQAAAAAAAABAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Skills\Base\SkillTable.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="skills" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Assets.scripts.Skills.Instances.SkillTemplate" Collapsed="true">
+    <Position X="16" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEACAAQCAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Skills\Instances\SkillTemplate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.Skills.Skill" Collapsed="true">
+    <Position X="16" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAACIACAAAAAAAAQAAAQAACEAAAABAAAAAAAAAEE=</HashCode>
+      <FileName>Assets\scripts\Skills\Skill.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assets.scripts.GameController" Collapsed="true">
+    <Position X="11.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\GameController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Assets.scripts.Actor.PlayerClasses.Base.ClassId" Collapsed="true">
+    <Position X="10" Y="3.5" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\scripts\Actor\PlayerClasses\Base\ClassId.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
