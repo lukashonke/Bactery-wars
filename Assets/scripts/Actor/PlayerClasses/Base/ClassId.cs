@@ -3,6 +3,6 @@
 	public enum ClassId
 	{
 		Default,
-		Warrior
+		Warrior,
 	}
 }

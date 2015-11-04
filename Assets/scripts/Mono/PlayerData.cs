@@ -10,7 +10,7 @@ namespace Assets.scripts.Mono
 	*/
 	public class PlayerData : MonoBehaviour
 	{
-		private Player player;
+		public Player player;
 
 		public int hp;
 		public int moveSpeed;
