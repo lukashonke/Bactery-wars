@@ -48,6 +48,8 @@ namespace Assets.scripts.Mono
 
                     nObject.AddComponent<FadeOut>();
 
+	                Debug.Log("test");
+
                     if (i < temp)
                     {
                         if (j < temp2)
