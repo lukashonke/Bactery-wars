@@ -35,5 +35,15 @@ namespace Assets.scripts.Skills.Instances
 		{
 			
 		}
+
+		public override bool CanMove()
+		{
+			return true;
+		}
+
+		public override bool CanRotate()
+		{
+			return true;
+		}
 	}
 }

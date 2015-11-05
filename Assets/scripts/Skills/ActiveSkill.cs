@@ -42,6 +42,8 @@ namespace Assets.scripts.Skills
 		public abstract void UpdateLaunched();
 		public abstract void OnFinish();
 		public abstract void OnSkillEnd();
+		public abstract bool CanMove();
+		public abstract bool CanRotate();
 
 		public override void SkillAdded()
 		{

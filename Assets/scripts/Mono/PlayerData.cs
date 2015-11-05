@@ -17,8 +17,8 @@ namespace Assets.scripts.Mono
 		public int rotateSpeed;
 		public bool canMoveWhenNotRotated;
 
-		public bool canMove = true;
-		public bool canRotate = true;
+		public bool movementEnabled = true;
+		public bool rotationEnabled = true;
 
 		public void Start()
 		{
@@ -43,6 +43,46 @@ namespace Assets.scripts.Mono
 		{
 		}
 
+		public bool CanMove()
+		{
+			if (!movementEnabled)
+				return false;
+
+			foreach (Skill skill in player.Skills.Skills)
+			{
+				if (skill is ActiveSkill)
+				{
+					// at least one active skill blocks movement
+					if (((ActiveSkill) skill).IsBeingCasted() && !((ActiveSkill) skill).CanMove())
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public bool CanRotate()
+		{
+			if (!rotationEnabled)
+				return false;
+
+			foreach (Skill skill in player.Skills.Skills)
+			{
+				if (skill is ActiveSkill)
+				{
+					// at least one active skill blocks movement
+					if (((ActiveSkill)skill).IsBeingCasted() && !((ActiveSkill)skill).CanRotate())
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
 		public void LaunchSkill(int key)
 		{
 			// select the skill mapped to the key
@@ -59,9 +99,9 @@ namespace Assets.scripts.Mono
 			player.CastSkill(skill);
 		}
 
-		public void SetCanMove(bool val)
+		public void SetMovementEnabled(bool val)
 		{
-			canMove = val;
+			movementEnabled = val;
         }
 
 		public void SetMoveSpeed(int speed)
@@ -84,9 +124,9 @@ namespace Assets.scripts.Mono
 			player.BreakCasting();
 		}
 
-		public void SetCanRotate(bool var)
+		public void SetRotationEnabled(bool var)
 		{
-			canRotate = var;
+			rotationEnabled = var;
 		}
 	}
 }

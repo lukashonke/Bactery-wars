@@ -125,12 +125,12 @@ namespace Assets.scripts.Mono
 					move = false;
 				}
 
-				if (!data.canMove)
+				if (!data.CanMove())
 				{
 					move = false;
 				}
 
-				if (!data.canRotate)
+				if (!data.CanRotate())
 				{
 					rotate = false;
 				}

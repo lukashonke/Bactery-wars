@@ -9,7 +9,6 @@ namespace Assets.scripts.Skills.Instances
 	{
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
-
 		}
 
 		public override Skill Instantiate()
@@ -22,15 +21,11 @@ namespace Assets.scripts.Skills.Instances
 			if (GetPlayerData() == null)
 				return false;
 
-			GetPlayerData().SetCanMove(false);
-			GetPlayerData().SetCanRotate(false);
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			GetPlayerData().SetCanMove(true);
-			GetPlayerData().SetCanRotate(true);
 		}
 
 		public override void UpdateLaunched()
@@ -44,8 +39,18 @@ namespace Assets.scripts.Skills.Instances
 
 		public override void OnSkillEnd()
 		{
-			GetPlayerData().SetCanMove(true);
-			GetPlayerData().SetCanRotate(true);
+		}
+
+		public override bool CanMove()
+		{
+			if (IsBeingCasted() && state == SKILL_CASTING)
+				return false;
+			return true;
+		}
+
+		public override bool CanRotate()
+		{
+			return CanMove();
 		}
 	}
 }
