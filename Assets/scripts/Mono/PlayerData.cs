@@ -17,7 +17,8 @@ namespace Assets.scripts.Mono
 		public int rotateSpeed;
 		public bool canMoveWhenNotRotated;
 
-		public bool immobilized = false;
+		public bool canMove = true;
+		public bool canRotate = true;
 
 		public void Start()
 		{
@@ -58,9 +59,9 @@ namespace Assets.scripts.Mono
 			player.CastSkill(skill);
 		}
 
-		public void SetImmobilized(bool val)
+		public void SetCanMove(bool val)
 		{
-			immobilized = val;
+			canMove = val;
         }
 
 		public void SetMoveSpeed(int speed)
@@ -81,6 +82,11 @@ namespace Assets.scripts.Mono
 		public void AbortSkills()
 		{
 			player.BreakCasting();
+		}
+
+		public void SetCanRotate(bool var)
+		{
+			canRotate = var;
 		}
 	}
 }

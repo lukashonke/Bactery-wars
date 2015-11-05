@@ -41,6 +41,7 @@ namespace Assets.scripts.Skills
 		public abstract void OnLaunch();
 		public abstract void UpdateLaunched();
 		public abstract void OnFinish();
+		public abstract void OnSkillEnd();
 
 		public override void SkillAdded()
 		{
@@ -105,6 +106,8 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
+			OnSkillEnd();
+
 			Owner.StopTask(Task);
 
 			End();
@@ -117,7 +120,10 @@ namespace Assets.scripts.Skills
 
 			// pri spusteni skillu zacni kouzlit
 			if (!OnCastStart())
+			{
+				OnSkillEnd();
 				yield break; //TODO test!
+			}
 
 			float castTime = this.castTime;
 

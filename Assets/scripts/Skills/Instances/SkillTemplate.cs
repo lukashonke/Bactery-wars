@@ -30,5 +30,10 @@ namespace Assets.scripts.Skills.Instances
 		public override void OnFinish()
 		{
 		}
+
+		public override void OnSkillEnd()
+		{
+			
+		}
 	}
 }

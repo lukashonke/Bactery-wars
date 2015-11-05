@@ -22,13 +22,15 @@ namespace Assets.scripts.Skills.Instances
 			if (GetPlayerData() == null)
 				return false;
 
-			GetPlayerData().SetImmobilized(true);
+			GetPlayerData().SetCanMove(false);
+			GetPlayerData().SetCanRotate(false);
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			GetPlayerData().SetImmobilized(false);
+			GetPlayerData().SetCanMove(true);
+			GetPlayerData().SetCanRotate(true);
 		}
 
 		public override void UpdateLaunched()
@@ -37,6 +39,13 @@ namespace Assets.scripts.Skills.Instances
 
 		public override void OnFinish()
 		{
+			
+		}
+
+		public override void OnSkillEnd()
+		{
+			GetPlayerData().SetCanMove(true);
+			GetPlayerData().SetCanRotate(true);
 		}
 	}
 }

@@ -113,6 +113,7 @@ namespace Assets.scripts.Mono
 				float currentAngle = body.transform.rotation.eulerAngles.z;
 
 				bool move = true;
+				bool rotate = true;
 
 				// TODO wtf ! predelat vypocet stupnu na otoceni a prepsat bez pouziti podminky
 				float diff = 360 - (Mathf.Abs(angle - 90)) - currentAngle;
@@ -124,9 +125,14 @@ namespace Assets.scripts.Mono
 					move = false;
 				}
 
-				if (data.immobilized)
+				if (!data.canMove)
 				{
 					move = false;
+				}
+
+				if (!data.canRotate)
+				{
+					rotate = false;
 				}
 
 				if (move)
@@ -135,14 +141,17 @@ namespace Assets.scripts.Mono
 					body.transform.position = Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * data.moveSpeed);
 				}
 
-				if (data.rotateSpeed > 20) // instantni rotace
+				if (rotate)
 				{
-					body.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
-				}
-				else
-				{
-					//TODO unsmooth this
-					body.transform.rotation = Quaternion.Slerp(body.transform.rotation, Quaternion.Euler(new Vector3(0, 0, angle - 90)), Time.deltaTime * data.rotateSpeed);
+					if (data.rotateSpeed > 20) // instantni rotace
+					{
+						body.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
+					}
+					else
+					{
+						//TODO unsmooth this
+						body.transform.rotation = Quaternion.Slerp(body.transform.rotation, Quaternion.Euler(new Vector3(0, 0, angle - 90)), Time.deltaTime * data.rotateSpeed);
+					}
 				}
 			}
 			else

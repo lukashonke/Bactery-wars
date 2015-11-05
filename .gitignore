@@ -31,3 +31,4 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 *.csproj
+GlobalSuppressions.cs
