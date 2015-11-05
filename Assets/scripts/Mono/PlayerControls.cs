@@ -32,6 +32,7 @@ namespace Assets.scripts.Mono
 		// Use this for initialization
 		public void Start()
 		{
+			body = GameObject.Find("Body");
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();

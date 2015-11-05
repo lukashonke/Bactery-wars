@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Assets.scripts.Actor;
 using Assets.scripts.Skills;
 using UnityEngine;
@@ -10,6 +11,8 @@ namespace Assets.scripts.Mono
 	*/
 	public class PlayerData : MonoBehaviour
 	{
+		public GameObject body;
+		public GameObject shootingPosition;
 		public Player player;
 
 		public int hp;
@@ -22,6 +25,8 @@ namespace Assets.scripts.Mono
 
 		public void Start()
 		{
+			body = GameObject.Find("Body");
+			shootingPosition = GameObject.Find("Shooting Position");
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 			Debug.Log("Registering new data for player " + player.Name);
 		}
@@ -41,6 +46,23 @@ namespace Assets.scripts.Mono
 
 		public void OnCollisionStay2D(Collision2D coll)
 		{
+		}
+
+		public void ShootProjectileForward(string folderName, string name)
+		{
+			GameObject go = Resources.Load(folderName + "/" + name) as GameObject;
+			if (go == null)
+				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
+
+			GameObject newProjectile = Instantiate(go, shootingPosition.transform.position, body.transform.rotation) as GameObject;
+
+			if (newProjectile != null)
+			{
+				Rigidbody2D rb = newProjectile.GetComponent<Rigidbody2D>();
+				rb.velocity = newProjectile.transform.position + newProjectile.transform.forward*150;
+
+				Destroy(newProjectile, 5f);
+			}
 		}
 
 		public bool CanMove()

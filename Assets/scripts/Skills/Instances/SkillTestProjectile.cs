@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.scripts.Skills.Instances
 {
@@ -9,6 +10,9 @@ namespace Assets.scripts.Skills.Instances
 	{
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
+			castTime = 1f;
+			reuse = 0.5f;
+			coolDown = 0.5f;
 		}
 
 		public override Skill Instantiate()
@@ -26,6 +30,8 @@ namespace Assets.scripts.Skills.Instances
 
 		public override void OnLaunch()
 		{
+			// this.GetType().Name vrati jmeno teto tridy ("SkillTestProjectile")
+			GetPlayerData().ShootProjectileForward(this.GetType().Name, "projectile_blacktest_i00");
 		}
 
 		public override void UpdateLaunched()

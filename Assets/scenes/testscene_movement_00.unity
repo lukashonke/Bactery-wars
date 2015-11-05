@@ -740,7 +740,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 539610704}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .0500000007, y: 1.82000005, z: 0}
+  m_LocalPosition: {x: .0199999996, y: 2.91000009, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 937088888}
@@ -942,7 +942,7 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0, y: 1.28999996}
+  m_Offset: {x: 0, y: .899999976}
   serializedVersion: 2
   m_Radius: .919910908
 --- !u!50 &937088886
@@ -1290,7 +1290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 964c1f5144317ab4980d11bbcf04c819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 937088883}
+  body: {fileID: 0}
   data: {fileID: 0}
   ui: {fileID: 0}
   mouseClicker: {fileID: 197066, guid: 9af521ec8e0944147ab2d1a2b4b9fe94, type: 2}
@@ -1307,10 +1307,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f59b4a3c72932d4499e93b00c39fe30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  body: {fileID: 937088883}
+  shootingPosition: {fileID: 0}
   hp: 0
   moveSpeed: 5
   rotateSpeed: 25
   canMoveWhenNotRotated: 0
+  movementEnabled: 1
+  rotationEnabled: 1
 --- !u!114 &983066288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,7 +1466,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1094898226}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .889999986, y: -.0799999982, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 23, y: 23, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
