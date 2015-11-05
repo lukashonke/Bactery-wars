@@ -69,6 +69,9 @@ namespace Assets.scripts.Skills.Base
 
 			skill = new SkillTemplate("Skill Template", 1);
 			AddSkill(skill);
+
+			skill = new SkillTestProjectile("Skill Test Projectile", 2);
+			AddSkill(skill);
 		}
 	}
 }

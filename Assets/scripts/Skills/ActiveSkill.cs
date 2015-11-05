@@ -37,7 +37,7 @@ namespace Assets.scripts.Skills
 			updateFrequency = 0.1f;
 		}
 
-		public abstract void OnCastStart();
+		public abstract bool OnCastStart();
 		public abstract void OnLaunch();
 		public abstract void UpdateLaunched();
 		public abstract void OnFinish();
@@ -116,7 +116,8 @@ namespace Assets.scripts.Skills
 			state = SKILL_CASTING;
 
 			// pri spusteni skillu zacni kouzlit
-			OnCastStart();
+			if (!OnCastStart())
+				yield break; //TODO test!
 
 			float castTime = this.castTime;
 

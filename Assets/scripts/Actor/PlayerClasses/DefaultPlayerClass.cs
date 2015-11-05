@@ -15,6 +15,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 		protected override void AddSkills()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(1)); // the default skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(2)); // the projectile test skill
 		}
 	}
 }

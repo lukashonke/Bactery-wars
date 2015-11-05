@@ -14,8 +14,9 @@ namespace Assets.scripts.Skills.Instances
 			return new SkillTemplate(Name, Id);
 		}
 
-		public override void OnCastStart()
+		public override bool OnCastStart()
 		{
+			return true;
 		}
 
 		public override void OnLaunch()

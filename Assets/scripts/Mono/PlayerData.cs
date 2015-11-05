@@ -17,6 +17,8 @@ namespace Assets.scripts.Mono
 		public int rotateSpeed;
 		public bool canMoveWhenNotRotated;
 
+		public bool immobilized = false;
+
 		public void Start()
 		{
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
@@ -55,6 +57,11 @@ namespace Assets.scripts.Mono
 			// cast this skill
 			player.CastSkill(skill);
 		}
+
+		public void SetImmobilized(bool val)
+		{
+			immobilized = val;
+        }
 
 		public void SetMoveSpeed(int speed)
 		{

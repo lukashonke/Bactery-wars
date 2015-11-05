@@ -124,6 +124,11 @@ namespace Assets.scripts.Mono
 					move = false;
 				}
 
+				if (data.immobilized)
+				{
+					move = false;
+				}
+
 				if (move)
 				{
 					anim.SetFloat("MOVE_SPEED", 1);
