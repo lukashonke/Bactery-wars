@@ -28,6 +28,18 @@ namespace Assets.scripts.Mono
 			player.OnUpdate();
 		}
 
+		public void OnCollisionEnter2D(Collision2D coll)
+		{
+		}
+
+		public void OnCollisionExit2D(Collision2D coll)
+		{
+		}
+
+		public void OnCollisionStay2D(Collision2D coll)
+		{
+		}
+
 		public void LaunchSkill(int key)
 		{
 			// select the skill mapped to the key
