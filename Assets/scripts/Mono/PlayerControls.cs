@@ -13,9 +13,6 @@ namespace Assets.scripts.Mono
 		private Vector3 targetPositionWorld;
 		private Rigidbody2D rb;
 
-		// clicked position to rotate the sprite to
-		private Vector3 rotationPosition;
-
 		// attached object to display moving to pos
 		public GameObject mouseClicker;
 		private GameObject currMouseClicker;
@@ -83,19 +80,17 @@ namespace Assets.scripts.Mono
 
 			HandleSkillControls();
 
+
 			if (!ui.MouseOverUI)
 			{
 				// change target position according to mouse when clicked
 				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 10)
 				{
 					targetPositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					targetPositionWorld.z = body.transform.position.z;
-					rotationPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z);
+					targetPositionWorld.z = body.transform.position.z; // do not update the z-axis
 
 					if (currMouseClicker != null)
-					{
 						Destroy(currMouseClicker);
-					}
 
 					currMouseClicker = Instantiate(mouseClicker, targetPositionWorld, Quaternion.identity) as GameObject;
 				}
@@ -104,8 +99,8 @@ namespace Assets.scripts.Mono
 			// move to mouse
 			if (Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
 			{
-				Vector3 mousePos = rotationPosition;
-				mousePos.z = 10; //The distance between the camera and object
+				Vector3 mousePos = Camera.main.WorldToScreenPoint(targetPositionWorld);
+				mousePos.z = Camera.main.transform.position.z; //The distance between the camera and object
 
 				Vector3 objectPos = Camera.main.WorldToScreenPoint(body.transform.position);
 				mousePos.x = mousePos.x - objectPos.x;
@@ -150,7 +145,6 @@ namespace Assets.scripts.Mono
 					}
 					else
 					{
-						//TODO unsmooth this
 						body.transform.rotation = Quaternion.Slerp(body.transform.rotation, Quaternion.Euler(new Vector3(0, 0, angle - 90)), Time.deltaTime * data.rotateSpeed);
 					}
 				}
