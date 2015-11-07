@@ -99,37 +99,23 @@ namespace Assets.scripts.Mono
 			// move to mouse
 			if (Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
 			{
-				Vector3 mousePos = Camera.main.WorldToScreenPoint(targetPositionWorld);
-				mousePos.z = Camera.main.transform.position.z; //The distance between the camera and object
+				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
+				newRotation.x = 0;
+				newRotation.y = 0;
 
-				Vector3 objectPos = Camera.main.WorldToScreenPoint(body.transform.position);
-				mousePos.x = mousePos.x - objectPos.x;
-				mousePos.y = mousePos.y - objectPos.y;
-				float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-				float currentAngle = body.transform.rotation.eulerAngles.z;
+				float angle = Quaternion.Angle(body.transform.rotation, newRotation);
 
 				bool move = true;
 				bool rotate = true;
 
-				// TODO wtf ! predelat vypocet stupnu na otoceni a prepsat bez pouziti podminky
-				float diff = 360 - (Mathf.Abs(angle - 90)) - currentAngle;
-				if(angle >= 90 && angle <= 180)
-					diff = (angle - 90) - currentAngle;
-
-				if (Mathf.Abs(diff) > 5 && !data.canMoveWhenNotRotated)
-				{
+				if (angle-90 > 1 && !data.canMoveWhenNotRotated)
 					move = false;
-				}
 
 				if (!data.CanMove())
-				{
 					move = false;
-				}
 
 				if (!data.CanRotate())
-				{
 					rotate = false;
-				}
 
 				if (move)
 				{
@@ -139,6 +125,11 @@ namespace Assets.scripts.Mono
 
 				if (rotate)
 				{
+					body.transform.rotation = Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * data.rotateSpeed);
+				}
+
+				/*if (rotate)
+				{
 					if (data.rotateSpeed > 20) // instantni rotace
 					{
 						body.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
@@ -147,7 +138,7 @@ namespace Assets.scripts.Mono
 					{
 						body.transform.rotation = Quaternion.Slerp(body.transform.rotation, Quaternion.Euler(new Vector3(0, 0, angle - 90)), Time.deltaTime * data.rotateSpeed);
 					}
-				}
+				}*/
 			}
 			else
 			{
