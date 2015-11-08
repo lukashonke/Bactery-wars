@@ -15,6 +15,8 @@ namespace Assets.scripts.Mono
 		public GameObject shootingPosition;
 		public Player player;
 
+		private Vector3 heading;
+
 		public int hp;
 		public int moveSpeed;
 		public int rotateSpeed;
@@ -56,13 +58,18 @@ namespace Assets.scripts.Mono
 
 			GameObject newProjectile = Instantiate(go, shootingPosition.transform.position, body.transform.rotation) as GameObject;
 
+			Rigidbody2D rb = null;
+
 			if (newProjectile != null)
 			{
-				Rigidbody2D rb = newProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = newProjectile.transform.position + newProjectile.transform.forward*150;
+				rb = newProjectile.GetComponent<Rigidbody2D>();
+				rb.velocity = newProjectile.transform.position + heading*15;
+
+				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.red, 5f);
 
 				Destroy(newProjectile, 5f);
 			}
+
 		}
 
 		public bool CanMove()
@@ -149,6 +156,27 @@ namespace Assets.scripts.Mono
 		public void SetRotationEnabled(bool var)
 		{
 			rotationEnabled = var;
+		}
+
+		public void UpdateHeading(Vector3 v)
+		{
+			heading = v;
+		}
+
+		public Vector3 GetForwardVector()
+		{
+			return heading;
+		}
+
+		// forward vector + fixed angle
+		public Vector3 GetForwardVector(int angle)
+		{
+			// 1. moznost
+			//Vector3 nv = Quaternion.AngleAxis(angle, Vector3.forward) * heading.normalized;
+
+			// 2. moznost - asi je lepsi
+			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, angle)) * heading;
+			return nv;
 		}
 	}
 }

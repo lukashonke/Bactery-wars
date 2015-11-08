@@ -80,7 +80,6 @@ namespace Assets.scripts.Mono
 
 			HandleSkillControls();
 
-
 			if (!ui.MouseOverUI)
 			{
 				// change target position according to mouse when clicked
@@ -126,19 +125,10 @@ namespace Assets.scripts.Mono
 				if (rotate)
 				{
 					body.transform.rotation = Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * data.rotateSpeed);
-				}
 
-				/*if (rotate)
-				{
-					if (data.rotateSpeed > 20) // instantni rotace
-					{
-						body.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
-					}
-					else
-					{
-						body.transform.rotation = Quaternion.Slerp(body.transform.rotation, Quaternion.Euler(new Vector3(0, 0, angle - 90)), Time.deltaTime * data.rotateSpeed);
-					}
-				}*/
+					float angleRad = (body.transform.rotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
+					data.UpdateHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
+				}
 			}
 			else
 			{
