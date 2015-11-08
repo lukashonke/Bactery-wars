@@ -740,7 +740,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 539610704}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .0199999996, y: 2.91000009, z: 0}
+  m_LocalPosition: {x: .0199999996, y: 2.46000004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 937088888}
@@ -993,7 +993,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 937088883}
-  m_LocalRotation: {x: 0, y: 0, z: -.842452645, w: -.538770378}
+  m_LocalRotation: {x: 0, y: 0, z: .179746598, w: .983712971}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1209,7 +1209,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 981440373}
-  m_LocalRotation: {x: .530211449, y: -.0199053232, z: -.0317995884, w: -.84703505}
+  m_LocalRotation: {x: .530584991, y: 0, z: 0, w: -.847631752}
   m_LocalPosition: {x: .0215160102, y: -.800000012, z: -1.35000002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1308,7 +1308,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   body: {fileID: 937088883}
   shootingPosition: {fileID: 0}
-  hp: 0
+  visibleHp: 0
   moveSpeed: 5
   rotateSpeed: 25
   canMoveWhenNotRotated: 0
