@@ -4,7 +4,6 @@ namespace Assets.scripts.Mono
 {
     public class MoveToMouse : MonoBehaviour
     {
-
         Rigidbody2D rb;
 
         // Use this for initialization
@@ -21,5 +20,4 @@ namespace Assets.scripts.Mono
             rb.AddForce(dir * 10, ForceMode2D.Force);
         }
     }
-
 }

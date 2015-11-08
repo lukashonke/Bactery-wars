@@ -11,18 +11,33 @@ namespace Assets.scripts.Mono
 	*/
 	public class PlayerData : MonoBehaviour
 	{
+		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
+
+		/// <summary>GameObject reprezentujici relativni pozici tesne pred hracem</summary>
 		public GameObject shootingPosition;
+
+		/// <summary>Datova trida hrace</summary>
 		public Player player;
 
+		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) hrace</summary>
 		private Vector3 heading;
 
-		public int hp;
+		// zastupne promenne GameObjektu (reflektuji datove hodnoty v tride Player)
+		public int visibleHp;
 		public int moveSpeed;
 		public int rotateSpeed;
+
+		/// <summary>
+		/// true pokud se hrac muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
+		/// pokud je nastaveno na false, hrac se nebude pohybovat smerem ke vsemu cili dokud k nemu nebude natoceny
+		/// </summary>
 		public bool canMoveWhenNotRotated;
 
+		/// <summary>true pokud se hrac muze hybat (nastavuje se na false napriklad pri kouzleni)</summary>
 		public bool movementEnabled = true;
+
+		/// <summary>true pokud se hrac muze otacet (nastavuje se na false napriklad pri kouzleni)</summary>
 		public bool rotationEnabled = true;
 
 		public void Start()
@@ -69,9 +84,11 @@ namespace Assets.scripts.Mono
 
 				Destroy(newProjectile, 5f);
 			}
-
 		}
 
+		/// <summary>
+		/// Vrati true pokud se hrac muze pohybovat (nemuze se pohybovat napriklad kdyz kouzli skill, ktery vyzaduje aby hrac stal na miste)
+		/// </summary>
 		public bool CanMove()
 		{
 			if (!movementEnabled)
@@ -92,6 +109,9 @@ namespace Assets.scripts.Mono
 			return true;
 		}
 
+		/// <summary>
+		/// Vrati true pokud se hrac muze otacet
+		/// </summary>
 		public bool CanRotate()
 		{
 			if (!rotationEnabled)
@@ -112,6 +132,10 @@ namespace Assets.scripts.Mono
 			return true;
 		}
 
+		/// <summary>
+		/// Spusti i-tý skill hrace (vola se po stisknuti klavesy 1-5)
+		/// </summary>
+		/// <param name="key">1-5</param>
 		public void LaunchSkill(int key)
 		{
 			// select the skill mapped to the key
@@ -133,6 +157,11 @@ namespace Assets.scripts.Mono
 			movementEnabled = val;
         }
 
+		public void SetRotationEnabled(bool val)
+		{
+			rotationEnabled = val;
+		}
+
 		public void SetMoveSpeed(int speed)
 		{
 			moveSpeed = speed;
@@ -143,19 +172,14 @@ namespace Assets.scripts.Mono
 			rotateSpeed = speed;
 		}
 
-		public void SetHp(int newHp)
+		public void SetVisibleHp(int newHp)
 		{
-			hp = newHp;
+			visibleHp = newHp;
         }
 
-		public void AbortSkills()
+		public void BreakCasting()
 		{
 			player.BreakCasting();
-		}
-
-		public void SetRotationEnabled(bool var)
-		{
-			rotationEnabled = var;
 		}
 
 		public void UpdateHeading(Vector3 v)
@@ -163,12 +187,18 @@ namespace Assets.scripts.Mono
 			heading = v;
 		}
 
+		/// <summary>
+		/// Vrati vektor smeru hrace
+		/// </summary>
+		/// <returns></returns>
 		public Vector3 GetForwardVector()
 		{
 			return heading;
 		}
 
-		// forward vector + fixed angle
+		/// <summary>
+		/// Vrati vektor smeru hrace ke kteremu se pricte uhel
+		/// </summary>
 		public Vector3 GetForwardVector(int angle)
 		{
 			// 1. moznost

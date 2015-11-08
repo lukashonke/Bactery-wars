@@ -9,6 +9,10 @@ using UnityEngine;
 
 namespace Assets.scripts
 {
+	/// <summary>
+	/// Singleton trida
+	/// Pridava hrace do hry
+	/// </summary>
 	public class GameSystem
 	{
 		// singleton 

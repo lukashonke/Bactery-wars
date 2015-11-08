@@ -64,7 +64,6 @@ namespace Assets.scripts.Mono
 			}
         }
 
-		// Update is called once per frame
 		public void FixedUpdate()
 		{
 			// fire TODO delete
@@ -75,7 +74,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
-				data.AbortSkills();
+				data.BreakCasting();
 			}
 
 			HandleSkillControls();

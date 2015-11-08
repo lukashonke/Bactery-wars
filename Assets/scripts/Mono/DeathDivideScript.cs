@@ -11,8 +11,8 @@ namespace Assets.scripts.Mono
         void Start()
         {
             // pouze sude hodnoty pro spravnou explozi! 2x2, 4x4, 6x6, 8x8
-            int piecesX = 4;
-            int piecesY = 4;
+            const int piecesX = 4;
+			const int piecesY = 4;
             int sizeX = source.width;
             int sizeY = source.height;
 

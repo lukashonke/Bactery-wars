@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Actor
 {
+	/// <summary>
+	/// Datova trida reprezentujici informace o jednom hraci (jeho skilly, classu, stav (pocet HP, atd.))
+	/// </summary>
 	public class Player : Character
 	{
 		public readonly PlayerData data;
@@ -22,6 +25,9 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		/// <summary>
+		/// Inicializuje sablonu hrace
+		/// </summary>
 		public void InitTemplate()
 		{
 			int i = 0;
@@ -38,29 +44,46 @@ namespace Assets.scripts.Actor
 			}
 		}
 
-		// happens every frame
+		/// <summary>
+		/// Probiha kazdy snimek hry
+		/// </summary>
 		public override void OnUpdate()
 		{
 			
 		}
 
+		/// <summary>
+		/// Inicializuje status hrace (HP, max. rychlost, atd.)
+		/// </summary>
 		protected override CharStatus InitStatus()
 		{
 			CharStatus st = new PlayerStatus(false, 10, 10); //TODO
 			return st;
 		}
 
+		/// <summary>
+		/// Inicializuje skillset hrace
+		/// </summary>
 		protected override SkillSet InitSkillSet()
 		{
 			SkillSet set = new SkillSet();
 			return set;
 		}
 
+		/// <summary>
+		/// Vytvori novy Task (vyuziva Unity Coroutiny)
+		/// Task je ukol ktery muze probihat rozlozeny mezi nekolik snimku hry
+		/// (prubeh metody se muze na urcitou dobu pozastavit a provest az v jinem, popr. hned nasledujicim snimku)
+		/// </summary>
 		public override Coroutine StartTask(IEnumerator skillTask)
 		{
 			return data.StartCoroutine(skillTask);
 		}
 
+		/// <summary>
+		/// Predcasne ukonci Task
+		/// </summary>
+		/// <param name="c"></param>
 		public override void StopTask(Coroutine c)
 		{
 			data.StopCoroutine(c);

@@ -29,7 +29,7 @@ namespace Assets.scripts.Mono
 		// Update is called once per frame
 		void Update()
 		{
-			hp.text = "HP " + data.hp;
+			hp.text = "HP " + data.visibleHp;
 		}
 
 		public void MenuClick()

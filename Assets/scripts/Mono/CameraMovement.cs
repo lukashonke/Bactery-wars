@@ -2,6 +2,9 @@
 
 namespace Assets.scripts.Mono
 {
+	/// <summary>
+	/// Stara se o posouvani kamery pokud hrac drzi prave tlacitko
+	/// </summary>
     public class CameraMovement : MonoBehaviour
     {
         public float scrollSpeed = 0.3f;

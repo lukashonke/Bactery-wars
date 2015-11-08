@@ -13,8 +13,14 @@ namespace Assets.scripts.Actor
 {
 	public abstract class Character : Entity
 	{
+		/// <summary>
+		/// Status characteru (HP, MP, atd.)
+		/// </summary>
 		public CharStatus Status { get; private set; }
 
+		/// <summary>
+		/// Skillset characteru
+		/// </summary>
 		public SkillSet Skills { get; set; }
 
 		protected Character(string name) : base(name)
@@ -31,6 +37,10 @@ namespace Assets.scripts.Actor
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
 
+		/// <summary>
+		/// Spusti kouzleni skillu
+		/// </summary>
+		/// <param name="skill"></param>
 		public void CastSkill(Skill skill)
 		{
 			// skill is passive - cant cast it
@@ -49,6 +59,9 @@ namespace Assets.scripts.Actor
 			skill.Start();
 		}
 
+		/// <summary>
+		/// Prerusi kouzleni vsech aktivnich skillů
+		/// </summary>
 		public void BreakCasting()
 		{
 			if (!Status.IsCasting())
@@ -66,11 +79,20 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
+		/// <summary>
+		/// Vytvori novy Task (vyuziva Unity Coroutiny)
+		/// Task je ukol ktery muze probihat rozlozeny mezi nekolik snimku hry
+		/// (prubeh metody se muze na urcitou dobu pozastavit a provest az v jinem, popr. hned nasledujicim snimku)
+		/// </summary>
 		public virtual Coroutine StartTask(IEnumerator skillTask)
 		{
 			return GameSystem.Instance.StartTask(skillTask);
 		}
 
+		/// <summary>
+		/// Predcasne ukonci Task
+		/// </summary>
+		/// <param name="c"></param>
 		public virtual void StopTask(Coroutine c)
 		{
 			GameSystem.Instance.StopTask(c);

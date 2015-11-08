@@ -3,18 +3,14 @@ using UnityEngine;
 
 namespace Assets.scripts
 {
+	/// <summary>
+	/// Pri startu hry spusti GameSystem
+	/// </summary>
 	public class GameController : MonoBehaviour
 	{
-		// Use this for initialization
 		void Start()
 		{
 			GameSystem.Instance.Start(this);
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-			//GameSystem.Instance.Update();
 		}
 	}
 }
