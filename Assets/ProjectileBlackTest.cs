@@ -25,8 +25,12 @@ public class ProjectileBlackTest : MonoBehaviour
 	}
 
 
-	public void OnCollisionEnter2D(Collision2D coll)
+	public void OnTriggerEnter2D(Collider2D obj)
 	{
+		// TODO: nepouzivat tagy, ale pridat promennou pres extension metody do gameobject pro porovnavani tymu
+		if (obj.gameObject.tag == gameObject.tag)
+			return;
+
 		collapse();
 	}
 

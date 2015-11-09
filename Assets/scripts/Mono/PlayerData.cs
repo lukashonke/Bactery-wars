@@ -77,11 +77,12 @@ namespace Assets.scripts.Mono
 				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
 
 			GameObject newProjectile = Instantiate(go, shootingPosition.transform.position, body.transform.rotation) as GameObject;
-
 			Rigidbody2D rb = null;
 
 			if (newProjectile != null)
 			{
+				newProjectile.tag = gameObject.tag;
+
 				rb = newProjectile.GetComponent<Rigidbody2D>();
 				rb.velocity = newProjectile.transform.position + (GetForwardVector(plusAngle) *15);
 
