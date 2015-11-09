@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace Assets.scripts.Mono
 	/*
 		Unity Engine delegate for Player objects
 	*/
-	public class PlayerData : MonoBehaviour
+	public class PlayerData : MonoBehaviour, ICollidable
 	{
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
@@ -55,14 +56,18 @@ namespace Assets.scripts.Mono
 
 		public void OnCollisionEnter2D(Collision2D coll)
 		{
+
 		}
+
 
 		public void OnCollisionExit2D(Collision2D coll)
 		{
+
 		}
 
 		public void OnCollisionStay2D(Collision2D coll)
 		{
+
 		}
 
 		public void ShootProjectileForward(string folderName, string name)
