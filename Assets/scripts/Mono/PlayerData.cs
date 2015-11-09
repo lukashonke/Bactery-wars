@@ -70,6 +70,18 @@ namespace Assets.scripts.Mono
 
 		}
 
+		public void OnTriggerEnter2D(Collider2D obj)
+		{
+		}
+
+		public void OnTriggerExit2D(Collider2D obj)
+		{
+		}
+
+		public void OnTriggerStay2D(Collider2D obj)
+		{
+		}
+
 		public void ShootProjectileForward(string folderName, string name, int plusAngle)
 		{
 			GameObject go = Resources.Load(folderName + "/" + name) as GameObject;
@@ -77,13 +89,12 @@ namespace Assets.scripts.Mono
 				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
 
 			GameObject newProjectile = Instantiate(go, shootingPosition.transform.position, body.transform.rotation) as GameObject;
-			Rigidbody2D rb = null;
 
 			if (newProjectile != null)
 			{
 				newProjectile.tag = gameObject.tag;
 
-				rb = newProjectile.GetComponent<Rigidbody2D>();
+				Rigidbody2D rb = newProjectile.GetComponent<Rigidbody2D>();
 				rb.velocity = newProjectile.transform.position + (GetForwardVector(plusAngle) *15);
 
 				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.red, 5f);

@@ -6,12 +6,20 @@ using UnityEngine;
 
 namespace Assets.scripts.Base
 {
-	interface ICollidable
+	internal interface ICollidable
 	{
+		// spusteno jinymi objekty
 		void OnCollisionEnter2D(Collision2D coll);
 
 		void OnCollisionExit2D(Collision2D coll);
 
 		void OnCollisionStay2D(Collision2D coll);
+
+		// spusteno projektily
+		void OnTriggerEnter2D(Collider2D obj);
+
+		void OnTriggerExit2D(Collider2D obj);
+
+		void OnTriggerStay2D(Collider2D obj);
 	}
 }

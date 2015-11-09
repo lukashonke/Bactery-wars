@@ -49,5 +49,20 @@ namespace Assets.scripts.Mono
 		{
 			data.OnCollisionStay2D(coll);
 		}
+
+		public void OnTriggerEnter2D(Collider2D obj)
+		{
+			data.OnTriggerEnter2D(obj);
+		}
+
+		public void OnTriggerExit2D(Collider2D obj)
+		{
+			data.OnTriggerExit2D(obj);
+		}
+
+		public void OnTriggerStay2D(Collider2D obj)
+		{
+			data.OnTriggerStay2D(obj);
+		}
 	}
 }

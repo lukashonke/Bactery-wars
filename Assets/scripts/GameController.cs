@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts
 {
@@ -8,9 +8,19 @@ namespace Assets.scripts
 	/// </summary>
 	public class GameController : MonoBehaviour
 	{
+		public GameObject prefabToSpawn;
+
 		void Start()
 		{
 			GameSystem.Instance.Start(this);
+		}
+
+		void Update()
+		{
+			if (System.Environment.TickCount%600 == 0)
+			{
+				Instantiate(prefabToSpawn, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), Quaternion.identity);
+			}
 		}
 	}
 }

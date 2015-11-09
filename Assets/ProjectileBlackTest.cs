@@ -3,7 +3,7 @@ using System.Collections;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 
-public class ProjectileBlackTest : MonoBehaviour
+public class ProjectileBlackTest : MonoBehaviour, IDamagable
 {
 	public Texture2D source;
 	public int collapseSpeed;
@@ -23,7 +23,6 @@ public class ProjectileBlackTest : MonoBehaviour
 	{
 
 	}
-
 
 	public void OnTriggerEnter2D(Collider2D obj)
 	{
@@ -63,8 +62,6 @@ public class ProjectileBlackTest : MonoBehaviour
 				rb.gravityScale = 0;
 
 				nObject.AddComponent<FadeOut>();
-
-				Debug.Log("test");
 
 				if (i < temp)
 				{
@@ -125,5 +122,10 @@ public class ProjectileBlackTest : MonoBehaviour
 
 		GetComponent<SpriteRenderer>().enabled = false;
 		Destroy(gameObject, 1.5f);
+	}
+
+	public int GetDamage()
+	{
+		return 1;
 	}
 }

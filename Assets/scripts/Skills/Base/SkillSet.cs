@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Assets.scripts.Skills;
-using Assets.scripts.Skills.Base;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-namespace Assets.scripts.Base
+namespace Assets.scripts.Skills.Base
 {
 	/*
 		Trida slouzi k ulozeni setu skillů jednoho Characteru (hrac nebo jiny objekt)
