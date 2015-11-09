@@ -6,18 +6,18 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.Instances
 {
-	public class SkillTestProjectile : ActiveSkill
+	public class SkillTestProjectileTriple : ActiveSkill
 	{
-		public SkillTestProjectile(string name, int id) : base(name, id)
+		public SkillTestProjectileTriple(string name, int id) : base(name, id)
 		{
-			castTime = 0.25f;
-			reuse = 0;
-			coolDown = 0;
+			castTime = 0.5f;
+			reuse = 0.5f;
+			coolDown = 0.5f;
 		}
 
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectile(Name, Id);
+			return new SkillTestProjectileTriple(Name, Id);
 		}
 
 		public override bool OnCastStart()
@@ -31,7 +31,9 @@ namespace Assets.scripts.Skills.Instances
 		public override void OnLaunch()
 		{
 			// this.GetType().Name vrati jmeno teto tridy ("SkillTestProjectile")
-			GetPlayerData().ShootProjectileForward(this.GetType().Name, "projectile_blacktest_i00", 0);
+			GetPlayerData().ShootProjectileForward("SkillTestProjectile", "projectile_blacktest_i00", -15);
+			GetPlayerData().ShootProjectileForward("SkillTestProjectile", "projectile_blacktest_i00", 0);
+			GetPlayerData().ShootProjectileForward("SkillTestProjectile", "projectile_blacktest_i00", 15);
 		}
 
 		public override void UpdateLaunched()

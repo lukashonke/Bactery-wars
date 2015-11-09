@@ -63,13 +63,18 @@ namespace Assets.scripts.Skills
 				return false;
 			}
 
-			int time = Environment.TickCount;
-
-			// the reuse time has passed
-			if (LastUsed + reuse < time)
+			if (reuse > 0)
 			{
-				return true;
+				int time = Environment.TickCount;
+
+				// the reuse time has passed
+				if (LastUsed + reuse < time)
+				{
+					return true;
+				}
 			}
+			else
+				return true;
 
 			Debug.Log("the skill is still being reused");
 			// not yet
@@ -131,7 +136,10 @@ namespace Assets.scripts.Skills
 
 			// TODO apply debuffs, etc here
 
-			yield return new WaitForSeconds(castTime);
+			if (castTime > 0)
+			{
+				yield return new WaitForSeconds(castTime);
+			}
 
 			Debug.Log("[Active]");
 
@@ -144,7 +152,10 @@ namespace Assets.scripts.Skills
 
 			// TODO apply cooldown modifying stuff here
 
-			yield return new WaitForSeconds(coolDown);
+			if (coolDown > 0)
+			{
+				yield return new WaitForSeconds(coolDown);
+			}
 
 			Debug.Log("[Idle]");
 

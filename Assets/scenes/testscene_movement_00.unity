@@ -925,6 +925,7 @@ GameObject:
   - 50: {fileID: 937088886}
   - 58: {fileID: 937088885}
   - 95: {fileID: 937088889}
+  - 114: {fileID: 937088884}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -932,6 +933,17 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &937088884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 937088883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf72cd12e7affa42b7d284249d4f908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!58 &937088885
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1637,6 +1649,7 @@ GameObject:
   - 95: {fileID: 1415849764}
   - 61: {fileID: 1415849768}
   - 114: {fileID: 1415849767}
+  - 114: {fileID: 1415849769}
   m_Layer: 0
   m_Name: enemy_test_body
   m_TagString: Untagged
@@ -1711,6 +1724,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ae6f9c6b3e9ce439ce98d4863c2823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationOffset: 90
+  rotationSpeed: 5
 --- !u!61 &1415849768
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1724,6 +1739,17 @@ BoxCollider2D:
   m_Offset: {x: 1.90734863e-06, y: 0}
   serializedVersion: 2
   m_Size: {x: 6.82000017, y: 5.98999977}
+--- !u!114 &1415849769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1415849763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf72cd12e7affa42b7d284249d4f908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1417948120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,6 +1758,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1417948121}
+  - 114: {fileID: 1417948122}
   m_Layer: 0
   m_Name: Enemy_test_i00
   m_TagString: Untagged
@@ -1752,6 +1779,17 @@ Transform:
   - {fileID: 1415849766}
   m_Father: {fileID: 0}
   m_RootOrder: 8
+--- !u!114 &1417948122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1417948120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b3ab74444d4dc143992a13cdecb88c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1614733751
 GameObject:
   m_ObjectHideFlags: 0

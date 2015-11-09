@@ -70,7 +70,7 @@ namespace Assets.scripts.Mono
 
 		}
 
-		public void ShootProjectileForward(string folderName, string name)
+		public void ShootProjectileForward(string folderName, string name, int plusAngle)
 		{
 			GameObject go = Resources.Load(folderName + "/" + name) as GameObject;
 			if (go == null)
@@ -83,7 +83,7 @@ namespace Assets.scripts.Mono
 			if (newProjectile != null)
 			{
 				rb = newProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = newProjectile.transform.position + heading*15;
+				rb.velocity = newProjectile.transform.position + (GetForwardVector(plusAngle) *15);
 
 				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.red, 5f);
 
