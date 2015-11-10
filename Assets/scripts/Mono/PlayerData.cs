@@ -95,9 +95,9 @@ namespace Assets.scripts.Mono
 				newProjectile.tag = gameObject.tag;
 
 				Rigidbody2D rb = newProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = newProjectile.transform.position + (GetForwardVector(plusAngle) *15);
+				rb.velocity = (GetForwardVector(plusAngle) *15);
 
-				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.red, 5f);
+				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.green, 5f);
 
 				Destroy(newProjectile, 5f);
 			}
