@@ -82,7 +82,7 @@ namespace Assets.scripts.Mono
 			if (!ui.MouseOverUI)
 			{
 				// change target position according to mouse when clicked
-				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 10)
+				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 1)
 				{
 					targetPositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 					targetPositionWorld.z = body.transform.position.z; // do not update the z-axis
@@ -138,6 +138,8 @@ namespace Assets.scripts.Mono
 					Destroy(currMouseClicker);
 				}
 			}
+
+			Debug.DrawRay(body.transform.position, data.GetForwardVector()*100, Color.red);
 		}
     }
 

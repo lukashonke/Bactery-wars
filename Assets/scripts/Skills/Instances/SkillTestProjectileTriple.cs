@@ -10,7 +10,7 @@ namespace Assets.scripts.Skills.Instances
 	{
 		public SkillTestProjectileTriple(string name, int id) : base(name, id)
 		{
-			castTime = 0.5f;
+			castTime = 1f;
 			reuse = 0.5f;
 			coolDown = 0.5f;
 		}

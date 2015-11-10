@@ -97,6 +97,8 @@ namespace Assets.scripts.Skills
 
             Owner.Status.ActiveSkills.Add(this);
 
+			Owner.NotifyCastingModeChange();
+
 			Task = Owner.StartTask(SkillTask());
 			UpdateTask = Owner.StartTask(StartUpdateTask());
 		}
@@ -106,6 +108,8 @@ namespace Assets.scripts.Skills
 			active = false;
 
             Owner.Status.ActiveSkills.Remove(this);
+
+			Owner.NotifyCastingModeChange();
 
 			UpdateTask = null;
 			Task = null;

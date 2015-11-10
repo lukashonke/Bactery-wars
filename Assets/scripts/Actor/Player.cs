@@ -70,6 +70,11 @@ namespace Assets.scripts.Actor
 			return set;
 		}
 
+		public override void NotifyCastingModeChange()
+		{
+			data.IsCasting = Status.IsCasting();
+		}
+
 		/// <summary>
 		/// Vytvori novy Task (vyuziva Unity Coroutiny)
 		/// Task je ukol ktery muze probihat rozlozeny mezi nekolik snimku hry

@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.scripts.Base;
+using Assets.scripts.Mono;
 
-public class EnemyTestData : MonoBehaviour, ICollidable
+public class EnemyTestData : AbstractData, ICollidable
 {
 	public int hp;
 
 	// Use this for initialization
-	void Start()
+	public void Start()
 	{
+		base.Start();
+
 		hp = 1;
 	}
 
 	// Update is called once per frame
-	void Update()
+	public void Update()
 	{
 
 	}

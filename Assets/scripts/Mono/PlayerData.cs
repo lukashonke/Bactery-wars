@@ -10,7 +10,7 @@ namespace Assets.scripts.Mono
 	/*
 		Unity Engine delegate for Player objects
 	*/
-	public class PlayerData : MonoBehaviour, ICollidable
+	public class PlayerData : AbstractData, ICollidable
 	{
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
@@ -23,6 +23,8 @@ namespace Assets.scripts.Mono
 
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) hrace</summary>
 		private Vector3 heading;
+
+		public ParticleSystem castingEffects;
 
 		// zastupne promenne GameObjektu (reflektuji datove hodnoty v tride Player)
 		public int visibleHp;
@@ -41,16 +43,44 @@ namespace Assets.scripts.Mono
 		/// <summary>true pokud se hrac muze otacet (nastavuje se na false napriklad pri kouzleni)</summary>
 		public bool rotationEnabled = true;
 
+		public bool IsCasting { get; set; }
+
 		public void Start()
 		{
-			body = GameObject.Find("Body");
-			shootingPosition = GameObject.Find("Shooting Position");
+			base.Start();
+
+			body = GetChildByName("Body");
+			shootingPosition = GetChildByName("Shooting Position");
+            castingEffects = GetChildByName("Casting Effect").GetComponent<ParticleSystem>();
+
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
-			Debug.Log("Registering new data for player " + player.Name);
+			IsCasting = false;
+
+            Debug.Log("Registering new data for player " + player.Name);
 		}
 
 		public void Update()
 		{
+			if (!castingEffects.isPlaying)
+				castingEffects.Play(true);
+
+			if (IsCasting)
+			{
+				if (!castingEffects.enableEmission)
+				{
+					castingEffects.enableEmission = true;
+                }
+				//castingEffects.Play(true);
+			}
+			else
+			{
+				if (castingEffects.enableEmission)
+				{
+					castingEffects.enableEmission = false;
+					//castingEffects.Pause(true);
+				}
+			}
+
 			player.OnUpdate();
 		}
 
@@ -58,7 +88,6 @@ namespace Assets.scripts.Mono
 		{
 
 		}
-
 
 		public void OnCollisionExit2D(Collision2D coll)
 		{

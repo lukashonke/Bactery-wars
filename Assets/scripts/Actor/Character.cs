@@ -36,6 +36,7 @@ namespace Assets.scripts.Actor
 
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
+		public abstract void NotifyCastingModeChange();
 
 		/// <summary>
 		/// Spusti kouzleni skillu
