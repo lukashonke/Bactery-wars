@@ -4,7 +4,7 @@ namespace Assets.scripts.Mono
 {
 	public class PlayerControls : MonoBehaviour
 	{
-		public GameObject body;
+		public GameObject body; // kvuli pokusu o commit ..
 
 		public PlayerData data;
 		public PlayerUI ui;
