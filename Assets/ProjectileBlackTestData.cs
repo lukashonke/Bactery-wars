@@ -3,6 +3,9 @@ using System.Collections;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 
+/// <summary>
+/// TODO redo this into a particle effect
+/// </summary>
 public class ProjectileBlackTest : MonoBehaviour, IDamagable
 {
 	public Texture2D source;
@@ -121,6 +124,11 @@ public class ProjectileBlackTest : MonoBehaviour, IDamagable
 		}
 
 		GetComponent<SpriteRenderer>().enabled = false;
+
+		// stop the movement so that it doesnt penetrate and hit other objects
+		GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+
+		// destroy the object after 1.5 seconds
 		Destroy(gameObject, 1.5f);
 	}
 
