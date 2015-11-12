@@ -12,8 +12,14 @@ namespace Assets.scripts.Mono
 	*/
 	public class PlayerData : AbstractData, ICollidable
 	{
+		// configs
+		public bool USE_VELOCITY_MOVEMENT;
+
+
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
+		public Rigidbody2D rb;
+		private Animator anim;
 
 		/// <summary>GameObject reprezentujici relativni pozici tesne pred hracem</summary>
 		public GameObject shootingPosition;
@@ -23,6 +29,15 @@ namespace Assets.scripts.Mono
 
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) hrace</summary>
 		private Vector3 heading;
+
+		// current position in world cords to move to
+		private Vector3 targetPositionWorld;
+
+		/// setting this to false will stop the current player movement
+		public bool HasTargetToMoveTo { get; set; }
+
+		private bool allowPlayerMovePointChange;
+		private bool forcedVelocity;
 
 		public ParticleSystem castingEffects;
 
@@ -45,18 +60,41 @@ namespace Assets.scripts.Mono
 
 		public bool IsCasting { get; set; }
 
-		public void Start()
+		public new void Start()
 		{
 			base.Start();
 
 			body = GetChildByName("Body");
+			rb = body.GetComponent<Rigidbody2D>();
+			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
             castingEffects = GetChildByName("Casting Effect").GetComponent<ParticleSystem>();
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
+
 			IsCasting = false;
+			HasTargetToMoveTo = false;
+			allowPlayerMovePointChange = true;
+			forcedVelocity = false;
 
             Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public override void JumpForward(float dist, float jumpSpeed)
+		{
+			if (USE_VELOCITY_MOVEMENT)
+			{
+				ForceSetMoveDestinaton(body.transform.position + GetForwardVector()*dist, 0.5f);
+				ForceSetVelocity(GetForwardVector() * jumpSpeed, 0.5f);
+				HasTargetToMoveTo = true;
+				UpdateHeading();
+			}
+			else
+			{
+				HasTargetToMoveTo = false;
+				SetPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector() * dist, dist), false);
+				UpdateHeading();
+			}
 		}
 
 		public void Update()
@@ -64,21 +102,83 @@ namespace Assets.scripts.Mono
 			if (!castingEffects.isPlaying)
 				castingEffects.Play(true);
 
+			// update effects
 			if (IsCasting)
 			{
 				if (!castingEffects.enableEmission)
 				{
 					castingEffects.enableEmission = true;
                 }
-				//castingEffects.Play(true);
 			}
 			else
 			{
 				if (castingEffects.enableEmission)
 				{
 					castingEffects.enableEmission = false;
-					//castingEffects.Pause(true);
 				}
+			}
+
+			Debug.Log(rb.velocity);
+
+			// update movement
+			// move to mouse
+			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
+			{
+				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
+				newRotation.x = 0;
+				newRotation.y = 0;
+
+				float angle = Quaternion.Angle(body.transform.rotation, newRotation);
+
+				bool move = true;
+				bool rotate = true;
+
+				if (angle - 90 > 1 && !canMoveWhenNotRotated)
+					move = false;
+
+				if (!CanMove())
+					move = false;
+
+				if (!CanRotate())
+					rotate = false;
+
+				if (move)
+				{
+					anim.SetFloat("MOVE_SPEED", 1);
+
+					if (USE_VELOCITY_MOVEMENT)
+					{
+						Vector3 newVelocity = targetPositionWorld - body.transform.position;
+						newVelocity.Normalize();
+
+						SetVelocity(newVelocity*moveSpeed);
+					}
+					else
+					{
+						SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime*moveSpeed), false);
+					}
+				}
+				else
+				{
+					ResetVelocity();
+				}
+
+				if (rotate)
+				{
+					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+				}
+
+				if (move || rotate)
+				{
+					UpdateHeading();
+				}
+			}
+			else
+			{
+				anim.SetFloat("MOVE_SPEED", 0);
+				HasTargetToMoveTo = false;
+
+				ResetVelocity();
 			}
 
 			player.OnUpdate();
@@ -130,6 +230,92 @@ namespace Assets.scripts.Mono
 
 				Destroy(newProjectile, 5f);
 			}
+		}
+
+		public void BreakMovement()
+		{
+			HasTargetToMoveTo = false;
+		}
+
+		/// <summary>
+		/// Forces player to move towards this direction (clicking on screen wont change it)
+		/// After 'duration' passes, unforces it
+		/// 
+		/// works only if USE_VELOCITY_MOVEMENT = true
+		/// </summary>
+		public void ForceSetMoveDestinaton(Vector3 newDest, float duration)
+		{
+			if (USE_VELOCITY_MOVEMENT == false)
+				return;
+
+			allowPlayerMovePointChange = false;
+			targetPositionWorld = newDest;
+
+			IEnumerator task = ScheduleResetAllowPlayerMovement(duration);
+			StartCoroutine(task);
+		}
+
+		private IEnumerator ScheduleResetAllowPlayerMovement(float duration)
+		{
+			yield return new WaitForSeconds(duration);
+
+			allowPlayerMovePointChange = true;
+
+			yield return null;
+		}
+
+		/// <summary>
+		/// Forces the object to have this velocity for 'duration' seconds
+		/// 
+		/// works only if USE_VELOCITY_MOVEMENT = true
+		/// </summary>
+		public void ForceSetVelocity(Vector3 newVel, float duration)
+		{
+			if (USE_VELOCITY_MOVEMENT == false)
+				return;
+
+			forcedVelocity = true;
+			rb.velocity = newVel;
+
+			IEnumerator task = ScheduleUnforceVelocity(duration);
+			StartCoroutine(task);
+		}
+
+		private IEnumerator ScheduleUnforceVelocity(float duration)
+		{
+			yield return new WaitForSeconds(duration);
+
+			ForceVelocityUnset();
+
+			yield return null;
+		}
+
+		public void ForceVelocityUnset()
+		{
+			forcedVelocity = false;
+		}
+
+		public void SetVelocity(Vector3 newVel)
+		{
+			if (forcedVelocity)
+				return;
+
+			rb.velocity = newVel;
+		}
+
+		public void SetPosition(Vector3 newPos, bool updateHeading)
+		{
+			body.transform.position = newPos;
+			if(updateHeading)
+				UpdateHeading();
+		}
+
+		public void SetRotation(Quaternion newRot, bool updateHeading)
+		{
+			body.transform.rotation = newRot;
+
+			if (updateHeading)
+				UpdateHeading();
 		}
 
 		/// <summary>
@@ -228,9 +414,33 @@ namespace Assets.scripts.Mono
 			player.BreakCasting();
 		}
 
-		public void UpdateHeading(Vector3 v)
+		public void UpdateHeading()
+		{
+			float angleRad = (body.transform.rotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
+			SetHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
+		}
+
+		public void ResetVelocity()
+		{
+			rb.velocity = Vector3.zero;
+		}
+
+		private void SetHeading(Vector3 v)
 		{
 			heading = v;
+		}
+
+		public void SetPlayersMoveToTarget(Vector3 newTarget)
+		{
+			if (!allowPlayerMovePointChange)
+				return;
+
+			targetPositionWorld = newTarget;
+		}
+
+		public Vector3 GetMovementTarget()
+		{
+			return targetPositionWorld;
 		}
 
 		/// <summary>

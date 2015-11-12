@@ -24,7 +24,7 @@ namespace Assets.scripts.Skills
 			return false;
 		}
 
-		public override void SetCooldownTimer()
+		public override void SetReuseTimer()
 		{
 		}
 

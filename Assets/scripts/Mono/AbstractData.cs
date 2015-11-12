@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Mono
 {
+	/// <summary>
+	/// The class for all graphical/physical objects in Unity
+	/// </summary>
 	public abstract class AbstractData : MonoBehaviour
 	{
 		protected Dictionary<string, GameObject> childs;
@@ -37,5 +40,7 @@ namespace Assets.scripts.Mono
 
 			return val;
 		}
+
+		public abstract void JumpForward(float dist, float jumpSpeed);
 	}
 }

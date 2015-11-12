@@ -17,7 +17,6 @@ namespace Assets.scripts.Mono
             {
                 Ability1();
             }
-
         }
 
         private void Ability1()

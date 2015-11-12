@@ -8,11 +8,16 @@ public class EnemyTestData : AbstractData, ICollidable
 	public int hp;
 
 	// Use this for initialization
-	public void Start()
+	public new void Start()
 	{
 		base.Start();
 
 		hp = 1;
+	}
+
+	public override void JumpForward(float dist, float jumpSpeed)
+	{
+		throw new System.NotImplementedException();
 	}
 
 	// Update is called once per frame

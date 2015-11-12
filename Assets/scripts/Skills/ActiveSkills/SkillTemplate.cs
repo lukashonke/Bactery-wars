@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace Assets.scripts.Skills.Instances
+﻿namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTemplate : ActiveSkill
 	{

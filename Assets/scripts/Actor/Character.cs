@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.Base;
+using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -23,6 +24,8 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public SkillSet Skills { get; set; }
 
+		public AbstractData Data { get; set; }
+
 		protected Character(string name) : base(name)
 		{
 			Init();
@@ -32,6 +35,11 @@ namespace Assets.scripts.Actor
 		{
 			Status = InitStatus();
 			Skills = InitSkillSet();
+		}
+
+		public AbstractData GetData()
+		{
+			return Data;
 		}
 
 		protected abstract CharStatus InitStatus();
@@ -55,7 +63,8 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			skill.SetCooldownTimer();
+			// start the reuse timer
+			skill.SetReuseTimer();
 
 			skill.Start();
 		}

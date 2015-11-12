@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
-namespace Assets.scripts.Skills.Instances
+﻿namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectileTriple : ActiveSkill
 	{
@@ -42,7 +36,7 @@ namespace Assets.scripts.Skills.Instances
 
 		public override void OnFinish()
 		{
-			
+
 		}
 
 		public override void OnSkillEnd()
@@ -51,7 +45,7 @@ namespace Assets.scripts.Skills.Instances
 
 		public override bool CanMove()
 		{
-			if (IsBeingCasted() && state == SKILL_CASTING)
+			if (IsBeingCasted())
 				return false;
 			return true;
 		}

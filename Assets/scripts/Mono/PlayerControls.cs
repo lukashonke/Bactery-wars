@@ -4,13 +4,10 @@ namespace Assets.scripts.Mono
 {
 	public class PlayerControls : MonoBehaviour
 	{
-		public GameObject body; // commit pokus
+		public GameObject body;
 
 		public PlayerData data;
 		public PlayerUI ui;
-
-		// position in world cords to move to
-		private Vector3 targetPositionWorld;
 		private Rigidbody2D rb;
 
 		// attached object to display moving to pos
@@ -34,7 +31,7 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();
 			ui = GetComponent<PlayerUI>();
-		}
+        }
 
 		private void HandleSkillControls()
 		{
@@ -64,7 +61,7 @@ namespace Assets.scripts.Mono
 			}
         }
 
-		public void FixedUpdate()
+		public void Update()
 		{
 			// fire TODO delete
 			if (Input.GetKeyDown("space"))
@@ -84,62 +81,25 @@ namespace Assets.scripts.Mono
 				// change target position according to mouse when clicked
 				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 1)
 				{
-					targetPositionWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					targetPositionWorld.z = body.transform.position.z; // do not update the z-axis
+					Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					newTarget.z = body.transform.position.z;
+					data.SetPlayersMoveToTarget(newTarget);
 
 					if (currMouseClicker != null)
 						Destroy(currMouseClicker);
 
-					currMouseClicker = Instantiate(mouseClicker, targetPositionWorld, Quaternion.identity) as GameObject;
-				}
+					currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+					data.HasTargetToMoveTo = true;
+                }
 			}
 
-			// move to mouse
-			if (Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
+			if (!data.HasTargetToMoveTo)
 			{
-				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
-				newRotation.x = 0;
-				newRotation.y = 0;
-
-				float angle = Quaternion.Angle(body.transform.rotation, newRotation);
-
-				bool move = true;
-				bool rotate = true;
-
-				if (angle-90 > 1 && !data.canMoveWhenNotRotated)
-					move = false;
-
-				if (!data.CanMove())
-					move = false;
-
-				if (!data.CanRotate())
-					rotate = false;
-
-				if (move)
-				{
-					anim.SetFloat("MOVE_SPEED", 1);
-					body.transform.position = Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * data.moveSpeed);
-				}
-
-				if (rotate)
-				{
-					body.transform.rotation = Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * data.rotateSpeed);
-
-					float angleRad = (body.transform.rotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
-					data.UpdateHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
-				}
-			}
-			else
-			{
-				anim.SetFloat("MOVE_SPEED", 0);
-
 				if (currMouseClicker != null)
-				{
 					Destroy(currMouseClicker);
-				}
 			}
 
-			Debug.DrawRay(body.transform.position, data.GetForwardVector()*100, Color.red);
+			Debug.DrawRay(body.transform.position, data.GetForwardVector()*10, Color.red);
 		}
     }
 
