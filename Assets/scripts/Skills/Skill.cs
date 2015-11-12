@@ -1,7 +1,6 @@
 ﻿using System;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
-using Assets.scripts.Skills.Instances;
 using UnityEngine;
 
 namespace Assets.scripts.Skills
@@ -56,11 +55,19 @@ namespace Assets.scripts.Skills
 			SkillAdded();
 		}
 
+		public AbstractData GetOwnerData()
+		{
+			return Owner.GetData();
+		}
+
+		/// <summary>
+		/// works only if the owner is a Player
+		/// </summary>
 		public PlayerData GetPlayerData()
 		{
 			if (Owner is Player)
 			{
-				return ((Player) Owner).data;
+				return ((Player) Owner).GetData();
 			}
 
 			return null;
@@ -72,7 +79,8 @@ namespace Assets.scripts.Skills
 		public abstract void SkillAdded();
 
 		public abstract bool CanUse();
-		public abstract void SetCooldownTimer();
+		public abstract void SetReuseTimer();
+		public abstract bool IsActive();
 		public abstract bool IsBeingCasted();
 		public abstract void Start();
 		public abstract void AbortCast();

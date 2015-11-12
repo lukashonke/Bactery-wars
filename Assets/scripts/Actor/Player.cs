@@ -14,15 +14,18 @@ namespace Assets.scripts.Actor
 	/// </summary>
 	public class Player : Character
 	{
-		public readonly PlayerData data;
-
 		public ClassTemplate Template { get; set; }
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
-			data = dataObject;
+			Data = dataObject;
 
 			Template = template;
+		}
+
+		public new PlayerData GetData()
+		{
+			return (PlayerData) Data;
 		}
 
 		/// <summary>
@@ -72,7 +75,7 @@ namespace Assets.scripts.Actor
 
 		public override void NotifyCastingModeChange()
 		{
-			data.IsCasting = Status.IsCasting();
+			GetData().IsCasting = Status.IsCasting();
 		}
 
 		/// <summary>
@@ -82,7 +85,7 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public override Coroutine StartTask(IEnumerator skillTask)
 		{
-			return data.StartCoroutine(skillTask);
+			return GetData().StartCoroutine(skillTask);
 		}
 
 		/// <summary>
@@ -91,12 +94,12 @@ namespace Assets.scripts.Actor
 		/// <param name="c"></param>
 		public override void StopTask(Coroutine c)
 		{
-			data.StopCoroutine(c);
+			GetData().StopCoroutine(c);
 		}
 
 		public override void StopTask(IEnumerator t)
 		{
-			data.StopCoroutine(t);
+			GetData().StopCoroutine(t);
 		}
 	}
 }

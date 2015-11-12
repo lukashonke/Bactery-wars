@@ -17,6 +17,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(2)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(3)); // the projectile test skill triple
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(4)); // aura
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(5)); // jump
 		}
 	}
 }

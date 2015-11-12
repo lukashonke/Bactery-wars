@@ -37,16 +37,23 @@ namespace Assets.scripts.Skills
 			updateFrequency = 0.1f;
 		}
 
+		/// returning false will make the skill not start
 		public abstract bool OnCastStart();
 		public abstract void OnLaunch();
 		public abstract void UpdateLaunched();
 		public abstract void OnFinish();
 		public abstract void OnSkillEnd();
+
+		/// can the player move while casting?
 		public abstract bool CanMove();
+
+		/// can the player rotate while casting?
 		public abstract bool CanRotate();
 
+		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
 		{
+
 		}
 
 		public override bool CanUse()
@@ -68,7 +75,7 @@ namespace Assets.scripts.Skills
 				int time = Environment.TickCount;
 
 				// the reuse time has passed
-				if (LastUsed + reuse < time)
+				if (LastUsed + (reuse*1000) < time)
 				{
 					return true;
 				}
@@ -81,12 +88,23 @@ namespace Assets.scripts.Skills
 			return false;
 		}
 
-		public override bool IsBeingCasted()
+		/// <summary>
+		/// skil isActive() during: player started to cast skill (skill.Start() was called) until --> Skill.End() was called
+		/// </summary>
+		public override bool IsActive()
 		{
 			return active;
 		}
 
-		public override void SetCooldownTimer()
+		/// <summary>
+		/// skill is being casted (for example: no projectile was shot yet)
+		/// </summary>
+		public override bool IsBeingCasted()
+		{
+			return state == SKILL_CASTING;
+		}
+
+		public override void SetReuseTimer()
 		{
 			LastUsed = Environment.TickCount;
 		}

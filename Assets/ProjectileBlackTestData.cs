@@ -6,7 +6,7 @@ using Assets.scripts.Mono;
 /// <summary>
 /// TODO redo this into a particle effect
 /// </summary>
-public class ProjectileBlackTest : MonoBehaviour, IDamagable
+public class ProjectileBlackTestData : MonoBehaviour, IDamagable
 {
 	public Texture2D source;
 	public int collapseSpeed;

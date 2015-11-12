@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Assets.scripts.Skills.Instances;
+using Assets.scripts.Skills.ActiveSkills;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.Base
@@ -77,6 +77,9 @@ namespace Assets.scripts.Skills.Base
 			AddSkill(skill);
 
 			skill = new SkillTestProjectileAllAround("Skill Test Projectile Aura", 4);
+			AddSkill(skill);
+
+			skill = new JumpShort("Short Jump", 5);
 			AddSkill(skill);
 		}
 	}

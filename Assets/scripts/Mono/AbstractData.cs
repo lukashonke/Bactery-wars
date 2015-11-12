@@ -40,5 +40,7 @@ namespace Assets.scripts.Mono
 
 			return val;
 		}
+
+		public abstract void JumpForward(float dist, float jumpSpeed);
 	}
 }

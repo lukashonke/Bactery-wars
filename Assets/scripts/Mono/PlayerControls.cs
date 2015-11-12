@@ -8,10 +8,13 @@ namespace Assets.scripts.Mono
 
 		public PlayerData data;
 		public PlayerUI ui;
+		private Rigidbody2D rb;
 
 		// position in world cords to move to
 		private Vector3 targetPositionWorld;
-		private Rigidbody2D rb;
+
+		// setting this to false will stop the current player movement
+		public bool HasTargetToMoveTo { get; set; }
 
 		// attached object to display moving to pos
 		public GameObject mouseClicker;
@@ -34,7 +37,9 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();
 			ui = GetComponent<PlayerUI>();
-		}
+
+			HasTargetToMoveTo = false;
+        }
 
 		private void HandleSkillControls()
 		{
@@ -91,11 +96,12 @@ namespace Assets.scripts.Mono
 						Destroy(currMouseClicker);
 
 					currMouseClicker = Instantiate(mouseClicker, targetPositionWorld, Quaternion.identity) as GameObject;
-				}
+					HasTargetToMoveTo = true;
+                }
 			}
 
 			// move to mouse
-			if (Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
+			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
 			{
 				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
 				newRotation.x = 0;
@@ -117,12 +123,14 @@ namespace Assets.scripts.Mono
 
 				if (move)
 				{
+					Debug.Log("moving");
 					anim.SetFloat("MOVE_SPEED", 1);
 					body.transform.position = Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * data.moveSpeed);
 				}
 
 				if (rotate)
 				{
+					Debug.Log("rotating");
 					body.transform.rotation = Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * data.rotateSpeed);
 
 					float angleRad = (body.transform.rotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
@@ -132,6 +140,7 @@ namespace Assets.scripts.Mono
 			else
 			{
 				anim.SetFloat("MOVE_SPEED", 0);
+				HasTargetToMoveTo = false;
 
 				if (currMouseClicker != null)
 				{
@@ -139,7 +148,7 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			Debug.DrawRay(body.transform.position, data.GetForwardVector()*100, Color.red);
+			Debug.DrawRay(body.transform.position, data.GetForwardVector()*10, Color.red);
 		}
     }
 

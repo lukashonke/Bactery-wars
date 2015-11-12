@@ -45,7 +45,7 @@ namespace Assets.scripts.Mono
 
 		public bool IsCasting { get; set; }
 
-		public void Start()
+		public new void Start()
 		{
 			base.Start();
 
@@ -57,6 +57,15 @@ namespace Assets.scripts.Mono
 			IsCasting = false;
 
             Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public override void JumpForward(float dist, float jumpSpeed)
+		{
+			Debug.DrawRay(body.transform.position, GetForwardVector() * dist, Color.magenta, 4f);
+
+			body.transform.position = Vector3.MoveTowards(body.transform.position, GetForwardVector()*10, Time.deltaTime * 100);
+
+			Debug.DrawRay(body.transform.position, GetForwardVector()*dist, Color.cyan, 4f);
 		}
 
 		public void Update()
