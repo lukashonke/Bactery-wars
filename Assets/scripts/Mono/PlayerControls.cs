@@ -83,7 +83,7 @@ namespace Assets.scripts.Mono
 				{
 					Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 					newTarget.z = body.transform.position.z;
-					data.SetMovementTarget(newTarget);
+					data.SetPlayersMoveToTarget(newTarget);
 
 					if (currMouseClicker != null)
 						Destroy(currMouseClicker);

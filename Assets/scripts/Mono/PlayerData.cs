@@ -13,10 +13,7 @@ namespace Assets.scripts.Mono
 	public class PlayerData : AbstractData, ICollidable
 	{
 		// configs
-		public bool use_velocity_movement;
-
-
-
+		public bool USE_VELOCITY_MOVEMENT;
 
 
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
@@ -39,6 +36,7 @@ namespace Assets.scripts.Mono
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
 
+		private bool allowPlayerMovePointChange;
 		private bool forcedVelocity;
 
 		public ParticleSystem castingEffects;
@@ -76,22 +74,24 @@ namespace Assets.scripts.Mono
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
+			allowPlayerMovePointChange = true;
+			forcedVelocity = false;
 
             Debug.Log("Registering new data for player " + player.Name);
 		}
 
 		public override void JumpForward(float dist, float jumpSpeed)
 		{
-			if (use_velocity_movement)
+			if (USE_VELOCITY_MOVEMENT)
 			{
-				//TODO set a movement point and move player fixed towards it with increase speed, when player is on the point, stop
+				ForceSetMoveDestinaton(body.transform.position + GetForwardVector()*dist, 0.5f);
 				ForceSetVelocity(GetForwardVector() * jumpSpeed, 0.5f);
 				UpdateHeading();
 			}
 			else
 			{
 				HasTargetToMoveTo = false;
-				MoveToPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector() * dist, dist), false);
+				SetPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector() * dist, dist), false);
 				UpdateHeading();
 			}
 		}
@@ -143,7 +143,7 @@ namespace Assets.scripts.Mono
 				{
 					anim.SetFloat("MOVE_SPEED", 1);
 
-					if (use_velocity_movement)
+					if (USE_VELOCITY_MOVEMENT)
 					{
 						Vector3 newVelocity = targetPositionWorld - body.transform.position;
 						newVelocity.Normalize();
@@ -152,7 +152,7 @@ namespace Assets.scripts.Mono
 					}
 					else
 					{
-						MoveToPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
+						SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
 					}
 				}
 
@@ -171,7 +171,7 @@ namespace Assets.scripts.Mono
 				anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
 
-				if (use_velocity_movement)
+				if (USE_VELOCITY_MOVEMENT)
 				{
 					ResetVelocity();
 				}
@@ -234,10 +234,42 @@ namespace Assets.scripts.Mono
 		}
 
 		/// <summary>
+		/// Forces player to move towards this direction (clicking on screen wont change it)
+		/// After 'duration' passes, unforces it
+		/// 
+		/// works only if USE_VELOCITY_MOVEMENT = true
+		/// </summary>
+		public void ForceSetMoveDestinaton(Vector3 newDest, float duration)
+		{
+			if (USE_VELOCITY_MOVEMENT == false)
+				return;
+
+			allowPlayerMovePointChange = false;
+			targetPositionWorld = newDest;
+
+			IEnumerator task = ScheduleResetAllowPlayerMovement(duration);
+			StartCoroutine(task);
+		}
+
+		private IEnumerator ScheduleResetAllowPlayerMovement(float duration)
+		{
+			yield return new WaitForSeconds(duration);
+
+			allowPlayerMovePointChange = true;
+
+			yield return null;
+		}
+
+		/// <summary>
 		/// Forces the object to have this velocity for 'duration' seconds
+		/// 
+		/// works only if USE_VELOCITY_MOVEMENT = true
 		/// </summary>
 		public void ForceSetVelocity(Vector3 newVel, float duration)
 		{
+			if (USE_VELOCITY_MOVEMENT == false)
+				return;
+
 			forcedVelocity = true;
 			rb.velocity = newVel;
 
@@ -267,7 +299,7 @@ namespace Assets.scripts.Mono
 			rb.velocity = newVel;
 		}
 
-		public void MoveToPosition(Vector3 newPos, bool updateHeading)
+		public void SetPosition(Vector3 newPos, bool updateHeading)
 		{
 			body.transform.position = newPos;
 			if(updateHeading)
@@ -386,9 +418,6 @@ namespace Assets.scripts.Mono
 
 		public void ResetVelocity()
 		{
-			if (forcedVelocity)
-				return;
-
 			rb.velocity = Vector3.zero;
 		}
 
@@ -397,8 +426,11 @@ namespace Assets.scripts.Mono
 			heading = v;
 		}
 
-		public void SetMovementTarget(Vector3 newTarget)
+		public void SetPlayersMoveToTarget(Vector3 newTarget)
 		{
+			if (!allowPlayerMovePointChange)
+				return;
+
 			targetPositionWorld = newTarget;
 		}
 
