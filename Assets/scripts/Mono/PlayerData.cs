@@ -12,8 +12,17 @@ namespace Assets.scripts.Mono
 	*/
 	public class PlayerData : AbstractData, ICollidable
 	{
+		// configs
+		public bool use_velocity_movement;
+
+
+
+
+
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
+		public Rigidbody2D rb;
+		private Animator anim;
 
 		/// <summary>GameObject reprezentujici relativni pozici tesne pred hracem</summary>
 		public GameObject shootingPosition;
@@ -24,8 +33,13 @@ namespace Assets.scripts.Mono
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) hrace</summary>
 		private Vector3 heading;
 
+		// current position in world cords to move to
+		private Vector3 targetPositionWorld;
+
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
+
+		private bool forcedVelocity;
 
 		public ParticleSystem castingEffects;
 
@@ -53,6 +67,8 @@ namespace Assets.scripts.Mono
 			base.Start();
 
 			body = GetChildByName("Body");
+			rb = body.GetComponent<Rigidbody2D>();
+			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
             castingEffects = GetChildByName("Casting Effect").GetComponent<ParticleSystem>();
 
@@ -66,9 +82,18 @@ namespace Assets.scripts.Mono
 
 		public override void JumpForward(float dist, float jumpSpeed)
 		{
-			HasTargetToMoveTo = false;
-			MoveToPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector()*dist, dist), false);
-			UpdateHeading();
+			if (use_velocity_movement)
+			{
+				//TODO set a movement point and move player fixed towards it with increase speed, when player is on the point, stop
+				ForceSetVelocity(GetForwardVector() * jumpSpeed, 0.5f);
+				UpdateHeading();
+			}
+			else
+			{
+				HasTargetToMoveTo = false;
+				MoveToPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector() * dist, dist), false);
+				UpdateHeading();
+			}
 		}
 
 		public void Update()
@@ -76,20 +101,79 @@ namespace Assets.scripts.Mono
 			if (!castingEffects.isPlaying)
 				castingEffects.Play(true);
 
+			// update effects
 			if (IsCasting)
 			{
 				if (!castingEffects.enableEmission)
 				{
 					castingEffects.enableEmission = true;
                 }
-				//castingEffects.Play(true);
 			}
 			else
 			{
 				if (castingEffects.enableEmission)
 				{
 					castingEffects.enableEmission = false;
-					//castingEffects.Pause(true);
+				}
+			}
+
+			// update movement
+			// move to mouse
+			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
+			{
+				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
+				newRotation.x = 0;
+				newRotation.y = 0;
+
+				float angle = Quaternion.Angle(body.transform.rotation, newRotation);
+
+				bool move = true;
+				bool rotate = true;
+
+				if (angle - 90 > 1 && !canMoveWhenNotRotated)
+					move = false;
+
+				if (!CanMove())
+					move = false;
+
+				if (!CanRotate())
+					rotate = false;
+
+				if (move)
+				{
+					anim.SetFloat("MOVE_SPEED", 1);
+
+					if (use_velocity_movement)
+					{
+						Vector3 newVelocity = targetPositionWorld - body.transform.position;
+						newVelocity.Normalize();
+
+						SetVelocity(newVelocity * moveSpeed);
+					}
+					else
+					{
+						MoveToPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
+					}
+				}
+
+				if (rotate)
+				{
+					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+				}
+
+				if (move || rotate)
+				{
+					UpdateHeading();
+				}
+			}
+			else
+			{
+				anim.SetFloat("MOVE_SPEED", 0);
+				HasTargetToMoveTo = false;
+
+				if (use_velocity_movement)
+				{
+					ResetVelocity();
 				}
 			}
 
@@ -147,6 +231,40 @@ namespace Assets.scripts.Mono
 		public void BreakMovement()
 		{
 			HasTargetToMoveTo = false;
+		}
+
+		/// <summary>
+		/// Forces the object to have this velocity for 'duration' seconds
+		/// </summary>
+		public void ForceSetVelocity(Vector3 newVel, float duration)
+		{
+			forcedVelocity = true;
+			rb.velocity = newVel;
+
+			IEnumerator task = ScheduleUnforceVelocity(duration);
+			StartCoroutine(task);
+		}
+
+		private IEnumerator ScheduleUnforceVelocity(float duration)
+		{
+			yield return new WaitForSeconds(duration);
+
+			ForceVelocityUnset();
+
+			yield return null;
+		}
+
+		public void ForceVelocityUnset()
+		{
+			forcedVelocity = false;
+		}
+
+		public void SetVelocity(Vector3 newVel)
+		{
+			if (forcedVelocity)
+				return;
+
+			rb.velocity = newVel;
 		}
 
 		public void MoveToPosition(Vector3 newPos, bool updateHeading)
@@ -266,9 +384,27 @@ namespace Assets.scripts.Mono
 			SetHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
 		}
 
+		public void ResetVelocity()
+		{
+			if (forcedVelocity)
+				return;
+
+			rb.velocity = Vector3.zero;
+		}
+
 		private void SetHeading(Vector3 v)
 		{
 			heading = v;
+		}
+
+		public void SetMovementTarget(Vector3 newTarget)
+		{
+			targetPositionWorld = newTarget;
+		}
+
+		public Vector3 GetMovementTarget()
+		{
+			return targetPositionWorld;
 		}
 
 		/// <summary>
