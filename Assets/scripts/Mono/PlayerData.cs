@@ -24,6 +24,9 @@ namespace Assets.scripts.Mono
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) hrace</summary>
 		private Vector3 heading;
 
+		/// setting this to false will stop the current player movement
+		public bool HasTargetToMoveTo { get; set; }
+
 		public ParticleSystem castingEffects;
 
 		// zastupne promenne GameObjektu (reflektuji datove hodnoty v tride Player)
@@ -54,18 +57,18 @@ namespace Assets.scripts.Mono
             castingEffects = GetChildByName("Casting Effect").GetComponent<ParticleSystem>();
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
+
 			IsCasting = false;
+			HasTargetToMoveTo = false;
 
             Debug.Log("Registering new data for player " + player.Name);
 		}
 
 		public override void JumpForward(float dist, float jumpSpeed)
 		{
-			Debug.DrawRay(body.transform.position, GetForwardVector() * dist, Color.magenta, 4f);
-
-			body.transform.position = Vector3.MoveTowards(body.transform.position, GetForwardVector()*10, Time.deltaTime * 100);
-
-			Debug.DrawRay(body.transform.position, GetForwardVector()*dist, Color.cyan, 4f);
+			HasTargetToMoveTo = false;
+			MoveToPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + GetForwardVector()*dist, dist), false);
+			UpdateHeading();
 		}
 
 		public void Update()
@@ -139,6 +142,26 @@ namespace Assets.scripts.Mono
 
 				Destroy(newProjectile, 5f);
 			}
+		}
+
+		public void BreakMovement()
+		{
+			HasTargetToMoveTo = false;
+		}
+
+		public void MoveToPosition(Vector3 newPos, bool updateHeading)
+		{
+			body.transform.position = newPos;
+			if(updateHeading)
+				UpdateHeading();
+		}
+
+		public void SetRotation(Quaternion newRot, bool updateHeading)
+		{
+			body.transform.rotation = newRot;
+
+			if (updateHeading)
+				UpdateHeading();
 		}
 
 		/// <summary>
@@ -237,7 +260,13 @@ namespace Assets.scripts.Mono
 			player.BreakCasting();
 		}
 
-		public void UpdateHeading(Vector3 v)
+		public void UpdateHeading()
+		{
+			float angleRad = (body.transform.rotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
+			SetHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
+		}
+
+		private void SetHeading(Vector3 v)
 		{
 			heading = v;
 		}

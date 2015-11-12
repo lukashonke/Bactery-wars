@@ -26,7 +26,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			GetOwnerData().JumpForward(10, 100);
+			GetOwnerData().JumpForward(4, 100);
 		}
 
 		public override void UpdateLaunched()
