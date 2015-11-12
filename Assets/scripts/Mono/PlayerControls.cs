@@ -93,7 +93,7 @@ namespace Assets.scripts.Mono
                 }
 			}
 
-			if (data.HasTargetToMoveTo == false)
+			if (!data.HasTargetToMoveTo)
 			{
 				if (currMouseClicker != null)
 					Destroy(currMouseClicker);

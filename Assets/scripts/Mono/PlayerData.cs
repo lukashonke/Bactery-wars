@@ -117,6 +117,8 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			Debug.Log(rb.velocity);
+
 			// update movement
 			// move to mouse
 			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
@@ -148,12 +150,16 @@ namespace Assets.scripts.Mono
 						Vector3 newVelocity = targetPositionWorld - body.transform.position;
 						newVelocity.Normalize();
 
-						SetVelocity(newVelocity * moveSpeed);
+						SetVelocity(newVelocity*moveSpeed);
 					}
 					else
 					{
-						SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
+						SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime*moveSpeed), false);
 					}
+				}
+				else
+				{
+					ResetVelocity();
 				}
 
 				if (rotate)
@@ -171,10 +177,7 @@ namespace Assets.scripts.Mono
 				anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
 
-				if (USE_VELOCITY_MOVEMENT)
-				{
-					ResetVelocity();
-				}
+				ResetVelocity();
 			}
 
 			player.OnUpdate();

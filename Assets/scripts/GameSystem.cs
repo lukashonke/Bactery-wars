@@ -26,6 +26,7 @@ namespace Assets.scripts
 		}
 
 		public GameController Controller { get; private set; }
+		private int lastPlayerId = 0;
 
 		// starts the game, loads data, etc
 		public void Start(GameController gc)
@@ -60,7 +61,7 @@ namespace Assets.scripts
 		// Methods
 		public Player RegisterNewPlayer(PlayerData data, String name)
 		{
-			Player player = new Player(name, data, ClassTemplateTable.Instance.GetType(ClassId.Default));
+			Player player = new Player(name + (++lastPlayerId), data, ClassTemplateTable.Instance.GetType(ClassId.Default));
 
 			Debug.Log("Player " + player.Name + " has template " + player.Template.ClassId);
 
