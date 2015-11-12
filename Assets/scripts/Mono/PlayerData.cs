@@ -86,6 +86,7 @@ namespace Assets.scripts.Mono
 			{
 				ForceSetMoveDestinaton(body.transform.position + GetForwardVector()*dist, 0.5f);
 				ForceSetVelocity(GetForwardVector() * jumpSpeed, 0.5f);
+				HasTargetToMoveTo = true;
 				UpdateHeading();
 			}
 			else
