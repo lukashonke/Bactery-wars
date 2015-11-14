@@ -15,7 +15,6 @@ namespace Assets.scripts.Mono
 		// configs
 		public bool USE_VELOCITY_MOVEMENT;
 
-
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
 		public Rigidbody2D rb;
@@ -213,7 +212,7 @@ namespace Assets.scripts.Mono
 
 		public void ShootProjectileForward(string folderName, string name, int plusAngle)
 		{
-			GameObject go = Resources.Load(folderName + "/" + name) as GameObject;
+			GameObject go = Resources.Load("Prefabs/projectiles/" + folderName + "/" + name) as GameObject;
 			if (go == null)
 				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
 
