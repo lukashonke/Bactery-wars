@@ -80,18 +80,23 @@ namespace Assets.scripts.Mono
 			if (!ui.MouseOverUI)
 			{
 				// change target position according to mouse when clicked
-				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 1)
+				if (Input.GetMouseButton(0))
 				{
 					Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 					newTarget.z = body.transform.position.z;
-					data.SetPlayersMoveToTarget(newTarget);
 
-					if (currMouseClicker != null)
-						Destroy(currMouseClicker);
+					// momentalne nepotrebne
+					//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+					//{
+						data.SetPlayersMoveToTarget(newTarget);
 
-					currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-					data.HasTargetToMoveTo = true;
-                }
+						if (currMouseClicker != null)
+							Destroy(currMouseClicker);
+
+						currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+						data.HasTargetToMoveTo = true;
+					//}
+				}
 			}
 
 			if (!data.HasTargetToMoveTo)

@@ -1375,6 +1375,7 @@ MonoBehaviour:
   visibleHp: 0
   moveSpeed: 5
   rotateSpeed: 25
+  minDistanceClickToMove: .200000003
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1

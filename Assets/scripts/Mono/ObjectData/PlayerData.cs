@@ -41,6 +41,7 @@ namespace Assets.scripts.Mono.ObjectData
 		public int visibleHp;
 		public int moveSpeed;
 		public int rotateSpeed;
+		public float minDistanceClickToMove;
 
 		/// <summary>
 		/// true pokud se hrac muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
@@ -118,7 +119,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 			// update movement
 			// move to mouse
-			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
+			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 			{
 				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
 				newRotation.x = 0;
