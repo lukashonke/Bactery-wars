@@ -1,6 +1,8 @@
 ﻿using System;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Skills
@@ -12,6 +14,8 @@ namespace Assets.scripts.Skills
 	{
 		public int Id { get; private set; }
 		public string Name { get; private set; }
+
+		public SkillEffect Effect { get; private set; }
 
 		public Character Owner { get; private set; }
 
@@ -39,6 +43,11 @@ namespace Assets.scripts.Skills
 
 			// nastavit defaultni parametry
 			MaxLevel = 1;
+		}
+
+		public void Init()
+		{
+			Effect = CreateEffects();
 		}
 
 		public void SetOwner(Character ch)
@@ -75,6 +84,7 @@ namespace Assets.scripts.Skills
 
 		// vytvori novou kopii sama sebe
 		public abstract Skill Instantiate();
+		public abstract SkillEffect CreateEffects();
 
 		public abstract void SkillAdded();
 

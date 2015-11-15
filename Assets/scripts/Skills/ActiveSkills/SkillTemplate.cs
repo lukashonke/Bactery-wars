@@ -1,4 +1,7 @@
-﻿namespace Assets.scripts.Skills.ActiveSkills
+﻿using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
+
+namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTemplate : ActiveSkill
 	{
@@ -10,6 +13,14 @@
 		public override Skill Instantiate()
 		{
 			return new SkillTemplate(Name, Id);
+		}
+
+		public override SkillEffect CreateEffects()
+		{
+			SkillEffect effect = new SkillEffect();
+
+
+			return effect;
 		}
 
 		public override bool OnCastStart()
@@ -25,13 +36,17 @@
 		{
 		}
 
+		public override void OnAbort()
+		{
+			
+		}
+
 		public override void OnFinish()
 		{
 		}
 
-		public override void OnSkillEnd()
+		public override void MonoUpdate(GameObject gameObject)
 		{
-			
 		}
 
 		public override bool CanMove()

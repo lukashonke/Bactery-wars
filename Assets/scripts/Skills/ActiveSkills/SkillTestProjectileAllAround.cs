@@ -1,6 +1,9 @@
-﻿namespace Assets.scripts.Skills.ActiveSkills
+﻿using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
+
+namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SkillTestProjectileAllAround : ActiveSkill
+	public class SkillTestProjectileAllAround : SkillTestProjectile
 	{
 		public SkillTestProjectileAllAround(string name, int id) : base(name, id)
 		{
@@ -14,47 +17,26 @@
 			return new SkillTestProjectileAllAround(Name, Id);
 		}
 
-		public override bool OnCastStart()
-		{
-			if (GetPlayerData() == null)
-				return false;
-
-			return true;
-		}
-
 		public override void OnLaunch()
 		{
-			// this.GetType().Name vrati jmeno teto tridy ("SkillTestProjectile")
+			GameObject activeProjectile;
 
-			for (int i = 0; i < 360; i += 30)
+			for (int i = 0; i < 360; i+=30)
 			{
-				GetPlayerData().ShootProjectileForward("SkillTestProjectile", "projectile_blacktest_i00", i);
+				activeProjectile = GetPlayerData().CreateProjectile("SkillTestProjectile", "projectile_blacktest_i00");
+
+				if (activeProjectile != null)
+				{
+					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+					rb.velocity = GetOwnerData().GetForwardVector(i) * 15;
+
+					Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
+
+					AddMonoReceiver(activeProjectile);
+
+					Object.Destroy(activeProjectile, 5f);
+				}
 			}
-		}
-
-		public override void UpdateLaunched()
-		{
-		}
-
-		public override void OnFinish()
-		{
-			
-		}
-
-		public override void OnSkillEnd()
-		{
-		}
-
-		public override bool CanMove()
-		{
-			if (IsBeingCasted())
-				return false;
-			return true;
-		}
-
-		public override bool CanRotate()
-		{
-			return CanMove();
 		}
 	}
 }

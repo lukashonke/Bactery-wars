@@ -3,6 +3,7 @@ using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;

@@ -1,7 +1,14 @@
-﻿namespace Assets.scripts.Skills.ActiveSkills
+﻿using Assets.scripts.Base;
+using Assets.scripts.Mono;
+using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
+
+namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectile : ActiveSkill
 	{
+		private GameObject activeProjectile;
+
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
 			castTime = 0f;
@@ -14,6 +21,13 @@
 			return new SkillTestProjectile(Name, Id);
 		}
 
+		public override SkillEffect CreateEffects()
+		{
+			SkillEffect effect = new SkillEffect();
+
+			return effect;
+		}
+
 		public override bool OnCastStart()
 		{
 			if (GetPlayerData() == null)
@@ -24,20 +38,56 @@
 
 		public override void OnLaunch()
 		{
-			// this.GetType().Name vrati jmeno teto tridy ("SkillTestProjectile")
-			GetPlayerData().ShootProjectileForward(this.GetType().Name, "projectile_blacktest_i00", 0);
-		}
+			activeProjectile = GetPlayerData().CreateProjectile(this.GetType().Name, "projectile_blacktest_i00");
 
-		public override void UpdateLaunched()
-		{
+			if (activeProjectile != null)
+			{
+				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+				rb.velocity = (GetOwnerData().GetForwardVector(0) * 15);
+
+				Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
+
+				AddMonoReceiver(activeProjectile);
+
+				Object.Destroy(activeProjectile, 5f);
+			}
 		}
 
 		public override void OnFinish()
 		{
-			
+
 		}
 
-		public override void OnSkillEnd()
+		public override void MonoUpdate(GameObject gameObject)
+		{
+		}
+
+		public override void MonoStart(GameObject gameObject)
+		{
+		}
+
+		public override void MonoDestroy(GameObject gameObject)
+		{
+		}
+
+		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
+		{
+		}
+
+		public override void MonoCollisionExit(GameObject gameObject, Collision2D coll)
+		{
+		}
+
+		public override void MonoCollisionStay(GameObject gameObject, Collision2D coll)
+		{
+		}
+
+		public override void UpdateLaunched()
+		{
+
+		}
+
+		public override void OnAbort()
 		{
 		}
 

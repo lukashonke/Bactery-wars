@@ -4,6 +4,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
 

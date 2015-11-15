@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Base;
+using Assets.scripts.Mono;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Skills
 {
-	public abstract class ActiveSkill : Skill
+	public abstract class ActiveSkill : Skill, IMonoReceiver
 	{
 		public const int SKILL_IDLE = 0;
 		public const int SKILL_CASTING = 1;
@@ -39,16 +42,34 @@ namespace Assets.scripts.Skills
 
 		/// returning false will make the skill not start
 		public abstract bool OnCastStart();
+
+		/// called when casting is done
 		public abstract void OnLaunch();
+
+		/// periodically called after casting is done
 		public abstract void UpdateLaunched();
+
+		/// called when cooldown runs out (skill ends)
+		public abstract void OnAbort();
+
+		/// called when cooldown rns out (skill ends)
 		public abstract void OnFinish();
-		public abstract void OnSkillEnd();
+
+		/// sent from GameObjects created using this skill
+		public abstract void MonoUpdate(GameObject gameObject);
 
 		/// can the player move while casting?
 		public abstract bool CanMove();
 
 		/// can the player rotate while casting?
 		public abstract bool CanRotate();
+
+		// overridable
+		public virtual void MonoStart(GameObject gameObject) { }
+		public virtual void MonoDestroy(GameObject gameObject) { }
+		public virtual void MonoCollisionEnter(GameObject gameObject, Collision2D coll) { }
+		public virtual void MonoCollisionExit(GameObject gameObject, Collision2D coll) { }
+		public virtual void MonoCollisionStay(GameObject gameObject, Collision2D coll) { }
 
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
@@ -104,6 +125,9 @@ namespace Assets.scripts.Skills
 			return state == SKILL_CASTING;
 		}
 
+		/// <summary>
+		/// resets the reuse timer so that the owner of the skill needs to wait before using the skill again
+		/// </summary>
 		public override void SetReuseTimer()
 		{
 			LastUsed = Environment.TickCount;
@@ -135,8 +159,6 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
-			OnSkillEnd();
-
 			Owner.StopTask(Task);
 
 			End();
@@ -150,7 +172,7 @@ namespace Assets.scripts.Skills
 			// pri spusteni skillu zacni kouzlit
 			if (!OnCastStart())
 			{
-				OnSkillEnd();
+				OnAbort();
 				yield break; //TODO test!
 			}
 
@@ -200,6 +222,22 @@ namespace Assets.scripts.Skills
 			}
 
 			yield return null;
+		}
+
+		/// <summary>
+		/// Makes the gameobject send Start() and Update() methods to this class to MonoUpdate and MonoStart
+		/// </summary>
+		protected void AddMonoReceiver(GameObject obj)
+		{
+			UpdateSender us = obj.GetComponent<UpdateSender>();
+			
+			if (us == null)
+			{
+				Debug.LogError("a projectile doesnt have UpdateSender " + Name + "; adding it automatically");
+				obj.AddComponent<UpdateSender>().target = this;
+			}
+			else
+				us.target = this;
 		}
 	}
 }

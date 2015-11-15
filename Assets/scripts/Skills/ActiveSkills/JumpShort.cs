@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
@@ -19,6 +21,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new JumpShort(Name, Id);
 		}
 
+		public override SkillEffect CreateEffects()
+		{
+			SkillEffect effect = new SkillEffect();
+
+
+			return effect;
+		}
+
 		public override bool OnCastStart()
 		{
 			return true;
@@ -33,12 +43,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
+		public override void OnAbort()
+		{ 
+		}
+
 		public override void OnFinish()
 		{
 		}
 
-		public override void OnSkillEnd()
-		{ 
+		public override void MonoUpdate(GameObject gameObject)
+		{
 		}
 
 		public override bool CanMove()

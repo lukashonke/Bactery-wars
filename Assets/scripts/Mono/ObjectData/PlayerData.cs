@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
 
-namespace Assets.scripts.Mono
+namespace Assets.scripts.Mono.ObjectData
 {
 	/*
 		Unity Engine delegate for Player objects
 	*/
 	public class PlayerData : AbstractData, ICollidable
 	{
-		// configs
-		public bool USE_VELOCITY_MOVEMENT;
-
 		/// <summary>GameObject reprezentujici fyzicke a graficke telo hrace </summary>
 		public GameObject body;
 		public Rigidbody2D rb;
@@ -117,8 +113,6 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			Debug.Log(rb.velocity);
-
 			// update movement
 			// move to mouse
 			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > 1)
@@ -208,27 +202,6 @@ namespace Assets.scripts.Mono
 
 		public void OnTriggerStay2D(Collider2D obj)
 		{
-		}
-
-		public void ShootProjectileForward(string folderName, string name, int plusAngle)
-		{
-			GameObject go = Resources.Load("Prefabs/projectiles/" + folderName + "/" + name) as GameObject;
-			if (go == null)
-				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
-
-			GameObject newProjectile = Instantiate(go, shootingPosition.transform.position, body.transform.rotation) as GameObject;
-
-			if (newProjectile != null)
-			{
-				newProjectile.tag = gameObject.tag;
-
-				Rigidbody2D rb = newProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetForwardVector(plusAngle) *15);
-
-				Debug.DrawRay(shootingPosition.transform.position, rb.velocity, Color.green, 5f);
-
-				Destroy(newProjectile, 5f);
-			}
 		}
 
 		public void BreakMovement()
@@ -442,11 +415,16 @@ namespace Assets.scripts.Mono
 			return targetPositionWorld;
 		}
 
+		public override GameObject GetBody()
+		{
+			return body;
+		}
+
 		/// <summary>
 		/// Vrati vektor smeru hrace
 		/// </summary>
 		/// <returns></returns>
-		public Vector3 GetForwardVector()
+		public override Vector3 GetForwardVector()
 		{
 			return heading;
 		}
@@ -454,7 +432,7 @@ namespace Assets.scripts.Mono
 		/// <summary>
 		/// Vrati vektor smeru hrace ke kteremu se pricte uhel
 		/// </summary>
-		public Vector3 GetForwardVector(int angle)
+		public override Vector3 GetForwardVector(int angle)
 		{
 			// 1. moznost
 			//Vector3 nv = Quaternion.AngleAxis(angle, Vector3.forward) * heading.normalized;
@@ -462,6 +440,11 @@ namespace Assets.scripts.Mono
 			// 2. moznost - asi je lepsi
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, angle)) * heading;
 			return nv;
+		}
+
+		public override GameObject GetShootingPosition()
+		{
+			return shootingPosition;
 		}
 	}
 }

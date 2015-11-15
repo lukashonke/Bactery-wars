@@ -11,6 +11,8 @@ namespace Assets.scripts.Mono
 	/// </summary>
 	public abstract class AbstractData : MonoBehaviour
 	{
+		public bool USE_VELOCITY_MOVEMENT;
+
 		protected Dictionary<string, GameObject> childs;
 
 		public AbstractData()
@@ -41,6 +43,27 @@ namespace Assets.scripts.Mono
 			return val;
 		}
 
+		public GameObject CreateProjectile(string folderName, string name)
+		{
+			GameObject go = Resources.Load("Prefabs/projectiles/" + folderName + "/" + name) as GameObject;
+			if (go == null)
+				throw new NullReferenceException("cannot find " + folderName + "/" + name + " !");
+
+			GameObject newProjectile = Instantiate(go, GetShootingPosition().transform.position, GetBody().transform.rotation) as GameObject;
+			if (newProjectile != null)
+			{
+				newProjectile.tag = gameObject.tag;
+			}
+
+			return newProjectile;
+		}
+
+
 		public abstract void JumpForward(float dist, float jumpSpeed);
+
+		public abstract GameObject GetBody();
+		public abstract GameObject GetShootingPosition();
+		public abstract Vector3 GetForwardVector();
+		public abstract Vector3 GetForwardVector(int angle); //TODO unabstract this here
 	}
 }

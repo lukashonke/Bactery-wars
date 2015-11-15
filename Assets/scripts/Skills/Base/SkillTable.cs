@@ -47,6 +47,7 @@ namespace Assets.scripts.Skills.Base
 			// create a new copy of a skill
 			// this is important!
 			Skill newSkill = sk.Instantiate();
+			newSkill.Init();
 
 			return newSkill;
 		}
