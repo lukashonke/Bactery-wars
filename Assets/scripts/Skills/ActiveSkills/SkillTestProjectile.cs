@@ -73,8 +73,24 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		{
+			
+		}
+
+		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)
+		{
+			
+		}
+
+		public override void MonoTriggerStay(GameObject gameObject, Collider2D other)
+		{
+			
+		}
+
 		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
 		{
+			
 		}
 
 		public override void MonoCollisionExit(GameObject gameObject, Collision2D coll)

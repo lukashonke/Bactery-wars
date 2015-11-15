@@ -17,7 +17,7 @@ namespace Assets.scripts.Mono
         {
             Vector2 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition)) - transform.position;
             dir.Normalize();
-            rb.AddForce(dir * 10, ForceMode2D.Force);
+            rb.AddForce(dir * 100, ForceMode2D.Force);
         }
     }
 }

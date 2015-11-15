@@ -120,11 +120,13 @@ namespace Assets.scripts
 					pieceYShift = sr.bounds.extents.y * 2;
 
 					nObject.transform.parent = gameObject.transform;
+					nObject.layer = 1;
 					nObject.transform.localPosition = new Vector3((+i) * pieceXShift, (+j) * pieceYShift, 0);
 				}
 			}
 
 			GetComponent<SpriteRenderer>().enabled = false;
+			GetComponent<Collider2D>().enabled = false;
 
 			// stop the movement so that it doesnt penetrate and hit other objects
 			GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);

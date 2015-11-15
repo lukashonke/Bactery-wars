@@ -68,9 +68,14 @@ namespace Assets.scripts.Skills
 		// overridable
 		public virtual void MonoStart(GameObject gameObject) { }
 		public virtual void MonoDestroy(GameObject gameObject) { }
+
 		public virtual void MonoCollisionEnter(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionExit(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionStay(GameObject gameObject, Collision2D coll) { }
+
+		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
