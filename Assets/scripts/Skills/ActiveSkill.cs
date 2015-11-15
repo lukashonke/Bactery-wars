@@ -7,6 +7,7 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills
 {
@@ -238,6 +239,77 @@ namespace Assets.scripts.Skills
 			}
 			else
 				us.target = this;
+		}
+
+		/// <summary>
+		/// Clones a prefab object which contains Particle Effect, adds it to the player and returns it.
+		/// The particle effect prefab must be within skill's folder in Resources/prefabs/projectiles 
+		/// </summary>
+		/// <param name="folderName">the folder in Resources/prefabs/projectiles to look into</param>
+		/// <param name="particleObjectName">name of the .prefab object</param>
+		/// <param name="makeChild">The particle effect position will move with player</param>
+		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
+		{
+			GameObject o = GetOwnerData().CreateProjectileParticleEffect(folderName, particleObjectName, makeChild);
+
+			if (o == null)
+				throw new NullReferenceException("effect " + folderName + ", " + particleObjectName + " not found");
+
+			return o;
+		}
+
+		/// <summary>
+		/// Starts or unpauses obj's particle system
+		/// </summary>
+		protected void StartParticleEffect (GameObject obj)
+		{
+			try
+			{
+				ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+				if (ps.isPlaying == false)
+					ps.Play();
+
+				if (!ps.enableEmission)
+					ps.enableEmission = true;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("couldnt play particle effect " + Name);
+			}
+		}
+
+		/// <summary>
+		/// Pauses the emmission of the particles 
+		/// </summary>
+		protected void PauseParticleEffect(GameObject obj)
+		{
+			try
+			{
+				ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+
+				if (ps.enableEmission)
+					ps.enableEmission = false;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("couldnt pause particle effect" + Name);
+			}
+		}
+
+		/// <summary>
+		/// Deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
+		/// </summary>
+		protected void DeleteParticleEffect(GameObject obj)
+		{
+			Object.Destroy(obj);
+		}
+
+		/// <summary>
+		/// After delay, deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
+		/// </summary>
+		protected void DeleteParticleEffect(GameObject obj, float delay)
+		{
+			Object.Destroy(obj, delay);
 		}
 	}
 }

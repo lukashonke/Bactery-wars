@@ -31,19 +31,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			//TODO abstract this in ActiveSkill
-			particleSystemObject = GetOwnerData().CreateProjectileParticleEffect("SkillTestProjectile", "CastingEffect", true);
-
-			ParticleSystem ps = particleSystemObject.GetComponent<ParticleSystem>();
-			ps.Play();
+			particleSystemObject = CreateParticleEffect("SkillTestProjectile", "CastingEffect", true);
+			StartParticleEffect(particleSystemObject);
 
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			if (particleSystemObject != null)
-				Object.Destroy(particleSystemObject);
+			DeleteParticleEffect(particleSystemObject);
 
 			activeProjectile = GetPlayerData().CreateProjectile(this.GetType().Name, "projectile_blacktest_i00");
 
