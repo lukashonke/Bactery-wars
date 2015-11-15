@@ -243,14 +243,14 @@ namespace Assets.scripts.Skills
 
 		/// <summary>
 		/// Clones a prefab object which contains Particle Effect, adds it to the player and returns it.
-		/// The particle effect prefab must be within skill's folder in Resources/prefabs/projectiles 
+		/// The particle effect prefab must be within skill's folder in Resources/prefabs/skill 
 		/// </summary>
-		/// <param name="folderName">the folder in Resources/prefabs/projectiles to look into</param>
+		/// <param name="folderName">the folder in Resources/prefabs/skill to look into</param>
 		/// <param name="particleObjectName">name of the .prefab object</param>
 		/// <param name="makeChild">The particle effect position will move with player</param>
 		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
 		{
-			GameObject o = GetOwnerData().CreateProjectileParticleEffect(folderName, particleObjectName, makeChild);
+			GameObject o = GetOwnerData().CreateSkillParticleEffect(folderName, particleObjectName, makeChild);
 
 			if (o == null)
 				throw new NullReferenceException("effect " + folderName + ", " + particleObjectName + " not found");

@@ -43,6 +43,9 @@ namespace Assets.scripts.Mono
 			return val;
 		}
 
+		/// <summary>
+		/// Clones gameobject prefab from Resources/prefabs/[type]/[resourceFolderName]/[fileName].prefab
+		/// </summary>
 		public GameObject LoadResource(string type, string resourceFolderName, string fileName)
 		{
 			GameObject go = Resources.Load("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName) as GameObject;
@@ -53,11 +56,11 @@ namespace Assets.scripts.Mono
 		}
 
 		/// <summary>
-		/// Instantiates an object from Resources/Prefabs folder
+		/// Instantiates an object from Resources/Prefabs/skill folder
 		/// </summary>
-		public GameObject CreateProjectileParticleEffect(string folderName, string name, bool makeChild)
+		public GameObject CreateSkillParticleEffect(string folderName, string name, bool makeChild)
 		{
-			GameObject go = LoadResource("projectile", folderName, name);
+			GameObject go = LoadResource("skill", folderName, name);
 
 			GameObject newProjectile = Instantiate(go, GetParticleSystemObject().transform.position, GetBody().transform.rotation) as GameObject;
 			if (newProjectile != null)
@@ -71,9 +74,15 @@ namespace Assets.scripts.Mono
 			return newProjectile;
 		}
 
+		/// <summary>
+		/// Clones gameobject from: Resources/prefabs/skill/[foldername]/[name].prefab and places it on GetShootingPosition() position
+		/// </summary>
+		/// <param name="folderName"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		public GameObject CreateProjectile(string folderName, string name)
 		{
-			GameObject go = LoadResource("projectile", folderName, name);
+			GameObject go = LoadResource("skill", folderName, name);
 
 			GameObject newProjectile = Instantiate(go, GetShootingPosition().transform.position, GetBody().transform.rotation) as GameObject;
 			if (newProjectile != null)
