@@ -19,6 +19,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			if (particleSystemObject != null)
+				Object.Destroy(particleSystemObject);
+
 			GameObject activeProjectile;
 
 			for (int i = 0; i < 360; i+=30)

@@ -8,6 +8,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class SkillTestProjectile : ActiveSkill
 	{
 		private GameObject activeProjectile;
+		protected GameObject particleSystemObject;
 
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
@@ -30,14 +31,20 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			if (GetPlayerData() == null)
-				return false;
+			//TODO abstract this in ActiveSkill
+			particleSystemObject = GetOwnerData().CreateProjectileParticleEffect("SkillTestProjectile", "CastingEffect", true);
+
+			ParticleSystem ps = particleSystemObject.GetComponent<ParticleSystem>();
+			ps.Play();
 
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
+			if (particleSystemObject != null)
+				Object.Destroy(particleSystemObject);
+
 			activeProjectile = GetPlayerData().CreateProjectile(this.GetType().Name, "projectile_blacktest_i00");
 
 			if (activeProjectile != null)

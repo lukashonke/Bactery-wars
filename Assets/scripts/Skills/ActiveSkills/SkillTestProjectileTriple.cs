@@ -19,6 +19,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			if (particleSystemObject != null)
+				Object.Destroy(particleSystemObject);
+
 			GameObject activeProjectile;
 
 			int angle = -15;

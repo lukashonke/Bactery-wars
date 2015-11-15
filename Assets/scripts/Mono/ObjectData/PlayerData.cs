@@ -15,6 +15,7 @@ namespace Assets.scripts.Mono.ObjectData
 		public GameObject body;
 		public Rigidbody2D rb;
 		private Animator anim;
+		public GameObject particleSystems;
 
 		/// <summary>GameObject reprezentujici relativni pozici tesne pred hracem</summary>
 		public GameObject shootingPosition;
@@ -63,7 +64,9 @@ namespace Assets.scripts.Mono.ObjectData
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
-            castingEffects = GetChildByName("Casting Effect").GetComponent<ParticleSystem>();
+            castingEffects = GetChildByName("CastingEffect").GetComponent<ParticleSystem>(); //TODO delete
+
+			particleSystems = GetChildByName("ParticleSystems");
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 
@@ -94,7 +97,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void Update()
 		{
-			if (!castingEffects.isPlaying)
+			/*if (!castingEffects.isPlaying)
 				castingEffects.Play(true);
 
 			// update effects
@@ -111,7 +114,7 @@ namespace Assets.scripts.Mono.ObjectData
 				{
 					castingEffects.enableEmission = false;
 				}
-			}
+			}*/
 
 			// update movement
 			// move to mouse
@@ -418,6 +421,11 @@ namespace Assets.scripts.Mono.ObjectData
 		public override GameObject GetBody()
 		{
 			return body;
+		}
+
+		public override GameObject GetParticleSystemObject()
+		{
+			return particleSystems;
 		}
 
 		/// <summary>

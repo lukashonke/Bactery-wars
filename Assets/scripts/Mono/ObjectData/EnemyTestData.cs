@@ -20,6 +20,11 @@ namespace Assets.scripts.Mono.ObjectData
 			throw new System.NotImplementedException();
 		}
 
+		public override GameObject GetParticleSystemObject()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public override GameObject GetBody()
 		{
 			throw new System.NotImplementedException();
