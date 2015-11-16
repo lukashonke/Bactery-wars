@@ -1,7 +1,6 @@
 ﻿using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
 
-// comment for test commit
 namespace Assets.scripts.Mono
 {
 	public class PlayerControls : MonoBehaviour
