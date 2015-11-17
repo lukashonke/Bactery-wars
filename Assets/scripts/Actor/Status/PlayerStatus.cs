@@ -10,7 +10,7 @@ namespace Assets.scripts.Actor.Status
 	*/
 	public class PlayerStatus : CharStatus
 	{
-		public PlayerStatus(bool isDead, int hp, int mp) : base(isDead, hp, mp)
+		public PlayerStatus(bool isDead, int hp, int mp, int maxHp) : base(isDead, hp, mp, maxHp)
 		{
 
 		}

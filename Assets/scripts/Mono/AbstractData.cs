@@ -35,11 +35,13 @@ namespace Assets.scripts.Mono
 		public Rigidbody2D rb;
 		protected Animator anim;
 		public GameObject particleSystems;
+		public Healthbar healthBar;
 
 		/// <summary>GameObject reprezentujici relativni pozici ze ktere vychazeji strely a nektere efekty</summary>
 		public GameObject shootingPosition;
 
 		// zastupne promenne objektu
+		public int visibleMaxHp;
 		public int visibleHp;
 		public int moveSpeed;
 		public int rotateSpeed;
@@ -93,6 +95,16 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
 			particleSystems = GetChildByName("ParticleSystems");
+
+			if (GetChildByName("Healthbar") != null)
+			{
+				healthBar = GetChildByName("Healthbar").GetComponent<Healthbar>();
+				if (healthBar != null)
+				{
+					healthBar.hp = visibleHp;
+					healthBar.maxHp = visibleMaxHp;
+				}
+			}
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
@@ -457,12 +469,36 @@ namespace Assets.scripts.Mono
 		public void SetVisibleHp(int newHp)
 		{
 			visibleHp = newHp;
+
+			if (healthBar != null)
+			{
+				healthBar.hp = visibleHp;
+			}
 		}
+
+		public void SetVisibleMaxHp(int newHp)
+		{
+			visibleMaxHp = newHp;
+
+			if (healthBar != null)
+			{
+				healthBar.maxHp = visibleMaxHp;
+			}
+		}
+		
 
 		public virtual void SetIsDead(bool isDead)
 		{
-			Debug.Log(name + " died");
-			Destroy(gameObject, 5f);
+			if (isDead)
+			{
+				Debug.Log(name + " died");
+				Destroy(gameObject, 5f);
+
+				if (healthBar != null)
+				{
+					healthBar.enabled = false;
+				}
+			}
 		}
 
 		public void BreakCasting()

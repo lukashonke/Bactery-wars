@@ -32,6 +32,10 @@ namespace Assets.scripts.Mono.ObjectData
 
 				body.GetComponent<SpriteRenderer>().enabled = false;
 				body.GetComponent<Collider2D>().enabled = false;
+
+				if (healthBar != null)
+					healthBar.gameObject.active = false;
+
 				Destroy(gameObject, 1f);
 			}
 		}

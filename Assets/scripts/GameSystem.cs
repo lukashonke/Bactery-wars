@@ -64,6 +64,8 @@ namespace Assets.scripts
 		{
 			Player player = new Player(name + (++lastPlayerId), data, ClassTemplateTable.Instance.GetType(ClassId.Default));
 
+			player.Init();
+
 			//TODO improve this
 			if (data.tag == "Team1")
 			{
@@ -94,6 +96,8 @@ namespace Assets.scripts
 		public Monster RegisterNewMonster(EnemyData data, String name)
 		{
 			Monster monster = new Monster(name, data);
+
+			monster.Init();
 
 			return monster;
 		}

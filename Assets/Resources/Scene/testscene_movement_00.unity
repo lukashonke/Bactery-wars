@@ -550,6 +550,48 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1001 &269288476
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 937088888}
+    m_Modifications:
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -.180000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.28999996
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &460055488
 GameObject:
   m_ObjectHideFlags: 0
@@ -913,6 +955,10 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
+--- !u!4 &716159703 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 442076, guid: aaee6ff7cf41bf54d80706c611ef7bac, type: 2}
+  m_PrefabInternal: {fileID: 269288476}
 --- !u!1 &937088883
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,6 +1059,7 @@ Transform:
   - {fileID: 981440374}
   - {fileID: 539610705}
   - {fileID: 1223473320}
+  - {fileID: 716159703}
   m_Father: {fileID: 983066285}
   m_RootOrder: 0
 --- !u!95 &937088889
@@ -1290,7 +1337,7 @@ Transform:
   m_Children:
   - {fileID: 937088888}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!114 &983066286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1324,7 +1371,9 @@ MonoBehaviour:
   body: {fileID: 937088883}
   rb: {fileID: 0}
   particleSystems: {fileID: 0}
+  healthBar: {fileID: 0}
   shootingPosition: {fileID: 0}
+  visibleMaxHp: 0
   visibleHp: 0
   moveSpeed: 5
   rotateSpeed: 25
@@ -1387,7 +1436,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!1 &1092984192
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,7 +1464,7 @@ Transform:
   m_Children:
   - {fileID: 141498822}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!1 &1094898226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1488,7 +1537,7 @@ Transform:
   m_LocalScale: {x: 23, y: 23, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!1 &1176918151
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,7 +1714,7 @@ RectTransform:
   - {fileID: 952589103}
   - {fileID: 2136851296}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -1777,7 +1826,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!81 &1624055901
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1886,7 +1935,49 @@ Transform:
   m_Children:
   - {fileID: 1176918153}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
+--- !u!1001 &1986555198
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -6.6500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -3.8900001
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 489226, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: e187f65e71f2c0847ba4fed9023a0e16, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &2136851294
 GameObject:
   m_ObjectHideFlags: 0
@@ -2032,4 +2123,4 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8

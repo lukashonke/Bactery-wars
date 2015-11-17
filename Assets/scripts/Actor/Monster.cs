@@ -22,7 +22,10 @@ namespace Assets.scripts.Actor
 
 		protected override CharStatus InitStatus()
 		{
-			CharStatus st = new MonsterStatus(false, 20, 20);
+			CharStatus st = new MonsterStatus(false, 20, 20, 20);
+			GetData().SetVisibleHp(st.Hp);
+			GetData().SetVisibleMaxHp(st.MaxHp); //TODO convert to setter
+
 			return st;
 		}
 

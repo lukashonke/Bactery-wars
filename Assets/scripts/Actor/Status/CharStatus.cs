@@ -14,17 +14,19 @@ namespace Assets.scripts.Actor.Status
 	public abstract class CharStatus
 	{
 		public bool IsDead { get; private set; }
-		public int Hp { get; private set; }
+		public int Hp { get; private set; } //TODO limit maxhp
+		public int MaxHp { get; private set; }
 		public int Mp { get; private set; }
 		public int MoveSpeed { get; set; }
 
 		public List<Skill> ActiveSkills { get; private set; }
 
-		protected CharStatus(bool isDead, int hp, int mp)
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp)
 		{
 			IsDead = isDead;
 			Hp = hp;
 			Mp = mp;
+			MaxHp = maxHp;
 			MoveSpeed = 5;
 			ActiveSkills = new List<Skill>();
 		}

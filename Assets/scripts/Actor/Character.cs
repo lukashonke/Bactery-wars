@@ -30,10 +30,10 @@ namespace Assets.scripts.Actor
 
 		protected Character(string name) : base(name)
 		{
-			Init();
+			
 		}
 
-		private void Init()
+		public void Init()
 		{
 			Status = InitStatus();
 			Skills = InitSkillSet();
@@ -112,6 +112,8 @@ namespace Assets.scripts.Actor
 			{
 				GetData().SetIsDead(true);
 			}
+
+			GetData().SetVisibleHp(Status.Hp);
 		}
 
 		/// <summary>

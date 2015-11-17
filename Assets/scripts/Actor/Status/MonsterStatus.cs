@@ -7,7 +7,7 @@ namespace Assets.scripts.Actor.Status
 {
 	public class MonsterStatus : CharStatus
 	{
-		public MonsterStatus(bool isDead, int hp, int mp) : base(isDead, hp, mp)
+		public MonsterStatus(bool isDead, int hp, int mp, int maxHp) : base(isDead, hp, mp, maxHp)
 		{
 
 		}
