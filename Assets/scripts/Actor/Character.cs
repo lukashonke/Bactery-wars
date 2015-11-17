@@ -105,7 +105,6 @@ namespace Assets.scripts.Actor
 
 		public void ReceiveDamage(int damage)
 		{
-			Debug.Log("1 receiving " + damage + " damage");
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)

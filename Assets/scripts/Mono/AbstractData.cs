@@ -413,7 +413,7 @@ namespace Assets.scripts.Mono
 				if (skill is ActiveSkill)
 				{
 					// at least one active skill blocks movement
-					if (((ActiveSkill)skill).IsBeingCasted() && !((ActiveSkill)skill).CanMove())
+					if (((ActiveSkill)skill).IsActive() && !((ActiveSkill)skill).CanMove())
 					{
 						return false;
 					}
@@ -436,7 +436,7 @@ namespace Assets.scripts.Mono
 				if (skill is ActiveSkill)
 				{
 					// at least one active skill blocks movement
-					if (((ActiveSkill)skill).IsBeingCasted() && !((ActiveSkill)skill).CanRotate())
+					if (((ActiveSkill)skill).IsActive() && !((ActiveSkill)skill).CanRotate())
 					{
 						return false;
 					}

@@ -82,7 +82,7 @@ namespace Assets.scripts.Mono.ObjectData
 				return;
 			}
 
-			Debug.Log("Launching skill... " + skill.Name);
+			//Debug.Log("Launching skill... " + skill.Name);
 
 			// cast this skill
 			player.CastSkill(skill);
