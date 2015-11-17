@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Base;
+﻿using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.ObjectData
@@ -15,43 +16,13 @@ namespace Assets.scripts.Mono.ObjectData
 			hp = 1;
 		}
 
-		public override void JumpForward(float dist, float jumpSpeed)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void JumpForward(Vector3 direction, float dist, float jumpSpeed)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override GameObject GetParticleSystemObject()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override GameObject GetBody()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override GameObject GetShootingPosition()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override Vector3 GetForwardVector()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override Vector3 GetForwardVector(int angle)
+		public override Character GetOwner()
 		{
 			throw new System.NotImplementedException();
 		}
 
 		// Update is called once per frame
-		public void Update()
+		public override void Update()
 		{
 
 		}
