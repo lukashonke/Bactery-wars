@@ -79,15 +79,32 @@ namespace Assets.scripts.Mono
 
 			if (!ui.MouseOverUI)
 			{
-				// change target position according to mouse when clicked
-				if (Input.GetMouseButton(0))
+				if (data.ActiveConfirmationSkill != null)
 				{
-					Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					newTarget.z = body.transform.position.z;
+					if (Input.GetMouseButtonDown(0))
+					{
+						data.ConfirmSkillLaunch();
+					}
 
-					// momentalne nepotrebne
-					//if (Vector3.Distance(body.transform.position, newTarget) > 2)
-					//{
+					if (Input.GetMouseButtonDown(1))
+					{
+						data.ActiveConfirmationSkill.AbortCast();
+					}
+
+					// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
+					Input.ResetInputAxes();
+				}
+				else
+				{
+					// change target position according to mouse when clicked
+					if (Input.GetMouseButton(0))
+					{
+						Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+						newTarget.z = body.transform.position.z;
+
+						// momentalne nepotrebne
+						//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+						//{
 						data.SetPlayersMoveToTarget(newTarget);
 
 						if (currMouseClicker != null)
@@ -95,7 +112,8 @@ namespace Assets.scripts.Mono
 
 						currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
 						data.HasTargetToMoveTo = true;
-					//}
+						//}
+					}
 				}
 			}
 

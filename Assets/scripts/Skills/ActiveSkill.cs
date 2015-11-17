@@ -14,22 +14,30 @@ namespace Assets.scripts.Skills
 	public abstract class ActiveSkill : Skill, IMonoReceiver
 	{
 		public const int SKILL_IDLE = 0;
-		public const int SKILL_CASTING = 1;
-		public const int SKILL_ACTIVE = 2;
+		public const int SKILL_CONFIRMING = 1;
+		public const int SKILL_CASTING = 2;
+		public const int SKILL_ACTIVE = 3;
 
 		protected bool active;
 		protected Coroutine Task { get; set; }
 		protected Coroutine UpdateTask { get; set; }
 		protected int state;
 
-		// how often should UpdateLaunched be called (in seconds)
+		/// <summary>how often should UpdateLaunched() be called (in seconds)</summary>
 		protected float updateFrequency;
 
 		protected float castTime;
 		protected float coolDown;
 		protected float reuse;
 
+		/// <summary>if the skill requires confirmation before casting (second click)</summary>
+		protected bool requireConfirm;
+		public bool MovementBreaksConfirmation { get; protected set; }
+
 		protected int LastUsed { get; private set; }
+
+		protected Vector3 mouseDirection;
+		protected GameObject confirmObject;
 
 		public ActiveSkill(string name, int id) : base(name, id)
 		{
@@ -39,6 +47,8 @@ namespace Assets.scripts.Skills
 			coolDown = 5;
 			reuse = 5;
 			updateFrequency = 0.1f;
+			requireConfirm = false;
+			MovementBreaksConfirmation = false;
 		}
 
 		/// returning false will make the skill not start
@@ -66,6 +76,21 @@ namespace Assets.scripts.Skills
 		public abstract bool CanRotate();
 
 		// overridable
+		public virtual void OnBeingConfirmed()
+		{
+			if (confirmObject == null)
+				confirmObject = GetPlayerData().CreateSkillResource("TemplateSkill", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+
+			UpdateMouseDirection(confirmObject.transform);
+			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+		}
+
+		public virtual void CancelConfirmation()
+		{
+			if (confirmObject != null)
+				Object.Destroy(confirmObject);
+		}
+
 		public virtual void MonoStart(GameObject gameObject) { }
 		public virtual void MonoDestroy(GameObject gameObject) { }
 
@@ -124,11 +149,19 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
-		/// skill is being casted (for example: no projectile was shot yet)
+		/// skill is being casted (no projectile was shot yet)
 		/// </summary>
 		public override bool IsBeingCasted()
 		{
 			return state == SKILL_CASTING;
+		}
+
+		/// <summary>
+		/// skill is waiting for player to confirm the launch of the skill 
+		/// </summary>
+		public override bool IsBeingConfirmed()
+		{
+			return state == SKILL_CONFIRMING;
 		}
 
 		/// <summary>
@@ -141,6 +174,47 @@ namespace Assets.scripts.Skills
 
 		public override void Start()
 		{
+			bool start = false;
+			bool isPlayer = GetPlayerData() != null;
+
+			// works only for Players (not needed for other characters)
+			if (requireConfirm && isPlayer)
+			{
+				// switch this skill from idle to being confirmed
+				if (state == SKILL_IDLE)
+				{
+					// the player has another skill waiting to be confirmed -> set this skil back to idle
+					if (GetPlayerData().ActiveConfirmationSkill != null &&
+					    GetPlayerData().ActiveConfirmationSkill.state == SKILL_CONFIRMING)
+					{
+						GetPlayerData().ActiveConfirmationSkill.AbortCast();
+					}
+
+					GetPlayerData().ActiveConfirmationSkill = this;
+					state = SKILL_CONFIRMING;
+					return;
+				}
+
+				if (state == SKILL_CONFIRMING && GetPlayerData().ActiveConfirmationSkill.Equals(this))
+				{
+					start = true;
+					GetPlayerData().ActiveConfirmationSkill = null;
+				}
+			}
+			else
+			{
+				start = true;
+
+				if (isPlayer)
+				{
+					if (GetPlayerData().ActiveConfirmationSkill != null)
+						GetPlayerData().ActiveConfirmationSkill.AbortCast();
+				}
+			}
+
+			if (!start)
+				return;
+
 			active = true;
 
             Owner.Status.ActiveSkills.Add(this);
@@ -165,6 +239,14 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
+			if (state == SKILL_CONFIRMING)
+			{
+				GetPlayerData().ActiveConfirmationSkill = null;
+				CancelConfirmation();
+				state = SKILL_IDLE;
+				return;
+			}
+
 			Owner.StopTask(Task);
 
 			End();
@@ -174,6 +256,8 @@ namespace Assets.scripts.Skills
 		{
 			Debug.Log("[Casting]");
 			state = SKILL_CASTING;
+
+			CancelConfirmation();
 
 			// pri spusteni skillu zacni kouzlit
 			if (!OnCastStart())
@@ -315,6 +399,11 @@ namespace Assets.scripts.Skills
 		protected void DeleteParticleEffect(GameObject obj, float delay)
 		{
 			Object.Destroy(obj, delay);
+		}
+
+		protected void UpdateMouseDirection(Transform from)
+		{
+			mouseDirection = Utils.GetDirectionVectorToMousePos(from);
 		}
 	}
 }

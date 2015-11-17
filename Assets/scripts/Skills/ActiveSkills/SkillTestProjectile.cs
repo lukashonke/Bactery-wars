@@ -15,6 +15,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0f;
 			reuse = 0;
 			coolDown = 0;
+			requireConfirm = true;
+			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -31,6 +33,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
+			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+
 			particleSystemObject = CreateParticleEffect("SkillTestProjectile", "CastingEffect", true);
 			StartParticleEffect(particleSystemObject);
 

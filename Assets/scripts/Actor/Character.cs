@@ -74,6 +74,14 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public void BreakCasting()
 		{
+			if (this is Player)
+			{
+				if (((Player)this).GetData().ActiveConfirmationSkill != null)
+				{
+					((Player)this).GetData().ActiveConfirmationSkill.AbortCast();
+				}
+			}
+
 			if (!Status.IsCasting())
 				return;
 

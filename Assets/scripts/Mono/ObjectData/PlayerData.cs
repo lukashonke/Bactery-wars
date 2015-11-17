@@ -35,6 +35,7 @@ namespace Assets.scripts.Mono.ObjectData
 		private bool allowPlayerMovePointChange;
 		private bool forcedVelocity;
 
+		public ActiveSkill ActiveConfirmationSkill { get; set; }
 		public ParticleSystem castingEffects;
 
 		// zastupne promenne GameObjektu (reflektuji datove hodnoty v tride Player)
@@ -96,6 +97,25 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
+		public override void JumpForward(Vector3 direction, float dist, float jumpSpeed)
+		{
+			SetRotation(body.transform.position + direction.normalized*dist, true);
+
+			if (USE_VELOCITY_MOVEMENT)
+			{
+				ForceSetMoveDestinaton(body.transform.position + direction.normalized * dist, 0.5f);
+				ForceSetVelocity(direction.normalized * jumpSpeed, 0.5f);
+				HasTargetToMoveTo = true;
+				UpdateHeading();
+			}
+			else
+			{
+				HasTargetToMoveTo = false;
+				SetPosition(Vector3.MoveTowards(body.transform.position, body.transform.position + direction.normalized * dist, dist), false);
+				UpdateHeading();
+			}
+		}
+
 		public void Update()
 		{
 			/*if (!castingEffects.isPlaying)
@@ -116,6 +136,12 @@ namespace Assets.scripts.Mono.ObjectData
 					castingEffects.enableEmission = false;
 				}
 			}*/
+
+			// if the player is waiting to confirm skill casting, call the skills method to render the confirmation elements (eg. arrow to select where the skill should be casted, etc)
+			if (ActiveConfirmationSkill != null)
+			{
+				ActiveConfirmationSkill.OnBeingConfirmed();
+			}
 
 			// update movement
 			// move to mouse
@@ -174,6 +200,13 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
+
+				// the player had fixed position and velocity to move to, if he is there already, unfix this
+				if (!allowPlayerMovePointChange && forcedVelocity)
+				{
+					allowPlayerMovePointChange = true;
+					forcedVelocity = false;
+				}
 
 				ResetVelocity();
 			}
@@ -294,6 +327,15 @@ namespace Assets.scripts.Mono.ObjectData
 				UpdateHeading();
 		}
 
+		public void SetRotation(Vector3 target, bool updateHeading)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(body.transform.position - target, Vector3.forward);
+			newRotation.x = 0;
+			newRotation.y = 0;
+
+			SetRotation(newRotation, updateHeading);
+		}
+
 		/// <summary>
 		/// Vrati true pokud se hrac muze pohybovat (nemuze se pohybovat napriklad kdyz kouzli skill, ktery vyzaduje aby hrac stal na miste)
 		/// </summary>
@@ -411,6 +453,11 @@ namespace Assets.scripts.Mono.ObjectData
 			if (!allowPlayerMovePointChange)
 				return;
 
+			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
+			{
+				ActiveConfirmationSkill.AbortCast();
+			}
+
 			targetPositionWorld = newTarget;
 		}
 
@@ -454,6 +501,11 @@ namespace Assets.scripts.Mono.ObjectData
 		public override GameObject GetShootingPosition()
 		{
 			return shootingPosition;
+		}
+
+		public void ConfirmSkillLaunch()
+		{
+			ActiveConfirmationSkill.Start();
 		}
 	}
 }

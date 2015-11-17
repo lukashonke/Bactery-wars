@@ -92,6 +92,7 @@ namespace Assets.scripts.Skills
 		public abstract void SetReuseTimer();
 		public abstract bool IsActive();
 		public abstract bool IsBeingCasted();
+		public abstract bool IsBeingConfirmed();
 		public abstract void Start();
 		public abstract void AbortCast();
 		public abstract void End();

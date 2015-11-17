@@ -20,6 +20,11 @@ namespace Assets.scripts.Mono.ObjectData
 			throw new System.NotImplementedException();
 		}
 
+		public override void JumpForward(Vector3 direction, float dist, float jumpSpeed)
+		{
+			throw new System.NotImplementedException();
+		}
+
 		public override GameObject GetParticleSystemObject()
 		{
 			throw new System.NotImplementedException();

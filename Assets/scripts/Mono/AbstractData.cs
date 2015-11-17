@@ -55,6 +55,23 @@ namespace Assets.scripts.Mono
 			return go;
 		}
 
+		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 position)
+		{
+			GameObject go = LoadResource("skill", resourceFolderName, fileName);
+
+			GameObject newObject = Instantiate(go, position, GetBody().transform.rotation) as GameObject;
+
+			if (newObject != null)
+			{
+				if (makeChild)
+					newObject.transform.parent = GetBody().transform;
+
+				newObject.tag = gameObject.tag;
+			}
+
+			return newObject;
+		}
+
 		/// <summary>
 		/// Instantiates an object from Resources/Prefabs/skill folder
 		/// </summary>
@@ -95,6 +112,7 @@ namespace Assets.scripts.Mono
 
 
 		public abstract void JumpForward(float dist, float jumpSpeed);
+		public abstract void JumpForward(Vector3 direction, float dist, float jumpSpeed);
 
 		public abstract GameObject GetParticleSystemObject();
 		public abstract GameObject GetBody();
