@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Skills;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.Status
 {
@@ -30,15 +31,13 @@ namespace Assets.scripts.Actor.Status
 
 		public void ReceiveDamage(int dmg)
 		{
-			if (Hp < dmg)
-			{
+			Hp -= dmg;
+
+			if (Hp < 0)
 				Hp = 0;
+
+			if (Hp == 0)
 				DoDie();
-			}
-			else
-			{
-				Hp -= dmg;
-			}
 		}
 
 		public bool HasMana(int mp)

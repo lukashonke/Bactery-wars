@@ -24,11 +24,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillTestProjectile(Name, Id);
 		}
 
-		public override SkillEffect CreateEffects()
+		public override SkillEffect[] CreateEffects()
 		{
-			SkillEffect effect = new SkillEffect();
-
-			return effect;
+			return new SkillEffect[] {new EffectDamage(10, 2)};
 		}
 
 		public override bool OnCastStart()
@@ -71,6 +69,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoStart(GameObject gameObject)
 		{
+			
 		}
 
 		public override void MonoDestroy(GameObject gameObject)
@@ -79,7 +78,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
-			
+			// the only possible collisions are the projectile with target
+			ApplyEffects(Owner, other.gameObject);
 		}
 
 		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)

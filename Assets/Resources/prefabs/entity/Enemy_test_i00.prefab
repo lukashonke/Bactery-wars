@@ -15,8 +15,9 @@ GameObject:
   - 114: {fileID: 11409612}
   - 198: {fileID: 19822176}
   - 199: {fileID: 19958350}
+  - 50: {fileID: 5016908}
   m_Layer: 0
-  m_Name: enemy_test_body
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,12 +117,28 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138092}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.318140984, y: 4.23012161, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 417530}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!50 &5016908
+Rigidbody2D:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 106520}
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: .0500000007
+  m_GravityScale: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!61 &6117758
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -203,10 +220,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 138092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b3ab74444d4dc143992a13cdecb88c4, type: 3}
+  m_Script: {fileID: 11500000, guid: 167423db0e52ba4428e356452630afb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
+  USE_VELOCITY_MOVEMENT: 0
+  minDistanceClickToMove: 0
+  body: {fileID: 0}
+  rb: {fileID: 0}
+  particleSystems: {fileID: 0}
+  shootingPosition: {fileID: 0}
+  visibleHp: 0
+  moveSpeed: 0
+  rotateSpeed: 0
+  isDead: 0
+  canMoveWhenNotRotated: 0
+  movementEnabled: 1
+  rotationEnabled: 1
 --- !u!114 &11452924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2446,6 +2475,10 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_GravityScale
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

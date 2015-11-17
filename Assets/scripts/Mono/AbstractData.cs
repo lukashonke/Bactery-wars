@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Mono
 {
@@ -18,17 +20,17 @@ namespace Assets.scripts.Mono
 	/// "Shooting position" pro reprezentaci pozice ze ktere vychazeji projektily a efekty
 	/// "ParticleSystems" pro efekty
 	/// </summary>
-	public abstract class AbstractData : MonoBehaviour
+	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
 		public bool USE_VELOCITY_MOVEMENT;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove;
 		
-		// child objects
+		// child objects mapped by name
 		protected Dictionary<string, GameObject> childs;
 
-		/// <summary>GameObject reprezentujici fyzicke a graficke telo objektu </summary>
+		/// <summary>GameObjecty reprezentujici fyzicke a graficke telo objektu </summary>
 		public GameObject body;
 		public Rigidbody2D rb;
 		protected Animator anim;
@@ -41,6 +43,8 @@ namespace Assets.scripts.Mono
 		public int visibleHp;
 		public int moveSpeed;
 		public int rotateSpeed;
+
+		public bool isDead;
 
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) objektu</summary>
 		protected Vector3 heading;
@@ -75,9 +79,16 @@ namespace Assets.scripts.Mono
 
 		public void Start()
 		{
+			// loads all the child objects
 			AddChildObjects(transform);
 
 			body = GetChildByName("Body");
+
+			if (body == null)
+			{
+				throw new NullReferenceException("Object " + gameObject.name + " has no body!");
+			}
+
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
@@ -448,6 +459,12 @@ namespace Assets.scripts.Mono
 			visibleHp = newHp;
 		}
 
+		public virtual void SetIsDead(bool isDead)
+		{
+			Debug.Log(name + " died");
+			Destroy(gameObject, 5f);
+		}
+
 		public void BreakCasting()
 		{
 			GetOwner().BreakCasting();
@@ -517,5 +534,11 @@ namespace Assets.scripts.Mono
 		}
 
 		public abstract Character GetOwner();
+		public abstract void OnCollisionEnter2D(Collision2D coll);
+		public abstract void OnCollisionExit2D(Collision2D coll);
+		public abstract void OnCollisionStay2D(Collision2D coll);
+		public abstract void OnTriggerEnter2D(Collider2D obj);
+		public abstract void OnTriggerExit2D(Collider2D obj);
+		public abstract void OnTriggerStay2D(Collider2D obj);
 	}
 }

@@ -7,7 +7,7 @@ namespace Assets.scripts
 	/// <summary>
 	/// TODO redo this into a particle effect
 	/// </summary>
-	public class ProjectileBlackTestData : MonoBehaviour, IDamagable
+	public class ProjectileBlackTestData : MonoBehaviour
 	{
 		public Texture2D source;
 		public int collapseSpeed;
@@ -133,11 +133,6 @@ namespace Assets.scripts
 
 			// destroy the object after 1.5 seconds
 			Destroy(gameObject, 1.5f);
-		}
-
-		public int GetDamage()
-		{
-			return 1;
 		}
 	}
 }

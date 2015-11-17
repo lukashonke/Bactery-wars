@@ -254,7 +254,6 @@ namespace Assets.scripts.Skills
 
 		protected virtual IEnumerator SkillTask()
 		{
-			Debug.Log("[Casting]");
 			state = SKILL_CASTING;
 
 			CancelConfirmation();
@@ -275,8 +274,6 @@ namespace Assets.scripts.Skills
 				yield return new WaitForSeconds(castTime);
 			}
 
-			Debug.Log("[Active]");
-
 			// nastavit stav - active
 			state = SKILL_ACTIVE;
 
@@ -290,8 +287,6 @@ namespace Assets.scripts.Skills
 			{
 				yield return new WaitForSeconds(coolDown);
 			}
-
-			Debug.Log("[Idle]");
 
 			// nastavit stav - idle
 			state = SKILL_IDLE;

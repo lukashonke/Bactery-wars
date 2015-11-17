@@ -913,52 +913,6 @@ MonoBehaviour:
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
---- !u!1001 &654915409
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 937088888}
-    m_Modifications:
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 1.01999998
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -.4083305
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: .912834167
-      objectReference: {fileID: 0}
-    - target: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-  m_IsPrefabParent: 0
---- !u!4 &871262279 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 460216, guid: 803917118c236c54f97a44be11b486c6, type: 2}
-  m_PrefabInternal: {fileID: 654915409}
 --- !u!1 &937088883
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,7 +1012,6 @@ Transform:
   - {fileID: 51703791}
   - {fileID: 981440374}
   - {fileID: 539610705}
-  - {fileID: 871262279}
   - {fileID: 1223473320}
   m_Father: {fileID: 983066285}
   m_RootOrder: 0
@@ -1367,15 +1320,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   USE_VELOCITY_MOVEMENT: 1
+  minDistanceClickToMove: .200000003
   body: {fileID: 937088883}
   rb: {fileID: 0}
   particleSystems: {fileID: 0}
   shootingPosition: {fileID: 0}
-  castingEffects: {fileID: 0}
   visibleHp: 0
   moveSpeed: 5
   rotateSpeed: 25
-  minDistanceClickToMove: .200000003
+  isDead: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
@@ -1622,7 +1575,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 937088888}
-  m_RootOrder: 4
+  m_RootOrder: 3
 --- !u!1 &1315679250
 GameObject:
   m_ObjectHideFlags: 0

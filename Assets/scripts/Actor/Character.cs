@@ -26,6 +26,8 @@ namespace Assets.scripts.Actor
 
 		public AbstractData Data { get; set; }
 
+		public int Team { get; set; }
+
 		protected Character(string name) : base(name)
 		{
 			Init();
@@ -44,7 +46,6 @@ namespace Assets.scripts.Actor
 
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
-		public abstract void NotifyCastingModeChange();
 
 		/// <summary>
 		/// Spusti kouzleni skillu
@@ -67,6 +68,11 @@ namespace Assets.scripts.Actor
 			skill.SetReuseTimer();
 
 			skill.Start();
+		}
+
+		public void NotifyCastingModeChange()
+		{
+			GetData().IsCasting = Status.IsCasting();
 		}
 
 		/// <summary>
@@ -97,6 +103,17 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
+		public void ReceiveDamage(int damage)
+		{
+			Debug.Log("1 receiving " + damage + " damage");
+			Status.ReceiveDamage(damage);
+
+			if (Status.IsDead)
+			{
+				GetData().SetIsDead(true);
+			}
+		}
+
 		/// <summary>
 		/// Vytvori novy Task (vyuziva Unity Coroutiny)
 		/// Task je ukol ktery muze probihat rozlozeny mezi nekolik snimku hry
@@ -119,6 +136,11 @@ namespace Assets.scripts.Actor
 		public virtual void StopTask(IEnumerator t)
 		{
 			GameSystem.Instance.StopTask(t);
+		}
+
+		public bool CanAttack(Character targetCh)
+		{
+			return Team != targetCh.Team;
 		}
 	}
 }

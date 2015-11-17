@@ -9,7 +9,7 @@ namespace Assets.scripts.Mono.ObjectData
 	/*
 		Unity Engine delegate for Player objects
 	*/
-	public class PlayerData : AbstractData, ICollidable
+	public class PlayerData : AbstractData
 	{
 		/// <summary>Datova trida hrace</summary>
 		public Player player;
@@ -38,32 +38,32 @@ namespace Assets.scripts.Mono.ObjectData
 			base.Update();
 		}
 
-		public void OnCollisionEnter2D(Collision2D coll)
+		public override void OnCollisionEnter2D(Collision2D coll)
 		{
 
 		}
 
-		public void OnCollisionExit2D(Collision2D coll)
+		public override void OnCollisionExit2D(Collision2D coll)
 		{
 
 		}
 
-		public void OnCollisionStay2D(Collision2D coll)
+		public override void OnCollisionStay2D(Collision2D coll)
 		{
 
 		}
 
-		public void OnTriggerEnter2D(Collider2D obj)
+		public override void OnTriggerEnter2D(Collider2D obj)
 		{
 
 		}
 
-		public void OnTriggerExit2D(Collider2D obj)
+		public override void OnTriggerExit2D(Collider2D obj)
 		{
 
 		}
 
-		public void OnTriggerStay2D(Collider2D obj)
+		public override void OnTriggerStay2D(Collider2D obj)
 		{
 
 		}
