@@ -400,5 +400,10 @@ namespace Assets.scripts.Skills
 		{
 			mouseDirection = Utils.GetDirectionVectorToMousePos(from);
 		}
+
+		protected void RotatePlayerTowardsMouse()
+		{
+			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+		}
 	}
 }

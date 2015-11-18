@@ -85,6 +85,9 @@ namespace Assets.scripts.Skills.Base
 
 			skill = new ChainSkill("Chain Skill", 6);
 			AddSkill(skill);
+
+			skill = new SkillAreaExplode("Bomb skill", 7);
+			AddSkill(skill);
 		}
 	}
 }

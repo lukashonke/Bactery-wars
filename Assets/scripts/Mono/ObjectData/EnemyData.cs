@@ -43,8 +43,8 @@ namespace Assets.scripts.Mono.ObjectData
 				ps = blood.GetComponent<ParticleSystem>();
 				ps.maxParticles = Random.RandomRange(10, 50);
 
-				Instantiate(blood, body.transform.position, Quaternion.identity);
-				Destroy(blood, 10f);
+				GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
+				Destroy(bloodObject, 10f);
 			}
 		}
 
