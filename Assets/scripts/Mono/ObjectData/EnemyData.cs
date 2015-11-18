@@ -37,6 +37,14 @@ namespace Assets.scripts.Mono.ObjectData
 					healthBar.gameObject.active = false;
 
 				Destroy(gameObject, 1f);
+
+				GameObject blood = LoadResource("misc", "Blood", "Blood_red");
+
+				ps = blood.GetComponent<ParticleSystem>();
+				ps.maxParticles = Random.RandomRange(10, 50);
+
+				Instantiate(blood, body.transform.position, Quaternion.identity);
+				Destroy(blood, 10f);
 			}
 		}
 
