@@ -1,10 +1,9 @@
 ﻿using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono
 {
-	public class PlayerControls : NetworkBehaviour
+	public class PlayerControls : MonoBehaviour
 	{
 		public GameObject body;
 
@@ -65,11 +64,6 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
-            if (!isLocalPlayer)
-            {
-                return;
-            }
-
 			// fire TODO delete
 			if (Input.GetKeyDown("space"))
 			{
