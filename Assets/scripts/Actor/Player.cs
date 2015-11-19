@@ -63,7 +63,8 @@ namespace Assets.scripts.Actor
 		{
 			CharStatus st = new PlayerStatus(false, Template.MaxHp, Template.MaxMp, Template); //TODO
 			GetData().SetVisibleHp(st.Hp);
-			GetData().SetVisibleMaxHp(st.MaxHp); //TODO convert to setter
+			GetData().SetVisibleMaxHp(st.MaxHp);
+			GetData().SetMoveSpeed(st.MoveSpeed);
 
 			return st;
 		}

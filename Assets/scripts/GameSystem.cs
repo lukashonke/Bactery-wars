@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Mono;
@@ -95,7 +96,7 @@ namespace Assets.scripts
 
 		public Monster RegisterNewMonster(EnemyData data, String name)
 		{
-			Monster monster = new Monster(name, data);
+			Monster monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(MonsterId.TestMonster));
 
 			monster.Init();
 
