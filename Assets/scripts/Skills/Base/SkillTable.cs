@@ -82,6 +82,12 @@ namespace Assets.scripts.Skills.Base
 
 			skill = new JumpShort("Short Jump", 5);
 			AddSkill(skill);
+
+			skill = new ChainSkill("Chain Skill", 6);
+			AddSkill(skill);
+
+			skill = new SkillAreaExplode("Bomb skill", 7);
+			AddSkill(skill);
 		}
 	}
 }

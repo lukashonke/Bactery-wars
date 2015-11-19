@@ -79,19 +79,42 @@ namespace Assets.scripts.Mono
 
 			if (!ui.MouseOverUI)
 			{
-				// change target position according to mouse when clicked
-				if (Input.GetMouseButton(0) && Vector3.Distance(body.transform.position, Input.mousePosition) > 1)
+				if (data.ActiveConfirmationSkill != null)
 				{
-					Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					newTarget.z = body.transform.position.z;
-					data.SetPlayersMoveToTarget(newTarget);
+					if (Input.GetMouseButtonDown(0))
+					{
+						data.ConfirmSkillLaunch();
+					}
 
-					if (currMouseClicker != null)
-						Destroy(currMouseClicker);
+					if (Input.GetMouseButtonDown(1))
+					{
+						data.ActiveConfirmationSkill.AbortCast();
+					}
 
-					currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-					data.HasTargetToMoveTo = true;
-                }
+					// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
+					Input.ResetInputAxes();
+				}
+				else
+				{
+					// change target position according to mouse when clicked
+					if (Input.GetMouseButton(0))
+					{
+						Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+						newTarget.z = body.transform.position.z;
+
+						// momentalne nepotrebne
+						//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+						//{
+						data.SetPlayersMoveToTarget(newTarget);
+
+						if (currMouseClicker != null)
+							Destroy(currMouseClicker);
+
+						currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+						data.HasTargetToMoveTo = true;
+						//}
+					}
+				}
 			}
 
 			if (!data.HasTargetToMoveTo)

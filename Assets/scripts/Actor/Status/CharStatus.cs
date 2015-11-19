@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Skills;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.Status
 {
@@ -13,32 +14,32 @@ namespace Assets.scripts.Actor.Status
 	public abstract class CharStatus
 	{
 		public bool IsDead { get; private set; }
-		public int Hp { get; private set; }
+		public int Hp { get; private set; } //TODO limit maxhp
+		public int MaxHp { get; private set; }
 		public int Mp { get; private set; }
 		public int MoveSpeed { get; set; }
 
 		public List<Skill> ActiveSkills { get; private set; }
 
-		protected CharStatus(bool isDead, int hp, int mp)
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp)
 		{
 			IsDead = isDead;
 			Hp = hp;
 			Mp = mp;
+			MaxHp = maxHp;
 			MoveSpeed = 5;
 			ActiveSkills = new List<Skill>();
 		}
 
 		public void ReceiveDamage(int dmg)
 		{
-			if (Hp < dmg)
-			{
+			Hp -= dmg;
+
+			if (Hp < 0)
 				Hp = 0;
+
+			if (Hp == 0)
 				DoDie();
-			}
-			else
-			{
-				Hp -= dmg;
-			}
 		}
 
 		public bool HasMana(int mp)

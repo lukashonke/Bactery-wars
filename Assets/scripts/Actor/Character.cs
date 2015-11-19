@@ -26,12 +26,14 @@ namespace Assets.scripts.Actor
 
 		public AbstractData Data { get; set; }
 
+		public int Team { get; set; }
+
 		protected Character(string name) : base(name)
 		{
-			Init();
+			
 		}
 
-		private void Init()
+		public void Init()
 		{
 			Status = InitStatus();
 			Skills = InitSkillSet();
@@ -44,7 +46,6 @@ namespace Assets.scripts.Actor
 
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
-		public abstract void NotifyCastingModeChange();
 
 		/// <summary>
 		/// Spusti kouzleni skillu
@@ -69,11 +70,24 @@ namespace Assets.scripts.Actor
 			skill.Start();
 		}
 
+		public void NotifyCastingModeChange()
+		{
+			GetData().IsCasting = Status.IsCasting();
+		}
+
 		/// <summary>
 		/// Prerusi kouzleni vsech aktivnich skillů
 		/// </summary>
 		public void BreakCasting()
 		{
+			if (this is Player)
+			{
+				if (((Player)this).GetData().ActiveConfirmationSkill != null)
+				{
+					((Player)this).GetData().ActiveConfirmationSkill.AbortCast();
+				}
+			}
+
 			if (!Status.IsCasting())
 				return;
 
@@ -87,6 +101,18 @@ namespace Assets.scripts.Actor
 			}
 
 			Debug.Log("break done");
+		}
+
+		public void ReceiveDamage(int damage)
+		{
+			Status.ReceiveDamage(damage);
+
+			if (Status.IsDead)
+			{
+				GetData().SetIsDead(true);
+			}
+
+			GetData().SetVisibleHp(Status.Hp);
 		}
 
 		/// <summary>
@@ -111,6 +137,11 @@ namespace Assets.scripts.Actor
 		public virtual void StopTask(IEnumerator t)
 		{
 			GameSystem.Instance.StopTask(t);
+		}
+
+		public bool CanAttack(Character targetCh)
+		{
+			return Team != targetCh.Team;
 		}
 	}
 }

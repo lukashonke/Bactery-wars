@@ -15,8 +15,6 @@ namespace Assets.scripts.Skills
 		public int Id { get; private set; }
 		public string Name { get; private set; }
 
-		public SkillEffect Effect { get; private set; }
-
 		public Character Owner { get; private set; }
 
 		private int level;
@@ -47,7 +45,6 @@ namespace Assets.scripts.Skills
 
 		public void Init()
 		{
-			Effect = CreateEffects();
 		}
 
 		public void SetOwner(Character ch)
@@ -62,6 +59,19 @@ namespace Assets.scripts.Skills
 
 			// upozorni skill ze byl prirazen k majiteli
 			SkillAdded();
+		}
+
+		protected void ApplyEffects(Character source, GameObject target)
+		{
+			SkillEffect[] efs = CreateEffects();
+
+			if (efs != null)
+			{
+				foreach (SkillEffect ef in efs)
+				{
+					ef.ApplyEffect(source, target);
+				}
+			}
 		}
 
 		public AbstractData GetOwnerData()
@@ -84,7 +94,7 @@ namespace Assets.scripts.Skills
 
 		// vytvori novou kopii sama sebe
 		public abstract Skill Instantiate();
-		public abstract SkillEffect CreateEffects();
+		public abstract SkillEffect[] CreateEffects();
 
 		public abstract void SkillAdded();
 
@@ -92,6 +102,7 @@ namespace Assets.scripts.Skills
 		public abstract void SetReuseTimer();
 		public abstract bool IsActive();
 		public abstract bool IsBeingCasted();
+		public abstract bool IsBeingConfirmed();
 		public abstract void Start();
 		public abstract void AbortCast();
 		public abstract void End();

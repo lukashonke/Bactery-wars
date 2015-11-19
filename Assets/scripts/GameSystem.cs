@@ -64,13 +64,42 @@ namespace Assets.scripts
 		{
 			Player player = new Player(name + (++lastPlayerId), data, ClassTemplateTable.Instance.GetType(ClassId.Default));
 
-			Debug.Log("Player " + player.Name + " has template " + player.Template.ClassId);
+			player.Init();
+
+			//TODO improve this
+			if (data.tag == "Team1")
+			{
+				player.Team = 1;
+			}
+			else if (data.tag == "Team2")
+			{
+				player.Team = 2;
+			}
+			else if (data.tag == "Team3")
+			{
+				player.Team = 3;
+			}
+			else if (data.tag == "Team4")
+			{
+				player.Team = 4;
+			}
+
+			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.ClassId);
 
 			player.InitTemplate();
 
 			//TODO init, save, etc
 
 			return player;
+		}
+
+		public Monster RegisterNewMonster(EnemyData data, String name)
+		{
+			Monster monster = new Monster(name, data);
+
+			monster.Init();
+
+			return monster;
 		}
 	}
 }

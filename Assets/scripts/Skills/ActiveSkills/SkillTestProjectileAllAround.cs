@@ -10,6 +10,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 2f;
 			reuse = 0.5f;
 			coolDown = 0.5f;
+			requireConfirm = false;
 		}
 
 		public override Skill Instantiate()

@@ -15,12 +15,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillTemplate(Name, Id);
 		}
 
-		public override SkillEffect CreateEffects()
+		public override SkillEffect[] CreateEffects()
 		{
-			SkillEffect effect = new SkillEffect();
-
-
-			return effect;
+			return null;
 		}
 
 		public override bool OnCastStart()

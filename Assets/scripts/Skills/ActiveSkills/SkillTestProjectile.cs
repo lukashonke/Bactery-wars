@@ -15,6 +15,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0f;
 			reuse = 0;
 			coolDown = 0;
+			requireConfirm = true;
+			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -22,28 +24,24 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillTestProjectile(Name, Id);
 		}
 
-		public override SkillEffect CreateEffects()
+		public override SkillEffect[] CreateEffects()
 		{
-			SkillEffect effect = new SkillEffect();
-
-			return effect;
+			return new SkillEffect[] {new EffectDamage(10, 2)};
 		}
 
 		public override bool OnCastStart()
 		{
-			//TODO abstract this in ActiveSkill
-			particleSystemObject = GetOwnerData().CreateProjectileParticleEffect("SkillTestProjectile", "CastingEffect", true);
+			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 
-			ParticleSystem ps = particleSystemObject.GetComponent<ParticleSystem>();
-			ps.Play();
+			particleSystemObject = CreateParticleEffect("SkillTestProjectile", "CastingEffect", true);
+			StartParticleEffect(particleSystemObject);
 
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			if (particleSystemObject != null)
-				Object.Destroy(particleSystemObject);
+			DeleteParticleEffect(particleSystemObject);
 
 			activeProjectile = GetPlayerData().CreateProjectile(this.GetType().Name, "projectile_blacktest_i00");
 
@@ -71,14 +69,32 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoStart(GameObject gameObject)
 		{
+			
 		}
 
 		public override void MonoDestroy(GameObject gameObject)
 		{
 		}
 
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		{
+			// the only possible collisions are the projectile with target
+			ApplyEffects(Owner, other.gameObject);
+		}
+
+		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)
+		{
+			
+		}
+
+		public override void MonoTriggerStay(GameObject gameObject, Collider2D other)
+		{
+			
+		}
+
 		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
 		{
+			
 		}
 
 		public override void MonoCollisionExit(GameObject gameObject, Collision2D coll)

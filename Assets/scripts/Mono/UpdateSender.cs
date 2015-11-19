@@ -45,6 +45,24 @@ namespace Assets.scripts.Mono
 		{
 			if (target != null)
 				target.MonoCollisionStay(gameObject, coll);
-		} 
+		}
+
+		void OnTriggerEnter2D(Collider2D other)
+		{
+			if (target != null)
+				target.MonoTriggerEnter(gameObject, other);
+		}
+
+		void OnTriggerExit2D(Collider2D other)
+		{
+			if (target != null)
+				target.MonoTriggerExit(gameObject, other);
+		}
+
+		void OnTriggerStay2D(Collider2D other)
+		{
+			if (target != null)
+				target.MonoTriggerStay(gameObject, other);
+		}
 	}
 }

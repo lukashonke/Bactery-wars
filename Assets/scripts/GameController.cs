@@ -17,10 +17,15 @@ namespace Assets.scripts
 
 		void Update()
 		{
-			if (System.Environment.TickCount%6000 == 0)
+			if (System.Environment.TickCount%600 == 0)
 			{
-				//Instantiate(prefabToSpawn, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), Quaternion.identity);
+				//SpawnTestMob();
 			}
+		}
+
+		public void SpawnTestMob()
+		{
+			Instantiate(prefabToSpawn, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), Quaternion.identity);
 		}
 	}
 }

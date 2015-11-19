@@ -7,28 +7,37 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills
 {
 	public abstract class ActiveSkill : Skill, IMonoReceiver
 	{
 		public const int SKILL_IDLE = 0;
-		public const int SKILL_CASTING = 1;
-		public const int SKILL_ACTIVE = 2;
+		public const int SKILL_CONFIRMING = 1;
+		public const int SKILL_CASTING = 2;
+		public const int SKILL_ACTIVE = 3;
 
 		protected bool active;
 		protected Coroutine Task { get; set; }
 		protected Coroutine UpdateTask { get; set; }
 		protected int state;
 
-		// how often should UpdateLaunched be called (in seconds)
+		/// <summary>how often should UpdateLaunched() be called (in seconds)</summary>
 		protected float updateFrequency;
 
 		protected float castTime;
 		protected float coolDown;
 		protected float reuse;
 
+		/// <summary>if the skill requires confirmation before casting (second click)</summary>
+		protected bool requireConfirm;
+		public bool MovementBreaksConfirmation { get; protected set; }
+
 		protected int LastUsed { get; private set; }
+
+		protected Vector3 mouseDirection;
+		protected GameObject confirmObject;
 
 		public ActiveSkill(string name, int id) : base(name, id)
 		{
@@ -38,6 +47,8 @@ namespace Assets.scripts.Skills
 			coolDown = 5;
 			reuse = 5;
 			updateFrequency = 0.1f;
+			requireConfirm = false;
+			MovementBreaksConfirmation = false;
 		}
 
 		/// returning false will make the skill not start
@@ -65,11 +76,31 @@ namespace Assets.scripts.Skills
 		public abstract bool CanRotate();
 
 		// overridable
+		public virtual void OnBeingConfirmed()
+		{
+			if (confirmObject == null)
+				confirmObject = GetPlayerData().CreateSkillResource("TemplateSkill", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+
+			UpdateMouseDirection(confirmObject.transform);
+			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+		}
+
+		public virtual void CancelConfirmation()
+		{
+			if (confirmObject != null)
+				Object.Destroy(confirmObject);
+		}
+
 		public virtual void MonoStart(GameObject gameObject) { }
 		public virtual void MonoDestroy(GameObject gameObject) { }
+
 		public virtual void MonoCollisionEnter(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionExit(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionStay(GameObject gameObject, Collision2D coll) { }
+
+		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
@@ -118,11 +149,19 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
-		/// skill is being casted (for example: no projectile was shot yet)
+		/// skill is being casted (no projectile was shot yet)
 		/// </summary>
 		public override bool IsBeingCasted()
 		{
 			return state == SKILL_CASTING;
+		}
+
+		/// <summary>
+		/// skill is waiting for player to confirm the launch of the skill 
+		/// </summary>
+		public override bool IsBeingConfirmed()
+		{
+			return state == SKILL_CONFIRMING;
 		}
 
 		/// <summary>
@@ -135,6 +174,47 @@ namespace Assets.scripts.Skills
 
 		public override void Start()
 		{
+			bool start = false;
+			bool isPlayer = GetPlayerData() != null;
+
+			// works only for Players (not needed for other characters)
+			if (requireConfirm && isPlayer)
+			{
+				// switch this skill from idle to being confirmed
+				if (state == SKILL_IDLE)
+				{
+					// the player has another skill waiting to be confirmed -> set this skil back to idle
+					if (GetPlayerData().ActiveConfirmationSkill != null &&
+					    GetPlayerData().ActiveConfirmationSkill.state == SKILL_CONFIRMING)
+					{
+						GetPlayerData().ActiveConfirmationSkill.AbortCast();
+					}
+
+					GetPlayerData().ActiveConfirmationSkill = this;
+					state = SKILL_CONFIRMING;
+					return;
+				}
+
+				if (state == SKILL_CONFIRMING && GetPlayerData().ActiveConfirmationSkill.Equals(this))
+				{
+					start = true;
+					GetPlayerData().ActiveConfirmationSkill = null;
+				}
+			}
+			else
+			{
+				start = true;
+
+				if (isPlayer)
+				{
+					if (GetPlayerData().ActiveConfirmationSkill != null)
+						GetPlayerData().ActiveConfirmationSkill.AbortCast();
+				}
+			}
+
+			if (!start)
+				return;
+
 			active = true;
 
             Owner.Status.ActiveSkills.Add(this);
@@ -159,6 +239,14 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
+			if (state == SKILL_CONFIRMING)
+			{
+				GetPlayerData().ActiveConfirmationSkill = null;
+				CancelConfirmation();
+				state = SKILL_IDLE;
+				return;
+			}
+
 			Owner.StopTask(Task);
 
 			End();
@@ -166,8 +254,9 @@ namespace Assets.scripts.Skills
 
 		protected virtual IEnumerator SkillTask()
 		{
-			Debug.Log("[Casting]");
 			state = SKILL_CASTING;
+
+			CancelConfirmation();
 
 			// pri spusteni skillu zacni kouzlit
 			if (!OnCastStart())
@@ -185,8 +274,6 @@ namespace Assets.scripts.Skills
 				yield return new WaitForSeconds(castTime);
 			}
 
-			Debug.Log("[Active]");
-
 			// nastavit stav - active
 			state = SKILL_ACTIVE;
 
@@ -200,8 +287,6 @@ namespace Assets.scripts.Skills
 			{
 				yield return new WaitForSeconds(coolDown);
 			}
-
-			Debug.Log("[Idle]");
 
 			// nastavit stav - idle
 			state = SKILL_IDLE;
@@ -238,6 +323,87 @@ namespace Assets.scripts.Skills
 			}
 			else
 				us.target = this;
+		}
+
+		/// <summary>
+		/// Clones a prefab object which contains Particle Effect, adds it to the player and returns it.
+		/// The particle effect prefab must be within skill's folder in Resources/prefabs/skill 
+		/// </summary>
+		/// <param name="folderName">the folder in Resources/prefabs/skill to look into</param>
+		/// <param name="particleObjectName">name of the .prefab object</param>
+		/// <param name="makeChild">The particle effect position will move with player</param>
+		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
+		{
+			GameObject o = GetOwnerData().CreateSkillParticleEffect(folderName, particleObjectName, makeChild);
+
+			if (o == null)
+				throw new NullReferenceException("effect " + folderName + ", " + particleObjectName + " not found");
+
+			return o;
+		}
+
+		/// <summary>
+		/// Starts or unpauses obj's particle system
+		/// </summary>
+		protected void StartParticleEffect (GameObject obj)
+		{
+			try
+			{
+				ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+				if (ps.isPlaying == false)
+					ps.Play();
+
+				if (!ps.enableEmission)
+					ps.enableEmission = true;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("couldnt play particle effect " + Name);
+			}
+		}
+
+		/// <summary>
+		/// Pauses the emmission of the particles 
+		/// </summary>
+		protected void PauseParticleEffect(GameObject obj)
+		{
+			try
+			{
+				ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+
+				if (ps.enableEmission)
+					ps.enableEmission = false;
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("couldnt pause particle effect" + Name);
+			}
+		}
+
+		/// <summary>
+		/// Deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
+		/// </summary>
+		protected void DeleteParticleEffect(GameObject obj)
+		{
+			Object.Destroy(obj);
+		}
+
+		/// <summary>
+		/// After delay, deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
+		/// </summary>
+		protected void DeleteParticleEffect(GameObject obj, float delay)
+		{
+			Object.Destroy(obj, delay);
+		}
+
+		protected void UpdateMouseDirection(Transform from)
+		{
+			mouseDirection = Utils.GetDirectionVectorToMousePos(from);
+		}
+
+		protected void RotatePlayerTowardsMouse()
+		{
+			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 		}
 	}
 }

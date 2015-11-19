@@ -14,6 +14,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0f;
 			reuse = 1.0f;
 			coolDown = 0f;
+			requireConfirm = true;
+			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -21,12 +23,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new JumpShort(Name, Id);
 		}
 
-		public override SkillEffect CreateEffects()
+		public override SkillEffect[] CreateEffects()
 		{
-			SkillEffect effect = new SkillEffect();
-
-
-			return effect;
+			return null;
 		}
 
 		public override bool OnCastStart()
@@ -36,7 +35,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			GetOwnerData().JumpForward(4, 100);
+			GetOwnerData().JumpForward(mouseDirection, 4, 100);
 		}
 
 		public override void UpdateLaunched()

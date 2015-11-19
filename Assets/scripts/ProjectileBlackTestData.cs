@@ -7,7 +7,7 @@ namespace Assets.scripts
 	/// <summary>
 	/// TODO redo this into a particle effect
 	/// </summary>
-	public class ProjectileBlackTestData : MonoBehaviour, IDamagable
+	public class ProjectileBlackTestData : MonoBehaviour
 	{
 		public Texture2D source;
 		public int collapseSpeed;
@@ -120,22 +120,19 @@ namespace Assets.scripts
 					pieceYShift = sr.bounds.extents.y * 2;
 
 					nObject.transform.parent = gameObject.transform;
+					nObject.layer = 1;
 					nObject.transform.localPosition = new Vector3((+i) * pieceXShift, (+j) * pieceYShift, 0);
 				}
 			}
 
 			GetComponent<SpriteRenderer>().enabled = false;
+			GetComponent<Collider2D>().enabled = false;
 
 			// stop the movement so that it doesnt penetrate and hit other objects
 			GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
 
 			// destroy the object after 1.5 seconds
 			Destroy(gameObject, 1.5f);
-		}
-
-		public int GetDamage()
-		{
-			return 1;
 		}
 	}
 }
