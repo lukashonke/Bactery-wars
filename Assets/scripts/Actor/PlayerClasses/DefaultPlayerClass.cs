@@ -9,7 +9,9 @@ namespace Assets.scripts.Actor.PlayerClasses
 	{
 		public DefaultPlayerClass() : base(ClassId.Default)
 		{
-
+			MaxHp = 10;
+			MaxMp = 10;
+			MaxSpeed = 10;
 		}
 
 		protected override void AddSkills()

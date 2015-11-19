@@ -13,6 +13,10 @@ namespace Assets.scripts.Actor.PlayerClasses
 
 		public List<Skill> TemplateSkills { get; set; }
 
+		public int MaxHp { get; protected set; }
+		public int MaxMp { get; protected set; }
+		public int MaxSpeed { get; protected set; }
+
 		protected ClassTemplate(ClassId classId)
 		{
 			ClassId = classId;

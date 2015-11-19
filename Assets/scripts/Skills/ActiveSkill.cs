@@ -228,6 +228,9 @@ namespace Assets.scripts.Skills
 			if (!start)
 				return;
 
+			// start the reuse timer
+			SetReuseTimer();
+
 			active = true;
 
 			Owner.Status.ActiveSkills.Add(this);
@@ -538,6 +541,9 @@ namespace Assets.scripts.Skills
 			o.GetComponent<Collider2D>().enabled = false;
 		}
 
+		/// <summary>
+		/// Instantiates and optionally starts effect CastingEffect.prefab in the skill's folder
+		/// </summary>
 		protected void CreateCastingEffect(bool start)
 		{
 			particleSystem = CreateParticleEffect("CastingEffect", true);
@@ -545,6 +551,9 @@ namespace Assets.scripts.Skills
 				StartParticleEffect(particleSystem);
 		}
 
+		/// <summary>
+		/// Instantiates and optionally starts effect CastingEffect.prefab in the [folderName] folder
+		/// </summary>
 		protected void CreateCastingEffect(bool start, string folderName)
 		{
 			particleSystem = CreateParticleEffect(folderName, "CastingEffect", true);
@@ -552,6 +561,9 @@ namespace Assets.scripts.Skills
 				StartParticleEffect(particleSystem);
 		}
 
+		/// <summary>
+		/// Stops the current casting effect 
+		/// </summary>
 		protected void DeleteCastingEffect()
 		{
 			if (particleSystem != null)
