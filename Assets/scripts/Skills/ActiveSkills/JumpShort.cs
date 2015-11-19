@@ -15,7 +15,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 1.0f;
 			coolDown = 0f;
 			requireConfirm = true;
-			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()

@@ -20,14 +20,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			if (particleSystemObject != null)
-				Object.Destroy(particleSystemObject);
+			DeleteCastingEffect();
 
 			GameObject activeProjectile;
 
 			for (int i = 0; i < 360; i+=30)
 			{
-				activeProjectile = GetPlayerData().CreateProjectile("SkillTestProjectile", "projectile_blacktest_i00");
+				activeProjectile = CreateSkillProjectile("Test Projectile", "projectile_blacktest_i00", true);
 
 				if (activeProjectile != null)
 				{
@@ -35,8 +34,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 					rb.velocity = GetOwnerData().GetForwardVector(i) * 15;
 
 					Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-					AddMonoReceiver(activeProjectile);
 
 					Object.Destroy(activeProjectile, 5f);
 				}

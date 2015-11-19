@@ -208,65 +208,53 @@ namespace Assets.scripts.Mono
 		public GameObject LoadResource(string type, string resourceFolderName, string fileName)
 		{
 			GameObject go = Resources.Load("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName) as GameObject;
+
 			if (go == null)
 				throw new NullReferenceException("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName + " !");
 
 			return go;
 		}
 
-		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 position)
+		public GameObject InstantiateObject(GameObject template)
+		{
+			return Instantiate(template, GetBody().transform.position, GetBody().transform.rotation) as GameObject;
+		}
+
+		public GameObject InstantiateObject(GameObject template, Vector3 position)
+		{
+			return Instantiate(template, position, GetBody().transform.rotation) as GameObject;
+		}
+
+		public GameObject InstantiateObject(GameObject template, Vector3 position, Quaternion rotation)
+		{
+			return Instantiate(template, position, rotation) as GameObject;
+;		}
+
+		public void SetChild(GameObject o)
+		{
+			o.transform.parent = GetBody().transform;
+		}
+
+		/// <summary>
+		/// Instantiates an object with from: Resources/Prefabs/skill/[resourceFolderName]/[fileName].prefab 
+		/// Places it into [spawnPosition]
+		/// [makeChild] will fix the position to the characters body
+		/// </summary>
+		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 spawnPosition)
 		{
 			GameObject go = LoadResource("skill", resourceFolderName, fileName);
 
-			GameObject newObject = Instantiate(go, position, GetBody().transform.rotation) as GameObject;
+			GameObject newObject = Instantiate(go, spawnPosition, GetBody().transform.rotation) as GameObject;
 
 			if (newObject != null)
 			{
 				if (makeChild)
-					newObject.transform.parent = GetBody().transform;
+					SetChild(newObject);
 
 				newObject.tag = gameObject.tag;
 			}
 
 			return newObject;
-		}
-
-		/// <summary>
-		/// Instantiates an object from Resources/Prefabs/skill folder
-		/// </summary>
-		public GameObject CreateSkillParticleEffect(string folderName, string name, bool makeChild)
-		{
-			GameObject go = LoadResource("skill", folderName, name);
-
-			GameObject newProjectile = Instantiate(go, GetParticleSystemObject().transform.position, GetBody().transform.rotation) as GameObject;
-			if (newProjectile != null)
-			{
-				if (makeChild)
-					newProjectile.transform.parent = GetParticleSystemObject().transform;
-
-				newProjectile.tag = gameObject.tag;
-			}
-
-			return newProjectile;
-		}
-
-		/// <summary>
-		/// Clones gameobject from: Resources/prefabs/skill/[foldername]/[name].prefab and places it on GetShootingPosition() position
-		/// </summary>
-		/// <param name="folderName"></param>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public GameObject CreateProjectile(string folderName, string name)
-		{
-			GameObject go = LoadResource("skill", folderName, name);
-
-			GameObject newProjectile = Instantiate(go, GetShootingPosition().transform.position, GetBody().transform.rotation) as GameObject;
-			if (newProjectile != null)
-			{
-				newProjectile.tag = gameObject.tag;
-			}
-
-			return newProjectile;
 		}
 
 		public void JumpForward(float dist, float jumpSpeed)

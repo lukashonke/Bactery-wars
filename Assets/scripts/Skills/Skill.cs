@@ -61,6 +61,11 @@ namespace Assets.scripts.Skills
 			SkillAdded();
 		}
 
+		/// <summary>
+		/// Applies all SkillEffects of this skill to the target
+		/// </summary>
+		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
+		/// <param name="target">who receives the effects</param>
 		protected void ApplyEffects(Character source, GameObject target)
 		{
 			SkillEffect[] efs = CreateEffects();

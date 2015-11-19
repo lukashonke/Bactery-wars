@@ -13,33 +13,46 @@ namespace Assets.scripts.Skills
 {
 	public abstract class ActiveSkill : Skill, IMonoReceiver
 	{
-		public const int SKILL_IDLE = 0;
-		public const int SKILL_CONFIRMING = 1;
-		public const int SKILL_CASTING = 2;
-		public const int SKILL_ACTIVE = 3;
+		public enum SkillState
+		{
+			SKILL_IDLE,
+			SKILL_CONFIRMING,
+			SKILL_CASTING,
+			SKILL_ACTIVE,
+		}
 
 		protected bool active;
 		protected Coroutine Task { get; set; }
 		protected Coroutine UpdateTask { get; set; }
-		protected int state;
+		protected SkillState state;
 
-		/// <summary>how often should UpdateLaunched() be called (in seconds)</summary>
+		/// how often should UpdateLaunched() be called (in seconds)
 		protected float updateFrequency;
 
 		protected float castTime;
 		protected float coolDown;
 		protected float reuse;
 
-		/// <summary>if the skill requires confirmation before casting (second click)</summary>
+		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
+
+		/// not used currently
 		public bool MovementBreaksConfirmation { get; protected set; }
 
+		/// the time when the skill was last used
 		protected int LastUsed { get; private set; }
 
+		/// represents the vector that usually points from the player_object to the mouse direction
 		protected Vector3 mouseDirection;
+
+		/// represents usually the arrow object that shows the direction the skill will be fired to
 		protected GameObject confirmObject;
 
-		public ActiveSkill(string name, int id) : base(name, id)
+		/// represents the main particleSystem for 
+		protected GameObject particleSystem;
+
+		public ActiveSkill(string name, int id)
+			: base(name, id)
 		{
 			active = false;
 			state = 0;
@@ -48,7 +61,7 @@ namespace Assets.scripts.Skills
 			reuse = 5;
 			updateFrequency = 0.1f;
 			requireConfirm = false;
-			MovementBreaksConfirmation = false;
+			MovementBreaksConfirmation = true;
 		}
 
 		/// returning false will make the skill not start
@@ -79,7 +92,7 @@ namespace Assets.scripts.Skills
 		public virtual void OnBeingConfirmed()
 		{
 			if (confirmObject == null)
-				confirmObject = GetPlayerData().CreateSkillResource("TemplateSkill", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+				confirmObject = GetPlayerData().CreateSkillResource("Skill Template", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
 
 			UpdateMouseDirection(confirmObject.transform);
 			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
@@ -127,7 +140,7 @@ namespace Assets.scripts.Skills
 				int time = Environment.TickCount;
 
 				// the reuse time has passed
-				if (LastUsed + (reuse*1000) < time)
+				if (LastUsed + (reuse * 1000) < time)
 				{
 					return true;
 				}
@@ -153,7 +166,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override bool IsBeingCasted()
 		{
-			return state == SKILL_CASTING;
+			return state == SkillState.SKILL_CASTING;
 		}
 
 		/// <summary>
@@ -161,7 +174,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override bool IsBeingConfirmed()
 		{
-			return state == SKILL_CONFIRMING;
+			return state == SkillState.SKILL_CONFIRMING;
 		}
 
 		/// <summary>
@@ -181,21 +194,21 @@ namespace Assets.scripts.Skills
 			if (requireConfirm && isPlayer)
 			{
 				// switch this skill from idle to being confirmed
-				if (state == SKILL_IDLE)
+				if (state == SkillState.SKILL_IDLE)
 				{
 					// the player has another skill waiting to be confirmed -> set this skil back to idle
 					if (GetPlayerData().ActiveConfirmationSkill != null &&
-					    GetPlayerData().ActiveConfirmationSkill.state == SKILL_CONFIRMING)
+						GetPlayerData().ActiveConfirmationSkill.state == SkillState.SKILL_CONFIRMING)
 					{
 						GetPlayerData().ActiveConfirmationSkill.AbortCast();
 					}
 
 					GetPlayerData().ActiveConfirmationSkill = this;
-					state = SKILL_CONFIRMING;
+					state = SkillState.SKILL_CONFIRMING;
 					return;
 				}
 
-				if (state == SKILL_CONFIRMING && GetPlayerData().ActiveConfirmationSkill.Equals(this))
+				if (state == SkillState.SKILL_CONFIRMING && GetPlayerData().ActiveConfirmationSkill.Equals(this))
 				{
 					start = true;
 					GetPlayerData().ActiveConfirmationSkill = null;
@@ -217,7 +230,7 @@ namespace Assets.scripts.Skills
 
 			active = true;
 
-            Owner.Status.ActiveSkills.Add(this);
+			Owner.Status.ActiveSkills.Add(this);
 
 			Owner.NotifyCastingModeChange();
 
@@ -229,7 +242,7 @@ namespace Assets.scripts.Skills
 		{
 			active = false;
 
-            Owner.Status.ActiveSkills.Remove(this);
+			Owner.Status.ActiveSkills.Remove(this);
 
 			Owner.NotifyCastingModeChange();
 
@@ -239,11 +252,11 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
-			if (state == SKILL_CONFIRMING)
+			if (state == SkillState.SKILL_CONFIRMING)
 			{
 				GetPlayerData().ActiveConfirmationSkill = null;
 				CancelConfirmation();
-				state = SKILL_IDLE;
+				state = SkillState.SKILL_IDLE;
 				return;
 			}
 
@@ -254,7 +267,7 @@ namespace Assets.scripts.Skills
 
 		protected virtual IEnumerator SkillTask()
 		{
-			state = SKILL_CASTING;
+			state = SkillState.SKILL_CASTING;
 
 			CancelConfirmation();
 
@@ -275,7 +288,7 @@ namespace Assets.scripts.Skills
 			}
 
 			// nastavit stav - active
-			state = SKILL_ACTIVE;
+			state = SkillState.SKILL_ACTIVE;
 
 			OnLaunch();
 
@@ -289,7 +302,7 @@ namespace Assets.scripts.Skills
 			}
 
 			// nastavit stav - idle
-			state = SKILL_IDLE;
+			state = SkillState.SKILL_IDLE;
 
 			OnFinish();
 
@@ -315,7 +328,7 @@ namespace Assets.scripts.Skills
 		protected void AddMonoReceiver(GameObject obj)
 		{
 			UpdateSender us = obj.GetComponent<UpdateSender>();
-			
+
 			if (us == null)
 			{
 				Debug.LogError("a projectile doesnt have UpdateSender " + Name + "; adding it automatically");
@@ -326,26 +339,146 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
+		/// Loads a prefab template from resources folder (does not instantiate it)
+		/// </summary>
+		protected GameObject LoadSkillResource(string particleObjectName)
+		{
+			GameObject o = GetOwnerData().LoadResource("skill", Name, particleObjectName);
+
+			return o;
+		}
+
+		/// <summary>
+		/// Instantiates GameObject and optionally makes it a child (moves with the player)
+		/// </summary>
+		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetBody().transform.position);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		/// <summary>
+		/// Instantiates GameObject into defined position and optionally makes it a child (moves with the player)
+		/// </summary>
+		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		/// <summary>
+		/// Creates an object in skill's folder and places it into Shooting position
+		/// </summary>
+		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, spawnPosition.position);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, spawnPosition.position);
+
+			if (addMonoReceiver)
+				AddMonoReceiver(o);
+
+			return o;
+		}
+
+		/// <summary>
 		/// Clones a prefab object which contains Particle Effect, adds it to the player and returns it.
 		/// The particle effect prefab must be within skill's folder in Resources/prefabs/skill 
 		/// </summary>
 		/// <param name="folderName">the folder in Resources/prefabs/skill to look into</param>
 		/// <param name="particleObjectName">name of the .prefab object</param>
 		/// <param name="makeChild">The particle effect position will move with player</param>
+		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
+			return o;
+		}
+
+		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+			return o;
+		}
+
 		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
 		{
-			GameObject o = GetOwnerData().CreateSkillParticleEffect(folderName, particleObjectName, makeChild);
-
-			if (o == null)
-				throw new NullReferenceException("effect " + folderName + ", " + particleObjectName + " not found");
-
+			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
+		}
+
+		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, spawnPosition);
+			return o;
+		}
+
+		/// <summary>
+		/// Updates the mouseDirection from GetOwnerData().Body
+		/// </summary>
+		protected void UpdateMouseDirection()
+		{
+			mouseDirection = Utils.GetDirectionVectorToMousePos(GetOwnerData().GetBody().transform);
+		}
+
+		/// <summary>
+		/// Updates the mouseDirection from the provided transform
+		/// </summary>
+		/// <param name="from"></param>
+		protected void UpdateMouseDirection(Transform from)
+		{
+			mouseDirection = Utils.GetDirectionVectorToMousePos(from);
+		}
+
+		/// <summary>
+		/// Rotates the player data towards mouse
+		/// Does anything only if owner is a player
+		/// </summary>
+		protected void RotatePlayerTowardsMouse()
+		{
+			if(GetPlayerData() != null)
+				GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 		}
 
 		/// <summary>
 		/// Starts or unpauses obj's particle system
 		/// </summary>
-		protected void StartParticleEffect (GameObject obj)
+		protected void StartParticleEffect(GameObject obj)
 		{
 			try
 			{
@@ -381,7 +514,7 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
-		/// Deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
+		/// Deletes the particle effect (change is permanent! - cannot be restarted, need to call CreateParticleEffect() again
 		/// </summary>
 		protected void DeleteParticleEffect(GameObject obj)
 		{
@@ -396,14 +529,35 @@ namespace Assets.scripts.Skills
 			Object.Destroy(obj, delay);
 		}
 
-		protected void UpdateMouseDirection(Transform from)
+		/// <summary>
+		/// turns off colliders and visible graphics for this object 
+		/// </summary>
+		protected void DisableProjectile(GameObject o)
 		{
-			mouseDirection = Utils.GetDirectionVectorToMousePos(from);
+			o.GetComponent<SpriteRenderer>().enabled = false;
+			o.GetComponent<Collider2D>().enabled = false;
 		}
 
-		protected void RotatePlayerTowardsMouse()
+		protected void CreateCastingEffect(bool start)
 		{
-			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+			particleSystem = CreateParticleEffect("CastingEffect", true);
+			if(start)
+				StartParticleEffect(particleSystem);
+		}
+
+		protected void CreateCastingEffect(bool start, string folderName)
+		{
+			particleSystem = CreateParticleEffect(folderName, "CastingEffect", true);
+			if (start)
+				StartParticleEffect(particleSystem);
+		}
+
+		protected void DeleteCastingEffect()
+		{
+			if (particleSystem != null)
+			{
+				DeleteParticleEffect(particleSystem);
+			}
 		}
 	}
 }
