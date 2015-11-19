@@ -11,7 +11,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class SkillAreaExplode : ActiveSkill
 	{
 		private GameObject activeProjectile;
-		private GameObject particleSystemObject;
 		private int launchStart;
 		private bool exploded;
 
@@ -23,7 +22,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			reuse = 5f;
 			requireConfirm = true;
-			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -38,21 +36,20 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			RotatePlayerTowardsMouse(); // TODO add everywhere
+			RotatePlayerTowardsMouse();
 
-			particleSystemObject = CreateParticleEffect("SkillAreaExplode", "CastingEffect", true);
-			StartParticleEffect(particleSystemObject);
+			CreateCastingEffect(true);
 
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			DeleteParticleEffect(particleSystemObject);
+			DeleteCastingEffect();
 
 			exploded = false;
 
-			activeProjectile = GetPlayerData().CreateProjectile("SkillAreaExplode", "projectile_blacktest_i00");
+			activeProjectile = CreateSkillProjectile("projectile_blacktest_i00", true);
 
 			if (activeProjectile != null)
 			{
@@ -60,8 +57,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 				rb.velocity = (GetOwnerData().GetForwardVector(0) * 5);
 
 				Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-				AddMonoReceiver(activeProjectile);
 
 				Object.Destroy(activeProjectile, 5f);
 			}
@@ -106,7 +101,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			exploded = true;
 
-			GameObject explosion = GetOwnerData().CreateSkillResource("SkillAreaExplode", "Explosion", false, projectile.transform.position);
+			GameObject explosion = CreateParticleEffect("Explosion", false, projectile.transform.position);
 
 			explosion.GetComponent<ParticleSystem>().Play();
 
@@ -119,8 +114,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 				ApplyEffects(Owner, c.gameObject);
 			}
 
-			projectile.GetComponent<SpriteRenderer>().enabled = false;
-			projectile.GetComponent<Collider2D>().enabled = false;
+			DisableProjectile(projectile);
+
 			Object.Destroy(projectile, 2f);
 			Object.Destroy(explosion, 2f);
 		}

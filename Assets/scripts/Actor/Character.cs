@@ -64,9 +64,6 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			// start the reuse timer
-			skill.SetReuseTimer();
-
 			skill.Start();
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
@@ -10,9 +11,12 @@ namespace Assets.scripts.Actor
 {
 	public class Monster : Character
 	{
-		public Monster(string name, EnemyData dataObject) : base(name)
+		public MonsterTemplate Template { get; set; }
+		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
 		{
 			Data = dataObject;
+
+			Template = template;
 		}
 
 		public new EnemyData GetData()
@@ -22,9 +26,10 @@ namespace Assets.scripts.Actor
 
 		protected override CharStatus InitStatus()
 		{
-			CharStatus st = new MonsterStatus(false, 20, 20, 20);
+			CharStatus st = new MonsterStatus(false, Template.MaxHp, Template.MaxMp, Template); //TODO make a template for this
 			GetData().SetVisibleHp(st.Hp);
-			GetData().SetVisibleMaxHp(st.MaxHp); //TODO convert to setter
+			GetData().SetVisibleMaxHp(st.MaxHp);
+			GetData().SetMoveSpeed(st.MoveSpeed);
 
 			return st;
 		}

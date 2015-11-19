@@ -71,13 +71,13 @@ namespace Assets.scripts.Skills.Base
 			skill = new SkillTemplate("Skill Template", 1);
 			AddSkill(skill);
 
-			skill = new SkillTestProjectile("Skill Test Projectile", 2);
+			skill = new SkillTestProjectile("Test Projectile", 2);
 			AddSkill(skill);
 
-			skill = new SkillTestProjectileTriple("Skill Test Projectile Triple", 3);
+			skill = new SkillTestProjectileTriple("Test Projectile Triple", 3);
 			AddSkill(skill);
 
-			skill = new SkillTestProjectileAllAround("Skill Test Projectile Aura", 4);
+			skill = new SkillTestProjectileAllAround("Test Projectile Aura", 4);
 			AddSkill(skill);
 
 			skill = new JumpShort("Short Jump", 5);
@@ -86,7 +86,7 @@ namespace Assets.scripts.Skills.Base
 			skill = new ChainSkill("Chain Skill", 6);
 			AddSkill(skill);
 
-			skill = new SkillAreaExplode("Bomb skill", 7);
+			skill = new SkillAreaExplode("Bomb Skill", 7);
 			AddSkill(skill);
 		}
 	}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.PlayerClasses;
 
 namespace Assets.scripts.Actor.Status
 {
@@ -10,9 +11,11 @@ namespace Assets.scripts.Actor.Status
 	*/
 	public class PlayerStatus : CharStatus
 	{
-		public PlayerStatus(bool isDead, int hp, int mp, int maxHp) : base(isDead, hp, mp, maxHp)
-		{
+		private ClassTemplate template;
 
+		public PlayerStatus(bool isDead, int hp, int mp, ClassTemplate template) : base(isDead, hp, mp, template.MaxHp, template.MaxMp, template.MaxSpeed)
+		{
+			this.template = template;
 		}
 	}
 }

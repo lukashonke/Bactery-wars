@@ -11,7 +11,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 0.5f;
 			coolDown = 0.5f;
 			requireConfirm = true;
-			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -23,16 +22,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (confirmObject == null)
 			{
-				confirmObject = GetPlayerData().CreateSkillResource("SkillTestProjectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				confirmObject = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
 
 				UpdateMouseDirection(confirmObject.transform);
 				confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
 
-				GameObject arrow2 = GetPlayerData().CreateSkillResource("SkillTestProjectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				GameObject arrow2 = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
 				arrow2.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, -15));
 				arrow2.transform.parent = confirmObject.transform;
 
-				GameObject arrow3 = GetPlayerData().CreateSkillResource("SkillTestProjectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				GameObject arrow3 = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
 				arrow3.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, 15));
 				arrow3.transform.parent = confirmObject.transform;
 			}
@@ -43,8 +42,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			if (particleSystemObject != null)
-				Object.Destroy(particleSystemObject);
+			DeleteCastingEffect();
 
 			GameObject activeProjectile;
 
@@ -54,7 +52,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			int angle = -15;
 			for (int i = 0; i < 3; i++)
 			{
-				activeProjectile = GetPlayerData().CreateProjectile("SkillTestProjectile", "projectile_blacktest_i00");
+				activeProjectile = CreateSkillProjectile("Test Projectile", "projectile_blacktest_i00", true);
 
 				if (activeProjectile != null)
 				{
@@ -63,8 +61,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 					angle += 15;
 
 					Debug.DrawLine(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-					AddMonoReceiver(activeProjectile);
 
 					Object.Destroy(activeProjectile, 5f);
 				}

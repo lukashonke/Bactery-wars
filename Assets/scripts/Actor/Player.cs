@@ -61,9 +61,10 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		protected override CharStatus InitStatus()
 		{
-			CharStatus st = new PlayerStatus(false, 10, 10, 10); //TODO
+			CharStatus st = new PlayerStatus(false, Template.MaxHp, Template.MaxMp, Template); //TODO
 			GetData().SetVisibleHp(st.Hp);
-			GetData().SetVisibleMaxHp(st.MaxHp); //TODO convert to setter
+			GetData().SetVisibleMaxHp(st.MaxHp);
+			GetData().SetMoveSpeed(st.MoveSpeed);
 
 			return st;
 		}

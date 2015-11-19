@@ -8,7 +8,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class SkillTestProjectile : ActiveSkill
 	{
 		private GameObject activeProjectile;
-		protected GameObject particleSystemObject;
 
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
@@ -16,7 +15,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 0;
 			coolDown = 0;
 			requireConfirm = true;
-			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -31,28 +29,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+			RotatePlayerTowardsMouse();
 
-			particleSystemObject = CreateParticleEffect("SkillTestProjectile", "CastingEffect", true);
-			StartParticleEffect(particleSystemObject);
+			CreateCastingEffect(true, "Test Projectile");
 
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			DeleteParticleEffect(particleSystemObject);
+			DeleteCastingEffect();
 
-			activeProjectile = GetPlayerData().CreateProjectile(this.GetType().Name, "projectile_blacktest_i00");
+			activeProjectile = CreateSkillProjectile("projectile_blacktest_i00", true);
 
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
 				rb.velocity = (GetOwnerData().GetForwardVector(0) * 15);
 
-				Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-				AddMonoReceiver(activeProjectile);
+				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 
 				Object.Destroy(activeProjectile, 5f);
 			}

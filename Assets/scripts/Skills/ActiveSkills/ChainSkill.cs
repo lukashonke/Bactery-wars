@@ -9,19 +9,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class ChainSkill : ActiveSkill
 	{
-		protected GameObject particleSystemObject;
+		protected GameObject ray;
 
 		private int lastDmg = 0;
 
-		public ChainSkill(string name, int id)
-			: base(name, id)
+		public ChainSkill(string name, int id) : base(name, id)
 		{
 			castTime = 0f;
-			coolDown = 3f; // lasts 5s
+			coolDown = 3f;
 			reuse = 5f;
 			updateFrequency = 0.01f;
 			requireConfirm = true;
-			MovementBreaksConfirmation = true;
 		}
 
 		public override Skill Instantiate()
@@ -45,26 +43,26 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 
-			particleSystemObject = GetOwnerData().CreateSkillResource("ChainSkill", "ray", true, GetOwnerData().GetShootingPosition().transform.position);
-			StartParticleEffect(particleSystemObject);
+			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
+			StartParticleEffect(ray);
 
-			UpdateMouseDirection(particleSystemObject.transform);
-			particleSystemObject.transform.rotation = Utils.GetRotationToMouse(particleSystemObject.transform);
+			UpdateMouseDirection(ray.transform);
+			ray.transform.rotation = Utils.GetRotationToMouse(ray.transform);
 		}
 
 		public override void UpdateLaunched()
 		{
-			if (particleSystemObject != null)
+			if (ray != null)
 			{
-				GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+				RotatePlayerTowardsMouse();
 
-				UpdateMouseDirection(particleSystemObject.transform);
-				particleSystemObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
-
-				RaycastHit2D[] hits = Physics2D.RaycastAll(particleSystemObject.transform.position, mouseDirection, 20);
+				UpdateMouseDirection(ray.transform);
+				ray.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
 
 				if (lastDmg + 250 < System.Environment.TickCount)
 				{
+					RaycastHit2D[] hits = Physics2D.RaycastAll(ray.transform.position, mouseDirection, 20);
+
 					foreach (RaycastHit2D hit in hits)
 					{
 						// dont hit yourself
@@ -86,7 +84,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnFinish()
 		{
-			DeleteParticleEffect(particleSystemObject);
+			DeleteParticleEffect(ray);
 		}
 
 		public override void MonoUpdate(GameObject gameObject)
