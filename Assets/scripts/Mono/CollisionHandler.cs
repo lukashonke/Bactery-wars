@@ -14,22 +14,7 @@ namespace Assets.scripts.Mono
 		// Use this for initialization
 		public void Start ()
 		{
-			// najit script v materske tride ktery implementuje ICollidable
-			GameObject parent = transform.parent.gameObject;
-			if (parent == null)
-			{
-				Debug.LogError("cant find parent object for ColisionHandler's object for " + gameObject.name + " !!! will throw errors later on");
-				return;
-			}
-
-			foreach(MonoBehaviour m in GetComponentsInParent<MonoBehaviour>())
-			{
-				if (m is ICollidable)
-				{
-					data = (ICollidable) m;
-					break;
-				}
-			}
+			data = GetComponent<ICollidable>();
 
 			if (data == null)
 				Debug.LogError("cant find ICollidable Mono script in parent object for " + gameObject.name);

@@ -7,6 +7,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
+using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Mono
@@ -20,7 +21,7 @@ namespace Assets.scripts.Mono
 	/// "Shooting position" pro reprezentaci pozice ze ktere vychazeji projektily a efekty
 	/// "ParticleSystems" pro efekty
 	/// </summary>
-	public abstract class AbstractData : MonoBehaviour, ICollidable
+	public abstract class AbstractData : NetworkBehaviour, ICollidable
 	{
 		public bool USE_VELOCITY_MOVEMENT;
 
@@ -84,12 +85,7 @@ namespace Assets.scripts.Mono
 			// loads all the child objects
 			AddChildObjects(transform);
 
-			body = GetChildByName("Body");
-
-			if (body == null)
-			{
-				throw new NullReferenceException("Object " + gameObject.name + " has no body!");
-			}
+			body = gameObject;
 
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
@@ -158,7 +154,7 @@ namespace Assets.scripts.Mono
 
 				if (rotate)
 				{
-					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime*rotateSpeed), false);
 				}
 
 				if (move || rotate)
@@ -373,7 +369,10 @@ namespace Assets.scripts.Mono
 
 		public void SetRotation(Quaternion newRot, bool updateHeading)
 		{
-			body.transform.rotation = newRot;
+			if (USE_VELOCITY_MOVEMENT)
+				rb.transform.rotation = newRot;
+			else
+				body.transform.rotation = newRot;
 
 			if (updateHeading)
 				UpdateHeading();

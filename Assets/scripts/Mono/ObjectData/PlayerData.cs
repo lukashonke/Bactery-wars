@@ -3,6 +3,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono.ObjectData
 {
