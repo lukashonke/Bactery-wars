@@ -22,9 +22,18 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			base.Start();
 
+			if (isServer) // server assigns the team
+				team = Random.Range(0, 100);
+
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 
-            Debug.Log("Registering new data for player " + player.Name);
+			Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public void Awake()
+		{
+			Debug.Log("loading prefabs");
+			ClientScene.RegisterPrefab(LoadResource("skill", "Test Projectile", "projectile_blacktest_i00"));
 		}
 
 		public override void Update()

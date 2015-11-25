@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -104,6 +105,11 @@ namespace Assets.scripts.Skills
 				Object.Destroy(confirmObject);
 		}
 
+		public override AbstractServerData CreateServerData(GameObject owner)
+		{
+			return null;
+		}
+
 		public virtual void MonoStart(GameObject gameObject) { }
 		public virtual void MonoDestroy(GameObject gameObject) { }
 
@@ -178,7 +184,7 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
-		/// resets the reuse timer so that the owner of the skill needs to wait before using the skill again
+		/// resets the reuse timer so that the ownerObject of the skill needs to wait before using the skill again
 		/// </summary>
 		public override void SetReuseTimer()
 		{
@@ -294,6 +300,7 @@ namespace Assets.scripts.Skills
 			state = SkillState.SKILL_ACTIVE;
 
 			OnLaunch();
+			GetOwnerData().CallSkillOnServer(this, GetOwnerData().GetBody().transform.position, GetOwnerData().GetForwardVector());
 
 			float coolDown = this.coolDown;
 
@@ -377,14 +384,20 @@ namespace Assets.scripts.Skills
 			return o;
 		}
 
+		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
+		{
+			return CreateSkillProjectile(projectileObjectName, addMonoReceiver, (string) null);
+		}
+
 		/// <summary>
 		/// Creates an object in skill's folder and places it into Shooting position
 		/// </summary>
-		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
+		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, string objName)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position, true, objName);
 
-			if (addMonoReceiver)
+			// o will be null
+			if (o != null && addMonoReceiver)
 				AddMonoReceiver(o);
 
 			return o;
@@ -470,7 +483,7 @@ namespace Assets.scripts.Skills
 
 		/// <summary>
 		/// Rotates the player data towards mouse
-		/// Does anything only if owner is a player
+		/// Does anything only if ownerObject is a player
 		/// </summary>
 		protected void RotatePlayerTowardsMouse()
 		{

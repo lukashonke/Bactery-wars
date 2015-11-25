@@ -2,6 +2,7 @@
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -66,7 +67,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target)
+		public void ApplyEffects(Character source, GameObject target)
 		{
 			SkillEffect[] efs = CreateEffects();
 
@@ -85,7 +86,7 @@ namespace Assets.scripts.Skills
 		}
 
 		/// <summary>
-		/// works only if the owner is a Player
+		/// works only if the ownerObject is a Player
 		/// </summary>
 		public PlayerData GetPlayerData()
 		{
@@ -111,5 +112,7 @@ namespace Assets.scripts.Skills
 		public abstract void Start();
 		public abstract void AbortCast();
 		public abstract void End();
+
+		public abstract AbstractServerData CreateServerData(GameObject owner);
 	}
 }

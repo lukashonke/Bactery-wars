@@ -4,12 +4,19 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Base;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono
 {
-	public class UpdateSender : MonoBehaviour
+	public class UpdateSender : NetworkBehaviour
 	{
 		public IMonoReceiver target;
+		public bool handled;
+
+		void Awake()
+		{
+			handled = false;
+		}
 
 		void Start()
 		{

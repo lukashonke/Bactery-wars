@@ -26,8 +26,6 @@ namespace Assets.scripts.Actor
 
 		public AbstractData Data { get; set; }
 
-		public int Team { get; set; }
-
 		protected Character(string name) : base(name)
 		{
 			
@@ -138,7 +136,7 @@ namespace Assets.scripts.Actor
 
 		public bool CanAttack(Character targetCh)
 		{
-			return Team != targetCh.Team;
+			return GetData().team != targetCh.GetData().team;
 		}
 	}
 }

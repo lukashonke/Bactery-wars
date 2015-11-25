@@ -1,13 +1,16 @@
-﻿using Assets.scripts.Base;
+﻿using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectile : ActiveSkill
 	{
-		private GameObject activeProjectile;
+		public GameObject activeProjectile;
 
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
@@ -27,6 +30,60 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillEffect[] {new EffectDamage(10, 2)};
 		}
 
+		public override AbstractServerData CreateServerData(GameObject owner)
+		{
+			return new ServerData(owner, this);
+		}
+
+		private class ServerData : AbstractServerData
+		{
+			private GameObject activeProjectile;
+
+			public ServerData(GameObject o, ActiveSkill template) : base(o, template)
+			{
+			}
+
+			public override void LaunchOnServer(Vector3 startPos, Vector3 heading)
+			{
+				activeProjectile = CreateSkillResource("Test Projectile", "projectile_blacktest_i00", false, startPos, Quaternion.identity);
+
+				AddMonoReceiver(activeProjectile);
+
+				if (activeProjectile != null)
+				{
+					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+					rb.velocity = (heading * 15);
+
+					Object.Destroy(activeProjectile, 5f);
+
+					NetworkServer.Spawn(activeProjectile);
+				}
+			}
+
+			public override void UpdatePlayerHeading(Vector3 heading)
+			{
+			}
+
+			public override void UpdatePlayerPosition(Vector3 position)
+			{
+			}
+
+			public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
+			{
+				template.ApplyEffects(GetOwner(), coll.gameObject);
+
+				Character targetCh = GetCharacter(coll.gameObject);
+				if (targetCh == null)
+					return;
+
+				if (GetOwner().CanAttack(targetCh))
+				{
+					ProjectileBlackTestData pd = gameObject.GetComponent<ProjectileBlackTestData>();
+					pd.collapse();
+				}
+			}
+		}
+
 		public override bool OnCastStart()
 		{
 			RotatePlayerTowardsMouse();
@@ -39,18 +96,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			DeleteCastingEffect();
+		}
 
-			activeProjectile = CreateSkillProjectile("projectile_blacktest_i00", true);
-
-			if (activeProjectile != null)
-			{
-				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector(0) * 15);
-
-				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-				Object.Destroy(activeProjectile, 5f);
-			}
+		public void ServerLaunchSkill(Vector3 startPos, Vector3 heading)
+		{
+			
 		}
 
 		public override void OnFinish()
@@ -73,8 +123,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
-			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
 		}
 
 		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)

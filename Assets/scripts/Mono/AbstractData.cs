@@ -6,6 +6,8 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
+using Assets.scripts.Skills.ActiveSkills;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 using UnityEngine.Networking;
 using Object = UnityEngine.Object;
@@ -41,6 +43,9 @@ namespace Assets.scripts.Mono
 		/// <summary>GameObject reprezentujici relativni pozici ze ktere vychazeji strely a nektere efekty</summary>
 		public GameObject shootingPosition;
 
+		[SyncVar]
+		public int team;
+
 		// zastupne promenne objektu
 		public int visibleMaxHp;
 		public int visibleHp;
@@ -75,9 +80,12 @@ namespace Assets.scripts.Mono
 
 		public bool IsCasting { get; set; }
 
+		public List<string> NetworkObjectHooks { get; private set; }
+
 		protected AbstractData()
 		{
 			childs = new Dictionary<string, GameObject>();
+			NetworkObjectHooks = new List<string>();
 		}
 
 		public void Start()
@@ -106,6 +114,27 @@ namespace Assets.scripts.Mono
 			HasTargetToMoveTo = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
+		}
+
+		public virtual void CallSkillOnServer(ActiveSkill skill, Vector3 startPos, Vector3 head)
+		{
+			CmdCallSkillLaunch(GetComponent<NetworkIdentity>().netId, skill.Id, startPos, head);
+		}
+
+		[Command]
+		public void CmdCallSkillLaunch(NetworkInstanceId netId, int skillId, Vector3 startPos, Vector3 head)
+		{
+			GameObject owner;
+			if (isClient)
+				owner = ClientScene.FindLocalObject(netId);
+			else
+				owner = NetworkServer.FindLocalObject(netId);
+
+			ActiveSkill sk = (ActiveSkill) SkillTable.Instance.GetSkill(skillId);
+			//ActiveSkill sk = (ActiveSkill) GetOwner().Skills.GetSkill(0); // funguje jen u hosta co sdili data se serverem
+
+			AbstractServerData data = sk.CreateServerData(owner);
+			data.LaunchOnServer(startPos, head);
 		}
 
 		public virtual void Update()
@@ -231,26 +260,67 @@ namespace Assets.scripts.Mono
 			o.transform.parent = GetBody().transform;
 		}
 
+		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 spawnPosition)
+		{
+			return CreateSkillResource(resourceFolderName, fileName, makeChild, spawnPosition, false, null);
+		}
+
 		/// <summary>
 		/// Instantiates an object with from: Resources/Prefabs/skill/[resourceFolderName]/[fileName].prefab 
 		/// Places it into [spawnPosition]
 		/// [makeChild] will fix the position to the characters body
 		/// </summary>
-		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 spawnPosition)
+		public GameObject CreateSkillResource(string resourceFolderName, string fileName, bool makeChild, Vector3 spawnPosition, bool network, String objName)
 		{
-			GameObject go = LoadResource("skill", resourceFolderName, fileName);
+			GameObject newObject = null;
 
-			GameObject newObject = Instantiate(go, spawnPosition, GetBody().transform.rotation) as GameObject;
-
-			if (newObject != null)
+            if (network)
 			{
-				if (makeChild)
-					SetChild(newObject);
+				CmdSpawnSkillResource(resourceFolderName, fileName, spawnPosition, objName);
+			}
+			else
+			{
+				GameObject go = LoadResource("skill", resourceFolderName, fileName);
 
-				newObject.tag = gameObject.tag;
+				newObject = Instantiate(go, spawnPosition, GetBody().transform.rotation) as GameObject;
+
+				if (newObject != null)
+				{
+					if (makeChild)
+						SetChild(newObject);
+
+					newObject.tag = gameObject.tag;
+				}
 			}
 
 			return newObject;
+		}
+
+		[Command]
+		public void CmdSpawnSkillResource(string resourceFolderName, string fileName, Vector3 spawnPosition, string objName)
+		{
+			GameObject go = LoadResource("skill", resourceFolderName, fileName);
+			GameObject newObject = Instantiate(go, spawnPosition, GetBody().transform.rotation) as GameObject;
+			
+			if (newObject != null)
+			{
+				newObject.tag = gameObject.tag;
+			}
+
+			NetworkServer.SpawnWithClientAuthority(newObject, connectionToClient);
+        }
+
+		[ClientRpc]
+		public void RpcSetName(NetworkInstanceId id, string name)
+		{
+			if (ClientScene.objects.ContainsKey(id))
+			{
+				NetworkIdentity nid;
+				if (ClientScene.objects.TryGetValue(id, out nid))
+				{
+					nid.gameObject.name = name;
+				}
+			}
 		}
 
 		public void JumpForward(float dist, float jumpSpeed)

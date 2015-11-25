@@ -67,25 +67,7 @@ namespace Assets.scripts
 
 			player.Init();
 
-			//TODO improve this
-			if (data.tag == "Team1")
-			{
-				player.Team = 1;
-			}
-			else if (data.tag == "Team2")
-			{
-				player.Team = 2;
-			}
-			else if (data.tag == "Team3")
-			{
-				player.Team = 3;
-			}
-			else if (data.tag == "Team4")
-			{
-				player.Team = 4;
-			}
-
-			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.ClassId);
+			Debug.Log("Player " + player.Name + " of team " + data.team + " has template " + player.Template.ClassId);
 
 			player.InitTemplate();
 
