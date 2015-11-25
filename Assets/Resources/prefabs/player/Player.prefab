@@ -31,8 +31,6 @@ GameObject:
   - 114: {fileID: 11453724}
   - 114: {fileID: 11466548}
   - 114: {fileID: 11456146}
-  - 114: {fileID: 11439894}
-  - 114: {fileID: 11490946}
   m_Layer: 0
   m_Name: Player
   m_TagString: Team1
@@ -336,38 +334,6 @@ MonoBehaviour:
   maxHp: 0
   percent: 0
   currentPercent: 0
---- !u!114 &11439894
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 119
-    i1: 164
-    i2: 73
-    i3: 153
-    i4: 254
-    i5: 39
-    i6: 108
-    i7: 36
-    i8: 59
-    i9: 80
-    i10: 24
-    i11: 182
-    i12: 137
-    i13: 158
-    i14: 178
-    i15: 104
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 1
 --- !u!114 &11451382
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -438,26 +404,6 @@ MonoBehaviour:
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
---- !u!114 &11490946
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1768714887, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TransformSyncMode: 2
-  m_SendInterval: .0714285746
-  m_SyncRotationAxis: 3
-  m_RotationSyncCompression: 0
-  m_SyncSpin: 0
-  m_MovementTheshold: .00100000005
-  m_SnapThreshold: 5
-  m_InterpolateRotation: 1
-  m_InterpolateMovement: 1
 --- !u!212 &21253332
 SpriteRenderer:
   m_ObjectHideFlags: 1

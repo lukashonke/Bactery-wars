@@ -102,6 +102,9 @@ namespace Assets.scripts.Skills
 		{
 			if (confirmObject != null)
 				Object.Destroy(confirmObject);
+
+			if(GetPlayerData() != null && GetPlayerData().TargettingActive)
+				StopPlayerTargetting();
 		}
 
 		public virtual void MonoStart(GameObject gameObject) { }
@@ -570,6 +573,21 @@ namespace Assets.scripts.Skills
 			{
 				DeleteParticleEffect(particleSystem);
 			}
+		}
+
+		protected void StartPlayerTargetting()
+		{
+			GetPlayerData().TargettingActive = true;
+		}
+
+		protected void StopPlayerTargetting()
+		{
+			GetPlayerData().TargettingActive = false;
+		}
+
+		protected GameObject GetPlayerMouseHoverTarget()
+		{
+			return GetPlayerData().HoverTarget;
 		}
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Assets.scripts.Mono
 {
-	public sealed class PlayerUI : NetworkBehaviour
+	public sealed class PlayerUI : MonoBehaviour
 	{
 		private bool mouseOverUi = false;
 		public bool MouseOverUI

@@ -18,6 +18,26 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
+		private GameObject hoverTarget;
+		public GameObject HoverTarget
+		{
+			get { return hoverTarget; }
+			set
+			{
+				if (hoverTarget != null)
+				{
+					if (hoverTarget.Equals(value))
+						return;
+
+					HighlightTarget(hoverTarget, false);
+				}
+
+				hoverTarget = value;
+				HighlightTarget(hoverTarget, true);
+			}
+		}
+		public bool TargettingActive { get; set; }
+
 		public new void Start()
 		{
 			base.Start();
@@ -105,6 +125,30 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 
 			targetPositionWorld = newTarget;
+		}
+
+		public void HighlightTarget(GameObject target, bool enable)
+		{
+			if (target == null)
+				return;
+
+			SpriteRenderer sr = target.GetComponent<SpriteRenderer>();
+
+			if (sr == null)
+				return;
+
+			Material mat = sr.material;
+
+			if (enable)
+			{
+				//sr.material.SetColor("_Emission", new Color(0.2f, 0.2f, 0.14f));
+				sr.material.color = Color.red;
+			}
+			else
+			{
+				//sr.material.SetColor("_Emission", Color.black);
+				sr.material.color = Color.white;
+			}
 		}
 
 		public override Character GetOwner()

@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono
 {
-	public class PlayerControls : NetworkBehaviour
+	public class PlayerControls : MonoBehaviour
 	{
 		public GameObject body;
 
@@ -33,7 +33,7 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();
 			ui = GetComponent<PlayerUI>();
-        }
+		}
 
 		private void HandleSkillControls()
 		{
@@ -61,13 +61,35 @@ namespace Assets.scripts.Mono
 			{
 				data.LaunchSkill(5);
 			}
-        }
+
+			if (Input.GetKeyDown(KeyCode.Alpha6))
+			{
+				data.LaunchSkill(6);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha7))
+			{
+				data.LaunchSkill(7);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha8))
+			{
+				data.LaunchSkill(8);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha9))
+			{
+				data.LaunchSkill(9);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha0))
+			{
+				data.LaunchSkill(10);
+			}
+		}
 
 		public void Update()
 		{
-			if (!isLocalPlayer)
-				return;
-
 			// fire TODO delete
 			if (Input.GetKeyDown("space"))
 			{
@@ -83,6 +105,40 @@ namespace Assets.scripts.Mono
 
 			if (!ui.MouseOverUI)
 			{
+				// if targetting active, highlight target objects
+				if (data.TargettingActive)
+				{
+					Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					RaycastHit2D[] hits=  Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
+
+					int layer;
+					Rigidbody2D rb;
+
+					bool target = false;
+
+					foreach (RaycastHit2D hit in hits)
+					{
+						layer = hit.transform.gameObject.layer;
+						// not target projectiles, environment and background
+						if (layer == 11 || layer == 8 || layer == 9)
+							continue;
+
+						rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+
+						if (rb != null)
+						{
+							data.HoverTarget = hit.transform.gameObject;
+							target = true;
+                            break;
+						}
+					}
+
+					if (!target)
+					{
+						data.HoverTarget = null;
+					}
+				}
+
 				if (data.ActiveConfirmationSkill != null)
 				{
 					if (Input.GetMouseButtonDown(0))

@@ -94,7 +94,8 @@ namespace Assets.scripts.Actor
 		/// <param name="c"></param>
 		public override void StopTask(Coroutine c)
 		{
-			GetData().StopCoroutine(c);
+			if(c != null)
+				GetData().StopCoroutine(c);
 		}
 
 		public override void StopTask(IEnumerator t)

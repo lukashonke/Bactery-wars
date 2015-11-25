@@ -21,7 +21,7 @@ namespace Assets.scripts.Mono
 	/// "Shooting position" pro reprezentaci pozice ze ktere vychazeji projektily a efekty
 	/// "ParticleSystems" pro efekty
 	/// </summary>
-	public abstract class AbstractData : NetworkBehaviour, ICollidable
+	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
 		public bool USE_VELOCITY_MOVEMENT;
 
