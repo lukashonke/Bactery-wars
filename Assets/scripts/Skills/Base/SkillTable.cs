@@ -91,6 +91,9 @@ namespace Assets.scripts.Skills.Base
 
 			skill = new MissileProjectile("Missile Projectile", 8);
 			AddSkill(skill);
+
+			skill = new ChainedProjectile("Chained Projectile", 9);
+			AddSkill(skill);
 		}
 	}
 }

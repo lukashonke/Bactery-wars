@@ -118,6 +118,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 
 			ApplyEffects(Owner, other.gameObject);
+			DestroyProjectile(gameObject);
 		}
 
 		public override bool CanMove()

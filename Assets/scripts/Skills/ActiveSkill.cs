@@ -590,5 +590,14 @@ namespace Assets.scripts.Skills
 		{
 			return GetPlayerData().HoverTarget;
 		}
+
+		protected void DestroyProjectile(GameObject proj)
+		{
+			ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
+			if(pd != null)
+				pd.collapse();
+			else
+				DestroyProjectile(proj);
+		}
 	}
 }
