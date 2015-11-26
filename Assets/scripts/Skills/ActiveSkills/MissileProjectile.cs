@@ -8,14 +8,12 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class ChainedProjectile : ActiveSkill
+	public class MissileProjectile : ActiveSkill
 	{
-		protected bool explicitTarget = true;
 		private GameObject targettedPlayer;
-
 		private GameObject activeProjectile;
 
-		public ChainedProjectile(string name, int id) : base(name, id)
+		public MissileProjectile(string name, int id) : base(name, id)
 		{
 			castTime = 1f;
 			reuse = 0;
@@ -25,7 +23,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override Skill Instantiate()
 		{
-			return new ChainedProjectile(Name, Id);
+			return new MissileProjectile(Name, Id);
 		}
 
 		public override SkillEffect[] CreateEffects()
@@ -40,18 +38,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			if (explicitTarget)
+			GameObject target = GetPlayerMouseHoverTarget();
+			if (target == null)
 			{
-				GameObject target = GetPlayerMouseHoverTarget();
-				if (target == null)
-				{
-					AbortCast();
-					return false;
-				}
-
-				targettedPlayer = target;
-				Debug.Log("setting trget to " + targettedPlayer.name);
+				AbortCast();
+				return false;
 			}
+
+			targettedPlayer = target;
+			Debug.Log("setting trget to " + targettedPlayer.name);
 
 			RotatePlayerTowardsMouse();
 			CreateCastingEffect(true);
@@ -63,9 +58,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			if (explicitTarget && targettedPlayer != null)
+			if (targettedPlayer != null)
 			{
-				Debug.Log("casting");
 				activeProjectile = CreateSkillProjectile("projectile_blacktest_i00", true);
 
 				if (activeProjectile != null)
@@ -77,10 +71,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 					Object.Destroy(activeProjectile, 15f);
 				}
-			}
-			else
-			{
-				Debug.Log("null target");
 			}
 		}
 
@@ -128,8 +118,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 
 			ApplyEffects(Owner, other.gameObject);
-
-			// chain here
 		}
 
 		public override bool CanMove()

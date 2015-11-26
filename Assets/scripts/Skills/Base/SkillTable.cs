@@ -89,7 +89,7 @@ namespace Assets.scripts.Skills.Base
 			skill = new SkillAreaExplode("Bomb Skill", 7);
 			AddSkill(skill);
 
-			skill = new ChainedProjectile("Chained Projectile", 8);
+			skill = new MissileProjectile("Missile Projectile", 8);
 			AddSkill(skill);
 		}
 	}

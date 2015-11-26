@@ -583,6 +583,7 @@ namespace Assets.scripts.Skills
 		protected void StopPlayerTargetting()
 		{
 			GetPlayerData().TargettingActive = false;
+			GetPlayerData().HighlightTarget(GetPlayerData().HoverTarget, false);
 		}
 
 		protected GameObject GetPlayerMouseHoverTarget()

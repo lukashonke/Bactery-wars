@@ -36,6 +36,7 @@ namespace Assets.scripts.Mono.ObjectData
 				HighlightTarget(hoverTarget, true);
 			}
 		}
+
 		public bool TargettingActive { get; set; }
 
 		public new void Start()
