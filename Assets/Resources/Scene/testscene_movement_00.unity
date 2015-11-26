@@ -223,7 +223,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -240,7 +240,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -440,7 +440,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -457,7 +457,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -950,7 +950,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -967,7 +967,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -1251,7 +1251,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -1268,7 +1268,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -1694,7 +1694,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -1711,7 +1711,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -2115,7 +2115,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -2132,7 +2132,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -2237,7 +2237,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -2254,7 +2254,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -2330,6 +2330,7 @@ GameObject:
   - 224: {fileID: 988345542}
   - 222: {fileID: 988345544}
   - 114: {fileID: 988345543}
+  - 114: {fileID: 988345545}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -2400,6 +2401,53 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 988345541}
+--- !u!114 &988345545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 988345541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1535264804}
+          m_MethodName: SetMouseOverUi
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1535264804}
+          m_MethodName: SetMouseNotOverUi
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1064541406
 GameObject:
   m_ObjectHideFlags: 0
@@ -3214,7 +3262,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseOverUi
           m_Mode: 1
           m_Arguments:
@@ -3231,7 +3279,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 1535264804}
           m_MethodName: SetMouseNotOverUi
           m_Mode: 1
           m_Arguments:
@@ -3372,6 +3420,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 77a44999fe276c243b5018b6899eb268, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1535264804 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11453724, guid: 77a44999fe276c243b5018b6899eb268,
+    type: 2}
+  m_PrefabInternal: {fileID: 1411184720}
+  m_Script: {fileID: 11500000, guid: 274a268ee6fec2749939f0255a749bcf, type: 3}
 --- !u!1 &1545760600
 GameObject:
   m_ObjectHideFlags: 0
