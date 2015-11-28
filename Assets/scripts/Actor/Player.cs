@@ -46,6 +46,14 @@ namespace Assets.scripts.Actor
 				i++;
 				Debug.Log("adding skill to " + i + ": " + newSkill.Name);
 			}
+
+			if (Template.MeleeSkill != null)
+			{
+				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.Id);
+				newSkill.SetOwner(this);
+
+				MeleeSkill = (ActiveSkill) newSkill;
+			}
 		}
 
 		/// <summary>

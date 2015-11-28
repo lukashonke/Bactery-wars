@@ -43,6 +43,8 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			base.Start();
 
+			TargettingActive = true;
+
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 
             Debug.Log("Registering new data for player " + player.Name);
@@ -106,6 +108,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 			//Debug.Log("Launching skill... " + skill.Name);
 
+			//MovementChanged();
+
 			// cast this skill
 			player.CastSkill(skill);
 		}
@@ -125,7 +129,7 @@ namespace Assets.scripts.Mono.ObjectData
 				ActiveConfirmationSkill.AbortCast();
 			}
 
-			targetPositionWorld = newTarget;
+			SetMovementTarget(newTarget);
 		}
 
 		public void HighlightTarget(GameObject target, bool enable)

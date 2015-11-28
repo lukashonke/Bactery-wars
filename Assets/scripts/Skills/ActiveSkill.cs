@@ -33,8 +33,12 @@ namespace Assets.scripts.Skills
 		protected float coolDown;
 		protected float reuse;
 
+		public float range;
+
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
+
+		protected GameObject initTarget;
 
 		/// not used currently
 		public bool MovementBreaksConfirmation { get; protected set; }
@@ -186,6 +190,12 @@ namespace Assets.scripts.Skills
 		public override void SetReuseTimer()
 		{
 			LastUsed = Environment.TickCount;
+		}
+
+		public void Start(GameObject target)
+		{
+			initTarget = target;
+			Start();
 		}
 
 		public override void Start()
@@ -582,7 +592,7 @@ namespace Assets.scripts.Skills
 
 		protected void StopPlayerTargetting()
 		{
-			GetPlayerData().TargettingActive = false;
+			//GetPlayerData().TargettingActive = false;
 			GetPlayerData().HighlightTarget(GetPlayerData().HoverTarget, false);
 		}
 

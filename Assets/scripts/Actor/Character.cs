@@ -23,6 +23,7 @@ namespace Assets.scripts.Actor
 		/// Skillset characteru
 		/// </summary>
 		public SkillSet Skills { get; set; }
+		public ActiveSkill MeleeSkill { get; set; }
 
 		public AbstractData Data { get; set; }
 
@@ -110,6 +111,11 @@ namespace Assets.scripts.Actor
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public ActiveSkill GetMeleeAttackSkill()
+		{
+			return MeleeSkill;
 		}
 
 		/// <summary>

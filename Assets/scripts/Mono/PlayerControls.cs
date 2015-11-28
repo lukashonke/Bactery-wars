@@ -1,4 +1,5 @@
 ﻿using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Skills;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -123,6 +124,9 @@ namespace Assets.scripts.Mono
 						if (layer == 11 || layer == 8 || layer == 9)
 							continue;
 
+						if (hit.transform.gameObject.Equals(data.GetBody()))
+							continue;
+
 						rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
 
 						if (rb != null)
@@ -156,23 +160,34 @@ namespace Assets.scripts.Mono
 				}
 				else
 				{
-					// change target position according to mouse when clicked
-					if (Input.GetMouseButton(0))
+					if (data.HoverTarget != null)
 					{
-						Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-						newTarget.z = body.transform.position.z;
+						if (Input.GetMouseButtonDown(0))
+						{
+							data.MeleeAttack(data.HoverTarget);
+							Input.ResetInputAxes();
+						}
+					}
+					else
+					{
+						// change target position according to mouse when clicked
+						if (Input.GetMouseButton(0))
+						{
+							Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+							newTarget.z = body.transform.position.z;
 
-						// momentalne nepotrebne
-						//if (Vector3.Distance(body.transform.position, newTarget) > 2)
-						//{
-						data.SetPlayersMoveToTarget(newTarget);
+							// momentalne nepotrebne
+							//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+							//{
+							data.SetPlayersMoveToTarget(newTarget);
 
-						if (currMouseClicker != null)
-							Destroy(currMouseClicker);
+							if (currMouseClicker != null)
+								Destroy(currMouseClicker);
 
-						currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-						data.HasTargetToMoveTo = true;
-						//}
+							currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+							data.HasTargetToMoveTo = true;
+							//}
+						}
 					}
 				}
 			}

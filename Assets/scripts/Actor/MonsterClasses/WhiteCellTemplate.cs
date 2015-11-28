@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
@@ -18,6 +20,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		protected override void AddSkills()
 		{
 			// no skills
+			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(10));
 		}
 	}
 }

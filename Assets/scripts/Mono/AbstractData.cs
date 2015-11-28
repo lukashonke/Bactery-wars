@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -57,6 +58,8 @@ namespace Assets.scripts.Mono
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
+		public bool QueueMelee { get; set; }
+		public GameObject QueueMeleeTarget { get; set; }
 
 		protected bool allowMovePointChange;
 		protected bool forcedVelocity;
@@ -104,6 +107,7 @@ namespace Assets.scripts.Mono
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
+			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
 		}
@@ -175,6 +179,12 @@ namespace Assets.scripts.Mono
 				}
 
 				ResetVelocity();
+
+				if (QueueMelee)
+				{
+					MeleeAttack(QueueMeleeTarget);
+					QueueMelee = false;
+				}
 			}
 
 			GetOwner().OnUpdate();
@@ -255,6 +265,8 @@ namespace Assets.scripts.Mono
 
 		public void JumpForward(float dist, float jumpSpeed)
 		{
+			MovementChanged();
+
 			if (USE_VELOCITY_MOVEMENT)
 			{
 				ForceSetMoveDestinaton(body.transform.position + GetForwardVector() * dist, 0.5f);
@@ -270,8 +282,14 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public void MovementChanged()
+		{
+			if (QueueMelee) QueueMelee = false;
+		}
+
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
 		{
+			MovementChanged();
 			SetRotation(body.transform.position + direction.normalized * dist, true);
 
 			if (USE_VELOCITY_MOVEMENT)
@@ -291,6 +309,7 @@ namespace Assets.scripts.Mono
 
 		public void BreakMovement()
 		{
+			MovementChanged();
 			HasTargetToMoveTo = false;
 		}
 
@@ -304,6 +323,8 @@ namespace Assets.scripts.Mono
 		{
 			if (USE_VELOCITY_MOVEMENT == false)
 				return;
+
+			MovementChanged();
 
 			allowMovePointChange = false;
 			targetPositionWorld = newDest;
@@ -511,6 +532,7 @@ namespace Assets.scripts.Mono
 
 		public void SetMovementTarget(Vector3 newTarget)
 		{
+			MovementChanged();
 			targetPositionWorld = newTarget;
 		}
 
@@ -554,6 +576,56 @@ namespace Assets.scripts.Mono
 		public GameObject GetShootingPosition()
 		{
 			return shootingPosition;
+		}
+
+		private bool meleeAnimationActive;
+
+		public void StartMeleeAnimation()
+		{
+			Debug.Log("start");
+			meleeAnimationActive = true;
+		}
+
+		public void StopMeleeAnimation()
+		{
+			Debug.Log("stop");
+			meleeAnimationActive = false;
+		}
+
+		public bool IsMeleeActive()
+		{
+			return meleeAnimationActive;
+		}
+
+		public void MeleeAttack(GameObject target)
+		{
+			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
+
+			// no melee attack
+			if (sk == null)
+				return;
+
+			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
+			{
+				sk.Start(target);
+			}
+			else
+			{
+				if (this is PlayerData)
+				{
+					((PlayerData)this).SetPlayersMoveToTarget(target.transform.position);
+					HasTargetToMoveTo = true;
+					QueueMelee = true;
+					QueueMeleeTarget = target;
+				}
+				else if (this is EnemyData)
+				{
+					((EnemyData)this).SetMovementTarget(target.transform.position); //TODO might cause problems
+					HasTargetToMoveTo = true;
+					QueueMelee = true;
+					QueueMeleeTarget = target;
+				}
+			}
 		}
 
 		public abstract Character GetOwner();

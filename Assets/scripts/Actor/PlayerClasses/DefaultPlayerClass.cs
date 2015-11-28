@@ -24,6 +24,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(7)); // bomb skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(8)); // missile projectile
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(9)); // chained projectile
+
+			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(10));
 		}
 	}
 }
