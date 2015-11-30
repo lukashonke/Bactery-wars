@@ -17,7 +17,7 @@ namespace Assets.scripts.Actor
 
 		public virtual void OnUpdate()
 		{
-			
+
 		}
 	}
 }

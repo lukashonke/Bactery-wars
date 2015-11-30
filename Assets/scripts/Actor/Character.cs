@@ -24,6 +24,7 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public SkillSet Skills { get; set; }
 		public ActiveSkill MeleeSkill { get; set; }
+		public Knownlist Knownlist { get; private set; }
 
 		public AbstractData Data { get; set; }
 
@@ -31,14 +32,16 @@ namespace Assets.scripts.Actor
 
 		protected Character(string name) : base(name)
 		{
-			
-		}
+        }
 
 		public void Init()
 		{
+			Knownlist = new Knownlist(this);
 			Status = InitStatus();
 			Skills = InitSkillSet();
-		}
+
+			Knownlist.StartUpdating();
+        }
 
 		public AbstractData GetData()
 		{
@@ -47,6 +50,11 @@ namespace Assets.scripts.Actor
 
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
+
+		public override void OnUpdate()
+		{
+			
+		}
 
 		/// <summary>
 		/// Spusti kouzleni skillu
