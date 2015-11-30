@@ -12,13 +12,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class MeleeAttack : ActiveSkill
 	{
+		private GameObject meleeEffect;
+
 		public MeleeAttack(string name, int id) : base(name, id)
 		{
 			castTime = 1.0f;
 			coolDown = 0f;
 			reuse = 0;
 
-			Range = 5f;
+			Range = 4f;
 		}
 
 		public override Skill Instantiate()
@@ -28,13 +30,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectDamage(5, 0) };
+			return new SkillEffect[] { new EffectDamage(10, 0) };
 		}
 
 		public override bool OnCastStart()
 		{
 			if (initTarget == null)
 				return false;
+
+			Debug.Log("START");
 
 			Character chTarget = GetCharacterFromObject(initTarget);
 
@@ -43,11 +47,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			RotatePlayerTowardsTarget(initTarget);
 
-			Debug.Log(Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position));
-
 			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)
 			{
-				GetOwnerData().StartMeleeAnimation();
+				meleeEffect = CreateParticleEffect("Melee2", true, GetOwnerData().GetBody().transform.position);
+				StartParticleEffect(meleeEffect);
+				GetOwnerData().StartMeleeAnimation(castTime);
 				return true;
 			}
 
@@ -62,6 +66,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnFinish()
 		{
+			if (meleeEffect != null)
+				DeleteParticleEffect(meleeEffect);
+
 			if (initTarget != null)
 			{
 				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)

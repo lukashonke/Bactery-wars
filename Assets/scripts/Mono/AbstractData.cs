@@ -582,7 +582,7 @@ namespace Assets.scripts.Mono
 
 		private bool meleeAnimationActive;
 
-		public void StartMeleeAnimation()
+		public void StartMeleeAnimation(float duration)
 		{
 			Debug.Log("start");
 			meleeAnimationActive = true;
