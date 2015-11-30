@@ -15,7 +15,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 			owner = GameSystem.Instance.RegisterNewMonster(this, "Monster");
 
-			//Debug.Log("Registering new data for monster ");
+			Debug.Log("Registering new data for monster ");
 		}
 
 		public override Character GetOwner()
