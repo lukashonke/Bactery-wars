@@ -19,6 +19,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 1.0f;
 			coolDown = 0f;
 			reuse = 0;
+			updateFrequency = 0.1f;
 
 			Range = 4f;
 		}
@@ -37,8 +38,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (initTarget == null)
 				return false;
-
-			Debug.Log("START");
 
 			Character chTarget = GetCharacterFromObject(initTarget);
 
@@ -103,6 +102,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void UpdateLaunched()
 		{
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) > Range)
+			{
+				if(meleeEffect != null)
+					DeleteParticleEffect(meleeEffect);
+			}
 		}
 
 		public override void OnAbort()
