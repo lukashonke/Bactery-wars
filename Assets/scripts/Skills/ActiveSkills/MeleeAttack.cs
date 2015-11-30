@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -12,11 +14,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		public MeleeAttack(string name, int id) : base(name, id)
 		{
-			castTime = 0.5f;
+			castTime = 1.0f;
 			coolDown = 0f;
 			reuse = 0;
 
-			range = 5f;
+			Range = 5f;
 		}
 
 		public override Skill Instantiate()
@@ -34,18 +36,23 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (initTarget == null)
 				return false;
 
+			Character chTarget = GetCharacterFromObject(initTarget);
+
+			if (chTarget == null || chTarget.Status.IsDead)
+				return false;
+
+			RotatePlayerTowardsTarget(initTarget);
+
 			Debug.Log(Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position));
 
-			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)
 			{
 				GetOwnerData().StartMeleeAnimation();
 				return true;
 			}
-			else
-			{
-				// dont melee, too far
-				return false;
-			}
+
+			// dont melee, too far
+			return false;
 		}
 
 		public override void OnLaunch()
@@ -57,8 +64,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (initTarget != null)
 			{
-				ApplyEffects(Owner, initTarget);
-				GetOwnerData().MeleeAttack(initTarget); // continue with next attack
+				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)
+				{
+					ApplyEffects(Owner, initTarget);
+
+					if (GetOwnerData().IsMeleeAttacking) // continue with next attack
+						GetOwnerData().MeleeAttack(initTarget);
+				}
+				else
+				{
+					Debug.Log("too far");
+				}
 			}
 		}
 
@@ -84,11 +100,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnAbort()
 		{
+			GetOwnerData().AbortMeleeAttacking();
 		}
 
 		public override bool CanMove()
 		{
-			return !IsBeingCasted();
+			return !IsActive() && !IsBeingCasted();
 		}
 
 		public override bool CanRotate()

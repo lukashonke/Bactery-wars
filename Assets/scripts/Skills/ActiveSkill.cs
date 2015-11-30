@@ -33,7 +33,7 @@ namespace Assets.scripts.Skills
 		protected float coolDown;
 		protected float reuse;
 
-		public float range;
+		public float Range { get; protected set; }
 
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
@@ -489,6 +489,12 @@ namespace Assets.scripts.Skills
 		{
 			if(GetPlayerData() != null)
 				GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+		}
+
+		protected void RotatePlayerTowardsTarget(GameObject target)
+		{
+			if (GetPlayerData() != null)
+				GetPlayerData().SetRotation(target.transform.position, true);
 		}
 
 		/// <summary>

@@ -58,6 +58,7 @@ namespace Assets.scripts.Mono
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
+		public bool IsMeleeAttacking { get; set; }
 		public bool QueueMelee { get; set; }
 		public GameObject QueueMeleeTarget { get; set; }
 
@@ -284,7 +285,8 @@ namespace Assets.scripts.Mono
 
 		public void MovementChanged()
 		{
-			if (QueueMelee) QueueMelee = false;
+			if (QueueMelee)
+				QueueMelee = false;
 		}
 
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
@@ -605,8 +607,9 @@ namespace Assets.scripts.Mono
 			if (sk == null)
 				return;
 
-			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
+			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.Range)
 			{
+				IsMeleeAttacking = true;
 				sk.Start(target);
 			}
 			else
@@ -626,6 +629,11 @@ namespace Assets.scripts.Mono
 					QueueMeleeTarget = target;
 				}
 			}
+		}
+
+		public void AbortMeleeAttacking()
+		{
+			IsMeleeAttacking = false;
 		}
 
 		public abstract Character GetOwner();

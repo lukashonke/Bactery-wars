@@ -121,6 +121,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void SetPlayersMoveToTarget(Vector3 newTarget)
 		{
+			AbortMeleeAttacking();
+
 			if (!allowMovePointChange)
 				return;
 
