@@ -487,14 +487,14 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected void RotatePlayerTowardsMouse()
 		{
-			if(GetPlayerData() != null)
-				GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+			if (GetOwnerData() != null)
+				GetOwnerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 		}
 
 		protected void RotatePlayerTowardsTarget(GameObject target)
 		{
-			if (GetPlayerData() != null)
-				GetPlayerData().SetRotation(target.transform.position, true);
+			if (GetOwnerData() != null)
+				GetOwnerData().SetRotation(target.transform.position, true);
 		}
 
 		/// <summary>

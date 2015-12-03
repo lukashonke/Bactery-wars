@@ -9,8 +9,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 	{
 		public DefaultPlayerClass() : base(ClassId.Default)
 		{
-			MaxHp = 10;
-			MaxMp = 10;
+			MaxHp = 50;
+			MaxMp = 50;
 			MaxSpeed = 10;
 		}
 

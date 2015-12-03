@@ -34,14 +34,14 @@ namespace Assets.scripts.Mono.ObjectData
 				body.GetComponent<Collider2D>().enabled = false;
 
 				if (healthBar != null)
-					healthBar.gameObject.active = false;
+					healthBar.gameObject.SetActive(false);
 
 				Destroy(gameObject, 1f);
 
 				GameObject blood = LoadResource("misc", "Blood", "Blood_red");
 
 				ps = blood.GetComponent<ParticleSystem>();
-				ps.maxParticles = Random.RandomRange(10, 50);
+				ps.maxParticles = Random.Range(10, 50);
 
 				GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
 				Destroy(bloodObject, 10f);

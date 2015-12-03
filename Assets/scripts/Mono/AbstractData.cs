@@ -118,7 +118,6 @@ namespace Assets.scripts.Mono
 			// update movement
 			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 			{
-				Debug.Log("mving");
 				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
 				newRotation.x = 0;
 				newRotation.y = 0;
@@ -393,7 +392,7 @@ namespace Assets.scripts.Mono
 
 		public void SetRotation(Quaternion newRot, bool updateHeading)
 		{
-			if (USE_VELOCITY_MOVEMENT)
+			if (USE_VELOCITY_MOVEMENT) // TODO looks like this workso only for players
 				rb.transform.rotation = newRot;
 			else
 				body.transform.rotation = newRot;
@@ -502,7 +501,8 @@ namespace Assets.scripts.Mono
 		{
 			if (isDead)
 			{
-				Debug.Log(name + " died");
+				DisableMe();
+
 				Destroy(gameObject, 5f);
 
 				if (healthBar != null)
@@ -510,6 +510,12 @@ namespace Assets.scripts.Mono
 					healthBar.enabled = false;
 				}
 			}
+		}
+
+		public void DisableMe()
+		{
+			body.GetComponent<SpriteRenderer>().enabled = false;
+			body.GetComponent<Collider2D>().enabled = false;
 		}
 
 		public void BreakCasting()
@@ -585,13 +591,11 @@ namespace Assets.scripts.Mono
 
 		public void StartMeleeAnimation(float duration)
 		{
-			Debug.Log("start");
 			meleeAnimationActive = true;
 		}
 
 		public void StopMeleeAnimation()
 		{
-			Debug.Log("stop");
 			meleeAnimationActive = false;
 		}
 
@@ -605,7 +609,7 @@ namespace Assets.scripts.Mono
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
 			// no melee attack
-			if (sk == null)
+			if (sk == null || sk.IsActive())
 				return;
 
 			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.Range)

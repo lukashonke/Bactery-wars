@@ -117,6 +117,10 @@ namespace Assets.scripts.Actor
 
 		public void ReceiveDamage(int damage)
 		{
+			if (this is Player)
+			{
+				Debug.Log("receiving " + damage);
+			}
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)

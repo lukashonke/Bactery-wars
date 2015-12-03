@@ -11,7 +11,6 @@ namespace Assets.scripts.AI
 	public class MonsterAI : AbstractAI
 	{
 		public float AutoAttackRange { get; set; }
-		public Character Target { get; set; }
 
 		public MonsterAI(Character o) : base(o)
 		{
@@ -20,65 +19,20 @@ namespace Assets.scripts.AI
 
 		public override void Think()
 		{
+			Debug.Log(State.ToString());
+
 			switch (State)
 			{
 				case AIState.IDLE:
-					Debug.Log("idle");
-					if (Owner.Knownlist.KnownObjects.Count > 0)
-					{
-						foreach (GameObject o in Owner.Knownlist.KnownObjects)
-						{
-							if (o == null || o.Equals(Owner.GetData().GetBody())) continue;
-
-							
-
-							Character ch = Utils.GetCharacter(o);
-
-							if (ch != null && Owner.CanAutoAttack(ch)) // replace with isAttackable method
-							{
-								SetAIState(AIState.ACTIVE);
-								break;
-							}
-						}
-					}
+					ThinkIdle();
 
 					break;
 				case AIState.ACTIVE:
-					Debug.Log("act");
-					bool stillActive = false;
-					if (Owner.Knownlist.KnownObjects.Count > 0)
-					{
-						foreach (GameObject o in Owner.Knownlist.KnownObjects)
-						{
-							if (o == null) continue;
-
-							Character ch = Utils.GetCharacter(o);
-
-							if (ch != null && Owner.CanAutoAttack(ch))
-							{
-								stillActive = true;
-
-								// find target that can be attacked
-								if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AutoAttackRange)
-								{
-									Target = ch;
-									SetAIState(AIState.ATTACKING);
-								}
-
-								break;
-							}
-						}
-					}
-
-					if (!stillActive)
-					{
-						SetAIState(AIState.IDLE);
-					}
+					ThinkActive();
 
 					break;
 				case AIState.ATTACKING:
-					Debug.Log("attack");
-					if (Target == null || Target.Status.IsDead)
+					if (GetMainTarget() == null || GetMainTarget().Status.IsDead)
 					{
 						SetAIState(AIState.ACTIVE);
 						return;
@@ -90,18 +44,78 @@ namespace Assets.scripts.AI
 			}
 		}
 
+		private void ThinkIdle()
+		{
+			if (Owner.Knownlist.KnownObjects.Count > 0)
+			{
+				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				{
+					if (o == null || o.Equals(Owner.GetData().GetBody())) continue;
+
+					Character ch = Utils.GetCharacter(o);
+
+					if (ch != null && Owner.CanAutoAttack(ch)) // replace with isAttackable method
+					{
+						SetAIState(AIState.ACTIVE);
+						break;
+					}
+				}
+			}
+		}
+
 		private void ThinkAttack()
 		{
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, Target.GetData().GetBody().transform.position) >
-			    AutoAttackRange*2)
+			// target is too far (> attackdistance*2) - abandone attacking
+			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, GetMainTarget().GetData().GetBody().transform.position) > AutoAttackRange * 2)
 			{
 				SetAIState(AIState.ACTIVE);
-				Target = null;
+				RemoveMainTarget();
 				return;
 			}
 
-			Owner.GetData().SetMovementTarget(Target.GetData().GetBody().transform.position);
-			Owner.GetData().HasTargetToMoveTo = true;
+			Debug.DrawRay(Owner.GetData().GetBody().transform.position, GetMainTarget().GetData().GetBody().transform.position, Color.blue);
+
+			AttackTarget(GetMainTarget());
+		}
+
+		private void AttackTarget(Character target)
+		{
+			Owner.GetData().MeleeAttack(GetMainTarget().GetData().GetBody());
+			//Owner.GetData().SetMovementTarget(GetMainTarget().GetData().GetBody().transform.position);
+			//Owner.GetData().HasTargetToMoveTo = true;
+		}
+
+		private void ThinkActive()
+		{
+			bool stillActive = false;
+			if (Owner.Knownlist.KnownObjects.Count > 0)
+			{
+				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				{
+					if (o == null) continue;
+
+					Character ch = Utils.GetCharacter(o);
+
+					if (ch != null && Owner.CanAutoAttack(ch))
+					{
+						stillActive = true;
+
+						// find target that can be attacked
+						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AutoAttackRange)
+						{
+							SetMainTarget(ch);
+							SetAIState(AIState.ATTACKING);
+						}
+
+						break;
+					}
+				}
+			}
+
+			if (!stillActive)
+			{
+				SetAIState(AIState.IDLE);
+			}
 		}
 
 		public override void OnSwitchIdle()

@@ -17,12 +17,17 @@ namespace Assets.scripts.AI
 		private bool active;
 		private Coroutine task;
 
+		private Character MainTarget { get; set; }
+		protected List<Character> Targets { get; private set; } 
+
 		protected AbstractAI(Character o)
 		{
 			Owner = o;
 
 			State = AIState.IDLE;
 			ThinkInterval = 1f;
+
+			Targets = new List<Character>();
 		}
 
 		public void StartAITask()
@@ -76,6 +81,43 @@ namespace Assets.scripts.AI
 
 				Think();
 				yield return new WaitForSeconds(ThinkInterval);
+			}
+		}
+
+		public Character GetMainTarget()
+		{
+			return MainTarget;
+		}
+
+		public void SetMainTarget(Character o)
+		{
+			MainTarget = o;
+		}
+
+		public void AddTarget(Character o)
+		{
+			Targets.Add(o);
+		}
+
+		public void RemoveTarget(Character o)
+		{
+			Targets.Remove(o);
+		}
+
+		public void RemoveMainTarget()
+		{
+			MainTarget = null;
+		}
+
+		/// <summary>
+		/// Makes the main target the first element in 'Targets' List
+		/// </summary>
+		public void ReconsiderMainTarget()
+		{
+			if (Targets.Count > 0)
+			{
+				MainTarget = Targets.First();
+				RemoveTarget(MainTarget);
 			}
 		}
 	}
