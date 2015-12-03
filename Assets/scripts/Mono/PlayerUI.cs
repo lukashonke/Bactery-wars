@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace Assets.scripts.Mono
@@ -25,12 +26,13 @@ namespace Assets.scripts.Mono
 		void Start()
 		{
 			data = GetComponent<PlayerData>();
+			//hp = FindO
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
-			hp.text = "HP " + data.visibleHp;
+			//hp.text = "HP " + data.visibleHp; //TODO fix
 		}
 
 		public void MenuClick()

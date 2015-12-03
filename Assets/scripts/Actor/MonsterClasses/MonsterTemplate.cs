@@ -13,6 +13,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public MonsterId MonsterId { get; private set; }
 
 		public List<Skill> TemplateSkills { get; set; }
+		public ActiveSkill MeleeSkill;
 
 		public int MaxHp { get; protected set; }
 		public int MaxMp { get; protected set; }
@@ -30,6 +31,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 		protected virtual void Init()
 		{
 			AddSkills();
+		}
+
+		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)
+		{
+			MeleeSkill = skill;
 		}
 
 		protected abstract void AddSkills();

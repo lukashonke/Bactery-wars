@@ -3,6 +3,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono.ObjectData
 {
@@ -17,9 +18,32 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
+		private GameObject hoverTarget;
+		public GameObject HoverTarget
+		{
+			get { return hoverTarget; }
+			set
+			{
+				if (hoverTarget != null)
+				{
+					if (hoverTarget.Equals(value))
+						return;
+
+					HighlightTarget(hoverTarget, false);
+				}
+
+				hoverTarget = value;
+				HighlightTarget(hoverTarget, true);
+			}
+		}
+
+		public bool TargettingActive { get; set; }
+
 		public new void Start()
 		{
 			base.Start();
+
+			TargettingActive = true;
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 
@@ -84,6 +108,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 			//Debug.Log("Launching skill... " + skill.Name);
 
+			//MovementChanged();
+
 			// cast this skill
 			player.CastSkill(skill);
 		}
@@ -95,6 +121,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void SetPlayersMoveToTarget(Vector3 newTarget)
 		{
+			AbortMeleeAttacking();
+
 			if (!allowMovePointChange)
 				return;
 
@@ -103,7 +131,31 @@ namespace Assets.scripts.Mono.ObjectData
 				ActiveConfirmationSkill.AbortCast();
 			}
 
-			targetPositionWorld = newTarget;
+			SetMovementTarget(newTarget);
+		}
+
+		public void HighlightTarget(GameObject target, bool enable)
+		{
+			if (target == null)
+				return;
+
+			SpriteRenderer sr = target.GetComponent<SpriteRenderer>();
+
+			if (sr == null)
+				return;
+
+			Material mat = sr.material;
+
+			if (enable)
+			{
+				//sr.material.SetColor("_Emission", new Color(0.2f, 0.2f, 0.14f));
+				sr.material.color = Color.red;
+			}
+			else
+			{
+				//sr.material.SetColor("_Emission", Color.black);
+				sr.material.color = Color.white;
+			}
 		}
 
 		public override Character GetOwner()

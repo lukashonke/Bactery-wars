@@ -97,6 +97,18 @@ namespace Assets.scripts.Skills
 			return null;
 		}
 
+		public static Character GetCharacterFromObject(GameObject obj)
+		{
+			AbstractData data = obj.GetComponentInParent<AbstractData>();
+
+			if (data == null)
+				return null;
+
+			Character targetCh = data.GetOwner();
+
+			return targetCh;
+		}
+
 		// vytvori novou kopii sama sebe
 		public abstract Skill Instantiate();
 		public abstract SkillEffect[] CreateEffects();

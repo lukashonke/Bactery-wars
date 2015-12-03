@@ -88,6 +88,15 @@ namespace Assets.scripts.Skills.Base
 
 			skill = new SkillAreaExplode("Bomb Skill", 7);
 			AddSkill(skill);
+
+			skill = new MissileProjectile("Missile Projectile", 8);
+			AddSkill(skill);
+
+			skill = new ChainedProjectile("Chained Projectile", 9);
+			AddSkill(skill);
+
+			skill = new MeleeAttack("Melee Attack", 10);
+			AddSkill(skill);
 		}
 	}
 }

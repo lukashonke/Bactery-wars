@@ -30,14 +30,10 @@ namespace Assets.scripts
 
 		public void OnTriggerEnter2D(Collider2D obj)
 		{
-			// TODO: nepouzivat tagy, ale pridat promennou pres extension metody do gameobject pro porovnavani tymu
-			if (obj.gameObject.tag == gameObject.tag)
-				return;
-
-			collapse();
+			
 		}
 
-		private void collapse()
+		public void collapse()
 		{
 			// pouze sude hodnoty pro spravnou explozi! 2x2, 4x4, 6x6, 8x8
 			const int piecesX = 4;

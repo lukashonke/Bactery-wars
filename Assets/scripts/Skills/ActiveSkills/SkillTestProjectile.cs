@@ -73,8 +73,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
+			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
 			// the only possible collisions are the projectile with target
 			ApplyEffects(Owner, other.gameObject);
+			DestroyProjectile(gameObject);
 		}
 
 		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)

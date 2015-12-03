@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
@@ -29,6 +30,11 @@ namespace Assets.scripts.Actor
 			return (PlayerData) Data;
 		}
 
+		protected override AbstractAI InitAI()
+		{
+			return new PlayerAI(this);
+		}
+
 		/// <summary>
 		/// Inicializuje sablonu hrace
 		/// </summary>
@@ -45,6 +51,14 @@ namespace Assets.scripts.Actor
 
 				i++;
 				Debug.Log("adding skill to " + i + ": " + newSkill.Name);
+			}
+
+			if (Template.MeleeSkill != null)
+			{
+				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.Id);
+				newSkill.SetOwner(this);
+
+				MeleeSkill = (ActiveSkill) newSkill;
 			}
 		}
 
@@ -94,7 +108,8 @@ namespace Assets.scripts.Actor
 		/// <param name="c"></param>
 		public override void StopTask(Coroutine c)
 		{
-			GetData().StopCoroutine(c);
+			if(c != null)
+				GetData().StopCoroutine(c);
 		}
 
 		public override void StopTask(IEnumerator t)

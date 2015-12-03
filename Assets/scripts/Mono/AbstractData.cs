@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
+using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Mono
@@ -22,10 +24,10 @@ namespace Assets.scripts.Mono
 	/// </summary>
 	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
-		public bool USE_VELOCITY_MOVEMENT;
+		public bool USE_VELOCITY_MOVEMENT = true;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
-		public float minDistanceClickToMove;
+		public float minDistanceClickToMove = 0.2f;
 		
 		// child objects mapped by name
 		protected Dictionary<string, GameObject> childs;
@@ -56,6 +58,9 @@ namespace Assets.scripts.Mono
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
+		public bool IsMeleeAttacking { get; set; }
+		public bool QueueMelee { get; set; }
+		public GameObject QueueMeleeTarget { get; set; }
 
 		protected bool allowMovePointChange;
 		protected bool forcedVelocity;
@@ -84,12 +89,7 @@ namespace Assets.scripts.Mono
 			// loads all the child objects
 			AddChildObjects(transform);
 
-			body = GetChildByName("Body");
-
-			if (body == null)
-			{
-				throw new NullReferenceException("Object " + gameObject.name + " has no body!");
-			}
+			body = gameObject;
 
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
@@ -108,6 +108,7 @@ namespace Assets.scripts.Mono
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
+			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
 		}
@@ -137,7 +138,7 @@ namespace Assets.scripts.Mono
 
 				if (move)
 				{
-					anim.SetFloat("MOVE_SPEED", 1);
+					if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
 
 					if (USE_VELOCITY_MOVEMENT)
 					{
@@ -158,7 +159,7 @@ namespace Assets.scripts.Mono
 
 				if (rotate)
 				{
-					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime*rotateSpeed), false);
 				}
 
 				if (move || rotate)
@@ -168,7 +169,7 @@ namespace Assets.scripts.Mono
 			}
 			else
 			{
-				anim.SetFloat("MOVE_SPEED", 0);
+				if(this is PlayerData)anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
 
 				// the player had fixed position and velocity to move to, if he is there already, unfix this
@@ -179,6 +180,12 @@ namespace Assets.scripts.Mono
 				}
 
 				ResetVelocity();
+
+				if (QueueMelee)
+				{
+					MeleeAttack(QueueMeleeTarget);
+					QueueMelee = false;
+				}
 			}
 
 			GetOwner().OnUpdate();
@@ -259,6 +266,8 @@ namespace Assets.scripts.Mono
 
 		public void JumpForward(float dist, float jumpSpeed)
 		{
+			MovementChanged();
+
 			if (USE_VELOCITY_MOVEMENT)
 			{
 				ForceSetMoveDestinaton(body.transform.position + GetForwardVector() * dist, 0.5f);
@@ -274,8 +283,15 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public void MovementChanged()
+		{
+			if (QueueMelee)
+				QueueMelee = false;
+		}
+
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
 		{
+			MovementChanged();
 			SetRotation(body.transform.position + direction.normalized * dist, true);
 
 			if (USE_VELOCITY_MOVEMENT)
@@ -295,6 +311,7 @@ namespace Assets.scripts.Mono
 
 		public void BreakMovement()
 		{
+			MovementChanged();
 			HasTargetToMoveTo = false;
 		}
 
@@ -308,6 +325,8 @@ namespace Assets.scripts.Mono
 		{
 			if (USE_VELOCITY_MOVEMENT == false)
 				return;
+
+			MovementChanged();
 
 			allowMovePointChange = false;
 			targetPositionWorld = newDest;
@@ -373,7 +392,10 @@ namespace Assets.scripts.Mono
 
 		public void SetRotation(Quaternion newRot, bool updateHeading)
 		{
-			body.transform.rotation = newRot;
+			if (USE_VELOCITY_MOVEMENT) // TODO looks like this workso only for players
+				rb.transform.rotation = newRot;
+			else
+				body.transform.rotation = newRot;
 
 			if (updateHeading)
 				UpdateHeading();
@@ -479,7 +501,8 @@ namespace Assets.scripts.Mono
 		{
 			if (isDead)
 			{
-				Debug.Log(name + " died");
+				DisableMe();
+
 				Destroy(gameObject, 5f);
 
 				if (healthBar != null)
@@ -487,6 +510,12 @@ namespace Assets.scripts.Mono
 					healthBar.enabled = false;
 				}
 			}
+		}
+
+		public void DisableMe()
+		{
+			body.GetComponent<SpriteRenderer>().enabled = false;
+			body.GetComponent<Collider2D>().enabled = false;
 		}
 
 		public void BreakCasting()
@@ -512,6 +541,7 @@ namespace Assets.scripts.Mono
 
 		public void SetMovementTarget(Vector3 newTarget)
 		{
+			MovementChanged();
 			targetPositionWorld = newTarget;
 		}
 
@@ -555,6 +585,60 @@ namespace Assets.scripts.Mono
 		public GameObject GetShootingPosition()
 		{
 			return shootingPosition;
+		}
+
+		private bool meleeAnimationActive;
+
+		public void StartMeleeAnimation(float duration)
+		{
+			meleeAnimationActive = true;
+		}
+
+		public void StopMeleeAnimation()
+		{
+			meleeAnimationActive = false;
+		}
+
+		public bool IsMeleeActive()
+		{
+			return meleeAnimationActive;
+		}
+
+		public void MeleeAttack(GameObject target)
+		{
+			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
+
+			// no melee attack
+			if (sk == null || sk.IsActive())
+				return;
+
+			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.Range)
+			{
+				IsMeleeAttacking = true;
+				sk.Start(target);
+			}
+			else
+			{
+				if (this is PlayerData)
+				{
+					((PlayerData)this).SetPlayersMoveToTarget(target.transform.position);
+					HasTargetToMoveTo = true;
+					QueueMelee = true;
+					QueueMeleeTarget = target;
+				}
+				else if (this is EnemyData)
+				{
+					((EnemyData)this).SetMovementTarget(target.transform.position); //TODO might cause problems
+					HasTargetToMoveTo = true;
+					QueueMelee = true;
+					QueueMeleeTarget = target;
+				}
+			}
+		}
+
+		public void AbortMeleeAttacking()
+		{
+			IsMeleeAttacking = false;
 		}
 
 		public abstract Character GetOwner();

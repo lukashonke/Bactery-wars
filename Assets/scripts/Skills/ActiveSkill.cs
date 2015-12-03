@@ -33,8 +33,12 @@ namespace Assets.scripts.Skills
 		protected float coolDown;
 		protected float reuse;
 
+		public float Range { get; protected set; }
+
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
+
+		protected GameObject initTarget;
 
 		/// not used currently
 		public bool MovementBreaksConfirmation { get; protected set; }
@@ -102,6 +106,9 @@ namespace Assets.scripts.Skills
 		{
 			if (confirmObject != null)
 				Object.Destroy(confirmObject);
+
+			if(GetPlayerData() != null && GetPlayerData().TargettingActive)
+				StopPlayerTargetting();
 		}
 
 		public virtual void MonoStart(GameObject gameObject) { }
@@ -183,6 +190,12 @@ namespace Assets.scripts.Skills
 		public override void SetReuseTimer()
 		{
 			LastUsed = Environment.TickCount;
+		}
+
+		public void Start(GameObject target)
+		{
+			initTarget = target;
+			Start();
 		}
 
 		public override void Start()
@@ -474,8 +487,14 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected void RotatePlayerTowardsMouse()
 		{
-			if(GetPlayerData() != null)
-				GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+			if (GetOwnerData() != null)
+				GetOwnerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+		}
+
+		protected void RotatePlayerTowardsTarget(GameObject target)
+		{
+			if (GetOwnerData() != null)
+				GetOwnerData().SetRotation(target.transform.position, true);
 		}
 
 		/// <summary>
@@ -570,6 +589,31 @@ namespace Assets.scripts.Skills
 			{
 				DeleteParticleEffect(particleSystem);
 			}
+		}
+
+		protected void StartPlayerTargetting()
+		{
+			GetPlayerData().TargettingActive = true;
+		}
+
+		protected void StopPlayerTargetting()
+		{
+			//GetPlayerData().TargettingActive = false;
+			GetPlayerData().HighlightTarget(GetPlayerData().HoverTarget, false);
+		}
+
+		protected GameObject GetPlayerMouseHoverTarget()
+		{
+			return GetPlayerData().HoverTarget;
+		}
+
+		protected void DestroyProjectile(GameObject proj)
+		{
+			ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
+			if(pd != null)
+				pd.collapse();
+			else
+				DestroyProjectile(proj);
 		}
 	}
 }

@@ -100,6 +100,8 @@ namespace Assets.scripts
 
 			monster.Init();
 
+			monster.InitTemplate();
+
 			return monster;
 		}
 	}

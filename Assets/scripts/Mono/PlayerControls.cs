@@ -1,5 +1,7 @@
 ﻿using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Skills;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono
 {
@@ -27,12 +29,12 @@ namespace Assets.scripts.Mono
 		// Use this for initialization
 		public void Start()
 		{
-			body = GameObject.Find("Body");
+			body = gameObject;
 			rb = body.GetComponent<Rigidbody2D>();
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();
 			ui = GetComponent<PlayerUI>();
-        }
+		}
 
 		private void HandleSkillControls()
 		{
@@ -60,7 +62,32 @@ namespace Assets.scripts.Mono
 			{
 				data.LaunchSkill(5);
 			}
-        }
+
+			if (Input.GetKeyDown(KeyCode.Alpha6))
+			{
+				data.LaunchSkill(6);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha7))
+			{
+				data.LaunchSkill(7);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha8))
+			{
+				data.LaunchSkill(8);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha9))
+			{
+				data.LaunchSkill(9);
+			}
+
+			if (Input.GetKeyDown(KeyCode.Alpha0))
+			{
+				data.LaunchSkill(10);
+			}
+		}
 
 		public void Update()
 		{
@@ -79,6 +106,43 @@ namespace Assets.scripts.Mono
 
 			if (!ui.MouseOverUI)
 			{
+				// if targetting active, highlight target objects
+				if (data.TargettingActive)
+				{
+					Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					RaycastHit2D[] hits=  Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
+
+					int layer;
+					Rigidbody2D rb;
+
+					bool target = false;
+
+					foreach (RaycastHit2D hit in hits)
+					{
+						layer = hit.transform.gameObject.layer;
+						// not target projectiles, environment and background
+						if (layer == 11 || layer == 8 || layer == 9)
+							continue;
+
+						if (hit.transform.gameObject.Equals(data.GetBody()))
+							continue;
+
+						rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+
+						if (rb != null)
+						{
+							data.HoverTarget = hit.transform.gameObject;
+							target = true;
+                            break;
+						}
+					}
+
+					if (!target)
+					{
+						data.HoverTarget = null;
+					}
+				}
+
 				if (data.ActiveConfirmationSkill != null)
 				{
 					if (Input.GetMouseButtonDown(0))
@@ -96,23 +160,34 @@ namespace Assets.scripts.Mono
 				}
 				else
 				{
-					// change target position according to mouse when clicked
-					if (Input.GetMouseButton(0))
+					if (data.HoverTarget != null)
 					{
-						Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-						newTarget.z = body.transform.position.z;
+						if (Input.GetMouseButtonDown(0))
+						{
+							data.MeleeAttack(data.HoverTarget);
+							Input.ResetInputAxes();
+						}
+					}
+					else
+					{
+						// change target position according to mouse when clicked
+						if (Input.GetMouseButton(0))
+						{
+							Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+							newTarget.z = body.transform.position.z;
 
-						// momentalne nepotrebne
-						//if (Vector3.Distance(body.transform.position, newTarget) > 2)
-						//{
-						data.SetPlayersMoveToTarget(newTarget);
+							// momentalne nepotrebne
+							//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+							//{
+							data.SetPlayersMoveToTarget(newTarget);
 
-						if (currMouseClicker != null)
-							Destroy(currMouseClicker);
+							if (currMouseClicker != null)
+								Destroy(currMouseClicker);
 
-						currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-						data.HasTargetToMoveTo = true;
-						//}
+							currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+							data.HasTargetToMoveTo = true;
+							//}
+						}
 					}
 				}
 			}

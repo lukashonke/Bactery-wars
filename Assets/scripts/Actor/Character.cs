@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
@@ -23,6 +24,9 @@ namespace Assets.scripts.Actor
 		/// Skillset characteru
 		/// </summary>
 		public SkillSet Skills { get; set; }
+		public ActiveSkill MeleeSkill { get; set; }
+		public Knownlist Knownlist { get; private set; }
+		public AbstractAI AI { get; private set; }
 
 		public AbstractData Data { get; set; }
 
@@ -30,13 +34,18 @@ namespace Assets.scripts.Actor
 
 		protected Character(string name) : base(name)
 		{
-			
-		}
+        }
 
 		public void Init()
 		{
+			Knownlist = new Knownlist(this);
 			Status = InitStatus();
 			Skills = InitSkillSet();
+
+			Knownlist.StartUpdating();
+
+			AI = InitAI();
+			AI.StartAITask();
 		}
 
 		public AbstractData GetData()
@@ -44,8 +53,14 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
+		protected abstract AbstractAI InitAI();
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
+
+		public override void OnUpdate()
+		{
+			
+		}
 
 		/// <summary>
 		/// Spusti kouzleni skillu
@@ -102,6 +117,10 @@ namespace Assets.scripts.Actor
 
 		public void ReceiveDamage(int damage)
 		{
+			if (this is Player)
+			{
+				Debug.Log("receiving " + damage);
+			}
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)
@@ -110,6 +129,11 @@ namespace Assets.scripts.Actor
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public ActiveSkill GetMeleeAttackSkill()
+		{
+			return MeleeSkill;
 		}
 
 		/// <summary>
@@ -139,6 +163,18 @@ namespace Assets.scripts.Actor
 		public bool CanAttack(Character targetCh)
 		{
 			return Team != targetCh.Team;
+		}
+
+		public bool CanAutoAttack(Character ch)
+		{
+			if (this is Monster)
+			{
+				//TODO add isAggressive params
+
+				return CanAttack(ch);
+			}
+
+			return false;
 		}
 	}
 }
