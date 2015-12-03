@@ -36,8 +36,11 @@ namespace Assets.scripts.Base
 
 		public void StopUpdating()
 		{
-			if(task != null)
+			if (task != null)
+			{
 				Owner.StopTask(task);
+				task = null;
+			}
 		}
 
 		public void AddKnownObject(GameObject o)

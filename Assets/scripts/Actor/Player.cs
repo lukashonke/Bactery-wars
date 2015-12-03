@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
@@ -27,6 +28,11 @@ namespace Assets.scripts.Actor
 		public new PlayerData GetData()
 		{
 			return (PlayerData) Data;
+		}
+
+		protected override AbstractAI InitAI()
+		{
+			return new PlayerAI(this);
 		}
 
 		/// <summary>

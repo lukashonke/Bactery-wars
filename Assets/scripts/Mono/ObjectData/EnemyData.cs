@@ -51,7 +51,7 @@ namespace Assets.scripts.Mono.ObjectData
 		// Update is called once per frame
 		public override void Update()
 		{
-
+			base.Update();
 		}
 
 		public override void OnTriggerEnter2D(Collider2D obj)

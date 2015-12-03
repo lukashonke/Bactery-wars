@@ -284,8 +284,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167423db0e52ba4428e356452630afb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  USE_VELOCITY_MOVEMENT: 0
-  minDistanceClickToMove: 0
+  USE_VELOCITY_MOVEMENT: 1
+  minDistanceClickToMove: .200000003
   body: {fileID: 114806}
   rb: {fileID: 5082764}
   particleSystems: {fileID: 0}
@@ -2602,6 +2602,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: EmissionModule.cnt0
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: USE_VELOCITY_MOVEMENT
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: minDistanceClickToMove
+      value: .200000003
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

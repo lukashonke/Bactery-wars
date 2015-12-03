@@ -24,10 +24,10 @@ namespace Assets.scripts.Mono
 	/// </summary>
 	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
-		public bool USE_VELOCITY_MOVEMENT;
+		public bool USE_VELOCITY_MOVEMENT = true;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
-		public float minDistanceClickToMove;
+		public float minDistanceClickToMove = 0.2f;
 		
 		// child objects mapped by name
 		protected Dictionary<string, GameObject> childs;
@@ -118,6 +118,7 @@ namespace Assets.scripts.Mono
 			// update movement
 			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 			{
+				Debug.Log("mving");
 				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
 				newRotation.x = 0;
 				newRotation.y = 0;
@@ -138,7 +139,7 @@ namespace Assets.scripts.Mono
 
 				if (move)
 				{
-					anim.SetFloat("MOVE_SPEED", 1);
+					if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
 
 					if (USE_VELOCITY_MOVEMENT)
 					{
@@ -169,7 +170,7 @@ namespace Assets.scripts.Mono
 			}
 			else
 			{
-				anim.SetFloat("MOVE_SPEED", 0);
+				if(this is PlayerData)anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
 
 				// the player had fixed position and velocity to move to, if he is there already, unfix this

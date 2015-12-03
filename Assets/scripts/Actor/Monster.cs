@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
@@ -24,6 +25,11 @@ namespace Assets.scripts.Actor
 		public new EnemyData GetData()
 		{
 			return (EnemyData) Data;
+		}
+
+		protected override AbstractAI InitAI()
+		{
+			return new MonsterAI(this);
 		}
 
 		protected override CharStatus InitStatus()

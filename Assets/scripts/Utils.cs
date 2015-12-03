@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
+using Assets.scripts.Mono;
 using UnityEngine;
 
 namespace Assets.scripts
@@ -41,6 +43,18 @@ namespace Assets.scripts
 		{
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, angle)) * vector;
 			return nv;
+		}
+
+		public static Character GetCharacter(GameObject o)
+		{
+			AbstractData d = o.GetComponent<AbstractData>();
+
+			if (d == null)
+				return null;
+
+			Character ch = d.GetOwner();
+
+			return ch;
 		}
 	}
 }

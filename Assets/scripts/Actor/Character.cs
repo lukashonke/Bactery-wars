@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
@@ -25,6 +26,7 @@ namespace Assets.scripts.Actor
 		public SkillSet Skills { get; set; }
 		public ActiveSkill MeleeSkill { get; set; }
 		public Knownlist Knownlist { get; private set; }
+		public AbstractAI AI { get; private set; }
 
 		public AbstractData Data { get; set; }
 
@@ -41,13 +43,17 @@ namespace Assets.scripts.Actor
 			Skills = InitSkillSet();
 
 			Knownlist.StartUpdating();
-        }
+
+			AI = InitAI();
+			AI.StartAITask();
+		}
 
 		public AbstractData GetData()
 		{
 			return Data;
 		}
 
+		protected abstract AbstractAI InitAI();
 		protected abstract CharStatus InitStatus();
 		protected abstract SkillSet InitSkillSet();
 
@@ -153,6 +159,18 @@ namespace Assets.scripts.Actor
 		public bool CanAttack(Character targetCh)
 		{
 			return Team != targetCh.Team;
+		}
+
+		public bool CanAutoAttack(Character ch)
+		{
+			if (this is Monster)
+			{
+				//TODO add isAggressive params
+
+				return CanAttack(ch);
+			}
+
+			return false;
 		}
 	}
 }
