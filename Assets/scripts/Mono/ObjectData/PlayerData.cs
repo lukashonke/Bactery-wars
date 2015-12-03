@@ -64,7 +64,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnCollisionEnter2D(Collision2D coll)
 		{
-
+			base.OnCollisionEnter2D(coll);
 		}
 
 		public override void OnCollisionExit2D(Collision2D coll)
@@ -117,6 +117,21 @@ namespace Assets.scripts.Mono.ObjectData
 		public void ConfirmSkillLaunch()
 		{
 			ActiveConfirmationSkill.Start();
+		}
+
+		public void SetPlayersMoveToTarget(GameObject newTarget)
+		{
+			AbortMeleeAttacking();
+
+			if (!allowMovePointChange)
+				return;
+
+			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
+			{
+				ActiveConfirmationSkill.AbortCast();
+			}
+
+			SetMovementTarget(newTarget);
 		}
 
 		public void SetPlayersMoveToTarget(Vector3 newTarget)

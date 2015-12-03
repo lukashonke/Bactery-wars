@@ -77,6 +77,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnCollisionEnter2D(Collision2D coll)
 		{
+			base.OnCollisionEnter2D(coll);
 		}
 
 		public override void OnCollisionExit2D(Collision2D coll)

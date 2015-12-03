@@ -55,6 +55,7 @@ namespace Assets.scripts.Mono
 
 		// current position in world cords to move to
 		protected Vector3 targetPositionWorld;
+		protected GameObject targetMoveObject;
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
@@ -111,6 +112,13 @@ namespace Assets.scripts.Mono
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
+		}
+
+		private void CollidedWithTarget(Collision2D coll)
+		{
+			// the player has arrived to the target, dont move anymore (he'd move through the target's collider otherwise
+			targetMoveObject = null; 
+			BreakMovement();
 		}
 
 		public virtual void Update()
@@ -539,6 +547,13 @@ namespace Assets.scripts.Mono
 			heading = v;
 		}
 
+		public void SetMovementTarget(GameObject newTarget)
+		{
+			MovementChanged();
+			targetPositionWorld = newTarget.transform.position;
+			targetMoveObject = newTarget;
+		}
+
 		public void SetMovementTarget(Vector3 newTarget)
 		{
 			MovementChanged();
@@ -621,14 +636,14 @@ namespace Assets.scripts.Mono
 			{
 				if (this is PlayerData)
 				{
-					((PlayerData)this).SetPlayersMoveToTarget(target.transform.position);
+					((PlayerData)this).SetPlayersMoveToTarget(target);
 					HasTargetToMoveTo = true;
 					QueueMelee = true;
 					QueueMeleeTarget = target;
 				}
 				else if (this is EnemyData)
 				{
-					((EnemyData)this).SetMovementTarget(target.transform.position); //TODO might cause problems
+					((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 					HasTargetToMoveTo = true;
 					QueueMelee = true;
 					QueueMeleeTarget = target;
@@ -642,7 +657,15 @@ namespace Assets.scripts.Mono
 		}
 
 		public abstract Character GetOwner();
-		public abstract void OnCollisionEnter2D(Collision2D coll);
+
+		public virtual void OnCollisionEnter2D(Collision2D coll)
+		{
+			if (targetMoveObject != null && targetMoveObject.Equals(coll.gameObject))
+			{
+				CollidedWithTarget(coll);
+			}
+		}
+
 		public abstract void OnCollisionExit2D(Collision2D coll);
 		public abstract void OnCollisionStay2D(Collision2D coll);
 		public abstract void OnTriggerEnter2D(Collider2D obj);
