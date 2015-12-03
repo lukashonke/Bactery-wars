@@ -115,12 +115,8 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
-		public void ReceiveDamage(int damage)
+		public void ReceiveDamage(Character source, int damage)
 		{
-			if (this is Player)
-			{
-				Debug.Log("receiving " + damage);
-			}
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)
@@ -129,6 +125,8 @@ namespace Assets.scripts.Actor
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
+
+			AI.AddAggro(source, damage);
 		}
 
 		public ActiveSkill GetMeleeAttackSkill()

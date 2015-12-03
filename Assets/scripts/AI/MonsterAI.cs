@@ -12,9 +12,12 @@ namespace Assets.scripts.AI
 	{
 		public float AutoAttackRange { get; set; }
 
+		public Dictionary<Character, int> Aggro; 
+
 		public MonsterAI(Character o) : base(o)
 		{
 			AutoAttackRange = 5;
+			Aggro = new Dictionary<Character, int>();
 		}
 
 		public override void Think()
@@ -32,11 +35,6 @@ namespace Assets.scripts.AI
 
 					break;
 				case AIState.ATTACKING:
-					if (GetMainTarget() == null || GetMainTarget().Status.IsDead)
-					{
-						SetAIState(AIState.ACTIVE);
-						return;
-					}
 
 					ThinkAttack();
 
@@ -65,24 +63,93 @@ namespace Assets.scripts.AI
 
 		private void ThinkAttack()
 		{
-			// target is too far (> attackdistance*2) - abandone attacking
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, GetMainTarget().GetData().GetBody().transform.position) > AutoAttackRange * 2)
+			Character possibleTarget = SelectMostAggroTarget();
+
+			// no target this monster hates - go back to active
+			if (possibleTarget == null)
 			{
 				SetAIState(AIState.ACTIVE);
-				RemoveMainTarget();
 				return;
 			}
 
-			Debug.DrawRay(Owner.GetData().GetBody().transform.position, GetMainTarget().GetData().GetBody().transform.position, Color.blue);
+			if (possibleTarget.Status.IsDead)
+			{
+				RemoveAggro(possibleTarget);
+				return;
+			}
 
-			AttackTarget(GetMainTarget());
+			// target is too far (> attackdistance*2) - abandone attacking
+			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AutoAttackRange * 2)
+			{
+				RemoveAggro(possibleTarget, 1);
+			}
+
+			AttackTarget(possibleTarget);
+		}
+
+		public override void AddAggro(Character ch, int points)
+		{
+			if (!Aggro.ContainsKey(ch))
+			{
+				Aggro.Add(ch, points);
+			}
+			else
+			{
+				int newP = 0;
+				Aggro.TryGetValue(ch, out newP);
+				newP += points;
+				Aggro[ch] = newP;
+			}
+		}
+
+		public void RemoveAggro(Character ch)
+		{
+			RemoveAggro(ch, 0);
+		}
+
+		public override void RemoveAggro(Character ch, int points)
+		{
+			if (Aggro.ContainsKey(ch))
+			{
+				if (points == 0)
+					Aggro.Remove(ch);
+				else
+				{
+					int newP = 0;
+					Aggro.TryGetValue(ch, out newP);
+					newP -= points;
+
+					if (newP <= 0)
+						Aggro.Remove(ch);
+					else
+						Aggro[ch] = newP;
+				}
+			}
+		}
+
+		private Character SelectMostAggroTarget()
+		{
+			if (Aggro.Count == 0)
+				return null;
+
+			int top = 0;
+			Character topCh = null;
+			foreach (KeyValuePair<Character, int> e in Aggro)
+			{
+				if (e.Value > top)
+				{
+					top = e.Value;
+					topCh = e.Key;
+				}
+			}
+
+			return topCh;
 		}
 
 		private void AttackTarget(Character target)
 		{
-			Owner.GetData().MeleeAttack(GetMainTarget().GetData().GetBody());
-			//Owner.GetData().SetMovementTarget(GetMainTarget().GetData().GetBody().transform.position);
-			//Owner.GetData().HasTargetToMoveTo = true;
+			//just melee attack for now 
+			Owner.GetData().MeleeAttack(target.GetData().GetBody());
 		}
 
 		private void ThinkActive()
@@ -103,12 +170,16 @@ namespace Assets.scripts.AI
 						// find target that can be attacked
 						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AutoAttackRange)
 						{
-							SetMainTarget(ch);
-							SetAIState(AIState.ATTACKING);
+							AddAggro(ch, 1);
 						}
 
 						break;
 					}
+				}
+
+				if (Aggro.Any())
+				{
+					SetAIState(AIState.ATTACKING);
 				}
 			}
 
@@ -130,7 +201,7 @@ namespace Assets.scripts.AI
 
 		public override void OnSwitchAttacking()
 		{
-			
+			ThinkInterval = 0.2f;
 		}
 	}
 }

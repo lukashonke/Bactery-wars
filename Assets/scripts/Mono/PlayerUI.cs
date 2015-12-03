@@ -40,6 +40,11 @@ namespace Assets.scripts.Mono
 			Debug.Log("clicked ");
 		}
 
+		public void Skill(int order)
+		{
+			data.LaunchSkill(order);
+		}
+
 		public void Skill1()
 		{
 			data.LaunchSkill(1);
@@ -67,11 +72,13 @@ namespace Assets.scripts.Mono
 
 		public void SetMouseOverUi()
 		{
+			Debug.Log("in");
 			mouseOverUi = true;
 		}
 
 		public void SetMouseNotOverUi()
 		{
+			Debug.Log(("out"));
 			mouseOverUi = false;
 		}
 	}

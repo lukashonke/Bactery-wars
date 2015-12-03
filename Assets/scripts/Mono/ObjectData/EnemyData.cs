@@ -56,7 +56,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerEnter2D(Collider2D obj)
 		{
-			// kolize s objectem ktery implementuje IDamagable poskodi tohoto hrace
+			/*// kolize s objectem ktery implementuje IDamagable poskodi tohoto hrace
 			GameObject incoming = obj.gameObject;
 			IDamagable id;
 		
@@ -64,7 +64,7 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				id = dmg;
 				owner.ReceiveDamage(id.GetDamage());
-			}
+			}*/
 		}
 
 		public override void OnTriggerExit2D(Collider2D obj)

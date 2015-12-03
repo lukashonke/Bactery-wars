@@ -29,5 +29,13 @@ namespace Assets.scripts.AI
 		public override void OnSwitchAttacking()
 		{
 		}
+
+		public override void AddAggro(Character ch, int points)
+		{
+		}
+
+		public override void RemoveAggro(Character ch, int points)
+		{
+		}
 	}
 }

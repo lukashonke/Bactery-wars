@@ -72,6 +72,8 @@ namespace Assets.scripts.AI
 		public abstract void OnSwitchIdle();
 		public abstract void OnSwitchActive();
 		public abstract void OnSwitchAttacking();
+		public abstract void AddAggro(Character ch, int points);
+		public abstract void RemoveAggro(Character ch, int points);
 
 		private IEnumerator AITask()
 		{
