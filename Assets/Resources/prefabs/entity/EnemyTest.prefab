@@ -49,7 +49,6 @@ GameObject:
   - 198: {fileID: 19807832}
   - 199: {fileID: 19986954}
   - 50: {fileID: 5082764}
-  - 114: {fileID: 11480896}
   - 114: {fileID: 11429700}
   m_Layer: 0
   m_Name: EnemyTest
@@ -133,8 +132,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114806}
-  m_LocalRotation: {x: 0, y: 0, z: .764758408, w: .64431715}
-  m_LocalPosition: {x: -5.95998573, y: -1.05720925, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.5690794, y: -2.87508035, z: 0}
   m_LocalScale: {x: .314669639, y: .314669639, z: 1}
   m_Children:
   - {fileID: 406822}
@@ -164,7 +163,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 114806}
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: .0500000007
+  m_AngularDrag: 5
   m_GravityScale: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -196,7 +195,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 86760eac94f6bce408459992a40efe67, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -266,7 +265,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114806}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8ae6f9c6b3e9ce439ce98d4863c2823, type: 3}
   m_Name: 
@@ -294,43 +293,11 @@ MonoBehaviour:
   visibleMaxHp: 10
   visibleHp: 10
   moveSpeed: 10
-  rotateSpeed: 0
+  rotateSpeed: 25
   isDead: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
---- !u!114 &11480896
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 114806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 205
-    i1: 158
-    i2: 123
-    i3: 210
-    i4: 238
-    i5: 118
-    i6: 90
-    i7: 4
-    i8: 155
-    i9: 141
-    i10: 29
-    i11: 66
-    i12: 58
-    i13: 151
-    i14: 99
-    i15: 39
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!198 &19807832
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -2610,6 +2577,30 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: minDistanceClickToMove
       value: .200000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: canMoveWhenNotRotated
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: rotateSpeed
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_AngularDrag
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LinearDrag
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
