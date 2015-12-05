@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 0;
 			coolDown = 0;
 			requireConfirm = true;
+
+			range = 5;
 		}
 
 		public override Skill Instantiate()
@@ -25,6 +28,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override SkillEffect[] CreateEffects()
 		{
 			return new SkillEffect[] {new EffectDamage(10, 2)};
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()

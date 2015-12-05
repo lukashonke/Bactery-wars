@@ -10,14 +10,17 @@ namespace Assets.scripts.AI
 {
 	public class MonsterAI : AbstractAI
 	{
-		public float AutoAttackRange { get; set; }
+		public Dictionary<Character, int> Aggro;
 
-		public Dictionary<Character, int> Aggro; 
+		public bool IsAggressive { get; set; }
+		public int AggressionRange { get; set; }
 
 		public MonsterAI(Character o) : base(o)
 		{
-			AutoAttackRange = 5;
 			Aggro = new Dictionary<Character, int>();
+
+			IsAggressive = true;
+			AggressionRange = 2;
 		}
 
 		public override void Think()
@@ -61,6 +64,41 @@ namespace Assets.scripts.AI
 			}
 		}
 
+		private void ThinkActive()
+		{
+			bool stillActive = false;
+			if (Owner.Knownlist.KnownObjects.Count > 0)
+			{
+				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				{
+					if (o == null) continue;
+
+					Character ch = Utils.GetCharacter(o);
+
+					if (IsAggressive && ch != null && Owner.CanAutoAttack(ch))
+					{
+						stillActive = true;
+
+						// find target that can be attacked
+						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
+						{
+							AddAggro(ch, 1);
+						}
+
+						break;
+					}
+				}
+
+				if (Aggro.Any())
+					SetAIState(AIState.ATTACKING);
+			}
+
+			if (!stillActive)
+			{
+				SetAIState(AIState.IDLE);
+			}
+		}
+
 		private void ThinkAttack()
 		{
 			Character possibleTarget = SelectMostAggroTarget();
@@ -79,7 +117,7 @@ namespace Assets.scripts.AI
 			}
 
 			// target is too far (> attackdistance*2) - abandone attacking
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AutoAttackRange * 2)
+			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
 			{
 				RemoveAggro(possibleTarget, 1);
 			}
@@ -150,43 +188,6 @@ namespace Assets.scripts.AI
 		{
 			//just melee attack for now 
 			Owner.GetData().MeleeAttack(target.GetData().GetBody());
-		}
-
-		private void ThinkActive()
-		{
-			bool stillActive = false;
-			if (Owner.Knownlist.KnownObjects.Count > 0)
-			{
-				foreach (GameObject o in Owner.Knownlist.KnownObjects)
-				{
-					if (o == null) continue;
-
-					Character ch = Utils.GetCharacter(o);
-
-					if (ch != null && Owner.CanAutoAttack(ch))
-					{
-						stillActive = true;
-
-						// find target that can be attacked
-						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AutoAttackRange)
-						{
-							AddAggro(ch, 1);
-						}
-
-						break;
-					}
-				}
-
-				if (Aggro.Any())
-				{
-					SetAIState(AIState.ATTACKING);
-				}
-			}
-
-			if (!stillActive)
-			{
-				SetAIState(AIState.IDLE);
-			}
 		}
 
 		public override void OnSwitchIdle()

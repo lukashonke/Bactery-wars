@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Skills;
 using UnityEngine;
 
 namespace Assets.scripts.AI
@@ -35,6 +36,8 @@ namespace Assets.scripts.AI
 			if (active || task != null)
 				return;
 
+			Init();
+
 			active = true;
 			task = Owner.StartTask(AITask());
 		}
@@ -46,6 +49,19 @@ namespace Assets.scripts.AI
 				active = false;
 				Owner.StopTask(task);
 				task = null;
+			}
+		}
+
+		private void Init()
+		{
+			AnalyzeSkills();
+		}
+
+		private void AnalyzeSkills()
+		{
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				
 			}
 		}
 

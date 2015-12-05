@@ -22,6 +22,13 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		public Monster(string name, EnemyData dataObject, MonsterTemplate template, AbstractAI ai) : base(name, ai)
+		{
+			Data = dataObject;
+
+			Template = template;
+		}
+
 		public new EnemyData GetData()
 		{
 			return (EnemyData) Data;

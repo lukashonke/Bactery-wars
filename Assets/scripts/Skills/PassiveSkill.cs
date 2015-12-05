@@ -14,6 +14,15 @@ namespace Assets.scripts.Skills
 
 		public abstract void ApplyEffect();
 
+		public override void InitTraits()
+		{
+			
+		}
+
+		protected override void InitDynamicTraits()
+		{
+		}
+
 		public sealed override void SkillAdded()
 		{
 			ApplyEffect();

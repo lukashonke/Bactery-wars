@@ -36,6 +36,14 @@ namespace Assets.scripts.Actor
 		{
         }
 
+		protected Character(string name, AbstractAI ai) : base(name)
+		{
+			AI = ai;
+		}
+
+		/// <summary>
+		/// zavolano hned po vytvoreni Characteru (hned po zavolani konstruktorů)
+		/// </summary>
 		public void Init()
 		{
 			Knownlist = new Knownlist(this);
@@ -44,7 +52,9 @@ namespace Assets.scripts.Actor
 
 			Knownlist.StartUpdating();
 
-			AI = InitAI();
+			if (AI == null)
+				AI = InitAI();
+
 			AI.StartAITask();
 		}
 
@@ -165,14 +175,18 @@ namespace Assets.scripts.Actor
 
 		public bool CanAutoAttack(Character ch)
 		{
-			if (this is Monster)
-			{
-				//TODO add isAggressive params
+			return CanAttack(ch);
+		}
 
-				return CanAttack(ch);
+		public void ChangeAI(AbstractAI ai)
+		{
+			if (AI != null)
+			{
+				AI.StopAITask();
 			}
 
-			return false;
+			AI = ai;
+			AI.StartAITask();
 		}
 	}
 }

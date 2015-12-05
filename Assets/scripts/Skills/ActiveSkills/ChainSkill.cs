@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -30,6 +31,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override SkillEffect[] CreateEffects()
 		{
 			return new SkillEffect[] { new EffectDamage(2, 0) }; // deal 2 dmg / 250ms
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()

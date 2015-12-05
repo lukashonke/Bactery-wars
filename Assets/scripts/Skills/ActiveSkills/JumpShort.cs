@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -25,6 +26,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override SkillEffect[] CreateEffects()
 		{
 			return null;
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Jump);
 		}
 
 		public override bool OnCastStart()

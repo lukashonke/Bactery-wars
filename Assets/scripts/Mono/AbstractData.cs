@@ -25,6 +25,7 @@ namespace Assets.scripts.Mono
 	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
 		public bool USE_VELOCITY_MOVEMENT = true;
+		public string aiType;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove = 0.2f;
@@ -627,7 +628,7 @@ namespace Assets.scripts.Mono
 			if (sk == null || sk.IsActive())
 				return;
 
-			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.Range)
+			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
 			{
 				IsMeleeAttacking = true;
 				sk.Start(target);

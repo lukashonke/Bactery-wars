@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Assets.scripts.Actor;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
@@ -46,6 +47,16 @@ namespace Assets.scripts.Mono.ObjectData
 			TargettingActive = true;
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
+
+			if (aiType != null && !aiType.Equals("default"))
+			{
+				switch (aiType)
+				{
+					case "monster":
+						player.ChangeAI(new MonsterAI(player));
+						break;
+				}
+			}
 
             Debug.Log("Registering new data for player " + player.Name);
 		}

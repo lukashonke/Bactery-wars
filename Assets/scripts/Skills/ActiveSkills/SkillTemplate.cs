@@ -20,6 +20,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return null;
 		}
 
+		public override void InitTraits()
+		{
+		}
+
 		public override bool OnCastStart()
 		{
 			return true;

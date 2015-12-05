@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -24,16 +26,19 @@ namespace Assets.scripts.Skills
 		protected bool active;
 		protected Coroutine Task { get; set; }
 		protected Coroutine UpdateTask { get; set; }
+		protected Coroutine RangeCheckTask { get; set; }
 		protected SkillState state;
 
 		/// how often should UpdateLaunched() be called (in seconds)
 		protected float updateFrequency;
 
-		protected float castTime;
-		protected float coolDown;
-		protected float reuse;
+		/// pri kratkem range je vhodne snizit tuto frekvenci pro presnejsi vypocet, defaultne to je nastaveno na 0.2f (5x/s)
+		protected float rangeCheckFrequency;
 
-		public float Range { get; protected set; }
+		public float castTime;
+		public float coolDown;
+		public float reuse;
+		public int range;
 
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
@@ -55,6 +60,8 @@ namespace Assets.scripts.Skills
 		/// represents the main particleSystem for 
 		protected GameObject particleSystem;
 
+		protected Dictionary<GameObject, Vector3> RangeChecks;
+
 		public ActiveSkill(string name, int id)
 			: base(name, id)
 		{
@@ -64,8 +71,11 @@ namespace Assets.scripts.Skills
 			coolDown = 5;
 			reuse = 5;
 			updateFrequency = 0.1f;
+			rangeCheckFrequency = 0.2f;
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
+
+			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}
 
 		/// returning false will make the skill not start
@@ -121,6 +131,27 @@ namespace Assets.scripts.Skills
 		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
+
+		protected override void InitDynamicTraits()
+		{
+			if (castTime <= 1f)
+				AddTrait(SkillTraits.ShortCastingTime);
+
+			if (castTime >= 3)
+				AddTrait(SkillTraits.LongCastingTime);
+
+			if (reuse <= 1f)
+				AddTrait(SkillTraits.ShortReuse);
+
+			if (reuse >= 3)
+				AddTrait(SkillTraits.LongReuse);
+
+			if (range < 5)
+				AddTrait(SkillTraits.ShortRange);
+
+			if (range > 10)
+				AddTrait(SkillTraits.LongRange);
+		}
 
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
@@ -201,7 +232,7 @@ namespace Assets.scripts.Skills
 		public override void Start()
 		{
 			bool start = false;
-			bool isPlayer = GetPlayerData() != null;
+			bool isPlayer = GetPlayerData() != null && GetPlayerData().GetOwner().AI is PlayerAI;
 
 			// works only for Players (not needed for other characters)
 			if (requireConfirm && isPlayer)
@@ -252,6 +283,9 @@ namespace Assets.scripts.Skills
 
 			Task = Owner.StartTask(SkillTask());
 			UpdateTask = Owner.StartTask(StartUpdateTask());
+
+			if (range > 0)
+				RangeCheckTask = Owner.StartTask(RangeTaskCheck());
 		}
 
 		public override void End()
@@ -338,6 +372,17 @@ namespace Assets.scripts.Skills
 			yield return null;
 		}
 
+		protected IEnumerator RangeTaskCheck()
+		{
+			while (RangeChecks.Any() || active)
+			{
+				CheckRanges();
+				yield return new WaitForSeconds(rangeCheckFrequency);
+			}
+
+			yield return null;
+		}
+
 		/// <summary>
 		/// Makes the gameobject send Start() and Update() methods to this class to MonoUpdate and MonoStart
 		/// </summary>
@@ -400,6 +445,8 @@ namespace Assets.scripts.Skills
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
 
+			AddRangeCheck(o);
+
 			return o;
 		}
 
@@ -409,6 +456,8 @@ namespace Assets.scripts.Skills
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
+
+			AddRangeCheck(o);
 
 			return o;
 		}
@@ -420,6 +469,8 @@ namespace Assets.scripts.Skills
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
 
+			AddRangeCheck(o);
+
 			return o;
 		}
 
@@ -429,6 +480,8 @@ namespace Assets.scripts.Skills
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
+
+			AddRangeCheck(o);
 
 			return o;
 		}
@@ -613,7 +666,49 @@ namespace Assets.scripts.Skills
 			if(pd != null)
 				pd.collapse();
 			else
-				DestroyProjectile(proj);
+				Object.Destroy(proj);
+		}
+
+		protected void AddRangeCheck(GameObject o)
+		{
+			if(range > 0)
+				RangeChecks.Add(o, o.transform.position);
+		}
+
+		protected void CheckRanges()
+		{
+			List<GameObject> temp = new List<GameObject>(RangeChecks.Keys);
+			foreach (GameObject proj in temp)
+			{
+				Vector3 init = RangeChecks[proj];
+				bool far = CheckRange(proj, init, range);
+
+				if (far)
+				{
+					DestroyProjectile(proj);
+					RangeChecks.Remove(proj);
+					continue;
+				}
+			}
+		}
+
+		/// <summary>
+		/// returns true if it is out of range
+		/// pracuje s hodnotami nadruhou
+		/// </summary>
+		/// <param name="o"></param>
+		/// <param name="init"></param>
+		/// <param name="range"></param>
+		/// <returns></returns>
+		private bool CheckRange(GameObject o, Vector3 init, int range)
+		{
+			if (o != null && o.activeInHierarchy)
+			{
+				Vector3 rangeVector = init - o.transform.position;
+				return rangeVector.sqrMagnitude >= range*range;
+			}
+
+			return false;
 		}
 	}
 }

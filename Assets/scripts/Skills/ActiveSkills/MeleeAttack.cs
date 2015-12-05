@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 0;
 			updateFrequency = 0.1f;
 
-			Range = 4f;
+			range = 4;
 		}
 
 		public override Skill Instantiate()
@@ -32,6 +32,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override SkillEffect[] CreateEffects()
 		{
 			return new SkillEffect[] { new EffectDamage(10, 0) };
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()
@@ -46,7 +51,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			RotatePlayerTowardsTarget(initTarget);
 
-			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
 			{
 				meleeEffect = CreateParticleEffect("Melee2", true, GetOwnerData().GetBody().transform.position);
 				StartParticleEffect(meleeEffect);
@@ -70,7 +75,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			if (initTarget != null)
 			{
-				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < Range)
+				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
 				{
 					ApplyEffects(Owner, initTarget);
 
@@ -102,7 +107,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void UpdateLaunched()
 		{
-			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) > Range)
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) > range)
 			{
 				if(meleeEffect != null)
 					DeleteParticleEffect(meleeEffect);
