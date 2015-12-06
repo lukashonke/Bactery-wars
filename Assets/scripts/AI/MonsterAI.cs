@@ -19,7 +19,7 @@ namespace Assets.scripts.AI
 		protected readonly int SHORT_RANGE = 6;
 		protected readonly int LONG_RANGE = 10;
 		protected int MELEE_ATTACK_RATE = 50;
-		protected int LOW_HP_DETERMINER = 20;
+		protected int LOW_HP_DETERMINER = 50;
 
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
@@ -208,7 +208,7 @@ namespace Assets.scripts.AI
 			SetMainTarget(target);
 
 			bool isCasting = Owner.GetData().IsCasting;
-			bool isMelee = Owner.GetData().RepeatingMeleeAttack;
+			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 
 			// already doing something
 			if (isCasting || currentAction != null)
@@ -227,16 +227,27 @@ namespace Assets.scripts.AI
 			int targetHpPercentage = (int)((target.Status.Hp / (float)target.Status.MaxHp) * 100);
 			int targetHp = target.Status.Hp;
 
-			if (IsLowHp(hpPercentage))
+			if (dist > 5 && Random.Range(0, 100) < 20)
 			{
-				
+				ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
+				if (jump != null && jump.CanUse())
+				{
+					StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 1f);
+					return;
+				}
+			}
+
+			if (IsLowHp(hpPercentage) && !isMeleeAttacking)
+			{
+				StartAction(RunAway(target, 5f), 5f);
+				return;
 			}
 
 			ActiveSkill sk = (ActiveSkill) GetSkillWithTrait(SkillTraits.Damage);
 
 			if (sk != null && sk.CanUse())
 			{
-				StartAction(CastSkill(target, sk, dist, true, 0f, 0f), 5f);
+				StartAction(CastSkill(target, sk, dist, false, true, 0f, 0f), 5f);
 			}
 			else		
 				Owner.GetData().MeleeAttack(target.GetData().GetBody(), false);
@@ -244,12 +255,33 @@ namespace Assets.scripts.AI
 
 		private bool IsLowHp(int hpPercent)
 		{
-			return (LOW_HP_DETERMINER + Random.Range(-10, 10) <= hpPercent);
+			return (LOW_HP_DETERMINER + Random.Range(-10, 10) >= hpPercent);
 		}
 
-		protected IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		protected IEnumerator RunAway(Character target, float distance)
 		{
-			if (sk.range != 0)
+			Vector3 dirVector = -Utils.GetDirectionVector(target.GetData().GetBody().transform.position, Owner.GetData().transform.position).normalized * distance;
+
+			int randomDir = Random.Range(-20, 20);
+			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, randomDir)) * dirVector;
+			
+			MoveTo(nv);
+
+			Debug.DrawRay(Owner.GetData().GetBody().transform.position, nv, Color.green, 2f);
+
+			yield return null;
+
+			while (Owner.GetData().HasTargetToMoveTo)
+			{
+				yield return null;
+			}
+
+			currentAction = null;
+		}
+
+		protected IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		{
+			if (!noRangeCheck && sk.range != 0)
 			{
 				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
 				{
@@ -267,6 +299,8 @@ namespace Assets.scripts.AI
 					}
 				}
 			}
+
+			Debug.Log("gonna use " + sk.Name);
 
 			Owner.GetData().BreakMovement(true);
 			RotateToTarget(target);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.AI;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -40,7 +41,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			GetOwnerData().JumpForward(mouseDirection, 4, 100);
+			if (GetOwnerData().GetOwner().AI is PlayerAI)
+				GetOwnerData().JumpForward(mouseDirection, 4, 100);
+			else
+			{
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), 4, 100);
+			}
 		}
 
 		public override void UpdateLaunched()

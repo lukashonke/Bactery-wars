@@ -661,6 +661,13 @@ namespace Assets.scripts.Mono
 			return meleeAnimationActive;
 		}
 
+		public bool IsMeleeAttacking()
+		{
+			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
+
+			return sk != null && sk.IsActive();
+		}
+
 		public void MeleeAttack(GameObject target, bool repeat)
 		{
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
