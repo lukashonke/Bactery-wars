@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.Status;
 using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 
 namespace Assets.scripts.AI
@@ -16,7 +18,8 @@ namespace Assets.scripts.AI
 
 		public float ThinkInterval { get; set; }
 		private bool active;
-		private Coroutine task;
+		private Coroutine mainTask;
+		protected Coroutine currentAction;
 
 		private Character MainTarget { get; set; }
 		protected List<Character> Targets { get; private set; } 
@@ -33,22 +36,22 @@ namespace Assets.scripts.AI
 
 		public void StartAITask()
 		{
-			if (active || task != null)
+			if (active || mainTask != null)
 				return;
 
 			Init();
 
 			active = true;
-			task = Owner.StartTask(AITask());
+			mainTask = Owner.StartTask(AITask());
 		}
 
 		public void StopAITask()
 		{
-			if (active && task != null)
+			if (active && mainTask != null)
 			{
 				active = false;
-				Owner.StopTask(task);
-				task = null;
+				Owner.StopTask(mainTask);
+				mainTask = null;
 			}
 		}
 
@@ -57,12 +60,33 @@ namespace Assets.scripts.AI
 			AnalyzeSkills();
 		}
 
+		protected void StartAction(IEnumerator task, float timeLimit)
+		{
+			currentAction = Owner.StartTask(task);
+			Owner.StartTask(ActionTimeLimit(timeLimit));
+		}
+
+		private IEnumerator ActionTimeLimit(float timeLimit)
+		{
+			yield return new WaitForSeconds(timeLimit);
+			BreakCurrentAction();
+		}
+
+		protected void BreakCurrentAction()
+		{
+			if (currentAction != null)
+			{
+				Owner.StopTask(currentAction);
+				currentAction = null;
+			}
+		}
+
 		private void AnalyzeSkills()
 		{
-			foreach (Skill sk in Owner.Skills.Skills)
+			/*foreach (Skill sk in Owner.Skills.Skills)
 			{
 				
-			}
+			}*/
 		}
 
 		public virtual void SetAIState(AIState st)
@@ -137,6 +161,51 @@ namespace Assets.scripts.AI
 				MainTarget = Targets.First();
 				RemoveTarget(MainTarget);
 			}
+		}
+
+		public CharStatus GetStatus()
+		{
+			return Owner.Status;
+		}
+
+		public Skill GetSkillWithTrait(SkillTraits trait)
+		{
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				if (sk.Traits.Contains(trait))
+				{
+					return sk;
+				}
+			}
+			return null;
+		}
+
+		public List<Skill> GetAllSkillsWithTrait(SkillTraits trait)
+		{
+			List<Skill> skills = new List<Skill>();
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				if (sk.Traits.Contains(trait))
+				{
+					skills.Add(sk);
+				}
+			}
+			return skills;
+		}
+
+		protected void RotateToTarget(Character target)
+		{
+			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);
+		}
+
+		protected void MoveTo(Character target)
+		{
+			Owner.GetData().MoveTo(target.GetData().GetBody());
+		}
+
+		protected void MoveTo(Vector3 target)
+		{
+			Owner.GetData().MoveTo(target);
 		}
 	}
 }

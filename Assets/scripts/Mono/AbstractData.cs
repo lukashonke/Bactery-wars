@@ -40,6 +40,28 @@ namespace Assets.scripts.Mono
 		public GameObject particleSystems;
 		public Healthbar healthBar;
 
+		private GameObject target;
+		public GameObject Target
+		{
+			get { return target; }
+			set
+			{
+				if (target != null)
+				{
+					if (target.Equals(value))
+						return;
+
+					if(this is PlayerData)
+						((PlayerData)this).HighlightTarget(target, false);
+				}
+
+				target = value;
+
+				if (this is PlayerData)
+					((PlayerData)this).HighlightTarget(target, true);
+			}
+		}
+
 		/// <summary>GameObject reprezentujici relativni pozici ze ktere vychazeji strely a nektere efekty</summary>
 		public GameObject shootingPosition;
 
@@ -60,8 +82,9 @@ namespace Assets.scripts.Mono
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
-		public bool IsMeleeAttacking { get; set; }
+		public bool RepeatingMeleeAttack { get; set; }
 		public bool QueueMelee { get; set; }
+		public bool QueueMeleeRepeat { get; set; }
 		public GameObject QueueMeleeTarget { get; set; }
 
 		protected bool allowMovePointChange;
@@ -113,13 +136,6 @@ namespace Assets.scripts.Mono
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
-		}
-
-		private void CollidedWithTarget(Collision2D coll)
-		{
-			// the player has arrived to the target, dont move anymore (he'd move through the target's collider otherwise
-			targetMoveObject = null; 
-			BreakMovement();
 		}
 
 		public virtual void Update()
@@ -181,20 +197,9 @@ namespace Assets.scripts.Mono
 				if(this is PlayerData)anim.SetFloat("MOVE_SPEED", 0);
 				HasTargetToMoveTo = false;
 
-				// the player had fixed position and velocity to move to, if he is there already, unfix this
-				if (!allowMovePointChange && forcedVelocity)
-				{
-					allowMovePointChange = true;
-					forcedVelocity = false;
-				}
+				ArrivedAtDestination();
 
 				ResetVelocity();
-
-				if (QueueMelee)
-				{
-					MeleeAttack(QueueMeleeTarget);
-					QueueMelee = false;
-				}
 			}
 
 			GetOwner().OnUpdate();
@@ -318,10 +323,32 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void BreakMovement()
+		public void BreakMovement(bool arrivedAtDestination)
 		{
+			if (arrivedAtDestination)
+			{
+				targetMoveObject = null;
+				ArrivedAtDestination();
+			}
+
 			MovementChanged();
 			HasTargetToMoveTo = false;
+		}
+
+		private void ArrivedAtDestination()
+		{
+			// the player had fixed position and velocity to move to, if he is there already, unfix this
+			if (!allowMovePointChange && forcedVelocity)
+			{
+				allowMovePointChange = true;
+				forcedVelocity = false;
+			}
+
+			if (QueueMelee)
+			{
+				MeleeAttack(QueueMeleeTarget, QueueMeleeRepeat);
+				QueueMelee = false;
+			}
 		}
 
 		/// <summary>
@@ -424,7 +451,13 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public bool CanMove()
 		{
+			if (GetOwner().Status.IsDead)
+				return false;
+
 			if (!movementEnabled)
+				return false;
+
+			if (GetOwner().Status.IsImmobilized())
 				return false;
 
 			foreach (Skill skill in GetOwner().Skills.Skills)
@@ -447,6 +480,9 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public bool CanRotate()
 		{
+			if (GetOwner().Status.IsDead)
+				return false;
+
 			if (!rotationEnabled)
 				return false;
 
@@ -523,6 +559,11 @@ namespace Assets.scripts.Mono
 
 		public void DisableMe()
 		{
+			foreach (GameObject o in childs.Values)
+			{
+				o.SetActive(false);
+			}
+
 			body.GetComponent<SpriteRenderer>().enabled = false;
 			body.GetComponent<Collider2D>().enabled = false;
 		}
@@ -620,7 +661,7 @@ namespace Assets.scripts.Mono
 			return meleeAnimationActive;
 		}
 
-		public void MeleeAttack(GameObject target)
+		public void MeleeAttack(GameObject target, bool repeat)
 		{
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
@@ -630,31 +671,52 @@ namespace Assets.scripts.Mono
 
 			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
 			{
-				IsMeleeAttacking = true;
+				if(repeat)
+					RepeatingMeleeAttack = true;
+
 				sk.Start(target);
 			}
 			else
 			{
-				if (this is PlayerData)
-				{
-					((PlayerData)this).SetPlayersMoveToTarget(target);
-					HasTargetToMoveTo = true;
-					QueueMelee = true;
-					QueueMeleeTarget = target;
-				}
-				else if (this is EnemyData)
-				{
-					((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
-					HasTargetToMoveTo = true;
-					QueueMelee = true;
-					QueueMeleeTarget = target;
-				}
+				RepeatingMeleeAttack = false;
+				MoveTo(target);
+				QueueMelee = true;
+				QueueMeleeTarget = target;
+				QueueMeleeRepeat = repeat;
 			}
 		}
 
 		public void AbortMeleeAttacking()
 		{
-			IsMeleeAttacking = false;
+			RepeatingMeleeAttack = false;
+		}
+
+		public void MoveTo(GameObject target)
+		{
+			if (this is PlayerData)
+			{
+				((PlayerData)this).SetPlayersMoveToTarget(target);
+				HasTargetToMoveTo = true;
+			}
+			else if (this is EnemyData)
+			{
+				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
+				HasTargetToMoveTo = true;
+			}
+		}
+
+		public void MoveTo(Vector3 target)
+		{
+			if (this is PlayerData)
+			{
+				((PlayerData)this).SetPlayersMoveToTarget(target);
+				HasTargetToMoveTo = true;
+			}
+			else if (this is EnemyData)
+			{
+				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
+				HasTargetToMoveTo = true;
+			}
 		}
 
 		public abstract Character GetOwner();
@@ -663,7 +725,7 @@ namespace Assets.scripts.Mono
 		{
 			if (targetMoveObject != null && targetMoveObject.Equals(coll.gameObject))
 			{
-				CollidedWithTarget(coll);
+				BreakMovement(true);
 			}
 		}
 

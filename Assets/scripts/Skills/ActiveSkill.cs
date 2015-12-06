@@ -131,6 +131,7 @@ namespace Assets.scripts.Skills
 		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
+		public virtual void OnAfterEnd() { }
 
 		protected override void InitDynamicTraits()
 		{
@@ -298,6 +299,8 @@ namespace Assets.scripts.Skills
 
 			UpdateTask = null;
 			Task = null;
+
+			OnAfterEnd();
 		}
 
 		public override void AbortCast()
@@ -540,7 +543,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected void RotatePlayerTowardsMouse()
 		{
-			if (GetOwnerData() != null)
+			if (GetPlayerData() != null && GetPlayerData().GetOwner().AI is PlayerAI)
 				GetOwnerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 		}
 
@@ -652,12 +655,12 @@ namespace Assets.scripts.Skills
 		protected void StopPlayerTargetting()
 		{
 			//GetPlayerData().TargettingActive = false;
-			GetPlayerData().HighlightTarget(GetPlayerData().HoverTarget, false);
+			GetPlayerData().HighlightTarget(GetPlayerData().Target, false);
 		}
 
-		protected GameObject GetPlayerMouseHoverTarget()
+		public GameObject GetTarget()
 		{
-			return GetPlayerData().HoverTarget;
+			return GetOwnerData().Target;
 		}
 
 		protected void DestroyProjectile(GameObject proj)

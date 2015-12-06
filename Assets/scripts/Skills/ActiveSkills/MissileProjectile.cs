@@ -35,6 +35,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void InitTraits()
 		{
 			AddTrait(SkillTraits.Damage);
+			AddTrait(SkillTraits.Missile);
 		}
 
 		public override void OnBeingConfirmed()
@@ -44,7 +45,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			GameObject target = GetPlayerMouseHoverTarget();
+			GameObject target = GetTarget();
 			if (target == null)
 			{
 				AbortCast();
@@ -52,7 +53,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 
 			targettedPlayer = target;
-			Debug.Log("setting trget to " + targettedPlayer.name);
 
 			RotatePlayerTowardsMouse();
 			CreateCastingEffect(true);

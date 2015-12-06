@@ -38,6 +38,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void InitTraits()
 		{
 			AddTrait(SkillTraits.Damage);
+			AddTrait(SkillTraits.AreaDamage);
 		}
 
 		public override bool OnCastStart()

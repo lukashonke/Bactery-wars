@@ -78,6 +78,9 @@ namespace Assets.scripts.Actor
 		/// <param name="skill"></param>
 		public void CastSkill(Skill skill)
 		{
+			if (Status.IsDead)
+				return;
+
 			// skill is passive - cant cast it
 			if (skill is PassiveSkill)
 				return;
@@ -127,6 +130,9 @@ namespace Assets.scripts.Actor
 
 		public void ReceiveDamage(Character source, int damage)
 		{
+			if (Status.IsDead)
+				return;
+
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)

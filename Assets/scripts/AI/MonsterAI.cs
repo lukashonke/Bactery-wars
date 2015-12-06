@@ -1,16 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
 	public class MonsterAI : AbstractAI
 	{
 		public Dictionary<Character, int> Aggro;
+
+		public readonly int SHORT_RANGE = 6;
+		public readonly int LONG_RANGE = 10;
 
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
@@ -20,12 +27,16 @@ namespace Assets.scripts.AI
 			Aggro = new Dictionary<Character, int>();
 
 			IsAggressive = true;
-			AggressionRange = 2;
+			AggressionRange = 5;
 		}
 
 		public override void Think()
 		{
-			Debug.Log(State.ToString());
+			if (GetStatus().IsDead)
+			{
+				if (State == AIState.IDLE)
+					SetAIState(AIState.IDLE);
+			}
 
 			switch (State)
 			{
@@ -38,7 +49,6 @@ namespace Assets.scripts.AI
 
 					break;
 				case AIState.ATTACKING:
-
 					ThinkAttack();
 
 					break;
@@ -47,6 +57,9 @@ namespace Assets.scripts.AI
 
 		private void ThinkIdle()
 		{
+			if (GetStatus().IsDead)
+				return;
+
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
 				foreach (GameObject o in Owner.Knownlist.KnownObjects)
@@ -186,8 +199,73 @@ namespace Assets.scripts.AI
 
 		private void AttackTarget(Character target)
 		{
-			//just melee attack for now 
-			Owner.GetData().MeleeAttack(target.GetData().GetBody());
+			SetMainTarget(target);
+
+			bool isCasting = Owner.GetData().IsCasting;
+			bool isMelee = Owner.GetData().RepeatingMeleeAttack;
+
+			// already doing something
+			if (isCasting || currentAction != null)
+			{
+				return;
+			}
+
+			if(Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
+			{
+				Owner.GetData().Target = target.GetData().GetBody();
+			}
+
+			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			bool isImmobilized = Owner.GetData().CanMove();
+			int hpPercentage = (int) ((GetStatus().Hp/(float)GetStatus().MaxHp)*100);
+			int targetHpPercentage = (int)((target.Status.Hp / (float)target.Status.MaxHp) * 100);
+			int targetHp = target.Status.Hp;
+
+			if (IsLowHp(target))
+			{
+				
+			}
+
+			ActiveSkill sk = (ActiveSkill) GetSkillWithTrait(SkillTraits.Damage);
+
+			if (sk != null && sk.CanUse())
+			{
+				StartAction(CastSkill(target, sk, dist, true, 0f, 0f), 5f);
+			}
+			else		
+				Owner.GetData().MeleeAttack(target.GetData().GetBody(), false);
+		}
+
+		private bool IsLowHp(Character target)
+		{
+			return false;
+		}
+
+		protected IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		{
+			if (sk.range != 0)
+			{
+				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				{
+					dist = Vector3.Distance(target.GetData().transform.position, Owner.GetData().transform.position);
+
+					if (moveTowardsIfRequired)
+					{
+						MoveTo(target);
+						yield return null;
+					}
+					else // too far, cant move closer - break the action
+					{
+						currentAction = null;
+						yield break;
+					}
+				}
+			}
+
+			Owner.GetData().BreakMovement(true);
+			RotateToTarget(target);
+			Owner.CastSkill(sk);
+			currentAction = null;
 		}
 
 		public override void OnSwitchIdle()

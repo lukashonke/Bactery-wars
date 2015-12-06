@@ -131,7 +131,7 @@ namespace Assets.scripts.Mono
 
 						if (rb != null)
 						{
-							data.HoverTarget = hit.transform.gameObject;
+							data.Target = hit.transform.gameObject;
 							target = true;
                             break;
 						}
@@ -139,7 +139,7 @@ namespace Assets.scripts.Mono
 
 					if (!target)
 					{
-						data.HoverTarget = null;
+						data.Target = null;
 					}
 				}
 
@@ -160,11 +160,11 @@ namespace Assets.scripts.Mono
 				}
 				else
 				{
-					if (data.HoverTarget != null)
+					if (data.Target != null)
 					{
 						if (Input.GetMouseButtonDown(0))
 						{
-							data.MeleeAttack(data.HoverTarget);
+							data.MeleeAttack(data.Target, true);
 							Input.ResetInputAxes();
 						}
 					}

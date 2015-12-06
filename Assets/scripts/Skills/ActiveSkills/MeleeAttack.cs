@@ -78,9 +78,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
 				{
 					ApplyEffects(Owner, initTarget);
-
-					if (GetOwnerData().IsMeleeAttacking) // continue with next attack
-						GetOwnerData().MeleeAttack(initTarget);
 				}
 				else
 				{
@@ -103,6 +100,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
+		}
+
+		public override void OnAfterEnd()
+		{
+			// continue with next attack
+			if (GetOwnerData().RepeatingMeleeAttack)
+				GetOwnerData().MeleeAttack(initTarget, true);
 		}
 
 		public override void UpdateLaunched()

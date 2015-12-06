@@ -13,11 +13,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
 			castTime = 0f;
-			reuse = 0;
+			reuse = 1;
 			coolDown = 0;
 			requireConfirm = true;
 
-			range = 5;
+			range = 4;
 		}
 
 		public override Skill Instantiate()

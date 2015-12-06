@@ -19,25 +19,6 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
-		private GameObject hoverTarget;
-		public GameObject HoverTarget
-		{
-			get { return hoverTarget; }
-			set
-			{
-				if (hoverTarget != null)
-				{
-					if (hoverTarget.Equals(value))
-						return;
-
-					HighlightTarget(hoverTarget, false);
-				}
-
-				hoverTarget = value;
-				HighlightTarget(hoverTarget, true);
-			}
-		}
-
 		public bool TargettingActive { get; set; }
 
 		public new void Start()
@@ -162,6 +143,9 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void HighlightTarget(GameObject target, bool enable)
 		{
+			if (!(GetOwner().AI is PlayerAI))
+				return;
+
 			if (target == null)
 				return;
 
