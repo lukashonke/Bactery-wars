@@ -16,11 +16,14 @@ namespace Assets.scripts.AI
 	{
 		public Dictionary<Character, int> Aggro;
 
-		public readonly int SHORT_RANGE = 6;
-		public readonly int LONG_RANGE = 10;
+		protected readonly int SHORT_RANGE = 6;
+		protected readonly int LONG_RANGE = 10;
+		protected int MELEE_ATTACK_RATE = 50;
+		protected int LOW_HP_DETERMINER = 20;
 
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
+
 
 		public MonsterAI(Character o) : base(o)
 		{
@@ -32,6 +35,9 @@ namespace Assets.scripts.AI
 
 		public override void Think()
 		{
+			if (Owner == null)
+				return;
+
 			if (GetStatus().IsDead)
 			{
 				if (State == AIState.IDLE)
@@ -221,7 +227,7 @@ namespace Assets.scripts.AI
 			int targetHpPercentage = (int)((target.Status.Hp / (float)target.Status.MaxHp) * 100);
 			int targetHp = target.Status.Hp;
 
-			if (IsLowHp(target))
+			if (IsLowHp(hpPercentage))
 			{
 				
 			}
@@ -236,9 +242,9 @@ namespace Assets.scripts.AI
 				Owner.GetData().MeleeAttack(target.GetData().GetBody(), false);
 		}
 
-		private bool IsLowHp(Character target)
+		private bool IsLowHp(int hpPercent)
 		{
-			return false;
+			return (LOW_HP_DETERMINER + Random.Range(-10, 10) <= hpPercent);
 		}
 
 		protected IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)

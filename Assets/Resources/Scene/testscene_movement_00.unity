@@ -1982,7 +1982,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 120508, guid: 77a44999fe276c243b5018b6899eb268, type: 2}
       propertyPath: m_TagString
-      value: Neutral
+      value: Team2
       objectReference: {fileID: 0}
     - target: {fileID: 11466548, guid: 77a44999fe276c243b5018b6899eb268, type: 2}
       propertyPath: aiType
@@ -3821,6 +3821,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollSpeed: .300000012
+  edgeScrollSpeed: 10
+  scrollArea: 25
+  followSpeed: 2
+  objectToFollow: {fileID: 0}
 --- !u!114 &1624055906
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -54,6 +54,9 @@ namespace Assets.scripts.Base
 
 		public void Update()
 		{
+			if (Owner.Data.GetBody() == null)
+				return;
+
 			Collider2D[] hits = Physics2D.OverlapCircleAll(Owner.Data.GetBody().transform.position, VisibleRadius);
 
 			KnownObjects.Clear();
