@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Debug = UnityEngine.Debug;
 
 namespace Assets.scripts.AI
 {
@@ -14,6 +16,11 @@ namespace Assets.scripts.AI
 		{
 		}
 
+		protected virtual bool IsLowHp(int hpPercent)
+		{
+			return (30 + UnityEngine.Random.Range(-10, 10) >= hpPercent);
+		}
+
 		protected override void AttackTarget(Character target)
 		{
 			SetMainTarget(target);
@@ -21,6 +28,7 @@ namespace Assets.scripts.AI
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
 			if (isCasting || currentAction != null)
@@ -28,6 +36,12 @@ namespace Assets.scripts.AI
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
+
+			/*if (IsLowHp(hpPercentage))
+			{
+				StartAction(RunAway(target, 5f, 20), 1f);
+				return;
+			}*/
 
 			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
 

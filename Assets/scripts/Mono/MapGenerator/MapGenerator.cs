@@ -355,13 +355,16 @@ namespace Assets.scripts.Mono.MapGenerator
 			return x >= 0 && x < width && y >= 0 && y < height;
 		}
 
+		private bool first = true;
 
 		void RandomFillMap()
 		{
-			if (useRandomSeed)
+			if (!first && useRandomSeed)
 			{
 				seed = Time.time.ToString();
 			}
+
+			first = false;
 
 			System.Random pseudoRandom = new System.Random(seed.GetHashCode());
 

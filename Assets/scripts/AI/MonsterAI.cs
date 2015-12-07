@@ -205,6 +205,14 @@ namespace Assets.scripts.AI
 
 			int randomDir = Random.Range(-randomAngleAdd, randomAngleAdd);
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, randomDir)) * dirVector;
+
+			/*RaycastHit2D hit = Physics2D.Linecast(Owner.GetData().GetBody().transform.position, nv);
+
+			if (hit != null && hit.transform != null)
+			{
+				currentAction = null;
+				yield break;
+			}*/
 			
 			MoveTo(nv);
 

@@ -42,4 +42,9 @@ public class StartMenu : MonoBehaviour {
     {
         Application.Quit();
     }
+
+	public void restartGame()
+	{
+		Application.LoadLevel(Application.loadedLevel);
+	}
 }
