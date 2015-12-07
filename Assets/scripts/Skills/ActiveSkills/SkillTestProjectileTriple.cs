@@ -10,6 +10,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0;
 			reuse = 0.5f;
 			coolDown = 0.5f;
+			baseDamage = 10;
+
 			requireConfirm = true;
 		}
 

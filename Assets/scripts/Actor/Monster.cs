@@ -36,7 +36,7 @@ namespace Assets.scripts.Actor
 
 		protected override AbstractAI InitAI()
 		{
-			return new MonsterAI(this);
+			return Template.CreateAI(this);
 		}
 
 		protected override CharStatus InitStatus()

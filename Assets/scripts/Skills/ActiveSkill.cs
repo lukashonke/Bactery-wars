@@ -39,6 +39,10 @@ namespace Assets.scripts.Skills
 		public float coolDown;
 		public float reuse;
 		public int range;
+		public int baseDamage;
+
+		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
+		public float baseDamageFrequency;
 
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
@@ -712,6 +716,31 @@ namespace Assets.scripts.Skills
 			}
 
 			return false;
+		}
+
+		private int totalDamageOutput = -1;
+
+		/// <summary>
+		/// returns the max ammount of damage this skill does during its lifetime
+		/// </summary>
+		public int GetTotalDamageOutput()
+		{
+			if (totalDamageOutput > -1)
+				return totalDamageOutput;
+
+            if (baseDamageFrequency > 0)
+			{
+				int damage = 0;
+				damage += (int) ((1/baseDamageFrequency)*coolDown*damage);
+				totalDamageOutput = damage;
+			}
+			else
+			{
+				int damage = baseDamage;
+				totalDamageOutput = damage;
+			}
+
+			return totalDamageOutput;
 		}
 	}
 }

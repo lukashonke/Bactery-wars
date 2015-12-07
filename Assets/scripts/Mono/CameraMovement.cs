@@ -13,6 +13,9 @@ namespace Assets.scripts.Mono
 		public int scrollArea = 25;
 		public int followSpeed = 2;
 
+		public float minZoom = 10;
+		public float maxZoom = 15;
+
 		public GameObject objectToFollow;
 
 		// Use this for initialization
@@ -41,6 +44,17 @@ namespace Assets.scripts.Mono
 	        }
 	        else
 	        {
+		        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+		        {
+					if(Camera.main.orthographicSize <= maxZoom)
+						Camera.main.orthographicSize += 1;
+		        }
+				if (Input.GetAxis("Mouse ScrollWheel") < 0)
+				{
+					if (Camera.main.orthographicSize >= minZoom)
+						Camera.main.orthographicSize -= 1;
+				}
+
 				if (objectToFollow != null)
 				{
 					Vector3 pos = objectToFollow.transform.position;

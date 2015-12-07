@@ -109,9 +109,9 @@ namespace Assets.scripts.AI
 		}
 
 		public abstract void Think();
-		public abstract void OnSwitchIdle();
-		public abstract void OnSwitchActive();
-		public abstract void OnSwitchAttacking();
+		protected abstract void OnSwitchIdle();
+		protected abstract void OnSwitchActive();
+		protected abstract void OnSwitchAttacking();
 		public abstract void AddAggro(Character ch, int points);
 		public abstract void RemoveAggro(Character ch, int points);
 
@@ -180,6 +180,28 @@ namespace Assets.scripts.AI
 			return null;
 		}
 
+		public Skill GetSkillWithTrait(params SkillTraits[] traits)
+		{
+			bool containsAll;
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				containsAll = true;
+
+				foreach (SkillTraits t in traits)
+				{
+					if (!sk.Traits.Contains(t))
+					{
+						containsAll = false;
+						break;
+					}
+				}
+
+				if (containsAll)
+					return sk;
+			}
+			return null;
+		}
+
 		public List<Skill> GetAllSkillsWithTrait(SkillTraits trait)
 		{
 			List<Skill> skills = new List<Skill>();
@@ -189,6 +211,30 @@ namespace Assets.scripts.AI
 				{
 					skills.Add(sk);
 				}
+			}
+			return skills;
+		}
+
+		public List<Skill> GetAllSkillsWithTrait(params SkillTraits[] traits)
+		{
+			bool containsAll;
+			List<Skill> skills = new List<Skill>();
+
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				containsAll = true;
+
+				foreach (SkillTraits t in traits)
+				{
+					if (!sk.Traits.Contains(t))
+					{
+						containsAll = false;
+						break;
+					}
+				}
+
+				if (containsAll)
+					skills.Add(sk);
 			}
 			return skills;
 		}

@@ -34,7 +34,13 @@ namespace Assets.scripts.Mono.ObjectData
 				switch (aiType)
 				{
 					case "monster":
-						player.ChangeAI(new MonsterAI(player));
+						player.ChangeAI(new DefaultMonsterAI(player));
+						break;
+					case "meleeMonster":
+						player.ChangeAI(new MeleeMonsterAI(player));
+						break;
+					case "rangedMonster":
+						player.ChangeAI(new RangedMonsterAI(player));
 						break;
 				}
 			}

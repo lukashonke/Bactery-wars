@@ -20,6 +20,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0f;
 			reuse = 0;
 			updateFrequency = 0.1f;
+			baseDamage = 10;
 
 			range = 4;
 		}
@@ -31,7 +32,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectDamage(10, 0) };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
 		}
 
 		public override void InitTraits()

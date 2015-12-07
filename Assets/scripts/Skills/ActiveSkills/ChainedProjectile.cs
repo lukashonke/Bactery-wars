@@ -24,6 +24,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 0;
 			coolDown = 0;
 			range = 10;
+			baseDamage = 20;
+
 			requireConfirm = true;
 		}
 
@@ -34,7 +36,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(100, 2)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}
 
 		public override void InitTraits()

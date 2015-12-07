@@ -12,20 +12,14 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
-	public class MonsterAI : AbstractAI
+	public abstract class MonsterAI : AbstractAI
 	{
 		public Dictionary<Character, int> Aggro;
-
-		protected readonly int SHORT_RANGE = 6;
-		protected readonly int LONG_RANGE = 10;
-		protected int MELEE_ATTACK_RATE = 50;
-		protected int LOW_HP_DETERMINER = 50;
 
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
 
-
-		public MonsterAI(Character o) : base(o)
+		protected MonsterAI(Character o) : base(o)
 		{
 			Aggro = new Dictionary<Character, int>();
 
@@ -184,7 +178,7 @@ namespace Assets.scripts.AI
 			}
 		}
 
-		private Character SelectMostAggroTarget()
+		protected virtual Character SelectMostAggroTarget()
 		{
 			if (Aggro.Count == 0)
 				return null;
@@ -203,71 +197,16 @@ namespace Assets.scripts.AI
 			return topCh;
 		}
 
-		private void AttackTarget(Character target)
-		{
-			SetMainTarget(target);
+		protected abstract void AttackTarget(Character target);
 
-			bool isCasting = Owner.GetData().IsCasting;
-			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-
-			// already doing something
-			if (isCasting || currentAction != null)
-			{
-				return;
-			}
-
-			if(Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
-			{
-				Owner.GetData().Target = target.GetData().GetBody();
-			}
-
-			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
-			bool isImmobilized = Owner.GetData().CanMove();
-			int hpPercentage = (int) ((GetStatus().Hp/(float)GetStatus().MaxHp)*100);
-			int targetHpPercentage = (int)((target.Status.Hp / (float)target.Status.MaxHp) * 100);
-			int targetHp = target.Status.Hp;
-
-			if (dist > 5 && Random.Range(0, 100) < 20)
-			{
-				ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
-				if (jump != null && jump.CanUse())
-				{
-					StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 1f);
-					return;
-				}
-			}
-
-			if (IsLowHp(hpPercentage) && !isMeleeAttacking)
-			{
-				StartAction(RunAway(target, 5f), 5f);
-				return;
-			}
-
-			ActiveSkill sk = (ActiveSkill) GetSkillWithTrait(SkillTraits.Damage);
-
-			if (sk != null && sk.CanUse())
-			{
-				StartAction(CastSkill(target, sk, dist, false, true, 0f, 0f), 5f);
-			}
-			else		
-				Owner.GetData().MeleeAttack(target.GetData().GetBody(), false);
-		}
-
-		private bool IsLowHp(int hpPercent)
-		{
-			return (LOW_HP_DETERMINER + Random.Range(-10, 10) >= hpPercent);
-		}
-
-		protected IEnumerator RunAway(Character target, float distance)
+		protected virtual IEnumerator RunAway(Character target, float distance, int randomAngleAdd)
 		{
 			Vector3 dirVector = -Utils.GetDirectionVector(target.GetData().GetBody().transform.position, Owner.GetData().transform.position).normalized * distance;
 
-			int randomDir = Random.Range(-20, 20);
+			int randomDir = Random.Range(-randomAngleAdd, randomAngleAdd);
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, randomDir)) * dirVector;
 			
 			MoveTo(nv);
-
-			Debug.DrawRay(Owner.GetData().GetBody().transform.position, nv, Color.green, 2f);
 
 			yield return null;
 
@@ -279,7 +218,7 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-		protected IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{
@@ -300,25 +239,23 @@ namespace Assets.scripts.AI
 				}
 			}
 
-			Debug.Log("gonna use " + sk.Name);
-
 			Owner.GetData().BreakMovement(true);
 			RotateToTarget(target);
 			Owner.CastSkill(sk);
 			currentAction = null;
 		}
 
-		public override void OnSwitchIdle()
+		protected override void OnSwitchIdle()
 		{
 			ThinkInterval = 3f;
 		}
 
-		public override void OnSwitchActive()
+		protected override void OnSwitchActive()
 		{
 			ThinkInterval = 0.5f;
 		}
 
-		public override void OnSwitchAttacking()
+		protected override void OnSwitchAttacking()
 		{
 			ThinkInterval = 0.2f;
 		}

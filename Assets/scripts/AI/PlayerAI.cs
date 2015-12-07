@@ -18,15 +18,15 @@ namespace Assets.scripts.AI
 			// do nothing
 		}
 
-		public override void OnSwitchIdle()
+		protected override void OnSwitchIdle()
 		{
 		}
 
-		public override void OnSwitchActive()
+		protected override void OnSwitchActive()
 		{
 		}
 
-		public override void OnSwitchAttacking()
+		protected override void OnSwitchAttacking()
 		{
 		}
 
