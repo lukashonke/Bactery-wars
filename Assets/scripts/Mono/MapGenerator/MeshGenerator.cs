@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.scripts.Mono.MapGenerator;
 
 public class MeshGenerator : MonoBehaviour
 {
@@ -339,7 +340,7 @@ public class MeshGenerator : MonoBehaviour
 				for (int y = 0; y < nodeCountY; y++)
 				{
 					Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 0, -mapHeight / 2 + y * squareSize + squareSize / 2);
-					controlNodes[x, y] = new ControlNode(pos, map[x, y] == 1, squareSize);
+					controlNodes[x, y] = new ControlNode(pos, map[x, y] == MapGenerator.WALL, squareSize);
 				}
 			}
 

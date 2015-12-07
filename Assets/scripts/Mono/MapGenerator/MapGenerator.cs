@@ -15,6 +15,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		[Range(0, 100)]
 		public int randomFillPercent;
 
+		public const int WALL = 1;
+		public const int FLOOR = 0;
+
 		int[,] map;
 
 		void Start()
@@ -55,7 +58,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					}
 					else
 					{
-						borderedMap[x, y] = 1;
+						borderedMap[x, y] = WALL;
 					}
 				}
 			}
@@ -66,7 +69,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		void ProcessMap()
 		{
-			List<List<Coord>> wallRegions = GetRegions(1);
+			List<List<Coord>> wallRegions = GetRegions(WALL);
 			int wallThresholdSize = 50;
 
 			foreach (List<Coord> wallRegion in wallRegions)
@@ -75,12 +78,12 @@ namespace Assets.scripts.Mono.MapGenerator
 				{
 					foreach (Coord tile in wallRegion)
 					{
-						map[tile.tileX, tile.tileY] = 0;
+						map[tile.tileX, tile.tileY] = FLOOR;
 					}
 				}
 			}
 
-			List<List<Coord>> roomRegions = GetRegions(0);
+			List<List<Coord>> roomRegions = GetRegions(FLOOR);
 			int roomThresholdSize = 50;
 			List<Room> survivingRooms = new List<Room>();
 
@@ -90,7 +93,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				{
 					foreach (Coord tile in roomRegion)
 					{
-						map[tile.tileX, tile.tileY] = 1;
+						map[tile.tileX, tile.tileY] = WALL;
 					}
 				}
 				else
@@ -178,13 +181,13 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 				if (possibleConnectionFound && !forceAccessibilityFromMainRoom)
 				{
-					CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
+					CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB, FLOOR);
 				}
 			}
 
 			if (possibleConnectionFound && forceAccessibilityFromMainRoom)
 			{
-				CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
+				CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB, FLOOR);
 				ConnectClosestRooms(allRooms, true);
 			}
 
@@ -194,7 +197,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB)
+		void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB, int val)
 		{
 			Room.ConnectRooms(roomA, roomB);
 			//Debug.DrawLine (CoordToWorldPoint (tileA), CoordToWorldPoint (tileB), Color.green, 100);
@@ -202,11 +205,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			List<Coord> line = GetLine(tileA, tileB);
 			foreach (Coord c in line)
 			{
-				DrawCircle(c, 5);
+				DrawCircle(c, 5, val);
 			}
 		}
 
-		void DrawCircle(Coord c, int r)
+		void DrawCircle(Coord c, int r, int val)
 		{
 			for (int x = -r; x <= r; x++)
 			{
@@ -218,7 +221,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						int drawY = c.tileY + y;
 						if (IsInMapRange(drawX, drawY))
 						{
-							map[drawX, drawY] = 0;
+							map[drawX, drawY] = val;
 						}
 					}
 				}
@@ -368,11 +371,11 @@ namespace Assets.scripts.Mono.MapGenerator
 				{
 					if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
 					{
-						map[x, y] = 1;
+						map[x, y] = WALL;
 					}
 					else
 					{
-						map[x, y] = (pseudoRandom.Next(0, 100) < randomFillPercent) ? 1 : 0;
+						map[x, y] = (pseudoRandom.Next(0, 100) < randomFillPercent) ? WALL : FLOOR;
 					}
 				}
 			}
@@ -387,10 +390,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					int neighbourWallTiles = GetSurroundingWallCount(x, y);
 
 					if (neighbourWallTiles > 4)
-						map[x, y] = 1;
+						map[x, y] = WALL;
 					else if (neighbourWallTiles < 4)
-						map[x, y] = 0;
-
+						map[x, y] = FLOOR;
 				}
 			}
 		}
@@ -406,7 +408,10 @@ namespace Assets.scripts.Mono.MapGenerator
 					{
 						if (neighbourX != gridX || neighbourY != gridY)
 						{
-							wallCount += map[neighbourX, neighbourY];
+							int temp = map[neighbourX, neighbourY];
+
+							if (temp == WALL)
+								wallCount ++;
 						}
 					}
 					else
@@ -419,7 +424,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			return wallCount;
 		}
 
-		struct Coord
+		public struct Coord
 		{
 			public int tileX;
 			public int tileY;
@@ -430,82 +435,5 @@ namespace Assets.scripts.Mono.MapGenerator
 				tileY = y;
 			}
 		}
-
-
-		class Room : IComparable<Room>
-		{
-			public List<Coord> tiles;
-			public List<Coord> edgeTiles;
-			public List<Room> connectedRooms;
-			public int roomSize;
-			public bool isAccessibleFromMainRoom;
-			public bool isMainRoom;
-
-			public Room()
-			{
-			}
-
-			public Room(List<Coord> roomTiles, int[,] map)
-			{
-				tiles = roomTiles;
-				roomSize = tiles.Count;
-				connectedRooms = new List<Room>();
-
-				edgeTiles = new List<Coord>();
-				foreach (Coord tile in tiles)
-				{
-					for (int x = tile.tileX - 1; x <= tile.tileX + 1; x++)
-					{
-						for (int y = tile.tileY - 1; y <= tile.tileY + 1; y++)
-						{
-							if (x == tile.tileX || y == tile.tileY)
-							{
-								if (map[x, y] == 1)
-								{
-									edgeTiles.Add(tile);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			public void SetAccessibleFromMainRoom()
-			{
-				if (!isAccessibleFromMainRoom)
-				{
-					isAccessibleFromMainRoom = true;
-					foreach (Room connectedRoom in connectedRooms)
-					{
-						connectedRoom.SetAccessibleFromMainRoom();
-					}
-				}
-			}
-
-			public static void ConnectRooms(Room roomA, Room roomB)
-			{
-				if (roomA.isAccessibleFromMainRoom)
-				{
-					roomB.SetAccessibleFromMainRoom();
-				}
-				else if (roomB.isAccessibleFromMainRoom)
-				{
-					roomA.SetAccessibleFromMainRoom();
-				}
-				roomA.connectedRooms.Add(roomB);
-				roomB.connectedRooms.Add(roomA);
-			}
-
-			public bool IsConnected(Room otherRoom)
-			{
-				return connectedRooms.Contains(otherRoom);
-			}
-
-			public int CompareTo(Room otherRoom)
-			{
-				return otherRoom.roomSize.CompareTo(roomSize);
-			}
-		}
-
 	}
 }
