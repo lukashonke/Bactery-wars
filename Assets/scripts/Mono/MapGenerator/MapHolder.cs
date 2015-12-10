@@ -25,7 +25,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		// variables
 		public Dictionary<Cords, MapRegion> regions;
 
-		private MapGenerator generator;
+		private List<MapGenerator> generators = new List<MapGenerator>(); 
 
 		private const int SQUARE_SIZE = 1;
 
@@ -35,7 +35,6 @@ namespace Assets.scripts.Mono.MapGenerator
 				instance = this;
 
 			regions = new Dictionary<Cords, MapRegion>();
-			generator = GetComponent<DungeonGenerator>();
 
 			// create the first map
 			TestGen();
@@ -43,15 +42,15 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void TestGen()
 		{
-			GenerateRegion(0, 0);
-			/*GenerateRegion(0, 1);
-			GenerateRegion(0, -1);
-			GenerateRegion(1, 1);
-			GenerateRegion(1, 0);
-			GenerateRegion(1, -1);
-			GenerateRegion(-1, 1);
-			GenerateRegion(-1, 0);
-			GenerateRegion(-1, -1);*/
+			generators.Add(GenerateRegion(0, 0));
+			generators.Add(GenerateRegion(0, 1));
+			generators.Add(GenerateRegion(0, -1));
+			generators.Add(GenerateRegion(1, 1));
+			generators.Add(GenerateRegion(1, 0));
+			generators.Add(GenerateRegion(1, -1));
+			generators.Add(GenerateRegion(-1, 1));
+			generators.Add(GenerateRegion(-1, 0));
+			generators.Add(GenerateRegion(-1, -1));
 
 			MapRegion r1 = regions[new Cords(0, 1)];
 			MapRegion r2 = regions[new Cords(0, 0)];
@@ -91,27 +90,14 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		void OnDrawGizmos()
 		{
-			if (DoDebug == false || generator is DungeonGenerator)
+			if (DoDebug == false)
 				return;
 
-			foreach (MapRegion reg in regions.Values)
-			{
-				for (int x = 0; x < width; x++)
-				{
-					for (int y = 0; y < height; y++)
-					{
-						float xSize = (width) * SQUARE_SIZE;
-						float ySize = (height) * SQUARE_SIZE;
-
-						Gizmos.color = (reg.map[x, y] == 1) ? Color.black : Color.white;
-						Vector3 pos = new Vector3((-width / 2 + x + .5f)+reg.x*xSize, (-height / 2 + y + .5f)+reg.y*ySize, 0);
-						Gizmos.DrawCube(pos, Vector3.one);
-					}
-				}
-			}
+			foreach(MapGenerator g in generators)
+				g.OnDrawGizmos();
 		}
 
-		private void GenerateRegion(int x, int y)
+		private MapGenerator GenerateRegion(int x, int y)
 		{
 			Debug.Log("generating and enabling region .. " + x + ", " + y);
 
@@ -124,17 +110,20 @@ namespace Assets.scripts.Mono.MapGenerator
 			float ySize = (height) * SQUARE_SIZE;
 			Vector3 shiftVector = new Vector3(x*xSize, y*ySize);
 
-			int[,] map = generator.GenerateMap(width, height, seed, randomFillPercent, DoDebug, x, y, shiftVector);
+			MapGenerator generator = new DungeonGenerator(width, height, seed, randomFillPercent, DoDebug, x, y, shiftVector);
+
+			int[,] map = generator.GenerateMap();
 			MeshFilter mesh = null;
 
 			if (!DoDebug)
 			{
 				MeshGenerator meshGen = GetComponent<MeshGenerator>();
-				mesh = meshGen.GenerateMesh("Cave", map, SQUARE_SIZE);
 
 				// dimensions of the map
 				xSize = (map.GetLength(0) - 1) * SQUARE_SIZE;
 				ySize = (map.GetLength(1) - 1) * SQUARE_SIZE;
+
+				mesh = meshGen.GenerateMesh("Cave", map, SQUARE_SIZE, new Vector3(x*xSize, y * ySize));
 
 				mesh.gameObject.transform.position = new Vector3(x * xSize, y * ySize);
 			}
@@ -142,6 +131,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			MapRegion region = new MapRegion((int)x, (int)y, map, mesh);
 			region.Enable();
 			regions.Add(new Cords((int)x, (int)y), region);
+
+			return generator;
 		}
 
 		public void PositionEnter(Vector3 pos)

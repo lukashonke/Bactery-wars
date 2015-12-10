@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.scripts.Mono.MapGenerator;
 using Tile = Assets.scripts.Mono.MapGenerator.DungeonGenerator.Tile;
 
-class Room : IComparable<Room>
+public class Room : IComparable<Room>
 {
 	public List<Tile> tiles;
 	public List<Tile> edgeTiles;
@@ -75,11 +75,11 @@ class Room : IComparable<Room>
 		roomB.connectedRooms.Add(roomA);
 	}
 
-	public void ColorTiles(int color)
+	public void ColorTiles(int color, bool replace = false)
 	{
 		foreach (Tile t in tiles)
 		{
-			if (t.color == 0)
+			if (t.color == 0 || replace)
 				t.color = color;
 		}
 	}

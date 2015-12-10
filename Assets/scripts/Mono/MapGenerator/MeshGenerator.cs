@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.scripts.Mono.MapGenerator;
 
+//TODO object this - make one mesh generator per mapgenerator
 public class MeshGenerator : MonoBehaviour
 {
 	public SquareGrid squareGrid;
@@ -13,6 +14,8 @@ public class MeshGenerator : MonoBehaviour
 	Dictionary<int, List<Triangle>> triangleDictionary = new Dictionary<int, List<Triangle>>();
 	List<List<int>> outlines = new List<List<int>>();
 	HashSet<int> checkedVertices = new HashSet<int>();
+
+	private Vector3 shiftVector;
 
 	public void Start()
 	{
@@ -36,10 +39,10 @@ public class MeshGenerator : MonoBehaviour
 		return cave;
 	}
 
-	private int order = 0;
-
-	public MeshFilter GenerateMesh(string name, int[,] map, float squareSize)
+	public MeshFilter GenerateMesh(string name, int[,] map, float squareSize, Vector3 shiftVector)
 	{
+		this.shiftVector = shiftVector;
+
 		MeshFilter cave = MakeNewMesh(name);
 
         triangleDictionary.Clear();
@@ -76,22 +79,18 @@ public class MeshGenerator : MonoBehaviour
 		}
 		mesh.uv = uvs;
 
-		Generate2DColliders();
+		Generate2DColliders(cave.gameObject);
 
 		return cave;
 	}
 
-
-
-
-
-	private void Generate2DColliders()
+	private void Generate2DColliders(GameObject o)
 	{
-		EdgeCollider2D[] currentColliders = gameObject.GetComponents<EdgeCollider2D>();
+		/*EdgeCollider2D[] currentColliders = gameObject.GetComponents<EdgeCollider2D>();
 		for (int i = 0; i < currentColliders.Length; i++)
 		{
 			Destroy(currentColliders[i]);
-		}
+		}*/
 
 		CalculateMeshOutlines();
 
@@ -102,7 +101,7 @@ public class MeshGenerator : MonoBehaviour
 
 			for (int i = 0; i < outline.Count; i++)
 			{
-				edgePoints[i] = new Vector2(vertices[outline[i]].x+(100*order), vertices[outline[i]].z);
+				edgePoints[i] = new Vector2(vertices[outline[i]].x+shiftVector.x, vertices[outline[i]].z+shiftVector.y);
 			}
 			edgeCollider.points = edgePoints;
 		}
@@ -357,7 +356,7 @@ public class MeshGenerator : MonoBehaviour
 				for (int y = 0; y < nodeCountY; y++)
 				{
 					Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 0, -mapHeight / 2 + y * squareSize + squareSize / 2);
-					controlNodes[x, y] = new ControlNode(pos, map[x, y] == MapGenerator.WALL, squareSize);
+					controlNodes[x, y] = new ControlNode(pos, map[x, y] == DungeonGenerator.WALL, squareSize);
 				}
 			}
 

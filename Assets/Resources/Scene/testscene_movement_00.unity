@@ -4851,10 +4851,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 2056527962}
-  - 114: {fileID: 2056527961}
   - 114: {fileID: 2056527960}
   - 114: {fileID: 2056527964}
-  - 114: {fileID: 2056527963}
   m_Layer: 0
   m_Name: Cave Generator
   m_TagString: Untagged
@@ -4873,17 +4871,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 484b645c799a296418ed2865c6d4fb4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2056527961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2056527959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbf5b2738b1e989488127ca3100ee003, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2056527962
 Transform:
   m_ObjectHideFlags: 0
@@ -4897,17 +4884,6 @@ Transform:
   - {fileID: 1094898230}
   m_Father: {fileID: 0}
   m_RootOrder: 9
---- !u!114 &2056527963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2056527959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa1c8e4144cbc2c4482f55233c62eee7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2056527964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4922,7 +4898,7 @@ MonoBehaviour:
   width: 50
   height: 50
   seed: -534
-  useRandomSeed: 0
+  useRandomSeed: 1
   randomFillPercent: 47
 --- !u!1 &2136851294
 GameObject:

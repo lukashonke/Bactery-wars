@@ -9,33 +9,29 @@ namespace Assets.scripts.Mono.MapGenerator
 {
 	public class DungeonGenerator : MapGenerator
 	{
-		public enum Tiles
-		{
-			FLOOR = 0,
-			WALL = 1
-		}
-
 		public enum Direction
 		{
 			TOP, RIGHT, DOWN, LEFT
 		}
 
-		private int smoothCount = 4;
+		public const int FLOOR = 0;
+		public const int WALL = 1;
 
+		private int smoothCount = 4;
+		private int randomFillPercent;
 		private Tile[,] tiles;
 
-		public override int[,] GenerateMap(int w, int h, String s, int fill, bool d, int shiftX, int shiftY, Vector3 shiftVector)
+		private List<Room> separatedRooms; 
+		private Room mainRoom;
+
+		public DungeonGenerator(int width, int height, String seed, int wallFillPercent, bool debug, int shiftX, int shiftY, Vector3 shiftVector) : base(width, height, seed, shiftX, shiftY, shiftVector, debug)
+		{
+			this.randomFillPercent = wallFillPercent;
+		}
+
+		public override int[,] GenerateMap()
 		{
 			int start = System.Environment.TickCount;
-
-			this.width = w;
-			this.height = h;
-			this.randomFillPercent = fill;
-			this.seed = s;
-			this.DoDebug = d;
-			this.shiftVector = shiftVector;
-			this.shiftX = shiftX;
-			this.shiftY = shiftY;
 
 			Debug.Log("using seed " + seed);
 
@@ -147,33 +143,114 @@ namespace Assets.scripts.Mono.MapGenerator
 			foreach (Region r in floorRegions)
 			{
 				rooms.Add(new Room(r.tiles, tiles));
+
+				r.SetTilesChecked(false);
 			}
 
 			//Debug.Log("setting " + i + " tiles to WALL");
 
+			separatedRooms = rooms; // uloz mistnosti tak jak jsou predtim nez se vsechny propoji
+
+			ConnectAllRooms(rooms, false);
+
+			floorRegions = GetRegions(FLOOR);
+
+			foreach (Region r in floorRegions) // ulozit hlavni mistnost pro pozdeji referenci
+			{
+				mainRoom = new Room(r.tiles, tiles); 
+				//mainRoom.ColorTiles(5, true);
+			}
+		}
+
+		private void GetClosestTiles(Room roomA, Room roomB, out Tile bestTileA, out Tile bestTileB, out int bestDistance)
+		{
+			bestDistance = 0;
+			bestTileA = null;
+			bestTileB = null;
+
+			// projedeme vsechny okrajove body roomA
+			for (int tileIndexA = 0; tileIndexA < roomA.edgeTiles.Count; tileIndexA++)
+			{
+				// projedeme vsechny okrajovy body roomB
+				for (int tileIndexB = 0; tileIndexB < roomB.edgeTiles.Count; tileIndexB++)
+				{
+					Tile tileA = roomA.edgeTiles[tileIndexA];
+					Tile tileB = roomB.edgeTiles[tileIndexB];
+
+					// vypocitame vzdalenost kazdych dvou okrajovych bodu obou mistnosti
+					int dx = tileA.tileX - tileB.tileX;
+					int dy = tileA.tileY - tileB.tileY;
+					int dist = (int)(Math.Pow(dx, 2) + Math.Pow(dy, 2));
+
+					// tato vzdalenost je bud nejlepsi nebo possibleConnectionFound je false pri prvni iteraci
+					if (dist < bestDistance)
+					{
+						bestDistance = dist;
+
+						bestTileA = tileA;
+						bestTileB = tileB;
+					}
+				}
+			}
+		}
+
+		private void ConnectRooms(Room roomA, Room roomB)
+		{
+			int bestDistance;
+			Tile bestTileA;
+			Tile bestTileB;
+
+			GetClosestTiles(roomA, roomB, out bestTileA, out bestTileB, out bestDistance);
+
+			if(bestTileA != null && bestTileB != null)
+				CreatePassage(roomA, roomB, bestTileA, bestTileB);
+		}
+
+		private void ConnectAllRooms(List<Room> rooms, bool ensureMainRoomConnection)
+		{
 			rooms.Sort();
 			rooms[0].isMainRoom = true;
 			rooms[0].isAccessibleFromMainRoom = true;
 			rooms[0].ColorTiles(3);
 
-			ConnectClosestRooms(rooms);
-		}
+			List<Room> roomListA = new List<Room>();
+			List<Room> roomListB = new List<Room>();
 
-		private void ConnectClosestRooms(List<Room> rooms)
-		{
+			if (ensureMainRoomConnection)
+			{
+				foreach (Room r in rooms)
+				{
+					if(r.isAccessibleFromMainRoom)
+						roomListB.Add(r);
+					else
+						roomListA.Add(r);
+				}
+			}
+			else
+			{
+				roomListA = rooms;
+				roomListB = rooms;
+			}
+
 			int bestDistance = 0;
 			Tile bestTileA = null;
 			Tile bestTileB = null;
 			Room bestRoomA = null;
 			Room bestRoomB = null;
 
-			bool possibleConnectionFound;
+			bool possibleConnectionFound = false;
 
-			foreach (Room roomA in rooms)
+			foreach (Room roomA in roomListA)
 			{
-				possibleConnectionFound = false;
+				if (!ensureMainRoomConnection)
+				{
+					possibleConnectionFound = false;
+					// pokud nezajistujeme pripojeni hlavni mistnosti + kazda mistnost muze byt pripojena pouze k jedne jine
+					if(roomA.connectedRooms.Count > 0)
+						continue;
+				}
 
-				foreach (Room roomB in rooms)
+				foreach (Room roomB in roomListB)
 				{
 					if (roomA.Equals(roomB))
 						continue;
@@ -213,11 +290,21 @@ namespace Assets.scripts.Mono.MapGenerator
 					}
 				}
 
-				// connect roomA with the best roomB found
-				if (possibleConnectionFound)
+				if (possibleConnectionFound && !ensureMainRoomConnection)
 				{
 					CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
 				}
+			}
+
+			if (possibleConnectionFound && ensureMainRoomConnection)
+			{
+				CreatePassage(bestRoomA, bestRoomB, bestTileA, bestTileB);
+				ConnectAllRooms(rooms, true);
+			}
+
+			if (!ensureMainRoomConnection)
+			{
+				ConnectAllRooms(rooms, true);
 			}
 		}
 
@@ -229,6 +316,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				//edge.highlighted = true;
 			}
+
 			tileA.color = 1;
 			tileB.color = 1;
 
@@ -340,11 +428,13 @@ namespace Assets.scripts.Mono.MapGenerator
 			return new Vector3(-width / 2 + .5f + tile.tileX, -height / 2 + .5f + tile.tileY, 0) + shiftVector;
 		}
 
-		void OnDrawGizmos()
+		public override void OnDrawGizmos()
 		{
 			//Debug.Log("drawing");
 			if (DoDebug == false)
 				return;
+
+			int nulls = 0;
 
 			for (int x = 0; x < width; x++)
 			{
@@ -354,6 +444,12 @@ namespace Assets.scripts.Mono.MapGenerator
 					float ySize = (height) * 1;
 
 					Tile t = GetTile(x, y);
+
+					if (t == null)
+					{
+						nulls++;
+						continue;
+					}
 
 					Gizmos.color = (t.tileType == WALL) ? Color.black : Color.white;
 					if (t.color == 1)
@@ -538,7 +634,14 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private Tile GetTile(int x, int y)
 		{
-			return tiles[x, y];
+			try
+			{
+				return tiles[x, y];
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 
 		private bool IsEdge(int x, int y)
