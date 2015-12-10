@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
@@ -200,6 +201,12 @@ namespace Assets.scripts.Mono
 				ArrivedAtDestination();
 
 				ResetVelocity();
+			}
+
+			//TODO optimize
+			if (rb.velocity.x > 0 || rb.velocity.y > 0)
+			{
+				MapHolder.instance.PositionEnter(rb.transform.position);
 			}
 
 			GetOwner().OnUpdate();

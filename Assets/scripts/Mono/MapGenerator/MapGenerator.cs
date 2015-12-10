@@ -6,39 +6,43 @@ namespace Assets.scripts.Mono.MapGenerator
 {
 	public class MapGenerator : MonoBehaviour
 	{
-		public int width;
-		public int height;
+		protected int width;
+		protected int height;
 
-		public string seed;
-		public bool useRandomSeed;
+		protected string seed;
 
-		[Range(0, 100)]
-		public int randomFillPercent;
+		protected int randomFillPercent;
 
 		public const int WALL = 1;
 		public const int FLOOR = 0;
 
-		int[,] map;
+		protected bool DoDebug;
+		protected int shiftX;
+		protected int shiftY;
+		protected Vector3 shiftVector;
+
+		private int[,] map;
 
 		void Start()
 		{
-			GenerateMap();
+			//GenerateMap();
 		}
 
-		void Update()
+		public virtual int[,] GenerateMap(int w, int h, String s, int fill, bool d, int shiftX, int shiftY, Vector3 shiftVector)
 		{
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				GenerateMap();
-			}
-		}
+			this.width = w;
+			this.height = h;
+			this.randomFillPercent = fill;
+			this.seed = s;
+			this.DoDebug = d;
+			this.shiftVector = shiftVector;
+			this.shiftX = shiftX;
+			this.shiftY = shiftY;
 
-		void GenerateMap()
-		{
 			map = new int[width, height];
 			RandomFillMap();
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				SmoothMap();
 			}
@@ -63,43 +67,23 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 
-			MeshGenerator meshGen = GetComponent<MeshGenerator>();
-			meshGen.GenerateMesh(borderedMap, 1);
-		}
-
-		void ProcessMap()
-		{
-			List<List<Coord>> wallRegions = GetRegions(WALL);
-			int wallThresholdSize = 50;
-
-			foreach (List<Coord> wallRegion in wallRegions)
+			if (DoDebug)
 			{
-				if (wallRegion.Count < wallThresholdSize)
-				{
-					foreach (Coord tile in wallRegion)
-					{
-						map[tile.tileX, tile.tileY] = FLOOR;
-					}
-				}
+				Camera.main.orthographicSize = 60;
 			}
 
-			List<List<Coord>> roomRegions = GetRegions(FLOOR);
-			int roomThresholdSize = 50;
-			List<Room> survivingRooms = new List<Room>();
+			return borderedMap;
+		}
 
-			foreach (List<Coord> roomRegion in roomRegions)
+		public void ConnectDungeons(int[,] map)
+		{
+			List<List<Coord>> roomRegions1 = GetRegions(FLOOR, map);
+
+			List<MapRoom> survivingRooms = new List<MapRoom>();
+
+			foreach (List<Coord> l1 in roomRegions1)
 			{
-				if (roomRegion.Count < roomThresholdSize)
-				{
-					foreach (Coord tile in roomRegion)
-					{
-						map[tile.tileX, tile.tileY] = WALL;
-					}
-				}
-				else
-				{
-					survivingRooms.Add(new Room(roomRegion, map));
-				}
+				survivingRooms.Add(new MapRoom(l1, map));
 			}
 			survivingRooms.Sort();
 			survivingRooms[0].isMainRoom = true;
@@ -108,15 +92,66 @@ namespace Assets.scripts.Mono.MapGenerator
 			ConnectClosestRooms(survivingRooms);
 		}
 
-		void ConnectClosestRooms(List<Room> allRooms, bool forceAccessibilityFromMainRoom = false)
+		void ProcessMap()
+		{
+			List<List<Coord>> wallRegions = GetRegions(WALL, map);
+			int wallThresholdSize = 50;
+
+			int i = 0;
+;			foreach (List<Coord> wallRegion in wallRegions)
+			{
+				if (wallRegion.Count < wallThresholdSize)
+				{
+					foreach (Coord tile in wallRegion)
+					{
+						i++;
+						map[tile.tileX, tile.tileY] = FLOOR;
+					}
+				}
+			}
+
+			Debug.Log("setting " + i + " tiles to FLOOR");
+
+			List<List<Coord>> roomRegions = GetRegions(FLOOR, map);
+			int roomThresholdSize = 50;
+
+			List<MapRoom> survivingRooms = new List<MapRoom>();
+
+			i = 0;
+			foreach (List<Coord> roomRegion in roomRegions)
+			{
+				if (roomRegion.Count < roomThresholdSize)
+				{
+					foreach (Coord tile in roomRegion)
+					{
+						i++;
+						map[tile.tileX, tile.tileY] = WALL;
+					}
+				}
+				else
+				{
+					survivingRooms.Add(new MapRoom(roomRegion, map));
+				}
+			}
+
+			Debug.Log("setting " + i + " tiles to WALL");
+
+			survivingRooms.Sort();
+			survivingRooms[0].isMainRoom = true;
+			survivingRooms[0].isAccessibleFromMainRoom = true;
+
+			ConnectClosestRooms(survivingRooms);
+		}
+
+		void ConnectClosestRooms(List<MapRoom> allRooms, bool forceAccessibilityFromMainRoom = false)
 		{
 
-			List<Room> roomListA = new List<Room>();
-			List<Room> roomListB = new List<Room>();
+			List<MapRoom> roomListA = new List<MapRoom>(); // mistnosti pristupne z main roomu
+			List<MapRoom> roomListB = new List<MapRoom>(); // mistnosti nepristupne z main roomu
 
 			if (forceAccessibilityFromMainRoom)
 			{
-				foreach (Room room in allRooms)
+				foreach (MapRoom room in allRooms)
 				{
 					if (room.isAccessibleFromMainRoom)
 					{
@@ -137,11 +172,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			int bestDistance = 0;
 			Coord bestTileA = new Coord();
 			Coord bestTileB = new Coord();
-			Room bestRoomA = new Room();
-			Room bestRoomB = new Room();
+			MapRoom bestRoomA = new MapRoom();
+			MapRoom bestRoomB = new MapRoom();
 			bool possibleConnectionFound = false;
 
-			foreach (Room roomA in roomListA)
+			foreach (MapRoom roomA in roomListA)
 			{
 				if (!forceAccessibilityFromMainRoom)
 				{
@@ -152,7 +187,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					}
 				}
 
-				foreach (Room roomB in roomListB)
+				foreach (MapRoom roomB in roomListB)
 				{
 					if (roomA == roomB || roomA.IsConnected(roomB))
 					{
@@ -197,10 +232,10 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB, int val)
+		void CreatePassage(MapRoom roomA, MapRoom roomB, Coord tileA, Coord tileB, int val)
 		{
-			Room.ConnectRooms(roomA, roomB);
-			//Debug.DrawLine (CoordToWorldPoint (tileA), CoordToWorldPoint (tileB), Color.green, 100);
+			MapRoom.ConnectRooms(roomA, roomB);
+			Debug.DrawLine (CoordToWorldPoint (tileA), CoordToWorldPoint (tileB), Color.green, 100);
 
 			List<Coord> line = GetLine(tileA, tileB);
 			foreach (Coord c in line)
@@ -289,10 +324,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		Vector3 CoordToWorldPoint(Coord tile)
 		{
-			return new Vector3(-width / 2 + .5f + tile.tileX, 2, -height / 2 + .5f + tile.tileY);
+			return new Vector3(-width/2 + .5f + tile.tileX, 2, -height/2 + .5f + tile.tileY);
 		}
 
-		List<List<Coord>> GetRegions(int tileType)
+		List<List<Coord>> GetRegions(int tileType, int[,] map)
 		{
 			List<List<Coord>> regions = new List<List<Coord>>();
 			int[,] mapFlags = new int[width, height];
@@ -355,17 +390,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			return x >= 0 && x < width && y >= 0 && y < height;
 		}
 
-		private bool first = true;
-
 		void RandomFillMap()
 		{
-			if (!first && useRandomSeed)
-			{
-				seed = Time.time.ToString();
-			}
-
-			first = false;
-
 			System.Random pseudoRandom = new System.Random(seed.GetHashCode());
 
 			for (int x = 0; x < width; x++)
@@ -384,7 +410,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		void SmoothMap()
+		private void SmoothMap()
 		{
 			for (int x = 0; x < width; x++)
 			{

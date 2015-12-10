@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.scripts.Mono.MapGenerator;
-using Tile = Assets.scripts.Mono.MapGenerator.DungeonGenerator.Tile;
+using System.Diagnostics;
+using Coord = Assets.scripts.Mono.MapGenerator.MapGenerator.Coord;
+using Debug = UnityEngine.Debug;
 
-class Room : IComparable<Room>
+class MapRoom : IComparable<MapRoom>
 {
-	public List<Tile> tiles;
-	public List<Tile> edgeTiles;
-	public List<Room> connectedRooms;
+	public List<Coord> tiles;
+	public List<Coord> edgeTiles;
+	public List<MapRoom> connectedRooms;
 	public int roomSize;
 	public bool isAccessibleFromMainRoom;
 	public bool isMainRoom;
 
-	public Room()
+	public MapRoom()
 	{
 	}
 
-	public Room(List<Tile> roomTiles, Tile[,] map)
+	public MapRoom(List<Coord> roomTiles, int[,] map)
 	{
 		tiles = roomTiles;
 		roomSize = tiles.Count;
-		connectedRooms = new List<Room>();
+		connectedRooms = new List<MapRoom>();
 
-		edgeTiles = new List<Tile>();
+		int count = 0;
 
-		foreach (Tile tile in tiles) //TODO make better
+		edgeTiles = new List<Coord>();
+		foreach (Coord tile in tiles)
 		{
 			for (int x = tile.tileX - 1; x <= tile.tileX + 1; x++)
 			{
@@ -34,13 +36,14 @@ class Room : IComparable<Room>
 					{
 						try
 						{
-							if (map[x, y].tileType == 1)
+							if (map[x, y] == 1)
 							{
 								edgeTiles.Add(tile);
 							}
 						}
 						catch (Exception)
 						{
+							count ++;
 						}
 					}
 				}
@@ -53,14 +56,14 @@ class Room : IComparable<Room>
 		if (!isAccessibleFromMainRoom)
 		{
 			isAccessibleFromMainRoom = true;
-			foreach (Room connectedRoom in connectedRooms)
+			foreach (MapRoom connectedRoom in connectedRooms)
 			{
 				connectedRoom.SetAccessibleFromMainRoom();
 			}
 		}
 	}
 
-	public static void ConnectRooms(Room roomA, Room roomB)
+	public static void ConnectRooms(MapRoom roomA, MapRoom roomB)
 	{
 		if (roomA.isAccessibleFromMainRoom)
 		{
@@ -70,26 +73,16 @@ class Room : IComparable<Room>
 		{
 			roomA.SetAccessibleFromMainRoom();
 		}
-
 		roomA.connectedRooms.Add(roomB);
 		roomB.connectedRooms.Add(roomA);
 	}
 
-	public void ColorTiles(int color)
-	{
-		foreach (Tile t in tiles)
-		{
-			if (t.color == 0)
-				t.color = color;
-		}
-	}
-
-	public bool IsConnected(Room otherRoom)
+	public bool IsConnected(MapRoom otherRoom)
 	{
 		return connectedRooms.Contains(otherRoom);
 	}
 
-	public int CompareTo(Room otherRoom)
+	public int CompareTo(MapRoom otherRoom)
 	{
 		return otherRoom.roomSize.CompareTo(roomSize);
 	}

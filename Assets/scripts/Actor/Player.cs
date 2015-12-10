@@ -57,7 +57,7 @@ namespace Assets.scripts.Actor
 				Skills.AddSkill(newSkill);
 
 				i++;
-				Debug.Log("adding skill to " + i + ": " + newSkill.Name);
+				//Debug.Log("adding skill to " + i + ": " + newSkill.Name);
 			}
 
 			if (Template.MeleeSkill != null)

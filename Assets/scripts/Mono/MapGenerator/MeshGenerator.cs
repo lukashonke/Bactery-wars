@@ -6,7 +6,6 @@ using Assets.scripts.Mono.MapGenerator;
 public class MeshGenerator : MonoBehaviour
 {
 	public SquareGrid squareGrid;
-	public MeshFilter cave;
 
 	List<Vector3> vertices;
 	List<int> triangles;
@@ -17,20 +16,33 @@ public class MeshGenerator : MonoBehaviour
 
 	public void Start()
 	{
-		GameObject co = new GameObject("Cave Mesh");
+		
+	}
+
+	private MeshFilter MakeNewMesh(string name)
+	{
+		GameObject co = new GameObject("Mesh " + name);
 		co.transform.parent = transform;
 		co.transform.position = new Vector3(0, 0, 0);
 		co.AddComponent<MeshFilter>();
 		co.AddComponent<MeshRenderer>();
 
-		cave = co.GetComponent<MeshFilter>();
+		MeshFilter cave = co.GetComponent<MeshFilter>();
 		co.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/CaveMain");
 		cave.transform.rotation = Quaternion.Euler(new Vector3(270, 0, 0));
+
+		co.SetActive(false);
+
+		return cave;
 	}
 
-	public void GenerateMesh(int[,] map, float squareSize)
+	private int order = 0;
+
+	public MeshFilter GenerateMesh(string name, int[,] map, float squareSize)
 	{
-		triangleDictionary.Clear();
+		MeshFilter cave = MakeNewMesh(name);
+
+        triangleDictionary.Clear();
 		outlines.Clear();
 		checkedVertices.Clear();
 
@@ -65,9 +77,15 @@ public class MeshGenerator : MonoBehaviour
 		mesh.uv = uvs;
 
 		Generate2DColliders();
+
+		return cave;
 	}
 
-	void Generate2DColliders()
+
+
+
+
+	private void Generate2DColliders()
 	{
 		EdgeCollider2D[] currentColliders = gameObject.GetComponents<EdgeCollider2D>();
 		for (int i = 0; i < currentColliders.Length; i++)
@@ -84,14 +102,13 @@ public class MeshGenerator : MonoBehaviour
 
 			for (int i = 0; i < outline.Count; i++)
 			{
-				edgePoints[i] = new Vector2(vertices[outline[i]].x, vertices[outline[i]].z);
+				edgePoints[i] = new Vector2(vertices[outline[i]].x+(100*order), vertices[outline[i]].z);
 			}
 			edgeCollider.points = edgePoints;
 		}
-
 	}
 
-	void TriangulateSquare(Square square)
+	private void TriangulateSquare(Square square)
 	{
 		switch (square.configuration)
 		{
@@ -158,7 +175,7 @@ public class MeshGenerator : MonoBehaviour
 
 	}
 
-	void MeshFromPoints(params Node[] points)
+	private void MeshFromPoints(params Node[] points)
 	{
 		AssignVertices(points);
 
@@ -173,7 +190,7 @@ public class MeshGenerator : MonoBehaviour
 
 	}
 
-	void AssignVertices(Node[] points)
+	private void AssignVertices(Node[] points)
 	{
 		for (int i = 0; i < points.Length; i++)
 		{
@@ -185,7 +202,7 @@ public class MeshGenerator : MonoBehaviour
 		}
 	}
 
-	void CreateTriangle(Node a, Node b, Node c)
+	private void CreateTriangle(Node a, Node b, Node c)
 	{
 		triangles.Add(a.vertexIndex);
 		triangles.Add(b.vertexIndex);
@@ -197,7 +214,7 @@ public class MeshGenerator : MonoBehaviour
 		AddTriangleToDictionary(triangle.vertexIndexC, triangle);
 	}
 
-	void AddTriangleToDictionary(int vertexIndexKey, Triangle triangle)
+	private void AddTriangleToDictionary(int vertexIndexKey, Triangle triangle)
 	{
 		if (triangleDictionary.ContainsKey(vertexIndexKey))
 		{
@@ -211,7 +228,7 @@ public class MeshGenerator : MonoBehaviour
 		}
 	}
 
-	void CalculateMeshOutlines()
+	private void CalculateMeshOutlines()
 	{
 
 		for (int vertexIndex = 0; vertexIndex < vertices.Count; vertexIndex++)
@@ -233,7 +250,7 @@ public class MeshGenerator : MonoBehaviour
 		}
 	}
 
-	void FollowOutline(int vertexIndex, int outlineIndex)
+	private void FollowOutline(int vertexIndex, int outlineIndex)
 	{
 		outlines[outlineIndex].Add(vertexIndex);
 		checkedVertices.Add(vertexIndex);
@@ -245,7 +262,7 @@ public class MeshGenerator : MonoBehaviour
 		}
 	}
 
-	int GetConnectedOutlineVertex(int vertexIndex)
+	private int GetConnectedOutlineVertex(int vertexIndex)
 	{
 		List<Triangle> trianglesContainingVertex = triangleDictionary[vertexIndex];
 
@@ -269,7 +286,7 @@ public class MeshGenerator : MonoBehaviour
 		return -1;
 	}
 
-	bool IsOutlineEdge(int vertexA, int vertexB)
+	private bool IsOutlineEdge(int vertexA, int vertexB)
 	{
 		List<Triangle> trianglesContainingVertexA = triangleDictionary[vertexA];
 		int sharedTriangleCount = 0;
