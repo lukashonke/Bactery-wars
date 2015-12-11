@@ -36,7 +36,7 @@ public class MeshGenerator
 		co.AddComponent<MeshRenderer>();
 
 		MeshFilter cave = co.GetComponent<MeshFilter>();
-		co.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/CaveMain");
+		co.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/Wall/CaveMain");
 		cave.transform.rotation = Quaternion.Euler(new Vector3(270, 0, 0));
 
 		co.SetActive(false);
