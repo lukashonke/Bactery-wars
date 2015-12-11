@@ -1,31 +1,36 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.scripts.Mono.MapGenerator;
+using Object = UnityEngine.Object;
 
-//TODO object this - make one mesh generator per mapgenerator
-public class MeshGenerator : MonoBehaviour
+public class MeshGenerator
 {
+	private GameObject parent;
+
+	public MeshFilter mesh;
+
 	public SquareGrid squareGrid;
 
-	List<Vector3> vertices;
-	List<int> triangles;
+	private List<Vector3> vertices;
+	private List<int> triangles;
 
-	Dictionary<int, List<Triangle>> triangleDictionary = new Dictionary<int, List<Triangle>>();
-	List<List<int>> outlines = new List<List<int>>();
-	HashSet<int> checkedVertices = new HashSet<int>();
+	private Dictionary<int, List<Triangle>> triangleDictionary = new Dictionary<int, List<Triangle>>();
+	private List<List<int>> outlines = new List<List<int>>();
+	private HashSet<int> checkedVertices = new HashSet<int>();
 
 	private Vector3 shiftVector;
 
-	public void Start()
+	public MeshGenerator(GameObject parent)
 	{
-		
+		this.parent = parent;
 	}
 
 	private MeshFilter MakeNewMesh(string name)
 	{
 		GameObject co = new GameObject("Mesh " + name);
-		co.transform.parent = transform;
+		co.transform.parent = parent.transform;
 		co.transform.position = new Vector3(0, 0, 0);
 		co.AddComponent<MeshFilter>();
 		co.AddComponent<MeshRenderer>();
@@ -37,6 +42,23 @@ public class MeshGenerator : MonoBehaviour
 		co.SetActive(false);
 
 		return cave;
+	}
+
+	public void Delete()
+	{
+		EdgeCollider2D[] currentColliders = parent.GetComponents<EdgeCollider2D>();
+		for (int i = 0; i < currentColliders.Length; i++)
+		{
+			Object.Destroy(currentColliders[i]);
+		}
+
+		try
+		{
+			Object.Destroy(mesh.gameObject);
+		}
+		catch (Exception)
+		{
+		}
 	}
 
 	public MeshFilter GenerateMesh(string name, int[,] map, float squareSize, Vector3 shiftVector)
@@ -81,6 +103,8 @@ public class MeshGenerator : MonoBehaviour
 
 		Generate2DColliders(cave.gameObject);
 
+		this.mesh = cave;
+
 		return cave;
 	}
 
@@ -96,7 +120,7 @@ public class MeshGenerator : MonoBehaviour
 
 		foreach (List<int> outline in outlines)
 		{
-			EdgeCollider2D edgeCollider = gameObject.AddComponent<EdgeCollider2D>();
+			EdgeCollider2D edgeCollider = parent.AddComponent<EdgeCollider2D>();
 			Vector2[] edgePoints = new Vector2[outline.Count];
 
 			for (int i = 0; i < outline.Count; i++)

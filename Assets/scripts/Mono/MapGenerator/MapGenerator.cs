@@ -31,5 +31,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		}
 
 		public abstract int[,] GenerateMap();
+		public abstract MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize, int x, int y, bool doDebug);
+		public abstract MeshGenerator GetMeshGenerator();
 	}
 }

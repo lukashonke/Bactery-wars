@@ -4851,7 +4851,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 2056527962}
-  - 114: {fileID: 2056527960}
   - 114: {fileID: 2056527964}
   m_Layer: 0
   m_Name: Cave Generator
@@ -4860,17 +4859,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2056527960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2056527959}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 484b645c799a296418ed2865c6d4fb4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2056527962
 Transform:
   m_ObjectHideFlags: 0
@@ -4900,6 +4888,7 @@ MonoBehaviour:
   seed: -534
   useRandomSeed: 1
   randomFillPercent: 47
+  doDebug: 0
 --- !u!1 &2136851294
 GameObject:
   m_ObjectHideFlags: 0

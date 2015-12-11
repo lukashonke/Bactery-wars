@@ -20,7 +20,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		[Range(0, 100)]
 		public int randomFillPercent;
 
-		public const bool DoDebug = true;
+		public bool doDebug = false;
 
 		// variables
 		public Dictionary<Cords, MapRegion> regions;
@@ -83,6 +83,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
+				foreach (MapRegion region in regions.Values)
+				{
+					region.mapGen.GetMeshGenerator().Delete();
+				}
+
 				regions.Clear();
 				TestGen();
 			}
@@ -90,7 +95,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		void OnDrawGizmos()
 		{
-			if (DoDebug == false)
+			if (doDebug == false)
 				return;
 
 			foreach(MapGenerator g in generators)
@@ -110,29 +115,18 @@ namespace Assets.scripts.Mono.MapGenerator
 			float ySize = (height) * SQUARE_SIZE;
 			Vector3 shiftVector = new Vector3(x*xSize, y*ySize);
 
-			MapGenerator generator = new DungeonGenerator(width, height, seed, randomFillPercent, DoDebug, x, y, shiftVector);
+			MapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
 
-			int[,] map = generator.GenerateMap();
-			MeshFilter mesh = null;
+			int[,] map = mapGenerator.GenerateMap();
 
-			if (!DoDebug)
-			{
-				MeshGenerator meshGen = GetComponent<MeshGenerator>();
+			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE, x, y, doDebug);
+			MeshFilter mesh = meshGenerator.mesh;
 
-				// dimensions of the map
-				xSize = (map.GetLength(0) - 1) * SQUARE_SIZE;
-				ySize = (map.GetLength(1) - 1) * SQUARE_SIZE;
-
-				mesh = meshGen.GenerateMesh("Cave", map, SQUARE_SIZE, new Vector3(x*xSize, y * ySize));
-
-				mesh.gameObject.transform.position = new Vector3(x * xSize, y * ySize);
-			}
-
-			MapRegion region = new MapRegion((int)x, (int)y, map, mesh);
+			MapRegion region = new MapRegion((int)x, (int)y, map, mesh, mapGenerator);
 			region.Enable();
 			regions.Add(new Cords((int)x, (int)y), region);
 
-			return generator;
+			return mapGenerator;
 		}
 
 		public void PositionEnter(Vector3 pos)
@@ -174,14 +168,16 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			public int x, y;
 			public int[,] map;
+			public MapGenerator mapGen;
 			public MeshFilter mesh;
 
-			public MapRegion(int x, int y, int[,] map, MeshFilter m)
+			public MapRegion(int x, int y, int[,] map, MeshFilter m, MapGenerator mapGen)
 			{
 				this.map = map;
 				this.x = x;
 				this.y = y;
 				this.mesh = m;
+				this.mapGen = mapGen;
 
 				active = true;
 			}

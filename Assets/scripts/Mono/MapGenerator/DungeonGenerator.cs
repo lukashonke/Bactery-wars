@@ -14,6 +14,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			TOP, RIGHT, DOWN, LEFT
 		}
 
+		private MeshGenerator meshGen;
+
 		public const int FLOOR = 0;
 		public const int WALL = 1;
 
@@ -27,6 +29,28 @@ namespace Assets.scripts.Mono.MapGenerator
 		public DungeonGenerator(int width, int height, String seed, int wallFillPercent, bool debug, int shiftX, int shiftY, Vector3 shiftVector) : base(width, height, seed, shiftX, shiftY, shiftVector, debug)
 		{
 			this.randomFillPercent = wallFillPercent;
+		}
+
+		public Room MainRoom
+		{
+			get { return mainRoom; }
+		}
+
+		public override MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize, int x, int y, bool doDebug)
+		{
+			meshGen = new MeshGenerator(parent);
+
+			if (!doDebug)
+			{
+				// dimensions of the map
+				float xSize = (map.GetLength(0) - 1) * squareSize;
+				float ySize = (map.GetLength(1) - 1) * squareSize;
+
+				MeshFilter mesh = meshGen.GenerateMesh("Cave", map, squareSize, new Vector3(x * xSize, y * ySize));
+				mesh.gameObject.transform.position = new Vector3(x * xSize, y * ySize);
+			}
+
+			return meshGen;
 		}
 
 		public override int[,] GenerateMap()
@@ -80,7 +104,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			int end = System.Environment.TickCount;
-			//Debug.Log("it took " + (end - start));
+			Debug.Log("it took " + (end - start));
 
 			return borderedMap;
 		}
@@ -720,6 +744,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				isChecked = false;
 			}
+		}
+
+		public override MeshGenerator GetMeshGenerator()
+		{
+			return meshGen;
 		}
 	}
 }
