@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace Assets.scripts.MapGenerator
+namespace Assets.scripts.Mono.MapGenerator
 {
-	public class DungeonGenerator : AbstractMapGenerator
+	public class DungeonGenerator : MapGenerator
 	{
 		public enum Direction
 		{
@@ -13,16 +15,15 @@ namespace Assets.scripts.MapGenerator
 		}
 
 		private MeshGenerator meshGen;
-		private float meshSquareSize;
-		private int meshShiftX, meshShiftY;
 
 		public const int FLOOR = 0;
 		public const int WALL = 1;
 
 		private int smoothCount = 4;
 		private int randomFillPercent;
+		private Tile[,] tiles;
 
-		private List<Room> connectedRooms;
+		private List<Room> separatedRooms; 
 		private Room mainRoom;
 
 		public DungeonGenerator(int width, int height, String seed, int wallFillPercent, bool debug, int shiftX, int shiftY, Vector3 shiftVector) : base(width, height, seed, shiftX, shiftY, shiftVector, debug)
@@ -30,44 +31,31 @@ namespace Assets.scripts.MapGenerator
 			this.randomFillPercent = wallFillPercent;
 		}
 
-		public Room MainRoom { get { return mainRoom; } }
+		public Room MainRoom
+		{
+			get { return mainRoom; }
+		}
 
-		public override MeshGenerator GenerateMesh(GameObject parent, float squareSize)
+		public override MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize, int x, int y, bool doDebug)
 		{
 			meshGen = new MeshGenerator(parent);
-			meshSquareSize = squareSize;
 
 			if (!doDebug)
 			{
 				// dimensions of the map
-				float xSize = (tiles.GetLength(0) - 1) * squareSize;
-				float ySize = (tiles.GetLength(1) - 1) * squareSize;
+				float xSize = (map.GetLength(0) - 1) * squareSize;
+				float ySize = (map.GetLength(1) - 1) * squareSize;
 
-				MeshFilter mesh = meshGen.GenerateMesh("Cave", ToIntArray(), squareSize, new Vector3(shiftX * xSize, shiftY * ySize));
-				mesh.gameObject.transform.position = new Vector3(shiftX * xSize, shiftY * ySize);
+				MeshFilter mesh = meshGen.GenerateMesh("Cave", map, squareSize, new Vector3(x * xSize, y * ySize));
+				mesh.gameObject.transform.position = new Vector3(x * xSize, y * ySize);
 			}
 
 			return meshGen;
 		}
 
-		public void UpdateMesh()
+		public override int[,] GenerateMap()
 		{
-			if (meshGen == null || doDebug)
-				return;
-
-			// dimensions of the map
-			float xSize = (tiles.GetLength(0) - 1) * meshSquareSize;
-			float ySize = (tiles.GetLength(1) - 1) * meshSquareSize;
-
-			meshGen.Delete();
-
-			MeshFilter mesh = meshGen.GenerateMesh("Cave", ToIntArray(), meshSquareSize, new Vector3(shiftX * xSize, shiftY * ySize));
-			mesh.gameObject.transform.position = new Vector3(shiftX * xSize, shiftY * ySize);
-		}
-
-		public override Tile[,] GenerateDungeon()
-		{
-			/**/ int start = System.Environment.TickCount;
+			int start = System.Environment.TickCount;
 
 			Debug.Log("using seed " + seed);
 
@@ -89,31 +77,34 @@ namespace Assets.scripts.MapGenerator
 				SmoothMap();
 			}
 
-			// process the map, remove small regions, propojit je, atd
+			// process the map, remove small regions
 			ProcessMap();
 
-			// vytvorit okraj mapy a prevest ho do 2D matice
 			const int borderSize = 1;
-			Tile[,] borderedMap = new Tile[width + borderSize * 2, height + borderSize * 2];
+			int[,] borderedMap = new int[width + borderSize * 2, height + borderSize * 2];
 
 			for (int x = 0; x < borderedMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < borderedMap.GetLength(1); y++)
 				{
 					if (x >= borderSize && x < width + borderSize && y >= borderSize && y < height + borderSize)
-						borderedMap[x, y] = tiles[x - borderSize, y - borderSize];
+					{
+						borderedMap[x, y] = tiles[x - borderSize, y - borderSize].tileType;
+					}
 					else
-						borderedMap[x, y] = new Tile(x, y, WALL);
+					{
+						borderedMap[x, y] = WALL;
+					}
 				}
 			}
 
-			if (doDebug)
+			if (DoDebug)
 			{
 				Camera.main.orthographicSize = 60;
 			}
 
-			/**/int end = System.Environment.TickCount;
-			/**/Debug.Log("it took " + (end - start));
+			int end = System.Environment.TickCount;
+			Debug.Log("it took " + (end - start));
 
 			return borderedMap;
 		}
@@ -182,7 +173,7 @@ namespace Assets.scripts.MapGenerator
 
 			//Debug.Log("setting " + i + " tiles to WALL");
 
-			connectedRooms = rooms; // uloz mistnosti tak jak jsou predtim nez se vsechny propoji
+			separatedRooms = rooms; // uloz mistnosti tak jak jsou predtim nez se vsechny propoji
 
 			ConnectAllRooms(rooms, false);
 
@@ -195,7 +186,7 @@ namespace Assets.scripts.MapGenerator
 			}
 		}
 
-		protected void GetClosestTiles(Room roomA, Room roomB, out Tile bestTileA, out Tile bestTileB, out int bestDistance)
+		private void GetClosestTiles(Room roomA, Room roomB, out Tile bestTileA, out Tile bestTileB, out int bestDistance)
 		{
 			bestDistance = 0;
 			bestTileA = null;
@@ -227,7 +218,7 @@ namespace Assets.scripts.MapGenerator
 			}
 		}
 
-		protected void ConnectRooms(Room roomA, Room roomB)
+		private void ConnectRooms(Room roomA, Room roomB)
 		{
 			int bestDistance;
 			Tile bestTileA;
@@ -464,7 +455,7 @@ namespace Assets.scripts.MapGenerator
 		public override void OnDrawGizmos()
 		{
 			//Debug.Log("drawing");
-			if (doDebug == false)
+			if (DoDebug == false)
 				return;
 
 			int nulls = 0;
@@ -684,7 +675,7 @@ namespace Assets.scripts.MapGenerator
 			return false;
 		}
 
-		private class Region
+		public class Region
 		{
 			public List<Tile> tiles;
 			public int type;
@@ -720,32 +711,44 @@ namespace Assets.scripts.MapGenerator
             }
 		}
 
+		public class Tile
+		{
+			public int tileX;
+			public int tileY;
+			public int tileType;
+			public bool isChecked;
+			public int color;
+
+			public Tile(int x, int y, int t)
+			{
+				tileX = x;
+				tileY = y;
+				tileType = t;
+				isChecked = false;
+			}
+
+			public Tile(int x, int y)
+			{
+				tileX = x;
+				tileY = y;
+				tileType = 0;
+				isChecked = false;
+			}
+
+			public void Check()
+			{
+				isChecked = true;
+			}
+
+			public void Uncheck()
+			{
+				isChecked = false;
+			}
+		}
+
 		public override MeshGenerator GetMeshGenerator()
 		{
 			return meshGen;
-		}
-
-
-		public override Tile[,] GetTiles()
-		{
-			return tiles;
-		}
-
-		public override List<Room> GetConnectedRooms()
-		{
-			return connectedRooms;
-		}
-
-		public override List<Room> GetSeparatedRooms()
-		{
-			List<Room> list = new List<Room>();
-			list.Add(MainRoom);
-			return list;
-		}
-
-		public override Room GetMainRoom()
-		{
-			return MainRoom;
 		}
 	}
 }
