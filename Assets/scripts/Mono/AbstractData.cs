@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
-using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;

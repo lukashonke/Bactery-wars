@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Collections.Generic;
+using Assets.scripts.MapGenerator;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Assets.scripts.Mono.MapGenerator
+namespace Assets.scripts.Mono
 {
 	public class MapHolder : MonoBehaviour
 	{
@@ -25,7 +22,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		// variables
 		public Dictionary<Cords, MapRegion> regions;
 
-		private List<MapGenerator> generators = new List<MapGenerator>(); 
+		private List<AbstractMapGenerator> generators = new List<AbstractMapGenerator>(); 
 
 		private const int SQUARE_SIZE = 1;
 
@@ -37,10 +34,10 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions = new Dictionary<Cords, MapRegion>();
 
 			// create the first map
-			TestGen();
+			GenerateFirst();
 		}
 
-		private void TestGen()
+		private void GenerateFirst()
 		{
 			generators.Add(GenerateRegion(0, 0));
 			generators.Add(GenerateRegion(0, 1));
@@ -54,72 +51,25 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			MapRegion r1 = regions[new Cords(0, 1)];
 			MapRegion r2 = regions[new Cords(0, 0)];
-
-			/*int[,] sharedMap = new int[r1.map.GetLength(0), r1.map.GetLength(1) + r2.map.GetLength(1)];
-
-			for (int i = 0; i < r1.map.GetLength(0); i++)
-			{
-				for (int j = 0; j < r1.map.GetLength(1); j++)
-				{
-					sharedMap[i,j] = r1.map[i, j];
-				}
-			}
-
-			for (int i = 0; i < r2.map.GetLength(0); i++)
-			{
-				for (int j = 0; j < r2.map.GetLength(1); j++)
-				{
-					sharedMap[i, j + r1.map.GetLength(1)] = r2.map[i, j];
-				}
-			}
-
-			Debug.Log(sharedMap.GetLength(0) + ", " + sharedMap.GetLength(1));
-
-			generator.ConnectDungeons(sharedMap);*/
 		}
 
-
-		void Update()
+		private AbstractMapGenerator GenerateRegion(int x, int y)
 		{
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				foreach (MapRegion region in regions.Values)
-				{
-					region.mapGen.GetMeshGenerator().Delete();
-				}
-
-				regions.Clear();
-				TestGen();
-			}
-		}
-
-		void OnDrawGizmos()
-		{
-			if (doDebug == false)
-				return;
-
-			foreach(MapGenerator g in generators)
-				g.OnDrawGizmos();
-		}
-
-		private MapGenerator GenerateRegion(int x, int y)
-		{
-			Debug.Log("generating and enabling region .. " + x + ", " + y);
+		    /**/Debug.Log("generating and enabling region .. " + x + ", " + y);
 
 			if (useRandomSeed)
-			{
 				seed = Random.Range(-1000, 1000).ToString();
-			}
 
 			float xSize = (width) * SQUARE_SIZE;
 			float ySize = (height) * SQUARE_SIZE;
 			Vector3 shiftVector = new Vector3(x*xSize, y*ySize);
 
-			MapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
+			AbstractMapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
 
-			int[,] map = mapGenerator.GenerateMap();
+			mapGenerator.GenerateDungeon();
+			int[,] map = mapGenerator.ToIntArray();
 
-			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE, x, y, doDebug);
+			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, SQUARE_SIZE);
 			MeshFilter mesh = meshGenerator.mesh;
 
 			MapRegion region = new MapRegion((int)x, (int)y, map, mesh, mapGenerator);
@@ -147,6 +97,29 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
+		void Update()
+		{
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				foreach (MapRegion region in regions.Values)
+				{
+					region.mapGen.GetMeshGenerator().Delete();
+				}
+
+				regions.Clear();
+				GenerateFirst();
+			}
+		}
+
+		void OnDrawGizmos()
+		{
+			if (doDebug == false)
+				return;
+
+			foreach (AbstractMapGenerator g in generators)
+				g.OnDrawGizmos();
+		}
+
 		public MapRegion GetRegion(Vector2 pos)
 		{
 			float xSize = (width + 1) * SQUARE_SIZE;
@@ -168,10 +141,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			public int x, y;
 			public int[,] map;
-			public MapGenerator mapGen;
+			public AbstractMapGenerator mapGen;
 			public MeshFilter mesh;
 
-			public MapRegion(int x, int y, int[,] map, MeshFilter m, MapGenerator mapGen)
+			public MapRegion(int x, int y, int[,] map, MeshFilter m, AbstractMapGenerator mapGen)
 			{
 				this.map = map;
 				this.x = x;
