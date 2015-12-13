@@ -117,9 +117,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			MapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
 
-			int[,] map = mapGenerator.GenerateMap();
+			MapGenerator.Tile[,] tileMap = mapGenerator.GenerateMap();
+			int[,] map = mapGenerator.GetIntMap();
 
-			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE, x, y, doDebug);
+			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE);
 			MeshFilter mesh = meshGenerator.mesh;
 
 			MapRegion region = new MapRegion((int)x, (int)y, map, mesh, mapGenerator);
