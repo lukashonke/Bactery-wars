@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.scripts.Mono.MapGenerator;
-using Tile = Assets.scripts.Mono.MapGenerator.DungeonGenerator.Tile;
 
 public class Room : IComparable<Room>
 {

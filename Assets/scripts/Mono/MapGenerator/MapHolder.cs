@@ -21,13 +21,120 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int randomFillPercent;
 
 		public bool doDebug = false;
+		private const int SQUARE_SIZE = 1;
+		private const int MAX_REGIONS = 6;
 
 		// variables
 		public Dictionary<Cords, MapRegion> regions;
 
-		private List<MapGenerator> generators = new List<MapGenerator>(); 
+		private int regionSize;
 
-		private const int SQUARE_SIZE = 1;
+		private List<MapGenerator> generators = new List<MapGenerator>();
+
+		public Tile[,] SceneMap { get; set; }
+
+
+
+		const bool renderAllMap = false;
+
+
+
+		/// <summary>
+		/// TODO dokoncit - prevest vygenerovane regiony do jedne velke mapy a pak postupne zapinat nebo vypinat meshe podle toho ktere jsou regiony jsou aktivni a ktere ne 
+		/// </summary>
+		public void CreateSceneMesh()
+		{
+			// test
+			/*SceneMap = new Tile[regionSize * 24, regionSize * 24];
+			for (int i = 0; i < SceneMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < SceneMap.GetLength(1); j++)
+				{
+					SceneMap[i, j] = new Tile(1,1,1);
+				}
+			}*/
+
+			Dictionary<Cords, int[,]> map = new Dictionary<Cords, int[,]>();
+
+			for (int x = 0; x < SceneMap.GetLength(0); x++)
+			{
+				for (int y = 0; y < SceneMap.GetLength(1); y++)
+				{
+					Cords c = new Cords(x/ regionSize, y/ regionSize);
+
+					if (map.ContainsKey(c))
+					{
+						Tile t = SceneMap[x, y];
+						if (t != null)
+							map[c][x % regionSize, y % regionSize] = SceneMap[x, y].tileType;
+						else
+							map[c][x % regionSize, y % regionSize] = 0;
+					}
+					else
+					{
+						map[c] = new int[regionSize, regionSize];
+
+						Tile t = SceneMap[x, y];
+						if (t != null)
+							map[c][x%regionSize, y%regionSize] = SceneMap[x, y].tileType;
+						else
+							map[c][x%regionSize, y%regionSize] = 0;
+					}
+				}
+			}
+
+			if (renderAllMap)
+			{
+				for (int i = 0; i < map.Count; i++)
+				{
+					KeyValuePair<Cords, int[,]> e = map.ElementAt(i);
+
+					Cords c = e.Key;
+					int[,] regionMap = e.Value;
+
+					MeshGenerator generator = new MeshGenerator(gameObject);
+
+					float xSize = (regionMap.GetLength(0) - 1) * SQUARE_SIZE;
+					float ySize = (regionMap.GetLength(1) - 1) * SQUARE_SIZE;
+
+					Vector3 v = new Vector3(c.x * xSize, c.y * ySize);
+
+					MeshFilter mesh = generator.GenerateMesh("Cave " + c.ToString(), regionMap, SQUARE_SIZE, v);
+					mesh.gameObject.transform.position = v;
+				}
+			}
+			
+
+			Debug.Log("pocet regionu na renderovani: " + map.Count);
+
+			/*for (int i = 0; i < map.Count; i++)
+			{
+				int jednicky = 0;
+
+				for (int x = 0; x < map.ElementAt(i).Value.GetLength(0); x++)
+				{
+					for (int y = 0; y < map.ElementAt(i).Value.GetLength(1); y++)
+					{
+					}
+				}
+
+				Debug.Log("region " + map.ElementAt(i).Key.ToString() + " ma " + jednicky);
+			}*/
+		}
+
+		public void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
+		{
+			regionX += MAX_REGIONS/2;
+			regionY += MAX_REGIONS/2;
+
+			for (int x = 0; x < tiles.GetLength(0); x++)
+			{
+				for (int y = 0; y < tiles.GetLength(1); y++)
+				{
+					SceneMap[(regionX * regionSize) + x, regionY * regionSize + y] = tiles[x, y];
+				}
+			}
+		}
 
 		void Start()
 		{
@@ -35,6 +142,9 @@ namespace Assets.scripts.Mono.MapGenerator
 				instance = this;
 
 			regions = new Dictionary<Cords, MapRegion>();
+
+			regionSize = width + 2;
+			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
 
 			// create the first map
 			TestGen();
@@ -51,6 +161,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			generators.Add(GenerateRegion(-1, 1));
 			generators.Add(GenerateRegion(-1, 0));
 			generators.Add(GenerateRegion(-1, -1));
+
+			CreateSceneMesh();
 
 			MapRegion r1 = regions[new Cords(0, 1)];
 			MapRegion r2 = regions[new Cords(0, 0)];
@@ -117,11 +229,18 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			MapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
 
-			MapGenerator.Tile[,] tileMap = mapGenerator.GenerateMap();
+			Tile[,] tileMap = mapGenerator.GenerateMap();
 			int[,] map = mapGenerator.GetIntMap();
 
-			MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE);
-			MeshFilter mesh = meshGenerator.mesh;
+			AddToSceneMap(tileMap, x, y);
+
+			MeshFilter mesh = null;
+            if (!renderAllMap)
+			{
+				MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE);
+				mesh = meshGenerator.mesh;
+			}
+			
 
 			MapRegion region = new MapRegion((int)x, (int)y, map, mesh, mapGenerator);
 			region.Enable();
@@ -202,7 +321,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public struct Cords
 		{
-			private int x, y;
+			public int x, y;
 			public Cords(int x, int y)
 			{
 				this.x = x;
@@ -212,6 +331,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			public bool Equals(Cords f, Cords s)
 			{
 				return f.x == s.x && f.y == s.y;
+			}
+
+			public string ToString()
+			{
+				return x + ", " + y;
 			}
 		}
 	}

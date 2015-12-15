@@ -119,7 +119,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			int end = System.Environment.TickCount;
-			Debug.Log("it took " + (end - start));
+			//Debug.Log("it took " + (end - start));
 
 			tiles = borderedMap;
 
@@ -364,8 +364,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			Debug.DrawLine(TileToWorldPoint(tileA), TileToWorldPoint(tileB), Color.blue, 100f);
 			List<Tile> line = GetLine(tileA, tileB);
 
-			Debug.Log(line.Count);
-
 			foreach (Tile t in line)
 			{
 				t.color = 5;
@@ -395,7 +393,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private List<Tile> GetLine(Tile from, Tile to)
 		{
-			Debug.Log("drawing line");
+			//Debug.Log("drawing line");
 			List<Tile> tiles = new List<Tile>();
 
 			int x = from.tileX;
@@ -692,7 +690,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
-		public class Region
+		private class Region
 		{
 			public List<Tile> tiles;
 			public int type;
