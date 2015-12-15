@@ -46,6 +46,7 @@ namespace Assets.scripts.Skills
 
 		/// if the skill requires confirmation before casting (second click)
 		protected bool requireConfirm;
+		public bool breaksMouseMovement;
 
 		protected GameObject initTarget;
 
@@ -78,6 +79,7 @@ namespace Assets.scripts.Skills
 			rangeCheckFrequency = 0.2f;
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
+			breaksMouseMovement = true;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}

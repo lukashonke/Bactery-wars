@@ -145,6 +145,8 @@ namespace Assets.scripts.Mono
 
 				if (data.ActiveConfirmationSkill != null)
 				{
+					bool breakMouseMovement = data.ActiveConfirmationSkill.breaksMouseMovement;
+
 					if (Input.GetMouseButtonDown(0))
 					{
 						data.ConfirmSkillLaunch();
@@ -156,7 +158,8 @@ namespace Assets.scripts.Mono
 					}
 
 					// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
-					Input.ResetInputAxes();
+					if(breakMouseMovement)
+						Input.ResetInputAxes();
 				}
 				else
 				{
