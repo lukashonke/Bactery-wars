@@ -33,11 +33,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public Tile[,] SceneMap { get; set; }
 
-
-
+		// for test TODO remove this
 		const bool renderAllMap = false;
-
-
 
 		/// <summary>
 		/// TODO dokoncit - prevest vygenerovane regiony do jedne velke mapy a pak postupne zapinat nebo vypinat meshe podle toho ktere jsou regiony jsou aktivni a ktere ne 
