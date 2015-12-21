@@ -41,5 +41,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		protected abstract void AddSkills();
 		public abstract MonsterAI CreateAI(Character ch);
+
+		public abstract GroupTemplate GetGroupTemplate();
 	}
 }

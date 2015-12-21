@@ -26,6 +26,8 @@ namespace Assets.scripts.Mono
 	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
 		public bool USE_VELOCITY_MOVEMENT = true;
+		public bool keyboardMovementAllowed;
+		public bool rotateTowardsMouse;
 		public string aiType;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
@@ -80,6 +82,10 @@ namespace Assets.scripts.Mono
 		// current position in world cords to move to
 		protected Vector3 targetPositionWorld;
 		protected GameObject targetMoveObject;
+
+		protected bool keyboardMoving;
+		protected float keyboardHorizontalMovement;
+		protected float keyboardVerticalMovement;
 
 		/// setting this to false will stop the current player movement
 		public bool HasTargetToMoveTo { get; set; }
@@ -141,66 +147,103 @@ namespace Assets.scripts.Mono
 
 		public virtual void Update()
 		{
-			// update movement
-			if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
+			if (!HasTargetToMoveTo && keyboardMovementAllowed)
 			{
-				Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
-				newRotation.x = 0;
-				newRotation.y = 0;
-
-				float angle = Quaternion.Angle(body.transform.rotation, newRotation);
-
-				bool move = true;
-				bool rotate = true;
-
-				if (angle - 90 > 1 && !canMoveWhenNotRotated)
-					move = false;
-
-				if (!CanMove())
-					move = false;
-
-				if (!CanRotate())
-					rotate = false;
-
-				if (move)
+				if (allowMovePointChange && CanMove())
 				{
-					if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
+					Vector3 dir = new Vector3(keyboardHorizontalMovement*moveSpeed, keyboardVerticalMovement*moveSpeed, 0);
+					SetVelocity(dir);
 
-					if (USE_VELOCITY_MOVEMENT)
+					if (CanRotate())
 					{
-						Vector3 newVelocity = targetPositionWorld - body.transform.position;
-						newVelocity.Normalize();
+						if (rotateTowardsMouse)
+						{
+							Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-						SetVelocity(newVelocity * moveSpeed);
+							Quaternion newRotation = Quaternion.LookRotation(body.transform.position - temp, Vector3.forward);
+							newRotation.x = 0;
+							newRotation.y = 0;
+
+							SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+
+							UpdateHeading();
+						}
+						else if (keyboardMoving)
+						{
+							Quaternion newRotation = Quaternion.LookRotation(body.transform.position - (body.transform.position + dir), Vector3.forward);
+							newRotation.x = 0;
+							newRotation.y = 0;
+
+							SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+
+							UpdateHeading();
+						}
 					}
-					else
-					{
-						SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
-					}
-				}
-				else
-				{
-					ResetVelocity();
-				}
-
-				if (rotate)
-				{
-					SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime*rotateSpeed), false);
-				}
-
-				if (move || rotate)
-				{
-					UpdateHeading();
 				}
 			}
 			else
 			{
-				if(this is PlayerData)anim.SetFloat("MOVE_SPEED", 0);
-				HasTargetToMoveTo = false;
+				// update movement
+				if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
+				{
+					Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
+					newRotation.x = 0;
+					newRotation.y = 0;
 
-				ArrivedAtDestination();
+					float angle = Quaternion.Angle(body.transform.rotation, newRotation);
 
-				ResetVelocity();
+					bool move = true;
+					bool rotate = true;
+
+					if (angle - 90 > 1 && !canMoveWhenNotRotated)
+						move = false;
+
+					if (!CanMove())
+						move = false;
+
+					if (!CanRotate())
+						rotate = false;
+
+					if (move)
+					{
+						if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
+
+						if (USE_VELOCITY_MOVEMENT)
+						{
+							Vector3 newVelocity = targetPositionWorld - body.transform.position;
+							newVelocity.Normalize();
+
+							SetVelocity(newVelocity * moveSpeed);
+						}
+						else
+						{
+							SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
+						}
+					}
+					else
+					{
+						ResetVelocity();
+					}
+
+					if (rotate)
+					{
+						SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime * rotateSpeed), false);
+					}
+
+					if (move || rotate)
+					{
+						UpdateHeading();
+					}
+				}
+				else
+				{
+					if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 0);
+					HasTargetToMoveTo = false;
+
+					ArrivedAtDestination();
+
+					ResetVelocity();
+				}
 			}
 
 			//TODO optimize
@@ -730,6 +773,23 @@ namespace Assets.scripts.Mono
 			{
 				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 				HasTargetToMoveTo = true;
+			}
+		}
+
+		public void SetKeyboardMovement(float horizontal, float vertical)
+		{
+			if (keyboardMovementAllowed)
+			{
+				keyboardHorizontalMovement = horizontal;
+				keyboardVerticalMovement = vertical;
+
+				if (horizontal > 0 || vertical > 0 || horizontal < 0 || vertical < 0)
+				{
+					BreakMovement(false);
+					keyboardMoving = true;
+				}
+				else 
+					keyboardMoving = false;
 			}
 		}
 

@@ -8,12 +8,14 @@ namespace Assets.scripts.Mono.ObjectData
 	{
 		private Monster owner;
 
+		public int monsterId;
+
 		// Use this for initialization
 		public new void Start()
 		{
 			base.Start();
 
-			owner = GameSystem.Instance.RegisterNewMonster(this, "Monster");
+			owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
 
 			Debug.Log("Registering new data for monster ");
 		}

@@ -9,11 +9,12 @@ using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
-	public class WhiteCellTemplate : MonsterTemplate
+	public class LeukocyteRanged : MonsterTemplate
 	{
-		public WhiteCellTemplate(MonsterId id) : base(id)
+		public LeukocyteRanged(MonsterId id)
+			: base(id)
 		{
-			MaxHp = 50;
+			MaxHp = 10;
 			MaxMp = 50;
 			MaxSpeed = 10;
 		}
@@ -22,16 +23,13 @@ namespace Assets.scripts.Actor.MonsterClasses
 		{
 			// no skills
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(10));
+
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(2)); // the projectile test skill
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			return new MeleeMonsterAI(ch);
-		}
-
-		public override GroupTemplate GetGroupTemplate()
-		{
-			return new GroupTemplate().Add(MonsterId.TestMonster, 3);
+			return new RangedMonsterAI(ch);
 		}
 	}
 }

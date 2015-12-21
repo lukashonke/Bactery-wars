@@ -89,18 +89,25 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private void KeyboardMovement()
+		{
+			data.SetKeyboardMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+		}
+
 		public void Update()
 		{
 			// fire TODO delete
 			if (Input.GetKeyDown("space"))
 			{
-				Instantiate(projectObject, body.transform.position, body.transform.rotation);
+				//Instantiate(projectObject, body.transform.position, body.transform.rotation);
 			}
 
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				data.BreakCasting();
 			}
+
+			KeyboardMovement();
 
 			HandleSkillControls();
 

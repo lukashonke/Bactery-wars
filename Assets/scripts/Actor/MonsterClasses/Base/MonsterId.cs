@@ -7,6 +7,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 {
 	public enum MonsterId
 	{
-		TestMonster
+		TestMonster = 0,
+
+		Leukocyte_melee = 1,
+		Leukocyte_ranged = 2
 	}
 }

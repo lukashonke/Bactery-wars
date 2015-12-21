@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.Status;
+using Assets.scripts.AI.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -22,7 +23,10 @@ namespace Assets.scripts.AI
 		protected Coroutine currentAction;
 
 		private Character MainTarget { get; set; }
-		protected List<Character> Targets { get; private set; } 
+		protected List<Character> Targets { get; private set; }
+
+		public bool IsGroupLeader { get; set; }
+		public AIGroup Group { get; set; }
 
 		protected AbstractAI(Character o)
 		{
@@ -149,6 +153,32 @@ namespace Assets.scripts.AI
 		public void RemoveMainTarget()
 		{
 			MainTarget = null;
+		}
+
+		public void CreateGroup()
+		{
+			Group = new AIGroup(Owner);
+		}
+
+		public void JoinGroup(Character target)
+		{
+			if (target.AI.IsInGroup())
+			{
+				target.AI.Group.AddMember(Owner);
+			}
+		}
+
+		public Character GetGroupLeader()
+		{
+			if (!IsInGroup())
+				return null;
+
+			return Group.GetLeader();
+		}
+
+		public bool IsInGroup()
+		{
+			return Group != null;
 		}
 
 		/// <summary>

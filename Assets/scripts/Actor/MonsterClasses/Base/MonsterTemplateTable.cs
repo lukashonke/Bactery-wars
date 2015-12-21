@@ -35,6 +35,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		private void Init()
 		{
 			AddType(new WhiteCellTemplate(MonsterId.TestMonster));
+			AddType(new LeukocyteMelee(MonsterId.Leukocyte_melee));
+			AddType(new LeukocyteRanged(MonsterId.Leukocyte_ranged));
 		}
 
 		public void AddType(MonsterTemplate t)

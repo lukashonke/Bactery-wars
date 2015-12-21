@@ -18,11 +18,13 @@ namespace Assets.scripts
 	public class GameSystem
 	{
 		// singleton 
-		private static readonly GameSystem instance = new GameSystem();
+		private static GameSystem instance;
 		public static GameSystem Instance
 		{
 			get
 			{
+				if(instance == null)
+					instance = new GameSystem();
 				return instance;
 			}
 		}
@@ -94,15 +96,34 @@ namespace Assets.scripts
 			return player;
 		}
 
-		public Monster RegisterNewMonster(EnemyData data, String name)
+		public Monster RegisterNewMonster(EnemyData data, String name, int id)
 		{
-			Monster monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(MonsterId.TestMonster));
+			Monster monster = null;
+
+			MonsterId mId = (MonsterId) Enum.Parse(typeof (MonsterId), ""+id);
+			monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(mId));
 
 			monster.Init();
 
 			monster.InitTemplate();
 
 			return monster;
+		}
+
+		public Monster RegisterNewMonster(EnemyData data, MonsterId id)
+		{
+			Monster monster = null;
+			monster = new Monster(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
+			monster.Init();
+
+			monster.InitTemplate();
+
+			return monster;
+		}
+
+		public Monster SpawnMonster(MonsterId id, Vector3 position)
+		{
+			return null;
 		}
 	}
 }

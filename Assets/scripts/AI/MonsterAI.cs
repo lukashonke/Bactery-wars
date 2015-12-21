@@ -14,14 +14,14 @@ namespace Assets.scripts.AI
 {
 	public abstract class MonsterAI : AbstractAI
 	{
-		public Dictionary<Character, int> Aggro;
+		protected Dictionary<Character, int> aggro;
 
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
 
 		protected MonsterAI(Character o) : base(o)
 		{
-			Aggro = new Dictionary<Character, int>();
+			aggro = new Dictionary<Character, int>();
 
 			IsAggressive = true;
 			AggressionRange = 5;
@@ -98,11 +98,12 @@ namespace Assets.scripts.AI
 							AddAggro(ch, 1);
 						}
 
+
 						break;
 					}
 				}
 
-				if (Aggro.Any())
+				if (aggro.Any())
 					SetAIState(AIState.ATTACKING);
 			}
 
@@ -140,16 +141,16 @@ namespace Assets.scripts.AI
 
 		public override void AddAggro(Character ch, int points)
 		{
-			if (!Aggro.ContainsKey(ch))
+			if (!aggro.ContainsKey(ch))
 			{
-				Aggro.Add(ch, points);
+				aggro.Add(ch, points);
 			}
 			else
 			{
 				int newP = 0;
-				Aggro.TryGetValue(ch, out newP);
+				aggro.TryGetValue(ch, out newP);
 				newP += points;
-				Aggro[ch] = newP;
+				aggro[ch] = newP;
 			}
 		}
 
@@ -160,32 +161,32 @@ namespace Assets.scripts.AI
 
 		public override void RemoveAggro(Character ch, int points)
 		{
-			if (Aggro.ContainsKey(ch))
+			if (aggro.ContainsKey(ch))
 			{
 				if (points == 0)
-					Aggro.Remove(ch);
+					aggro.Remove(ch);
 				else
 				{
 					int newP = 0;
-					Aggro.TryGetValue(ch, out newP);
+					aggro.TryGetValue(ch, out newP);
 					newP -= points;
 
 					if (newP <= 0)
-						Aggro.Remove(ch);
+						aggro.Remove(ch);
 					else
-						Aggro[ch] = newP;
+						aggro[ch] = newP;
 				}
 			}
 		}
 
 		protected virtual Character SelectMostAggroTarget()
 		{
-			if (Aggro.Count == 0)
+			if (aggro.Count == 0)
 				return null;
 
 			int top = 0;
 			Character topCh = null;
-			foreach (KeyValuePair<Character, int> e in Aggro)
+			foreach (KeyValuePair<Character, int> e in aggro)
 			{
 				if (e.Value > top)
 				{

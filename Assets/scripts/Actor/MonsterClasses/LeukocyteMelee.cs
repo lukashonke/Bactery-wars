@@ -9,11 +9,12 @@ using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
-	public class WhiteCellTemplate : MonsterTemplate
+	public class LeukocyteMelee : MonsterTemplate
 	{
-		public WhiteCellTemplate(MonsterId id) : base(id)
+		public LeukocyteMelee(MonsterId id)
+			: base(id)
 		{
-			MaxHp = 50;
+			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
 		}
@@ -27,11 +28,6 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public override MonsterAI CreateAI(Character ch)
 		{
 			return new MeleeMonsterAI(ch);
-		}
-
-		public override GroupTemplate GetGroupTemplate()
-		{
-			return new GroupTemplate().Add(MonsterId.TestMonster, 3);
 		}
 	}
 }

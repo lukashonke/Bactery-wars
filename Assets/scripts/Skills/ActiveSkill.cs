@@ -240,9 +240,10 @@ namespace Assets.scripts.Skills
 		{
 			bool start = false;
 			bool isPlayer = GetPlayerData() != null && GetPlayerData().GetOwner().AI is PlayerAI;
+			bool keyboardMovement = isPlayer && GetPlayerData().keyboardMovementAllowed;
 
 			// works only for Players (not needed for other characters)
-			if (requireConfirm && isPlayer)
+			if (requireConfirm && isPlayer && !keyboardMovement)
 			{
 				// switch this skill from idle to being confirmed
 				if (state == SkillState.SKILL_IDLE)
