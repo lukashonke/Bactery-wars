@@ -8,6 +8,7 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Pathfinding;
 using UnityEngine;
 using UnityEngine.Networking;
 using Object = UnityEngine.Object;
@@ -146,6 +147,35 @@ namespace Assets.scripts.Mono
 			forcedVelocity = false;
 		}
 
+		protected Path currentPath;
+		private int currentPathNode;
+
+		private void CalculatePathfindingNodes()
+		{
+			Debug.Log("calculating..");
+			Seeker seeker = GetComponent<Seeker>();
+
+			seeker.StartPath(body.transform.position, targetPositionWorld, OnPathFindComplete);
+			currentPathNode = 0;
+		}
+
+		public void OnPathFindComplete(Path p)
+		{
+			if (!p.error)
+			{
+				currentPath = p;
+				currentPathNode = 0;
+			}
+			else
+				Debug.LogError(p.error);
+		}
+
+		public void ResetPath()
+		{
+			currentPath = null;
+			currentPathNode = 0;
+		}
+
 		public virtual void Update()
 		{
 			if (!HasTargetToMoveTo && keyboardMovementAllowed)
@@ -187,14 +217,24 @@ namespace Assets.scripts.Mono
 				// update movement
 				if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 				{
-					if (usesPathfinding)
+					Vector3 currentDestination = targetPositionWorld;
+					if (usesPathfinding && currentPath != null)
 					{
-						Seeker seeker = GetComponent<Seeker>();
+						if (currentPathNode < currentPath.vectorPath.Count)
+						{
+							Debug.Log("current node index " + currentPathNode);
+							currentDestination = currentPath.vectorPath[currentPathNode];
 
-						seeker.StartPath(body.transform.position, targetPositionWorld);
+							const int nextWaypointDistance = 3;
+
+							if (Vector3.Distance(body.transform.position, currentDestination) < nextWaypointDistance)
+								currentPathNode++;
+						}
+						else
+							ResetPath();
 					}
 
-					Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
+					Quaternion newRotation = Quaternion.LookRotation(body.transform.position - currentDestination, Vector3.forward);
 					newRotation.x = 0;
 					newRotation.y = 0;
 
@@ -218,14 +258,14 @@ namespace Assets.scripts.Mono
 
 						if (USE_VELOCITY_MOVEMENT)
 						{
-							Vector3 newVelocity = targetPositionWorld - body.transform.position;
+							Vector3 newVelocity = currentDestination - body.transform.position;
 							newVelocity.Normalize();
 
 							SetVelocity(newVelocity * moveSpeed);
 						}
 						else
 						{
-							SetPosition(Vector3.MoveTowards(body.transform.position, targetPositionWorld, Time.deltaTime * moveSpeed), false);
+							SetPosition(Vector3.MoveTowards(body.transform.position, currentDestination, Time.deltaTime * moveSpeed), false);
 						}
 					}
 					else
@@ -411,6 +451,11 @@ namespace Assets.scripts.Mono
 			{
 				allowMovePointChange = true;
 				forcedVelocity = false;
+			}
+
+			if (usesPathfinding)
+			{
+				ResetPath();
 			}
 
 			if (QueueMelee)
@@ -663,12 +708,16 @@ namespace Assets.scripts.Mono
 			MovementChanged();
 			targetPositionWorld = newTarget.transform.position;
 			targetMoveObject = newTarget;
+
+			CalculatePathfindingNodes();
 		}
 
 		public void SetMovementTarget(Vector3 newTarget)
 		{
 			MovementChanged();
 			targetPositionWorld = newTarget;
+
+			CalculatePathfindingNodes();
 		}
 
 		public Vector3 GetMovementTarget()
