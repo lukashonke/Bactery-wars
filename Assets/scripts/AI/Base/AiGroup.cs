@@ -48,6 +48,8 @@ namespace Assets.scripts.AI.Base
 
 			members.Add(ch);
 			ch.AI.Group = this;
+
+			Debug.Log("adding " + ch.Name + " to group of " + leader.Name);
 		}
 
 		public bool IsInGroup(Character ch)

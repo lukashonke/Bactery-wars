@@ -8,6 +8,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts
 {
@@ -62,6 +63,13 @@ namespace Assets.scripts
 			Controller.StopCoroutine(t);
 		}
 
+		public void UpdatePathfinding()
+		{
+			AstarPath ap = Controller.GetComponent<AstarPath>();
+
+			ap.Scan();
+		}
+
 		// Methods
 		public Player RegisterNewPlayer(PlayerData data, String name)
 		{
@@ -110,20 +118,31 @@ namespace Assets.scripts
 			return monster;
 		}
 
-		public Monster RegisterNewMonster(EnemyData data, MonsterId id)
+		public Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion)
 		{
 			Monster monster = null;
 			monster = new Monster(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
+			data.SetOwner(monster);
 			monster.Init();
 
+			monster.isMinion = isMinion;
 			monster.InitTemplate();
 
 			return monster;
 		}
 
-		public Monster SpawnMonster(MonsterId id, Vector3 position)
+		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion)
 		{
-			return null;
+			Debug.Log("spawning, is minion is " + isMinion);
+			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
+
+			if (go == null)
+				throw new NullReferenceException("Prefabs/entity/" + id.ToString() + "/" + id);
+
+			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
+			EnemyData data = result.GetComponent<EnemyData>();
+
+			return RegisterNewMonster(data, id, isMinion);
 		}
 	}
 }

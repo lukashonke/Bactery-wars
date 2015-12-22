@@ -164,6 +164,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			MapRegion r1 = regions[new Cords(0, 1)];
 			MapRegion r2 = regions[new Cords(0, 0)];
 
+			GameSystem.Instance.UpdatePathfinding();
+
 			/*int[,] sharedMap = new int[r1.map.GetLength(0), r1.map.GetLength(1) + r2.map.GetLength(1)];
 
 			for (int i = 0; i < r1.map.GetLength(0); i++)

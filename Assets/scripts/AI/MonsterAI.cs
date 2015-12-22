@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -23,8 +24,8 @@ namespace Assets.scripts.AI
 		{
 			aggro = new Dictionary<Character, int>();
 
-			IsAggressive = true;
-			AggressionRange = 5;
+			IsAggressive = ((EnemyData) Owner.GetData()).isAggressive;
+			AggressionRange = ((EnemyData)Owner.GetData()).aggressionRange;
 		}
 
 		public override void Think()
@@ -74,6 +75,26 @@ namespace Assets.scripts.AI
 						break;
 					}
 				}
+			}
+
+			if (GetGroupLeader() != null && !IsGroupLeader)
+			{
+				Character leader = GetGroupLeader();
+				Vector3 leaderPos = leader.Data.GetBody().transform.position;
+
+				int distToFollow = ((EnemyData) Owner.GetData()).distanceToFollowLeader;
+
+				if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+				{
+					Vector3 rnd = Random.insideUnitCircle;
+					rnd.z = 0;
+
+					MoveTo(leaderPos + rnd);
+
+					Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
+				}
+				else
+					Debug.Log("okay");
 			}
 		}
 

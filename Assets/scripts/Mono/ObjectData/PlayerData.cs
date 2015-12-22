@@ -60,6 +60,11 @@ namespace Assets.scripts.Mono.ObjectData
 			base.Update();
 		}
 
+		public override void SetOwner(Character ch)
+		{
+			player = (Player) ch;
+		}
+
 		public override void OnCollisionEnter2D(Collision2D coll)
 		{
 			base.OnCollisionEnter2D(coll);

@@ -29,6 +29,7 @@ namespace Assets.scripts.Mono
 		public bool keyboardMovementAllowed;
 		public bool rotateTowardsMouse;
 		public string aiType;
+		public bool usesPathfinding;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove = 0.2f;
@@ -186,6 +187,13 @@ namespace Assets.scripts.Mono
 				// update movement
 				if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 				{
+					if (usesPathfinding)
+					{
+						Seeker seeker = GetComponent<Seeker>();
+
+						seeker.StartPath(body.transform.position, targetPositionWorld);
+					}
+
 					Quaternion newRotation = Quaternion.LookRotation(body.transform.position - targetPositionWorld, Vector3.forward);
 					newRotation.x = 0;
 					newRotation.y = 0;
@@ -252,7 +260,18 @@ namespace Assets.scripts.Mono
 				MapHolder.instance.PositionEnter(rb.transform.position);
 			}
 
-			GetOwner().OnUpdate();
+			try
+			{
+				GetOwner().OnUpdate();
+			}
+			catch (NullReferenceException)
+			{
+				if (this is EnemyData)
+				{
+					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData)this).monsterId));
+					Debug.Log("Registering new data for monster ");
+				}
+			}
 		}
 
 		private void AddChildObjects(Transform t)
@@ -794,6 +813,7 @@ namespace Assets.scripts.Mono
 		}
 
 		public abstract Character GetOwner();
+		public abstract void SetOwner(Character ch);
 
 		public virtual void OnCollisionEnter2D(Collision2D coll)
 		{

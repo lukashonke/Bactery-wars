@@ -29,5 +29,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 		{
 			return new MeleeMonsterAI(ch);
 		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
 	}
 }

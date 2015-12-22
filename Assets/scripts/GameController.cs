@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.scripts.Actor.MonsterClasses.Base;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Assets.scripts
@@ -25,7 +26,7 @@ namespace Assets.scripts
 
 		public void SpawnTestMob()
 		{
-			Instantiate(prefabToSpawn, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), Quaternion.identity);
+			GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
 		}
 	}
 }

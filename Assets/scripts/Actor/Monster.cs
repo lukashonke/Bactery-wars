@@ -10,12 +10,16 @@ using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Actor
 {
 	public class Monster : Character
 	{
 		public MonsterTemplate Template { get; set; }
+
+		public bool isMinion;
+
 		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
 		{
 			Data = dataObject;
@@ -79,12 +83,19 @@ namespace Assets.scripts.Actor
 			}
 
 			GroupTemplate gt = Template.GetGroupTemplate();
-
-			if (gt != null)
+			if (!isMinion && gt != null)
 			{
+				AI.CreateGroup();
 				foreach (KeyValuePair<MonsterId, int> e in gt.MembersToSpawn)
 				{
-					
+					for (i = 0; i < e.Value; i++)
+					{
+						Vector3 rndPos = Random.insideUnitSphere;
+						rndPos.z = 0;
+
+						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, GetData().GetBody().transform.position + (rndPos*GetData().distanceToFollowLeader/2), true);
+						mon.AI.JoinGroup(this);
+					}
 				}
 			}
 		}

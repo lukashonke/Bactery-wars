@@ -31,5 +31,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 		{
 			return new RangedMonsterAI(ch);
 		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
 	}
 }

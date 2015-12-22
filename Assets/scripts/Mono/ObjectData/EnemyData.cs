@@ -10,19 +10,27 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public int monsterId;
 
+		public int distanceToFollowLeader = 8;
+		public bool isAggressive = false;
+		public int aggressionRange = 5;
+
 		// Use this for initialization
 		public new void Start()
 		{
 			base.Start();
 
-			owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
-
-			Debug.Log("Registering new data for monster ");
+			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
+			//Debug.Log("Registering new data for monster ");
 		}
 
 		public override Character GetOwner()
 		{
 			return owner;
+		}
+
+		public override void SetOwner(Character ch)
+		{
+			owner = (Monster) ch;
 		}
 
 		public override void SetIsDead(bool isDead)
