@@ -17,6 +17,8 @@ GameObject:
   - 199: {fileID: 19989050}
   - 50: {fileID: 5073276}
   - 114: {fileID: 11419596}
+  - 114: {fileID: 11411954}
+  - 114: {fileID: 11406344}
   m_Layer: 0
   m_Name: Leukocyte_melee
   m_TagString: Untagged
@@ -291,6 +293,46 @@ Light:
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
+--- !u!114 &11406344
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 118368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 1
+--- !u!114 &11411954
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 118368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    priority: 2
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  traversableTagsCompatibility:
+    tagsChange: -1
+    tagsSet: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!114 &11418444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -317,7 +359,7 @@ MonoBehaviour:
   keyboardMovementAllowed: 0
   rotateTowardsMouse: 0
   aiType: 
-  usesPathfinding: 0
+  usesPathfinding: 1
   minDistanceClickToMove: 0.2
   body: {fileID: 118368}
   rb: {fileID: 5073276}
@@ -332,7 +374,7 @@ MonoBehaviour:
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
-  monsterId: 2
+  monsterId: 1
   distanceToFollowLeader: 8
   isAggressive: 1
   aggressionRange: 5
@@ -3550,6 +3592,18 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: isAggressive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: usesPathfinding
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startEndModifier.priority
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: monsterId
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -155,6 +155,11 @@ namespace Assets.scripts.Mono
 			Debug.Log("calculating..");
 			Seeker seeker = GetComponent<Seeker>();
 
+			if (seeker == null)
+			{
+				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
+			}
+
 			seeker.StartPath(body.transform.position, targetPositionWorld, OnPathFindComplete);
 			currentPathNode = 0;
 		}
@@ -222,7 +227,7 @@ namespace Assets.scripts.Mono
 					{
 						if (currentPathNode < currentPath.vectorPath.Count)
 						{
-							Debug.Log("current node index " + currentPathNode);
+							//Debug.Log("current node index " + currentPathNode);
 							currentDestination = currentPath.vectorPath[currentPathNode];
 
 							const int nextWaypointDistance = 3;
@@ -639,6 +644,8 @@ namespace Assets.scripts.Mono
 		{
 			visibleHp = newHp;
 
+			Debug.Log("setting viis hp to " + newHp);
+
 			if (healthBar != null)
 			{
 				healthBar.hp = visibleHp;
@@ -648,6 +655,8 @@ namespace Assets.scripts.Mono
 		public void SetVisibleMaxHp(int newHp)
 		{
 			visibleMaxHp = newHp;
+
+			Debug.Log("setting viis max hpo " + newHp);
 
 			if (healthBar != null)
 			{

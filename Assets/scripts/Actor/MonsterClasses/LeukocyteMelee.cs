@@ -14,7 +14,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public LeukocyteMelee(MonsterId id)
 			: base(id)
 		{
-			MaxHp = 20;
+			MaxHp = 100;
 			MaxMp = 50;
 			MaxSpeed = 10;
 		}
