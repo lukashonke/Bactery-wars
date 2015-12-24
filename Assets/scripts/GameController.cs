@@ -12,14 +12,15 @@ namespace Assets.scripts
 	{
 		public GameObject prefabToSpawn;
 
+		public bool isAndroid;
+
 		void Start()
 		{
-			bool mobile = false;
 #if UNITY_ANDROID
-			mobile = true;
+			isAndroid = true;
 #endif
 
-			if (mobile)
+			if (isAndroid)
 			{
 				try
 				{

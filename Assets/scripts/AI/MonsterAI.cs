@@ -93,8 +93,6 @@ namespace Assets.scripts.AI
 
 					Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
 				}
-				else
-					Debug.Log("okay");
 			}
 		}
 

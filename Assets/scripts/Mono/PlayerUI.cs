@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Mono.ObjectData;
+﻿using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -22,26 +23,60 @@ namespace Assets.scripts.Mono
 
 		private PlayerData data;
 
+		public GameObject menuPanel;
+
 		// Use this for initialization
 		void Start()
 		{
 			data = GetComponent<PlayerData>();
-			//hp = FindO
+
+			menuPanel.SetActive(false);
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
-			//hp.text = "HP " + data.visibleHp; //TODO fix
 		}
 
 		public void MenuClick()
 		{
-			Debug.Log("clicked ");
+			if(menuPanel.activeSelf)
+				menuPanel.SetActive(false);
+			else
+				menuPanel.SetActive(true);
+		}
+
+		public void RestartGame()
+		{
+			Application.LoadLevel(Application.loadedLevel);
+		}
+
+		public void TestSpawnMonsters()
+		{
+			MonsterId mId = MonsterId.TestMonster; 
+
+			switch (Random.Range(1, 2))
+			{
+				case 1:
+					mId = MonsterId.Leukocyte_melee;
+					break;
+				case 2:
+					mId = MonsterId.Leukocyte_ranged;
+					break;
+			}
+
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false);
+		}
+
+		public void TestSpawnMonsters2()
+		{
+			MonsterId mId = MonsterId.TestMonster;
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false);
 		}
 
 		public void Skill(int order)
 		{
+			Debug.Log("calling skill at .. " + Time.frameCount);
 			data.LaunchSkill(order);
 		}
 
@@ -72,11 +107,13 @@ namespace Assets.scripts.Mono
 
 		public void SetMouseOverUi()
 		{
+			Debug.Log("mouse over UI");
 			mouseOverUi = true;
 		}
 
 		public void SetMouseNotOverUi()
 		{
+			Debug.Log("mouse not UI");
 			mouseOverUi = false;
 		}
 	}

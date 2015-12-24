@@ -109,6 +109,14 @@ namespace Assets.scripts.Mono.ObjectData
 				return;
 			}
 
+#if UNITY_ANDROID
+			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.Equals(skill))
+			{
+				ActiveConfirmationSkill.AbortCast();
+				return;
+			}
+#endif
+
 			//Debug.Log("Launching skill... " + skill.Name);
 
 			//MovementChanged();
@@ -120,6 +128,11 @@ namespace Assets.scripts.Mono.ObjectData
 		public void ConfirmSkillLaunch()
 		{
 			ActiveConfirmationSkill.Start();
+		}
+
+		public void ConfirmSkillLaunch(Vector3 mousePosition)
+		{
+			ActiveConfirmationSkill.Start(mousePosition);
 		}
 
 		public void SetPlayersMoveToTarget(GameObject newTarget)

@@ -94,6 +94,10 @@ namespace Assets.scripts.Mono
 			data.SetKeyboardMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 		}
 
+		private int currentTouchAction;
+		private const int TOUCH_MOVEMENT = 1;
+		private const int TOUCH_CONFIRMINGSKILL = 2;
+
 		public void Update()
 		{
 			bool usingTouches = false;
@@ -111,12 +115,9 @@ namespace Assets.scripts.Mono
 				data.BreakCasting();
 			}
 
-
-
 			KeyboardMovement();
 
 			HandleSkillControls();
-
 #endif
 
 #if UNITY_ANDROID
@@ -125,6 +126,7 @@ namespace Assets.scripts.Mono
 
 			Vector3 inputPosition;
 			bool touched = false;
+			Touch firstTouch = new Touch();
 
 			if (!usingTouches)
 			{
@@ -136,108 +138,240 @@ namespace Assets.scripts.Mono
 				{
 					touched = true;
 					inputPosition = Input.GetTouch(0).position;
+					firstTouch = Input.GetTouch(0);
+
+					if (firstTouch.phase.Equals(TouchPhase.Began))
+					{
+						currentTouchAction = 0;
+					}
+					else if (firstTouch.phase.Equals(TouchPhase.Ended))
+					{
+
+					}
 				}
 				else
+				{
 					inputPosition = new Vector3(0, 0, 0);
+					currentTouchAction = 0;
+				}
 			}
 
 
-			if (!ui.MouseOverUI)
+			if (usingTouches)
 			{
-				// if targetting active, highlight target objects
-				if (data.TargettingActive)
+				if (!ui.MouseOverUI)
 				{
-					Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
-					RaycastHit2D[] hits=  Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
-
-					int layer;
-					Rigidbody2D rb;
-
-					bool target = false;
-
-					foreach (RaycastHit2D hit in hits)
+					// if targetting active, highlight target objects
+					if (data.TargettingActive)
 					{
-						layer = hit.transform.gameObject.layer;
-						// not target projectiles, environment and background
-						if (layer == 11 || layer == 8 || layer == 9)
-							continue;
+						Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
+						RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
 
-						if (hit.transform.gameObject.Equals(data.GetBody()))
-							continue;
+						int layer;
+						Rigidbody2D rb;
 
-						rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+						bool target = false;
 
-						if (rb != null)
+						foreach (RaycastHit2D hit in hits)
 						{
-							data.Target = hit.transform.gameObject;
-							target = true;
-                            break;
+							layer = hit.transform.gameObject.layer;
+							// not target projectiles, environment and background
+							if (layer == 11 || layer == 8 || layer == 9)
+								continue;
+
+							if (hit.transform.gameObject.Equals(data.GetBody()))
+								continue;
+
+							rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+
+							if (rb != null)
+							{
+								data.Target = hit.transform.gameObject;
+								target = true;
+								break;
+							}
+						}
+
+						if (!target)
+						{
+							data.Target = null;
 						}
 					}
 
-					if (!target)
+					if (data.ActiveConfirmationSkill != null)
 					{
-						data.Target = null;
-					}
-				}
+						bool breakMouseMovement = data.ActiveConfirmationSkill.breaksMouseMovement;
 
-				if (data.ActiveConfirmationSkill != null)
-				{
-					bool breakMouseMovement = data.ActiveConfirmationSkill.breaksMouseMovement;
-
-					if (Input.GetMouseButtonDown(0) || touched)
-					{
-						Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
-						temp.z = body.transform.position.z;
-						data.lastClickPositionWorld = temp;
-
-						data.ConfirmSkillLaunch();
-					}
-
-					if (Input.GetMouseButtonDown(1))
-					{
-						data.ActiveConfirmationSkill.AbortCast();
-					}
-
-					// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
-					if(breakMouseMovement)
-						Input.ResetInputAxes();
-				}
-				else
-				{
-					if (data.Target != null)
-					{
-						if (Input.GetMouseButtonDown(0) || touched)
+						if (touched && firstTouch.phase.Equals(TouchPhase.Began))
 						{
+							currentTouchAction = TOUCH_CONFIRMINGSKILL;
 							Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 							temp.z = body.transform.position.z;
 							data.lastClickPositionWorld = temp;
 
-							data.MeleeAttack(data.Target, true);
+							data.ConfirmSkillLaunch(temp);
+						}
+
+						if (Input.GetMouseButtonDown(1))
+						{
+							data.ActiveConfirmationSkill.AbortCast();
+						}
+
+						// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
+						if (breakMouseMovement)
+						{
 							Input.ResetInputAxes();
 						}
 					}
 					else
 					{
-						// change target position according to mouse when clicked
-						if (Input.GetMouseButton(0) || touched)
+						if (data.Target != null)
 						{
-							Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
-							newTarget.z = body.transform.position.z;
+							if (touched && firstTouch.phase.Equals(TouchPhase.Began))
+							{
+								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
+								temp.z = body.transform.position.z;
+								data.lastClickPositionWorld = temp;
 
-							data.lastClickPositionWorld = newTarget;
+								data.MeleeAttack(data.Target, true);
+								Input.ResetInputAxes();
+							}
+						}
+						else
+						{
+							// change target position according to mouse when clicked
+							if (touched && (currentTouchAction == 0 || currentTouchAction == TOUCH_MOVEMENT))
+							{
+								if (currentTouchAction == 0)
+									currentTouchAction = TOUCH_MOVEMENT;
 
-							// momentalne nepotrebne
-							//if (Vector3.Distance(body.transform.position, newTarget) > 2)
-							//{
-							data.HasTargetToMoveTo = true;
-							data.SetPlayersMoveToTarget(newTarget);
+                                Debug.Log("moving at .. " + Time.frameCount);
 
-							if (currMouseClicker != null)
-								Destroy(currMouseClicker);
+								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
+								newTarget.z = body.transform.position.z;
 
-							currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-							//}
+								data.lastClickPositionWorld = newTarget;
+
+								// momentalne nepotrebne
+								//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+								//{
+								data.HasTargetToMoveTo = true;
+								data.SetPlayersMoveToTarget(newTarget);
+
+								if (currMouseClicker != null)
+									Destroy(currMouseClicker);
+
+								currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+								//}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if (!ui.MouseOverUI)
+				{
+					// if targetting active, highlight target objects
+					if (data.TargettingActive)
+					{
+						Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
+						RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
+
+						int layer;
+						Rigidbody2D rb;
+
+						bool target = false;
+
+						foreach (RaycastHit2D hit in hits)
+						{
+							layer = hit.transform.gameObject.layer;
+							// not target projectiles, environment and background
+							if (layer == 11 || layer == 8 || layer == 9)
+								continue;
+
+							if (hit.transform.gameObject.Equals(data.GetBody()))
+								continue;
+
+							rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+
+							if (rb != null)
+							{
+								data.Target = hit.transform.gameObject;
+								target = true;
+								break;
+							}
+						}
+
+						if (!target)
+						{
+							data.Target = null;
+						}
+					}
+
+					if (data.ActiveConfirmationSkill != null)
+					{
+						bool breakMouseMovement = data.ActiveConfirmationSkill.breaksMouseMovement;
+
+						if (Input.GetMouseButtonDown(0))
+						{
+							Debug.Log("confirming at .. " + Time.frameCount);
+							Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
+							temp.z = body.transform.position.z;
+							data.lastClickPositionWorld = temp;
+
+							data.ConfirmSkillLaunch();
+						}
+
+						if (Input.GetMouseButtonDown(1))
+						{
+							data.ActiveConfirmationSkill.AbortCast();
+						}
+
+						// pro tento snimek vypne dalsi Input, aby nedoslo k pohybu za targetem skillu
+						if (breakMouseMovement)
+						{
+							Input.ResetInputAxes();
+						}
+					}
+					else
+					{
+						if (data.Target != null)
+						{
+							if (Input.GetMouseButtonDown(0))
+							{
+								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
+								temp.z = body.transform.position.z;
+								data.lastClickPositionWorld = temp;
+
+								data.MeleeAttack(data.Target, true);
+								Input.ResetInputAxes();
+							}
+						}
+						else
+						{
+							// change target position according to mouse when clicked
+							if (Input.GetMouseButton(0))
+							{
+								Debug.Log("moving at .. " + Time.frameCount);
+
+								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
+								newTarget.z = body.transform.position.z;
+
+								data.lastClickPositionWorld = newTarget;
+
+								// momentalne nepotrebne
+								//if (Vector3.Distance(body.transform.position, newTarget) > 2)
+								//{
+								data.HasTargetToMoveTo = true;
+								data.SetPlayersMoveToTarget(newTarget);
+
+								if (currMouseClicker != null)
+									Destroy(currMouseClicker);
+
+								currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
+								//}
+							}
 						}
 					}
 				}

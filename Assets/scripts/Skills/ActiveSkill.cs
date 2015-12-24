@@ -230,6 +230,12 @@ namespace Assets.scripts.Skills
 			LastUsed = Environment.TickCount;
 		}
 
+		public void Start(Vector3 inputPosition)
+		{
+			mouseDirection = inputPosition - GetOwnerData().GetBody().transform.position;
+			Start();
+		}
+
 		public void Start(GameObject target)
 		{
 			initTarget = target;

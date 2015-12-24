@@ -13,7 +13,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 	{
 		public WhiteCellTemplate(MonsterId id) : base(id)
 		{
-			MaxHp = 50;
+			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
 		}

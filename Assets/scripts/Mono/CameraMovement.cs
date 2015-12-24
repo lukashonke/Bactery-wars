@@ -69,7 +69,7 @@ namespace Assets.scripts.Mono
 						// Find the difference in the distances between each frame.
 						float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-						Camera.main.orthographicSize += deltaMagnitudeDiff * 0.5f;
+						Camera.main.orthographicSize += deltaMagnitudeDiff * 0.2f;
 
 						// Make sure the orthographic size never drops below zero.
 						Camera.main.orthographicSize = Mathf.Max(Camera.main.orthographicSize, 8);
