@@ -21,8 +21,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int randomFillPercent;
 
 		public bool doDebug = false;
-		private const int SQUARE_SIZE = 1;
-		private const int MAX_REGIONS = 6;
+		private int SQUARE_SIZE = 1;
+		private int MAX_REGIONS = 3;
 
 		// variables
 		public Dictionary<Cords, MapRegion> regions;
@@ -34,30 +34,20 @@ namespace Assets.scripts.Mono.MapGenerator
 		public Tile[,] SceneMap { get; set; }
 
 		// for test TODO remove this
-		const bool renderAllMap = false;
+		const bool renderAllMap = true;
 
 		/// <summary>
 		/// TODO dokoncit - prevest vygenerovane regiony do jedne velke mapy a pak postupne zapinat nebo vypinat meshe podle toho ktere jsou regiony jsou aktivni a ktere ne 
 		/// </summary>
 		public void CreateSceneMesh()
 		{
-			// test
-			/*SceneMap = new Tile[regionSize * 24, regionSize * 24];
-			for (int i = 0; i < SceneMap.GetLength(0); i++)
-			{
-				for (int j = 0; j < SceneMap.GetLength(1); j++)
-				{
-					SceneMap[i, j] = new Tile(1,1,1);
-				}
-			}*/
-
 			Dictionary<Cords, int[,]> map = new Dictionary<Cords, int[,]>();
 
 			for (int x = 0; x < SceneMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < SceneMap.GetLength(1); y++)
 				{
-					Cords c = new Cords(x/ regionSize, y/ regionSize);
+					Cords c = new Cords(x / regionSize, y / regionSize);
 
 					if (map.ContainsKey(c))
 					{
@@ -98,10 +88,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					MeshFilter mesh = generator.GenerateMesh("Cave " + c.ToString(), regionMap, SQUARE_SIZE, v);
 					mesh.gameObject.transform.position = v;
+					mesh.gameObject.SetActive(true);
 				}
 			}
 			
-
 			Debug.Log("pocet regionu na renderovani: " + map.Count);
 
 			/*for (int i = 0; i < map.Count; i++)
@@ -162,7 +152,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			CreateSceneMesh();
 
 			MapRegion r1 = regions[new Cords(0, 1)];
-			MapRegion r2 = regions[new Cords(0, 0)];
+			//MapRegion r2 = regions[new Cords(0, 0)];
 
 			GameSystem.Instance.UpdatePathfinding();
 
@@ -239,9 +229,8 @@ namespace Assets.scripts.Mono.MapGenerator
 				MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE);
 				mesh = meshGenerator.mesh;
 			}
-			
 
-			MapRegion region = new MapRegion((int)x, (int)y, map, mesh, mapGenerator);
+			MapRegion region = new MapRegion((int)x, (int)y, map, tileMap, mesh, mapGenerator);
 			region.Enable();
 			regions.Add(new Cords((int)x, (int)y), region);
 
@@ -287,16 +276,18 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			public int x, y;
 			public int[,] map;
+			public Tile[,] tileMap;
 			public MapGenerator mapGen;
 			public MeshFilter mesh;
 
-			public MapRegion(int x, int y, int[,] map, MeshFilter m, MapGenerator mapGen)
+			public MapRegion(int x, int y, int[,] map, Tile[,] tileMap, MeshFilter m, MapGenerator mapGen)
 			{
 				this.map = map;
 				this.x = x;
 				this.y = y;
 				this.mesh = m;
 				this.mapGen = mapGen;
+				this.tileMap = tileMap;
 
 				active = true;
 			}

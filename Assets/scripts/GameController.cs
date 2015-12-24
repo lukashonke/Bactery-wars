@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿using System;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,6 +14,23 @@ namespace Assets.scripts
 
 		void Start()
 		{
+			bool mobile = false;
+#if UNITY_ANDROID
+			mobile = true;
+#endif
+
+			if (mobile)
+			{
+				try
+				{
+					GameObject.Find("GameMenu").SetActive(false);
+					GameObject.Find("GameMenu_Mobile").SetActive(true);
+				}
+				catch (Exception)
+				{
+				}
+			}
+
 			GameSystem.Instance.Start(this);
 		}
 

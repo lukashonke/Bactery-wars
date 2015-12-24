@@ -96,6 +96,10 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
+			bool usingTouches = false;
+
+#if UNITY_STANDALONE || UNITY_EDITOR
+
 			// fire TODO delete
 			if (Input.GetKeyDown("space"))
 			{
@@ -107,16 +111,43 @@ namespace Assets.scripts.Mono
 				data.BreakCasting();
 			}
 
+
+
 			KeyboardMovement();
 
 			HandleSkillControls();
+
+#endif
+
+#if UNITY_ANDROID
+			usingTouches = true;
+#endif
+
+			Vector3 inputPosition;
+			bool touched = false;
+
+			if (!usingTouches)
+			{
+				inputPosition = Input.mousePosition;
+			}
+			else
+			{
+				if (Input.touchCount > 0)
+				{
+					touched = true;
+					inputPosition = Input.GetTouch(0).position;
+				}
+				else
+					inputPosition = new Vector3(0, 0, 0);
+			}
+
 
 			if (!ui.MouseOverUI)
 			{
 				// if targetting active, highlight target objects
 				if (data.TargettingActive)
 				{
-					Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 					RaycastHit2D[] hits=  Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
 
 					int layer;
@@ -154,9 +185,9 @@ namespace Assets.scripts.Mono
 				{
 					bool breakMouseMovement = data.ActiveConfirmationSkill.breaksMouseMovement;
 
-					if (Input.GetMouseButtonDown(0))
+					if (Input.GetMouseButtonDown(0) || touched)
 					{
-						Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+						Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 						temp.z = body.transform.position.z;
 						data.lastClickPositionWorld = temp;
 
@@ -176,9 +207,9 @@ namespace Assets.scripts.Mono
 				{
 					if (data.Target != null)
 					{
-						if (Input.GetMouseButtonDown(0))
+						if (Input.GetMouseButtonDown(0) || touched)
 						{
-							Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+							Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 							temp.z = body.transform.position.z;
 							data.lastClickPositionWorld = temp;
 
@@ -189,9 +220,9 @@ namespace Assets.scripts.Mono
 					else
 					{
 						// change target position according to mouse when clicked
-						if (Input.GetMouseButton(0))
+						if (Input.GetMouseButton(0) || touched)
 						{
-							Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+							Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
 							newTarget.z = body.transform.position.z;
 
 							data.lastClickPositionWorld = newTarget;

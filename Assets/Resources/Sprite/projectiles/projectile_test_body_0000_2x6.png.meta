@@ -28,7 +28,7 @@ TextureImporter:
   bumpmap:
     convertToNormalMap: 0
     externalNormalMap: 0
-    heightScale: .25
+    heightScale: 0.25
     normalMapFilter: 0
   isReadable: 0
   grayScaleToAlpha: 0
@@ -38,7 +38,7 @@ TextureImporter:
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -1
-  maxTextureSize: 1024
+  maxTextureSize: 128
   textureSettings:
     filterMode: -1
     aniso: 16
@@ -53,7 +53,7 @@ TextureImporter:
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-  spritePivot: {x: .5, y: .5}
+  spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
@@ -71,6 +71,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -6, y: 83.48944}
+        - {x: -36, y: 69.48944}
+        - {x: -87, y: 28.48944}
+        - {x: -87, y: 7.489441}
+        - {x: -84, y: -8.510559}
+        - {x: -76, y: -82.51056}
+        - {x: 73, y: -82.51056}
+        - {x: 87, y: 0.48944092}
+        - {x: 87, y: 26.48944}
+        - {x: 15, y: 83.48944}
     - name: projectile_test_body_0000_2x6_1
       rect:
         serializedVersion: 2
@@ -81,6 +92,15 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -7.5991974, y: 83.48944}
+        - {x: -86.5992, y: 39.48944}
+        - {x: -86.5992, y: -6.510559}
+        - {x: -71.5992, y: -82.51056}
+        - {x: 59.400803, y: -82.51056}
+        - {x: 87.4008, y: 2.489441}
+        - {x: 87.4008, y: 30.48944}
+        - {x: 12.400803, y: 83.48944}
     - name: projectile_test_body_0000_2x6_2
       rect:
         serializedVersion: 2
@@ -91,6 +111,15 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -6, y: 84.322754}
+        - {x: -87, y: 28.322754}
+        - {x: -87, y: 1.3227539}
+        - {x: -63, y: -82.677246}
+        - {x: 60, y: -82.677246}
+        - {x: 87, y: 8.322754}
+        - {x: 87, y: 26.322754}
+        - {x: 8, y: 84.322754}
     - name: projectile_test_body_0000_2x6_3
       rect:
         serializedVersion: 2
@@ -101,6 +130,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 9.400803, y: 84.322754}
+        - {x: -3.5991974, y: 84.322754}
+        - {x: -86.5992, y: 30.322754}
+        - {x: -86.5992, y: 7.322754}
+        - {x: -68.5992, y: -81.677246}
+        - {x: -56.599197, y: -82.677246}
+        - {x: 58.400803, y: -82.677246}
+        - {x: 62.400803, y: -74.677246}
+        - {x: 87.4008, y: 7.322754}
+        - {x: 87.4008, y: 29.322754}
     - name: projectile_test_body_0000_2x6_4
       rect:
         serializedVersion: 2
@@ -111,6 +151,16 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -8, y: 83.15607}
+        - {x: -87, y: 30.156067}
+        - {x: -87, y: 6.156067}
+        - {x: -63, y: -80.84393}
+        - {x: -56, y: -82.84393}
+        - {x: 57, y: -82.84393}
+        - {x: 87, y: 3.156067}
+        - {x: 87, y: 29.156067}
+        - {x: 10, y: 83.15607}
     - name: projectile_test_body_0000_2x6_5
       rect:
         serializedVersion: 2
@@ -121,6 +171,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -8.599197, y: 83.15607}
+        - {x: -86.5992, y: 37.156067}
+        - {x: -86.5992, y: -1.8439331}
+        - {x: -85.5992, y: -3.843933}
+        - {x: -61.599197, y: -77.84393}
+        - {x: -59.599197, y: -82.84393}
+        - {x: 57.400803, y: -82.84393}
+        - {x: 87.4008, y: 8.156067}
+        - {x: 87.4008, y: 28.156067}
+        - {x: 23.400803, y: 83.15607}
     - name: projectile_test_body_0000_2x6_6
       rect:
         serializedVersion: 2
@@ -131,6 +192,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -6, y: 83.48944}
+        - {x: -36, y: 69.48944}
+        - {x: -87, y: 28.48944}
+        - {x: -87, y: 7.489441}
+        - {x: -84, y: -8.510559}
+        - {x: -76, y: -82.51056}
+        - {x: 73, y: -82.51056}
+        - {x: 87, y: 0.48944092}
+        - {x: 87, y: 26.48944}
+        - {x: 15, y: 83.48944}
     - name: projectile_test_body_0000_2x6_7
       rect:
         serializedVersion: 2
@@ -141,6 +213,15 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -7.5991974, y: 83.48944}
+        - {x: -86.5992, y: 39.48944}
+        - {x: -86.5992, y: -6.510559}
+        - {x: -71.5992, y: -82.51056}
+        - {x: 59.400803, y: -82.51056}
+        - {x: 87.4008, y: 2.489441}
+        - {x: 87.4008, y: 30.48944}
+        - {x: 12.400803, y: 83.48944}
     - name: projectile_test_body_0000_2x6_8
       rect:
         serializedVersion: 2
@@ -151,6 +232,15 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -6, y: 84.322754}
+        - {x: -87, y: 28.322754}
+        - {x: -87, y: 1.3227539}
+        - {x: -63, y: -82.677246}
+        - {x: 60, y: -82.677246}
+        - {x: 87, y: 8.322754}
+        - {x: 87, y: 26.322754}
+        - {x: 8, y: 84.322754}
     - name: projectile_test_body_0000_2x6_9
       rect:
         serializedVersion: 2
@@ -161,6 +251,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 9.400803, y: 84.322754}
+        - {x: -3.5991974, y: 84.322754}
+        - {x: -86.5992, y: 30.322754}
+        - {x: -86.5992, y: 7.322754}
+        - {x: -68.5992, y: -81.677246}
+        - {x: -56.599197, y: -82.677246}
+        - {x: 58.400803, y: -82.677246}
+        - {x: 62.400803, y: -74.677246}
+        - {x: 87.4008, y: 7.322754}
+        - {x: 87.4008, y: 29.322754}
     - name: projectile_test_body_0000_2x6_10
       rect:
         serializedVersion: 2
@@ -171,6 +272,17 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -8, y: 83.15609}
+        - {x: -87, y: 30.15609}
+        - {x: -87, y: 6.15609}
+        - {x: -63, y: -80.84391}
+        - {x: -56, y: -82.84391}
+        - {x: 57, y: -82.84391}
+        - {x: 87, y: 3.1560898}
+        - {x: 87, y: 29.15609}
+        - {x: 10, y: 83.15609}
+    outline: []
   spritePackingTag: 
   userData: 
   assetBundleName: 

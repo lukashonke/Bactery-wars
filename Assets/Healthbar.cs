@@ -42,7 +42,6 @@ public class Healthbar : MonoBehaviour
 
 		percent = (int) (hp/(float) maxHp*100);
 		percent = 100 - percent;
-		Debug.Log("percent " + percent) ;
 
 		if (currentPercent != percent)
 		{
