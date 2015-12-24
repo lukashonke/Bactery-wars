@@ -156,6 +156,10 @@ namespace Assets.scripts.Mono
 
 					if (Input.GetMouseButtonDown(0))
 					{
+						Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+						temp.z = body.transform.position.z;
+						data.lastClickPositionWorld = temp;
+
 						data.ConfirmSkillLaunch();
 					}
 
@@ -174,6 +178,10 @@ namespace Assets.scripts.Mono
 					{
 						if (Input.GetMouseButtonDown(0))
 						{
+							Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+							temp.z = body.transform.position.z;
+							data.lastClickPositionWorld = temp;
+
 							data.MeleeAttack(data.Target, true);
 							Input.ResetInputAxes();
 						}
@@ -186,16 +194,18 @@ namespace Assets.scripts.Mono
 							Vector3 newTarget = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 							newTarget.z = body.transform.position.z;
 
+							data.lastClickPositionWorld = newTarget;
+
 							// momentalne nepotrebne
 							//if (Vector3.Distance(body.transform.position, newTarget) > 2)
 							//{
+							data.HasTargetToMoveTo = true;
 							data.SetPlayersMoveToTarget(newTarget);
 
 							if (currMouseClicker != null)
 								Destroy(currMouseClicker);
 
 							currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
-							data.HasTargetToMoveTo = true;
 							//}
 						}
 					}

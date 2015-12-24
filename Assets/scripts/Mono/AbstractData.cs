@@ -34,6 +34,7 @@ namespace Assets.scripts.Mono
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove = 0.2f;
+		public int nextWaypointDistance = 3;
 		
 		// child objects mapped by name
 		protected Dictionary<string, GameObject> childs;
@@ -44,6 +45,7 @@ namespace Assets.scripts.Mono
 		protected Animator anim;
 		public GameObject particleSystems;
 		public Healthbar healthBar;
+		private Seeker seeker;
 
 		private GameObject target;
 		public GameObject Target
@@ -145,41 +147,113 @@ namespace Assets.scripts.Mono
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
+
+			seeker = GetComponent<Seeker>();
+			if (usesPathfinding && seeker == null)
+				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
 		}
 
 		protected Path currentPath;
 		private int currentPathNode;
 
-		private void CalculatePathfindingNodes()
-		{
-			Debug.Log("calculating..");
-			Seeker seeker = GetComponent<Seeker>();
+		private float lastRepath;
+		public float repathRate = 0.25f;
+		private Coroutine nextSearch;
+		private bool searchingPath;
 
-			if (seeker == null)
+		public void SearchPath()
+		{
+			//Debug.Log("searching new path");
+
+			if (HasTargetToMoveTo == false)
 			{
-				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
+				return;
 			}
 
 			seeker.StartPath(body.transform.position, targetPositionWorld, OnPathFindComplete);
-			currentPathNode = 0;
+			searchingPath = true;
+		}
+
+		private void CalculatePathfindingNodes()
+		{
+			if (!usesPathfinding)
+				return;
+
+			if (lastRepath + repathRate < Time.time)
+			{
+				SearchPath();
+				lastRepath = Time.time;
+			}
+			else
+			{
+				if (nextSearch != null) // already scheduling next search as soon as possible
+					return;
+
+				if (Time.time - lastRepath < 0.1f)
+					return;
+
+				float repathIn = repathRate - (Time.time - lastRepath);
+				nextSearch = StartCoroutine(ScheduleRepath(repathIn));
+			}
+		}
+
+		private IEnumerator ScheduleRepath(float time)
+		{
+			yield return new WaitForSeconds(time);
+			SearchPath();
+			nextSearch = null;
 		}
 
 		public void OnPathFindComplete(Path p)
 		{
+			searchingPath = false;
+			//Debug.Log("* calculated!");
+			p.Claim(this);
+
 			if (!p.error)
 			{
+				if (currentPath != null)
+					currentPath.Release(this);
+
 				currentPath = p;
 				currentPathNode = 0;
+
+				Vector3 p1 = Time.time - lastFoundWaypointTime < 0.3f ? lastFoundWaypointPosition : ((ABPath)p).originalStartPoint;
+				Vector3 p2 = body.transform.position;
+				Vector3 dir = p2 - p1;
+				float magn = dir.magnitude;
+				dir /= magn;
+				int steps = (int) (magn/nextWaypointDistance);
+
+				for (int i = 0; i <= steps; i++)
+				{
+					GetNextPathfindingNode(p1);
+					p1 += dir;
+				}
 			}
 			else
+			{
+				p.Release(this);
 				Debug.LogError(p.error);
+			}
+		}
+
+		private void GetNextPathfindingNode(Vector3 positionFrom)
+		{
+			currentPathNode++;
 		}
 
 		public void ResetPath()
 		{
+			if (currentPath != null)
+				currentPath.Release(this);
+
 			currentPath = null;
 			currentPathNode = 0;
 		}
+
+		private Vector3 lastFoundWaypointPosition;
+		private float lastFoundWaypointTime;
 
 		public virtual void Update()
 		{
@@ -223,17 +297,22 @@ namespace Assets.scripts.Mono
 				if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
 				{
 					Vector3 currentDestination = targetPositionWorld;
-					if (usesPathfinding && currentPath != null)
+					if (usesPathfinding && currentPath != null && allowMovePointChange)
 					{
+						if (currentPathNode < 1)
+							currentPathNode = 1;
+
 						if (currentPathNode < currentPath.vectorPath.Count)
 						{
 							//Debug.Log("current node index " + currentPathNode);
 							currentDestination = currentPath.vectorPath[currentPathNode];
 
-							const int nextWaypointDistance = 3;
-
-							if (Vector3.Distance(body.transform.position, currentDestination) < nextWaypointDistance)
+							if (Utils.DistancePwr(body.transform.position, currentDestination) < nextWaypointDistance*nextWaypointDistance)
+							{
+								lastFoundWaypointPosition = body.transform.position;
+								lastFoundWaypointTime = Time.time;
 								currentPathNode++;
+							}
 						}
 						else
 							ResetPath();
@@ -247,6 +326,12 @@ namespace Assets.scripts.Mono
 
 					bool move = true;
 					bool rotate = true;
+
+					if (usesPathfinding && currentPath == null && searchingPath)
+					{
+						rotate = false;
+						move = false;
+					}
 
 					if (angle - 90 > 1 && !canMoveWhenNotRotated)
 						move = false;
@@ -398,9 +483,9 @@ namespace Assets.scripts.Mono
 
 			if (USE_VELOCITY_MOVEMENT)
 			{
+				HasTargetToMoveTo = true;
 				ForceSetMoveDestinaton(body.transform.position + GetForwardVector() * dist, 0.5f);
 				ForceSetVelocity(GetForwardVector() * jumpSpeed, 0.5f);
-				HasTargetToMoveTo = true;
 				UpdateHeading();
 			}
 			else
@@ -424,9 +509,9 @@ namespace Assets.scripts.Mono
 
 			if (USE_VELOCITY_MOVEMENT)
 			{
-				ForceSetMoveDestinaton(body.transform.position + direction.normalized * dist, 0.5f);
-				ForceSetVelocity(direction.normalized * jumpSpeed, 0.5f);
 				HasTargetToMoveTo = true;
+				ForceSetMoveDestinaton(body.transform.position + direction.normalized * dist, 0.25f);
+				ForceSetVelocity(direction.normalized * jumpSpeed, 0.25f);
 				UpdateHeading();
 			}
 			else
@@ -443,6 +528,11 @@ namespace Assets.scripts.Mono
 			{
 				targetMoveObject = null;
 				ArrivedAtDestination();
+			}
+
+			if (usesPathfinding)
+			{
+				ResetPath();
 			}
 
 			MovementChanged();
@@ -478,10 +568,13 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public void ForceSetMoveDestinaton(Vector3 newDest, float duration)
 		{
-			if (USE_VELOCITY_MOVEMENT == false)
+			if (!USE_VELOCITY_MOVEMENT)
 				return;
 
 			MovementChanged();
+
+			if (usesPathfinding)
+				ResetPath();
 
 			allowMovePointChange = false;
 			targetPositionWorld = newDest;
@@ -490,11 +583,15 @@ namespace Assets.scripts.Mono
 			StartCoroutine(task);
 		}
 
+		public Vector3 lastClickPositionWorld;
+
 		private IEnumerator ScheduleResetAllowPlayerMovement(float duration)
 		{
 			yield return new WaitForSeconds(duration);
 
+			targetPositionWorld = lastClickPositionWorld;
 			allowMovePointChange = true;
+			CalculatePathfindingNodes();
 
 			yield return null;
 		}
@@ -643,8 +740,6 @@ namespace Assets.scripts.Mono
 		public void SetVisibleHp(int newHp)
 		{
 			visibleHp = newHp;
-
-			Debug.Log("setting viis hp to " + newHp);
 
 			if (healthBar != null)
 			{
@@ -829,13 +924,13 @@ namespace Assets.scripts.Mono
 		{
 			if (this is PlayerData)
 			{
-				((PlayerData)this).SetPlayersMoveToTarget(target);
 				HasTargetToMoveTo = true;
+				((PlayerData)this).SetPlayersMoveToTarget(target);
 			}
 			else if (this is EnemyData)
 			{
-				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 				HasTargetToMoveTo = true;
+				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 			}
 		}
 
@@ -843,13 +938,13 @@ namespace Assets.scripts.Mono
 		{
 			if (this is PlayerData)
 			{
-				((PlayerData)this).SetPlayersMoveToTarget(target);
 				HasTargetToMoveTo = true;
+				((PlayerData)this).SetPlayersMoveToTarget(target);
 			}
 			else if (this is EnemyData)
 			{
-				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 				HasTargetToMoveTo = true;
+				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
 			}
 		}
 

@@ -43,10 +43,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, 4, 100);
+				GetOwnerData().JumpForward(mouseDirection, 8, 100);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), 4, 100);
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), 8, 100);
 			}
 		}
 

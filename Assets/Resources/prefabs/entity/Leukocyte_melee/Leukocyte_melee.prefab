@@ -18,7 +18,7 @@ GameObject:
   - 50: {fileID: 5073276}
   - 114: {fileID: 11419596}
   - 114: {fileID: 11411954}
-  - 114: {fileID: 11406344}
+  - 114: {fileID: 11462656}
   m_Layer: 0
   m_Name: Leukocyte_melee
   m_TagString: Untagged
@@ -293,18 +293,6 @@ Light:
   m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_AreaSize: {x: 1, y: 1}
---- !u!114 &11406344
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 118368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  priority: 1
 --- !u!114 &11411954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -321,8 +309,8 @@ MonoBehaviour:
   startEndModifier:
     priority: 2
     addPoints: 0
-    exactStartPoint: 3
-    exactEndPoint: 3
+    exactStartPoint: 1
+    exactEndPoint: 1
     useRaycasting: 0
     mask:
       serializedVersion: 2
@@ -361,6 +349,7 @@ MonoBehaviour:
   aiType: 
   usesPathfinding: 1
   minDistanceClickToMove: 0.2
+  nextWaypointDistance: 3
   body: {fileID: 118368}
   rb: {fileID: 5073276}
   particleSystems: {fileID: 0}
@@ -374,6 +363,8 @@ MonoBehaviour:
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
+  repathRate: 0.25
+  lastClickPositionWorld: {x: 0, y: 0, z: 0}
   monsterId: 1
   distanceToFollowLeader: 8
   isAggressive: 1
@@ -395,6 +386,27 @@ MonoBehaviour:
   percent: 0
   currentPercent: 0
   distance: 0
+--- !u!114 &11462656
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 118368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6a34d769a1e4ac7b0b30e433aa443c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  priority: 1
+  smoothType: 0
+  subdivisions: 2
+  iterations: 5
+  strength: 0.2
+  uniformLength: 1
+  maxSegmentLength: 1
+  bezierTangentLength: 0.4
+  offset: 0.2
+  factor: 0.1
 --- !u!114 &11464990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3604,6 +3616,30 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: monsterId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: maxSegmentLength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: iterations
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: strength
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startEndModifier.exactEndPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startEndModifier.exactStartPoint
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
