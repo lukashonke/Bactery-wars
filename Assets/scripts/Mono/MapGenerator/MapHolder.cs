@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
 	public enum MapType
 	{
-		Dungeon
+		DungeonAllOpen,
+		DungeonCentralClosed
 	}
 
 	public class MapRegion
@@ -15,22 +19,40 @@ namespace Assets.scripts.Mono.MapGenerator
 		private bool active;
 
 		public int x, y;
-		public int[,] map;
 		public Tile[,] tileMap;
-		public MapGenerator mapGen;
+		public MapGenerator mapGen; //TODO remove, not neccessary
 
 		public MeshFilter mesh;
 		public MeshGenerator meshGen;
 
-		public MapRegion(int x, int y, int[,] map, Tile[,] tileMap, MapGenerator mapGen)
+		public bool isAccessibleFromStart;
+		public bool isStartRegion; // player begins here
+
+		public MapRegion(int x, int y, Tile[,] tileMap, MapGenerator mapGen)
 		{
-			this.map = map;
 			this.x = x;
 			this.y = y;
 			this.mapGen = mapGen;
 			this.tileMap = tileMap;
 
 			active = true;
+		}
+
+		public void AssignTilesToThisRegion()
+		{
+			for (int i = 0; i < tileMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < tileMap.GetLength(1); j++)
+				{
+					tileMap[i, j].AssignRegion(this);
+				}
+			}
+		}
+
+		public MapRegion SetAccessibleFromStart(bool b)
+		{
+			isAccessibleFromStart = b;
+			return this;
 		}
 
 		public void SetMesh(MeshFilter mesh, MeshGenerator meshGen)
@@ -101,22 +123,91 @@ namespace Assets.scripts.Mono.MapGenerator
 			regionSize = world.width + 2;
 			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
 
-			GenerateRegion(world.seed, 0, 0);
-			GenerateRegion(world.seed, 0, 1);
-			GenerateRegion(world.seed, 0, 2);
-			GenerateRegion(world.seed, 1, 0);
-			GenerateRegion(world.seed, 1, 1);
-			GenerateRegion(world.seed, 1, 2);
-			GenerateRegion(world.seed, 2, 0);
-			GenerateRegion(world.seed, 2, 1);
-			GenerateRegion(world.seed, 2, 2);
+			switch (mapType)
+			{
+					case MapType.DungeonAllOpen:
+						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 1, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+					break;
+					case MapType.DungeonCentralClosed:
+					GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
+					GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
+					GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
+					GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
+						GenerateEmptyRegion(1, 1);
+						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+					break;
+
+			}
 
 			ProcessScene();
 		}
 
 		public void ProcessScene()
 		{
-			// TODO generate passages, etc
+			MapProcessor processor = new MapProcessor(SceneMap, mapType);
+
+			processor.CreatePassages();
+
+			SceneMap = processor.Tiles;
+		}
+
+		protected void GenerateEmptyRegion(int regX, int regY)
+		{
+			Tile[,] tileMap = new Tile[world.width+2,world.height+2];
+
+			for (int x = 0; x < tileMap.GetLength(0); x++)
+			{
+				for (int y = 0; y < tileMap.GetLength(1); y++)
+				{
+					tileMap[x,y] = new Tile(x,y,WorldHolder.WALL);
+				}
+			}
+
+			AddToSceneMap(tileMap, regX, regY);
+
+			MapRegion region = new MapRegion(regX, regY, tileMap, null);
+			region.AssignTilesToThisRegion();
+			regions.Add(new WorldHolder.Cords(regX, regY), region);
+		}
+
+		protected void GenerateDungeonRoom(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion)
+		{
+			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
+
+			if (world.useRandomSeed)
+			{
+				seed = Random.Range(-1000, 1000).ToString();
+			}
+
+			float xSize = (world.width) * world.SQUARE_SIZE;
+			float ySize = (world.height) * world.SQUARE_SIZE;
+			Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
+
+			MapGenerator mapGenerator = new DungeonRoomGenerator(world.width, world.height, seed, randomFillPercent, world.doDebug, x, y, shiftVector);
+
+			Tile[,] tileMap = mapGenerator.GenerateMap();
+
+			AddToSceneMap(tileMap, x, y);
+
+			if (!GameController.DEV_BUILD)
+				mapGenerator = null;
+
+			MapRegion region = new MapRegion(x, y, tileMap, mapGenerator);
+			region.AssignTilesToThisRegion();
+			region.SetAccessibleFromStart(isAccessibleFromStart);
+			region.isStartRegion = isStartRegion;
+			regions.Add(new WorldHolder.Cords(x, y), region);
 		}
 
 		public void DeleteMap()
@@ -157,8 +248,48 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DrawGizmos()
 		{
-			foreach (MapRegion region in regions.Values)
-				region.mapGen.OnDrawGizmos();
+			float xSize = SceneMap.GetLength(0);
+			float ySize = SceneMap.GetLength(1);
+
+			int i = 0;
+			for (int x = 0; x < xSize; x++)
+			{
+				for (int y = 0; y < ySize; y++)
+				{
+					Tile t = GetTile(x, y);
+					if (t == null)
+						continue;
+
+					Gizmos.color = (t.tileType == WorldHolder.WALL) ? Color.black : Color.white;
+					if (t.GetColor() == 1)
+						Gizmos.color = Color.green;
+					else if (t.GetColor() == 2)
+						Gizmos.color = Color.magenta;
+					else if (t.GetColor() == 3)
+						Gizmos.color = Color.yellow;
+					else if (t.GetColor() == 5)
+						Gizmos.color = Color.blue;
+					else if (t.GetColor() == 6)
+						Gizmos.color = Color.red;
+
+					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + world.width+2, ((-ySize / 2) + y + .5f) + world.height+2, 0);
+					Gizmos.DrawCube(pos, Vector3.one);
+				}
+			}
+
+			Debug.Log("highlighted " + i );
+		}
+
+		private Tile GetTile(int x, int y)
+		{
+			try
+			{
+				return SceneMap[x, y];
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 
 		protected void GenerateMapMesh()
@@ -226,7 +357,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			//Debug.Log("pocet regionu na renderovani: " + map.Count);
-
 			/*for (int i = 0; i < map.Count; i++)
 			{
 				int jednicky = 0;
@@ -248,33 +378,16 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				for (int y = 0; y < tiles.GetLength(1); y++)
 				{
-					SceneMap[(regionX * regionSize) + x, regionY * regionSize + y] = tiles[x, y];
+					int newX = (regionX*regionSize) + x;
+					int newY = (regionY*regionSize) + y;
+
+					Tile t = tiles[x, y];
+
+					SceneMap[newX, newY] = t;
+					t.tileX = newX;
+					t.tileY = newY;
 				}
 			}
-		}
-
-		protected void GenerateRegion(string seed, int x, int y)
-		{
-			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
-
-			if (world.useRandomSeed)
-			{
-				seed = Random.Range(-1000, 1000).ToString();
-			}
-
-			float xSize = (world.width) * world.SQUARE_SIZE;
-			float ySize = (world.height) * world.SQUARE_SIZE;
-			Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
-
-			MapGenerator mapGenerator = new DungeonGenerator(world.width, world.height, seed, world.randomFillPercent, world.doDebug, x, y, shiftVector);
-
-			Tile[,] tileMap = mapGenerator.GenerateMap();
-			int[,] map = mapGenerator.GetIntMap();
-
-			AddToSceneMap(tileMap, x, y);
-
-			MapRegion region = new MapRegion(x, y, map, tileMap, mapGenerator);
-			regions.Add(new WorldHolder.Cords(x, y), region);
 		}
 
 		public MapRegion GetRegion(Vector2 pos)

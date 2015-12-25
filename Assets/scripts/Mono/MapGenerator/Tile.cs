@@ -11,7 +11,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int tileY;
 		public int tileType;
 		public bool isChecked;
-		public int color;
+		private int color;
+		public MapRegion region;
 
 		public Tile(int x, int y, int t)
 		{
@@ -29,6 +30,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			isChecked = false;
 		}
 
+		public void AssignRegion(MapRegion r)
+		{
+			region = r;
+		}
+
 		public void Check()
 		{
 			isChecked = true;
@@ -37,6 +43,20 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void Uncheck()
 		{
 			isChecked = false;
+		}
+
+		public void SetColor(int i)
+		{
+			if (color == 0)
+			{
+				
+			}
+			color = i;
+		}
+
+		public int GetColor()
+		{
+			return color;
 		}
 	}
 }

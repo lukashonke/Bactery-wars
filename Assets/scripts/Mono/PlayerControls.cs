@@ -150,7 +150,7 @@ namespace Assets.scripts.Mono
 					}
 					else if (firstTouch.phase.Equals(TouchPhase.Ended))
 					{
-
+						currentTouchAction = 0;
 					}
 				}
 				else
@@ -233,6 +233,11 @@ namespace Assets.scripts.Mono
 							data.lastClickPositionWorld = temp;
 
 							data.ConfirmSkillLaunch(temp);
+							Debug.Log("confirmed");
+						}
+						else
+						{
+							Debug.Log("not confirming");
 						}
 
 						if (Input.GetMouseButtonDown(1))
@@ -337,7 +342,6 @@ namespace Assets.scripts.Mono
 
 						if (Input.GetMouseButtonDown(0))
 						{
-							Debug.Log("confirming at .. " + Time.frameCount);
 							Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 							temp.z = body.transform.position.z;
 							data.lastClickPositionWorld = temp;
@@ -375,8 +379,6 @@ namespace Assets.scripts.Mono
 							// change target position according to mouse when clicked
 							if (Input.GetMouseButton(0))
 							{
-								Debug.Log("moving at .. " + Time.frameCount);
-
 								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
 								newTarget.z = body.transform.position.z;
 

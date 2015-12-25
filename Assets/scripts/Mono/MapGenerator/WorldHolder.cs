@@ -30,6 +30,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int SQUARE_SIZE = 1;
 		private int MAX_REGIONS = 3;
 
+		public const int WALL = 1;
+		public const int GROUND = 0;
+
 		void Start()
 		{
 			if (instance == null)
@@ -43,7 +46,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.Dungeon);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.DungeonCentralClosed);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -57,7 +60,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			Debug.Log("generating.. " + newCords.ToString());
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.Dungeon);
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.DungeonAllOpen);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
@@ -98,7 +101,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			if (Input.GetKeyDown(KeyCode.N))
 			{
 				Cords c = activeMap.Position;
-
 				Cords newC = new Cords(c.x + 1, c.y);
 
 				if (!maps.ContainsKey(newC))
@@ -118,10 +120,33 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
+		// temp from mobile
+		public void Next()
+		{
+			Cords c = activeMap.Position;
+			Cords newC = new Cords(c.x + 1, c.y);
+
+			if (!maps.ContainsKey(newC))
+			{
+				GenerateNextLevel(1);
+			}
+
+			SetActiveLevel(newC.x, newC.y);
+		}
+
+		// temp output from mobile
+		public void Prev()
+		{
+			Cords c = activeMap.Position;
+			Cords newC = new Cords(c.x - 1, c.y);
+
+			SetActiveLevel(newC.x, newC.y);
+		}
+
 		void OnDrawGizmos()
 		{
-			if (doDebug == false)
-				return;
+			//if (doDebug == false)
+			//	return;
 
 			if(activeMap != null)
 				activeMap.DrawGizmos();

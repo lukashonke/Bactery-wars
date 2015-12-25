@@ -380,7 +380,7 @@ public class MeshGenerator
 				for (int y = 0; y < nodeCountY; y++)
 				{
 					Vector3 pos = new Vector3(-mapWidth / 2 + x * squareSize + squareSize / 2, 0, -mapHeight / 2 + y * squareSize + squareSize / 2);
-					controlNodes[x, y] = new ControlNode(pos, map[x, y] == DungeonGenerator.WALL, squareSize);
+					controlNodes[x, y] = new ControlNode(pos, map[x, y] == DungeonRoomGenerator.WALL, squareSize);
 				}
 			}
 

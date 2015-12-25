@@ -12,6 +12,7 @@ namespace Assets.scripts
 	{
 		public GameObject prefabToSpawn;
 
+		public const bool DEV_BUILD = true;
 		public bool isAndroid;
 
 		void Start()
@@ -31,6 +32,8 @@ namespace Assets.scripts
 				{
 				}
 			}
+
+			Input.simulateMouseWithTouches = false;
 
 			GameSystem.Instance.Start(this);
 		}

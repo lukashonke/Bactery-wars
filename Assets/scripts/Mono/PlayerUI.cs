@@ -1,4 +1,5 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -68,6 +69,16 @@ namespace Assets.scripts.Mono
 		void Update()
 		{
 
+		}
+
+		public void NextLevel()
+		{
+			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().Next();
+		}
+
+		public void PrevLevel()
+		{
+			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().Prev();
 		}
 
 		public void MenuClick()

@@ -751,8 +751,6 @@ namespace Assets.scripts.Mono
 		{
 			visibleMaxHp = newHp;
 
-			Debug.Log("setting viis max hpo " + newHp);
-
 			if (healthBar != null)
 			{
 				healthBar.maxHp = visibleMaxHp;
