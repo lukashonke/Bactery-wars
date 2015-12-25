@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -44,11 +45,45 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.Dungeon);
 			newMap.CreateMap();
-			newMap.LoadMap();
-
-			activeMap = newMap;
-
 			maps.Add(new Cords(0, 0), newMap);
+
+			SetActiveLevel(0, 0);
+		}
+
+		public Cords GenerateNextLevel(int teleporterType)
+		{
+			Cords old = activeMap.Position;
+			Cords newCords = new Cords(old.x + 1, old.y);
+
+			Debug.Log("generating.. " + newCords.ToString());
+
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.Dungeon);
+			newMap.CreateMap();
+
+			maps.Add(newCords, newMap);
+			return newCords;
+		}
+
+		public void SetActiveLevel(int x, int y)
+		{
+			MapHolder map;
+			maps.TryGetValue(new Cords(x, y), out map);
+
+			if (map == null)
+			{
+				Debug.LogError("Null map on " + x + ", " + y);
+				return;
+			}
+
+			Debug.Log("setting active level to " + x + ", " + y);
+
+			if (activeMap != null)
+			{
+				activeMap.DeloadMap();
+			}
+
+			activeMap = map;
+			activeMap.LoadMap();
 		}
 
 		void Update()
@@ -58,6 +93,28 @@ namespace Assets.scripts.Mono.MapGenerator
 				activeMap.DeleteMap();
 				activeMap.CreateMap();
 				activeMap.LoadMap();
+			}
+
+			if (Input.GetKeyDown(KeyCode.N))
+			{
+				Cords c = activeMap.Position;
+
+				Cords newC = new Cords(c.x + 1, c.y);
+
+				if (!maps.ContainsKey(newC))
+				{
+					GenerateNextLevel(1);
+				}
+
+				SetActiveLevel(newC.x, newC.y);
+			}
+
+			if (Input.GetKeyDown(KeyCode.P))
+			{
+				Cords c = activeMap.Position;
+				Cords newC = new Cords(c.x - 1, c.y);
+
+				SetActiveLevel(newC.x, newC.y);
 			}
 		}
 

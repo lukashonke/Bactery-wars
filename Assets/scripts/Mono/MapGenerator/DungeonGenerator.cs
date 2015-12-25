@@ -72,7 +72,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public override Tile[,] GenerateMap()
 		{
 			int start = System.Environment.TickCount;
-			Debug.Log("using seed " + seed);
+			//Debug.Log("using seed " + seed);
 
 			// make the tile field
 			tiles = new Tile[width, height];

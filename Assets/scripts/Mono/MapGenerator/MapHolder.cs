@@ -112,8 +112,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			GenerateRegion(world.seed, 2, 2);
 
 			ProcessScene();
-
-			GenerateMapMesh();
 		}
 
 		public void ProcessScene()
@@ -134,13 +132,22 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void LoadMap()
 		{
+			GenerateMapMesh();
+
 			GameSystem.Instance.UpdatePathfinding();
 			SetActive(true);
 		}
 
 		public void DeloadMap()
 		{
-			
+			// destroy the meshes
+			foreach (MapRegion region in regions.Values)
+			{
+				region.meshGen.Delete();
+				Object.Destroy(region.mesh);
+			}
+
+			SetActive(false);
 		}
 
 		public void SetActive(bool active)
@@ -218,7 +225,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				reg.SetMesh(mesh, generator);
 			}
 
-			Debug.Log("pocet regionu na renderovani: " + map.Count);
+			//Debug.Log("pocet regionu na renderovani: " + map.Count);
 
 			/*for (int i = 0; i < map.Count; i++)
 			{
@@ -248,7 +255,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		protected void GenerateRegion(string seed, int x, int y)
 		{
-			Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
+			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
 			if (world.useRandomSeed)
 			{
