@@ -12,10 +12,10 @@ public class StartMenu : MonoBehaviour {
     void Start()
     {
 
-        settingstMenu = settingstMenu.GetComponent<Canvas>();
+        /*settingstMenu = settingstMenu.GetComponent<Canvas>();
         exit = exit.GetComponent<Button>();
         settings = settings.GetComponent<Button>();
-        settingstMenu.enabled = false;
+        settingstMenu.enabled = false;*/
 
     }
 

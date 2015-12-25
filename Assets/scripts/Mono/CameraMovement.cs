@@ -7,14 +7,16 @@ namespace Assets.scripts.Mono
 	/// </summary>
 	public class CameraMovement : MonoBehaviour
 	{
+		public PlayerControls controller;
+
 		public float scrollSpeed = 0.3f;
 
 		public float edgeScrollSpeed = 10f;
 		public int scrollArea = 25;
 		public int followSpeed = 2;
 
-		public float minZoom = 10;
-		public float maxZoom = 15;
+		public float minZoom = 8;
+		public float maxZoom = 20;
 
 		public GameObject objectToFollow;
 
@@ -24,6 +26,8 @@ namespace Assets.scripts.Mono
 		// Use this for initialization
 		public void Start()
 		{
+			controller = GameObject.Find("Player").GetComponent<PlayerControls>();
+
 #if UNITY_ANDROID
 			follow = true;
 			mobile = true;
@@ -52,29 +56,47 @@ namespace Assets.scripts.Mono
 	        {
 		        if (mobile)
 		        {
-					if (Input.touchCount == 2)
-					{
-						// Store both touches.
-						Touch touchZero = Input.GetTouch(0);
-						Touch touchOne = Input.GetTouch(1);
+			        if (Input.touchCount == 1 && Input.GetTouch(0).tapCount == 3 && Input.GetTouch(0).phase.Equals(TouchPhase.Began))
+			        {
+				        float currentSize = Camera.main.orthographicSize;
 
-						// Find the position in the previous frame of each touch.
-						Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-						Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+				        if (currentSize < maxZoom)
+					        Camera.main.orthographicSize = maxZoom;
+				        else
+					        Camera.main.orthographicSize = minZoom;
+			        }
 
-						// Find the magnitude of the vector (the distance) between the touches in each frame.
-						float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-						float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+			        if (Input.touchCount == 2)
+			        {
+						//if(Input.GetTouch(0).phase.Equals(TouchPhase.Began))
+						controller.currentTouchAction = PlayerControls.TOUCH_ZOOM;
 
-						// Find the difference in the distances between each frame.
-						float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+				        // Store both touches.
+				        Touch touchZero = Input.GetTouch(0);
+				        Touch touchOne = Input.GetTouch(1);
 
-						Camera.main.orthographicSize += deltaMagnitudeDiff * 0.2f;
+				        // Find the position in the previous frame of each touch.
+				        Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+				        Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
 
-						// Make sure the orthographic size never drops below zero.
-						Camera.main.orthographicSize = Mathf.Max(Camera.main.orthographicSize, 8);
-						Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize, 20);
-					}
+				        // Find the magnitude of the vector (the distance) between the touches in each frame.
+				        float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+				        float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+				        // Find the difference in the distances between each frame.
+				        float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+				        Camera.main.orthographicSize += deltaMagnitudeDiff*0.05f;
+
+				        // Make sure the orthographic size never drops below zero.
+						Camera.main.orthographicSize = Mathf.Max(Camera.main.orthographicSize, minZoom);
+						Camera.main.orthographicSize = Mathf.Min(Camera.main.orthographicSize, maxZoom);
+			        }
+			        else
+			        {
+				        if (controller.currentTouchAction == PlayerControls.TOUCH_ZOOM)
+					        controller.currentTouchAction = 0;
+			        }
 		        }
 
 		        if (Input.GetAxis("Mouse ScrollWheel") > 0)

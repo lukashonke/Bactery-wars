@@ -31,7 +31,27 @@ namespace Assets.scripts
 		}
 
 		public GameController Controller { get; private set; }
+
+		private bool paused;
+		public bool Paused
+		{
+			get { return paused; }
+			set
+			{
+				paused = value;
+				if (paused)
+				{
+					Time.timeScale = 0;
+				}
+				else
+				{
+					Time.timeScale = 1;
+				}
+			}
+		}
+
 		private int lastPlayerId = 0;
+
 
 		// starts the game, loads data, etc
 		public void Start(GameController gc)

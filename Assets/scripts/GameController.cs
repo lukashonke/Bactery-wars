@@ -37,10 +37,10 @@ namespace Assets.scripts
 
 		void Update()
 		{
-			if (System.Environment.TickCount%600 == 0)
-			{
+			//if (System.Environment.TickCount%600 == 0)
+			//{
 				//SpawnTestMob();
-			}
+			//}
 		}
 
 		public void SpawnTestMob()

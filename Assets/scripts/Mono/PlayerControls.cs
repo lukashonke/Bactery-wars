@@ -26,6 +26,14 @@ namespace Assets.scripts.Mono
 		// animators
 		private Animator anim;
 
+
+
+		public int currentTouchAction;
+		public const int TOUCH_MOVEMENT = 1;
+		public const int TOUCH_CONFIRMINGSKILL = 2;
+		public const int TOUCH_ZOOM = 3;
+		public const int TOUCH_SHIFTINGSKILLBAR = 4;
+
 		// Use this for initialization
 		public void Start()
 		{
@@ -94,10 +102,6 @@ namespace Assets.scripts.Mono
 			data.SetKeyboardMovement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 		}
 
-		private int currentTouchAction;
-		private const int TOUCH_MOVEMENT = 1;
-		private const int TOUCH_CONFIRMINGSKILL = 2;
-
 		public void Update()
 		{
 			bool usingTouches = false;
@@ -159,6 +163,25 @@ namespace Assets.scripts.Mono
 
 			if (usingTouches)
 			{
+				/*if (ui.MouseOverUI && touched)
+				{
+					Debug.Log(firstTouch.position);
+					if (firstTouch.phase.Equals(TouchPhase.Began))
+					{
+						//currentTouchAction = TOUCH_SHIFTINGSKILLBAR;
+					}
+
+					if (firstTouch.phase.Equals(TouchPhase.Moved))
+					{
+						Vector2 move = firstTouch.deltaPosition;
+
+						foreach (GameObject butObject in ui.skillButtons)
+						{
+							butObject.transform.position = butObject.transform.position + new Vector3(move.x, 0, 0);
+						}
+					}
+				}*/
+
 				if (!ui.MouseOverUI)
 				{
 					// if targetting active, highlight target objects
@@ -240,12 +263,11 @@ namespace Assets.scripts.Mono
 						else
 						{
 							// change target position according to mouse when clicked
-							if (touched && (currentTouchAction == 0 || currentTouchAction == TOUCH_MOVEMENT))
+							//TODO this touchphase Began means jump skill will not continue movement 
+							if (touched && ((currentTouchAction == 0 && firstTouch.phase.Equals(TouchPhase.Began)) || currentTouchAction == TOUCH_MOVEMENT))
 							{
 								if (currentTouchAction == 0)
 									currentTouchAction = TOUCH_MOVEMENT;
-
-                                Debug.Log("moving at .. " + Time.frameCount);
 
 								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
 								newTarget.z = body.transform.position.z;

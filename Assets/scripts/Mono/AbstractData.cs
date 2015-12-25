@@ -387,7 +387,7 @@ namespace Assets.scripts.Mono
 			//TODO optimize
 			if (rb.velocity.x > 0 || rb.velocity.y > 0)
 			{
-				MapHolder.instance.PositionEnter(rb.transform.position);
+				WorldHolder.instance.PositionEnter(rb.transform.position);
 			}
 
 			try

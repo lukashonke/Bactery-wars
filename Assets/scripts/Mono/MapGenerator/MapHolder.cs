@@ -1,53 +1,170 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
-	public class MapHolder : MonoBehaviour
+	public enum MapType
 	{
-		public static MapHolder instance;
+		Dungeon
+	}
 
-		// inspector configuration
-		public int width;
-		public int height;
-		public string seed;
-		public bool useRandomSeed;
-		[Range(0, 100)]
-		public int randomFillPercent;
+	public class MapRegion
+	{
+		private bool active;
 
-		public bool doDebug = false;
-		private int SQUARE_SIZE = 1;
-		private int MAX_REGIONS = 3;
+		public int x, y;
+		public int[,] map;
+		public Tile[,] tileMap;
+		public MapGenerator mapGen;
 
-		// variables
-		public Dictionary<Cords, MapRegion> regions;
+		public MeshFilter mesh;
+		public MeshGenerator meshGen;
 
-		private int regionSize;
+		public MapRegion(int x, int y, int[,] map, Tile[,] tileMap, MapGenerator mapGen)
+		{
+			this.map = map;
+			this.x = x;
+			this.y = y;
+			this.mapGen = mapGen;
+			this.tileMap = tileMap;
 
-		private List<MapGenerator> generators = new List<MapGenerator>();
+			active = true;
+		}
+
+		public void SetMesh(MeshFilter mesh, MeshGenerator meshGen)
+		{
+			this.mesh = mesh;
+			this.meshGen = meshGen;
+		}
+
+		/*public void Disable()
+		{
+			if (mesh == null)
+				return;
+			mesh.gameObject.SetActive(false);
+			active = false;
+		}
+
+		public void Enable()
+		{
+			if (mesh == null)
+				return;
+			mesh.gameObject.SetActive(true);
+			active = true;
+		}*/
+	}
+
+	/// <summary>
+	/// Reprezentuje jednu velkou mapu ve svete, mapy jsou propojene skrze "portaly" pro transport (reprezentovane jako zily)
+	/// </summary>
+	public class MapHolder
+	{
+		private WorldHolder world;
+
+		public bool isActive;
+
+		public string name;
+		private WorldHolder.Cords position;
+		private MapType mapType;
 
 		public Tile[,] SceneMap { get; set; }
+		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
-		// for test TODO remove this
-		const bool renderAllMap = true;
+		private int MAX_REGIONS = 3;
+		private int regionSize;
 
-		/// <summary>
-		/// TODO dokoncit - prevest vygenerovane regiony do jedne velke mapy a pak postupne zapinat nebo vypinat meshe podle toho ktere jsou regiony jsou aktivni a ktere ne 
-		/// </summary>
-		public void CreateSceneMesh()
+		public WorldHolder.Cords Position
 		{
-			Dictionary<Cords, int[,]> map = new Dictionary<Cords, int[,]>();
+			get { return position; }
+		}
 
+		public MapType MapType1
+		{
+			get { return mapType; }
+		}
+
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType)
+		{
+			this.world = world;
+
+			this.name = name;
+			this.position = position;
+			this.mapType = mapType;
+		}
+
+		public void CreateMap()
+		{
+			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
+
+			regionSize = world.width + 2;
+			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
+
+			GenerateRegion(world.seed, 0, 0);
+			GenerateRegion(world.seed, 0, 1);
+			GenerateRegion(world.seed, 0, 2);
+			GenerateRegion(world.seed, 1, 0);
+			GenerateRegion(world.seed, 1, 1);
+			GenerateRegion(world.seed, 1, 2);
+			GenerateRegion(world.seed, 2, 0);
+			GenerateRegion(world.seed, 2, 1);
+			GenerateRegion(world.seed, 2, 2);
+
+			ProcessScene();
+
+			GenerateMapMesh();
+		}
+
+		public void ProcessScene()
+		{
+			// TODO generate passages, etc
+		}
+
+		public void DeleteMap()
+		{
+			foreach (MapRegion region in regions.Values)
+			{
+				region.meshGen.Delete();
+				Object.Destroy(region.mesh);
+			}
+
+			regions.Clear();
+		}
+
+		public void LoadMap()
+		{
+			GameSystem.Instance.UpdatePathfinding();
+			SetActive(true);
+		}
+
+		public void DeloadMap()
+		{
+			
+		}
+
+		public void SetActive(bool active)
+		{
+			isActive = active;
+		}
+
+		public void DrawGizmos()
+		{
+			foreach (MapRegion region in regions.Values)
+				region.mapGen.OnDrawGizmos();
+		}
+
+		protected void GenerateMapMesh()
+		{
+			// int maps of all regions
+			Dictionary<WorldHolder.Cords, int[,]> map = new Dictionary<WorldHolder.Cords, int[,]>();
+
+			// create int maps of all regions
 			for (int x = 0; x < SceneMap.GetLength(0); x++)
 			{
 				for (int y = 0; y < SceneMap.GetLength(1); y++)
 				{
-					Cords c = new Cords(x / regionSize, y / regionSize);
+					WorldHolder.Cords c = new WorldHolder.Cords(x / regionSize, y / regionSize);
 
 					if (map.ContainsKey(c))
 					{
@@ -63,35 +180,44 @@ namespace Assets.scripts.Mono.MapGenerator
 
 						Tile t = SceneMap[x, y];
 						if (t != null)
-							map[c][x%regionSize, y%regionSize] = SceneMap[x, y].tileType;
+							map[c][x % regionSize, y % regionSize] = SceneMap[x, y].tileType;
 						else
-							map[c][x%regionSize, y%regionSize] = 0;
+							map[c][x % regionSize, y % regionSize] = 0;
 					}
 				}
 			}
 
-			if (renderAllMap)
+			// iterate through int maps and generate meshes
+			for (int i = 0; i < map.Count; i++)
 			{
-				for (int i = 0; i < map.Count; i++)
+				KeyValuePair<WorldHolder.Cords, int[,]> e = map.ElementAt(i);
+
+				WorldHolder.Cords c = e.Key;
+				int[,] regionMap = e.Value;
+
+				MeshGenerator generator = new MeshGenerator(world.gameObject);
+
+				float xSize = (regionMap.GetLength(0) - 1) * world.SQUARE_SIZE;
+				float ySize = (regionMap.GetLength(1) - 1) * world.SQUARE_SIZE;
+
+				Vector3 v = new Vector3(c.x * xSize, c.y * ySize);
+
+				// create the mesh
+				MeshFilter mesh = generator.GenerateMesh("Cave " + c.ToString(), regionMap, world.SQUARE_SIZE, v);
+				mesh.gameObject.transform.position = v;
+				mesh.gameObject.SetActive(true);
+
+				if (world.doDebug)
 				{
-					KeyValuePair<Cords, int[,]> e = map.ElementAt(i);
-
-					Cords c = e.Key;
-					int[,] regionMap = e.Value;
-
-					MeshGenerator generator = new MeshGenerator(gameObject);
-
-					float xSize = (regionMap.GetLength(0) - 1) * SQUARE_SIZE;
-					float ySize = (regionMap.GetLength(1) - 1) * SQUARE_SIZE;
-
-					Vector3 v = new Vector3(c.x * xSize, c.y * ySize);
-
-					MeshFilter mesh = generator.GenerateMesh("Cave " + c.ToString(), regionMap, SQUARE_SIZE, v);
-					mesh.gameObject.transform.position = v;
-					mesh.gameObject.SetActive(true);
+					mesh.gameObject.SetActive(false);
 				}
+
+				// assign the created mesh to the region
+				MapRegion reg;
+				regions.TryGetValue(c, out reg);
+				reg.SetMesh(mesh, generator);
 			}
-			
+
 			Debug.Log("pocet regionu na renderovani: " + map.Count);
 
 			/*for (int i = 0; i < map.Count; i++)
@@ -109,11 +235,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			}*/
 		}
 
-		public void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
+		protected void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
 		{
-			regionX += MAX_REGIONS/2;
-			regionY += MAX_REGIONS/2;
-
 			for (int x = 0; x < tiles.GetLength(0); x++)
 			{
 				for (int y = 0; y < tiles.GetLength(1); y++)
@@ -123,210 +246,43 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		void Start()
+		protected void GenerateRegion(string seed, int x, int y)
 		{
-			if (instance == null)
-				instance = this;
+			Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
-			regions = new Dictionary<Cords, MapRegion>();
-
-			regionSize = width + 2;
-			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
-
-			// create the first map
-			TestGen();
-		}
-
-		private void TestGen()
-		{
-			generators.Add(GenerateRegion(0, 0));
-			generators.Add(GenerateRegion(0, 1));
-			generators.Add(GenerateRegion(0, -1));
-			generators.Add(GenerateRegion(1, 1));
-			generators.Add(GenerateRegion(1, 0));
-			generators.Add(GenerateRegion(1, -1));
-			generators.Add(GenerateRegion(-1, 1));
-			generators.Add(GenerateRegion(-1, 0));
-			generators.Add(GenerateRegion(-1, -1));
-
-			CreateSceneMesh();
-
-			MapRegion r1 = regions[new Cords(0, 1)];
-			//MapRegion r2 = regions[new Cords(0, 0)];
-
-			GameSystem.Instance.UpdatePathfinding();
-
-			/*int[,] sharedMap = new int[r1.map.GetLength(0), r1.map.GetLength(1) + r2.map.GetLength(1)];
-
-			for (int i = 0; i < r1.map.GetLength(0); i++)
-			{
-				for (int j = 0; j < r1.map.GetLength(1); j++)
-				{
-					sharedMap[i,j] = r1.map[i, j];
-				}
-			}
-
-			for (int i = 0; i < r2.map.GetLength(0); i++)
-			{
-				for (int j = 0; j < r2.map.GetLength(1); j++)
-				{
-					sharedMap[i, j + r1.map.GetLength(1)] = r2.map[i, j];
-				}
-			}
-
-			Debug.Log(sharedMap.GetLength(0) + ", " + sharedMap.GetLength(1));
-
-			generator.ConnectDungeons(sharedMap);*/
-		}
-
-
-		void Update()
-		{
-			if (Input.GetKeyDown(KeyCode.Space))
-			{
-				foreach (MapRegion region in regions.Values)
-				{
-					region.mapGen.GetMeshGenerator().Delete();
-				}
-
-				regions.Clear();
-				TestGen();
-			}
-		}
-
-		void OnDrawGizmos()
-		{
-			if (doDebug == false)
-				return;
-
-			foreach(MapGenerator g in generators)
-				g.OnDrawGizmos();
-		}
-
-		private MapGenerator GenerateRegion(int x, int y)
-		{
-			Debug.Log("generating and enabling region .. " + x + ", " + y);
-
-			if (useRandomSeed)
+			if (world.useRandomSeed)
 			{
 				seed = Random.Range(-1000, 1000).ToString();
 			}
 
-			float xSize = (width) * SQUARE_SIZE;
-			float ySize = (height) * SQUARE_SIZE;
-			Vector3 shiftVector = new Vector3(x*xSize, y*ySize);
+			float xSize = (world.width) * world.SQUARE_SIZE;
+			float ySize = (world.height) * world.SQUARE_SIZE;
+			Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
 
-			MapGenerator mapGenerator = new DungeonGenerator(width, height, seed, randomFillPercent, doDebug, x, y, shiftVector);
+			MapGenerator mapGenerator = new DungeonGenerator(world.width, world.height, seed, world.randomFillPercent, world.doDebug, x, y, shiftVector);
 
 			Tile[,] tileMap = mapGenerator.GenerateMap();
 			int[,] map = mapGenerator.GetIntMap();
 
 			AddToSceneMap(tileMap, x, y);
 
-			MeshFilter mesh = null;
-            if (!renderAllMap)
-			{
-				MeshGenerator meshGenerator = mapGenerator.GenerateMesh(gameObject, map, SQUARE_SIZE);
-				mesh = meshGenerator.mesh;
-			}
-
-			MapRegion region = new MapRegion((int)x, (int)y, map, tileMap, mesh, mapGenerator);
-			region.Enable();
-			regions.Add(new Cords((int)x, (int)y), region);
-
-			return mapGenerator;
-		}
-
-		public void PositionEnter(Vector3 pos)
-		{
-			/*foreach (MapRegion r in regions.Values)
-			{
-				r.Disable();
-			}*/
-
-			MapRegion reg = GetRegion(pos);
-			if (reg != null)
-			{
-				reg.Enable(); //TODO add setting inactive
-			}
-			else
-			{
-				//Debug.LogError("Region for " + pos + " doesnt exist!");
-			}
+			MapRegion region = new MapRegion(x, y, map, tileMap, mapGenerator);
+			regions.Add(new WorldHolder.Cords(x, y), region);
 		}
 
 		public MapRegion GetRegion(Vector2 pos)
 		{
-			float xSize = (width + 1) * SQUARE_SIZE;
-			float ySize = (height + 1) * SQUARE_SIZE;
+			float xSize = (world.width + 1) * world.SQUARE_SIZE;
+			float ySize = (world.height + 1) * world.SQUARE_SIZE;
 
 			float regionX = (pos.x + xSize / 2) / xSize;
 			float regionY = (pos.y + ySize / 2) / ySize;
 
 			MapRegion reg;
-			Cords c = new Cords((int)regionX, (int)regionY);
+			WorldHolder.Cords c = new WorldHolder.Cords((int)regionX, (int)regionY);
 			regions.TryGetValue(c, out reg);
 
 			return reg;
-		}
-
-		public class MapRegion
-		{
-			private bool active;
-
-			public int x, y;
-			public int[,] map;
-			public Tile[,] tileMap;
-			public MapGenerator mapGen;
-			public MeshFilter mesh;
-
-			public MapRegion(int x, int y, int[,] map, Tile[,] tileMap, MeshFilter m, MapGenerator mapGen)
-			{
-				this.map = map;
-				this.x = x;
-				this.y = y;
-				this.mesh = m;
-				this.mapGen = mapGen;
-				this.tileMap = tileMap;
-
-				active = true;
-			}
-
-			public void Disable()
-			{
-				if (mesh == null)
-					return;
-				mesh.gameObject.SetActive(false);
-				active = false;
-			}
-
-			public void Enable()
-			{
-				if (mesh == null)
-					return;
-				mesh.gameObject.SetActive(true);
-				active = true;
-			}
-		}
-
-		public struct Cords
-		{
-			public int x, y;
-			public Cords(int x, int y)
-			{
-				this.x = x;
-				this.y = y;
-			}
-
-			public bool Equals(Cords f, Cords s)
-			{
-				return f.x == s.x && f.y == s.y;
-			}
-
-			public string ToString()
-			{
-				return x + ", " + y;
-			}
 		}
 	}
 }
