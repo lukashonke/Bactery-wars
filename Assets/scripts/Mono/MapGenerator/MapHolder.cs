@@ -20,19 +20,19 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public int x, y;
 		public Tile[,] tileMap;
-		public MapGenerator mapGen; //TODO remove, not neccessary
+		public RegionGenerator regionGen; //TODO remove, not neccessary
 
 		public MeshFilter mesh;
 		public MeshGenerator meshGen;
 
 		public bool isAccessibleFromStart;
-		public bool isStartRegion; // player begins here
+		public bool isStartRegion; // marks that the player starts in this region upon spawning into the map
 
-		public MapRegion(int x, int y, Tile[,] tileMap, MapGenerator mapGen)
+		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
 			this.x = x;
 			this.y = y;
-			this.mapGen = mapGen;
+			this.regionGen = regionGen;
 			this.tileMap = tileMap;
 
 			active = true;
@@ -126,6 +126,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			switch (mapType)
 			{
 					case MapType.DungeonAllOpen:
+
 						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
 						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
@@ -135,25 +136,28 @@ namespace Assets.scripts.Mono.MapGenerator
 						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+
 					break;
 					case MapType.DungeonCentralClosed:
-					GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
-					GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
-					GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
-					GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
+
+						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
 						GenerateEmptyRegion(1, 1);
 						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+
 					break;
 
 			}
 
-			ProcessScene();
+			ProcessSceneMap();
 		}
 
-		public void ProcessScene()
+		public void ProcessSceneMap()
 		{
 			MapProcessor processor = new MapProcessor(SceneMap, mapType);
 
@@ -190,20 +194,21 @@ namespace Assets.scripts.Mono.MapGenerator
 				seed = Random.Range(-1000, 1000).ToString();
 			}
 
-			float xSize = (world.width) * world.SQUARE_SIZE;
-			float ySize = (world.height) * world.SQUARE_SIZE;
-			Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
+			//float xSize = (world.width) * world.SQUARE_SIZE;
+			//float ySize = (world.height) * world.SQUARE_SIZE;
+			//Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
 
-			MapGenerator mapGenerator = new DungeonRoomGenerator(world.width, world.height, seed, randomFillPercent, world.doDebug, x, y, shiftVector);
+			//TODO make different generators, all applicable on to this method!
+			RegionGenerator regionGenerator = new DungeonRegionGenerator(world.width, world.height, seed, randomFillPercent, world.doDebug);
 
-			Tile[,] tileMap = mapGenerator.GenerateMap();
+			Tile[,] tileMap = regionGenerator.GenerateMap();
 
 			AddToSceneMap(tileMap, x, y);
 
 			if (!GameController.DEV_BUILD)
-				mapGenerator = null;
+				regionGenerator = null;
 
-			MapRegion region = new MapRegion(x, y, tileMap, mapGenerator);
+			MapRegion region = new MapRegion(x, y, tileMap, regionGenerator);
 			region.AssignTilesToThisRegion();
 			region.SetAccessibleFromStart(isAccessibleFromStart);
 			region.isStartRegion = isStartRegion;

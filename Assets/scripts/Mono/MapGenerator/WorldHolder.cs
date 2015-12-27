@@ -9,6 +9,9 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
+	/// <summary>
+	/// udrzuje v pameti vsechny mapy z aktivni hry a umi mezi nimi prepinat
+	/// </summary>
 	public class WorldHolder : MonoBehaviour
 	{
 		public static WorldHolder instance;
@@ -16,7 +19,6 @@ namespace Assets.scripts.Mono.MapGenerator
 		// data
 		public Dictionary<Cords, MapHolder> maps;
 		public MapHolder activeMap;
-
 
 		// inspector configuration for generated maps
 		public int width;

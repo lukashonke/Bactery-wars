@@ -4,36 +4,35 @@ using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
-	public abstract class MapGenerator
+	/// <summary>
+	/// materska trida pro generovani regionů na mape (dungeon, louka, mesto, atd.)
+	/// </summary>
+	public abstract class RegionGenerator
 	{
 		protected int width;
 		protected int height;
 		protected string seed;
 		protected bool doDebug;
-		protected int shiftX;
-		protected int shiftY;
-		protected Vector3 shiftVector;
-		protected float meshSquareSize;
 
-		public MapGenerator(int width, int height, string seed, int shiftX, int shiftY, Vector3 shiftVector, bool DoDebug)
+		//protected int shiftX;
+		//protected int shiftY;
+		//protected Vector3 shiftVector;
+		//protected float meshSquareSize;
+
+		public RegionGenerator(int width, int height, string seed, bool DoDebug)
 		{
 			this.width = width;
 			this.height = height;
 			this.seed = seed;
 			this.doDebug = DoDebug;
-			this.shiftVector = shiftVector;
-			this.shiftX = shiftX;
-			this.shiftY = shiftY;
-		}
-
-		public virtual void OnDrawGizmos()
-		{
-			
+			//this.shiftVector = shiftVector;
+			//this.shiftX = shiftX;
+			//this.shiftY = shiftY;
 		}
 
 		public abstract Tile[,] GenerateMap();
-		public abstract MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize);
-		public abstract MeshGenerator GetMeshGenerator();
+		//public abstract MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize);
+		//public abstract MeshGenerator GetMeshGenerator();
 
 		public abstract Tile[,] GetTiles();
 		public abstract List<Room> GetConnectedRooms();

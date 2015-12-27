@@ -7,18 +7,19 @@ using UnityEngine;
 namespace Assets.scripts.Mono.MapGenerator
 {
 	/// <summary>
-	/// Reprezentuje jednu mistnost na mape (vsechny mistnosti jsou propojene tunelem, centralni mistnost muze obsahovat bosse
+	/// Reprezentuje jednu mistnost na mape (vsechny mistnosti jsou propojene tunelem, centralni mistnost muze obsahovat bosse)
 	/// </summary>
 	public class MapRoom
 	{
+		// region kteremu tato mistnost nalezi
+		public MapRegion region;
+
 		public List<Tile> tiles;
 		public List<Tile> edgeTiles;
 		public List<MapRoom> connectedRooms;
 		public int roomSize;
 
 		public bool isAccessibleFromStartRoom;
-
-		public MapRegion region;
 
 		public MapRoom()
 		{

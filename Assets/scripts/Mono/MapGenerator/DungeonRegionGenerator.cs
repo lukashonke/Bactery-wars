@@ -8,73 +8,33 @@ using Debug = UnityEngine.Debug;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
-	public class DungeonRoomGenerator : MapGenerator
+	/// <summary>
+	/// Generuje jeden region typu Dungeon
+	/// </summary>
+	public class DungeonRegionGenerator : RegionGenerator
 	{
 		public enum Direction
 		{
 			TOP, RIGHT, DOWN, LEFT
 		}
 
-		private MeshGenerator meshGen;
-
 		public const int FLOOR = WorldHolder.GROUND;
 		public const int WALL = WorldHolder.WALL;
 
-		private int smoothCount = 4;
+		private const int smoothCount = 4;
 		private int randomFillPercent;
 		private Tile[,] tiles;
 
 		private List<Room> connectedRooms;
 		private Room mainRoom;
 
-		public DungeonRoomGenerator(int width, int height, String seed, int wallFillPercent, bool debug, int shiftX, int shiftY, Vector3 shiftVector) : base(width, height, seed, shiftX, shiftY, shiftVector, debug)
+		public DungeonRegionGenerator(int width, int height, String seed, int wallFillPercent, bool debug) : base(width, height, seed, debug)
 		{
 			this.randomFillPercent = wallFillPercent;
 		}
 
-		public Room MainRoom
-		{
-			get { return mainRoom; }
-		}
-
-		public override MeshGenerator GenerateMesh(GameObject parent, int[,] map, float squareSize)
-		{
-			meshGen = new MeshGenerator(parent);
-			meshSquareSize = squareSize;
-
-			if (!doDebug)
-			{
-				// dimensions of the map
-				float xSize = (map.GetLength(0) - 1) * squareSize;
-				float ySize = (map.GetLength(1) - 1) * squareSize;
-
-				MeshFilter mesh = meshGen.GenerateMesh("Cave", map, squareSize, new Vector3(shiftX * xSize, shiftY * ySize));
-				mesh.gameObject.transform.position = new Vector3(shiftX * xSize, shiftY * ySize);
-			}
-
-			return meshGen;
-		}
-
-		public void UpdateMesh()
-		{
-			if (meshGen == null || doDebug)
-				return;
-
-			// dimensions of the map
-			float xSize = (tiles.GetLength(0) - 1) * meshSquareSize;
-			float ySize = (tiles.GetLength(1) - 1) * meshSquareSize;
-
-			meshGen.Delete();
-
-			MeshFilter mesh = meshGen.GenerateMesh("Cave", GetIntMap(), meshSquareSize, new Vector3(shiftX * xSize, shiftY * ySize));
-			mesh.gameObject.transform.position = new Vector3(shiftX * xSize, shiftY * ySize);
-		}
-
 		public override Tile[,] GenerateMap()
 		{
-			int start = System.Environment.TickCount;
-			//Debug.Log("using seed " + seed);
-
 			// make the tile field
 			tiles = new Tile[width, height];
 
@@ -118,8 +78,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				Camera.main.orthographicSize = 60;
 			}
-
-			int end = System.Environment.TickCount;
 
 			tiles = borderedMap;
 
@@ -361,7 +319,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			tileA.SetColor(1);
 			tileB.SetColor(1);
 
-			Debug.DrawLine(TileToWorldPoint(tileA), TileToWorldPoint(tileB), Color.blue, 100f);
+			//Debug.DrawLine(TileToWorldPoint(tileA), TileToWorldPoint(tileB), Color.blue, 100f);
 			List<Tile> line = GetLine(tileA, tileB);
 
 			foreach (Tile t in line)
@@ -462,12 +420,13 @@ namespace Assets.scripts.Mono.MapGenerator
 			return tiles;
 		} 
 
-		private Vector3 TileToWorldPoint(Tile tile)
+		//TODO not needed anymore
+		/*private Vector3 TileToWorldPoint(Tile tile)
 		{
 			return new Vector3(-width / 2 + .5f + tile.tileX, -height / 2 + .5f + tile.tileY, 0) + shiftVector;
-		}
+		}*/
 
-		public override void OnDrawGizmos()
+		/*public override void OnDrawGizmos()
 		{
 			//Debug.Log("drawing");
 			if (doDebug == false)
@@ -501,7 +460,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					Gizmos.DrawCube(pos, Vector3.one);
 				}
 			}
-		}
+		}*/
 
 		private List<Region> GetRegions(int tileType)
 		{
@@ -721,11 +680,6 @@ namespace Assets.scripts.Mono.MapGenerator
             }
 		}
 
-		public override MeshGenerator GetMeshGenerator()
-		{
-			return meshGen;
-		}
-
 		public override Tile[,] GetTiles()
 		{
 			return tiles;
@@ -739,13 +693,13 @@ namespace Assets.scripts.Mono.MapGenerator
 		public override List<Room> GetSeparatedRooms()
 		{
 			List<Room> list = new List<Room>();
-			list.Add(MainRoom);
+			list.Add(mainRoom);
 			return list;
 		}
 
 		public override Room GetMainRoom()
 		{
-			return MainRoom;
+			return mainRoom;
 		}
 	}
 }

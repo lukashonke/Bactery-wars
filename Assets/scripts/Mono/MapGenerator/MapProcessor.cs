@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
+	/// <summary>
+	/// Dostava jako parametr velkou mapu jako 2D Tile matici a zpracuje ji z globalniho hlediska (propoji regiony, vytvori dvere atd.)
+	/// </summary>
 	public class MapProcessor
 	{
 		private Tile[,] tiles;
@@ -81,7 +84,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			UncheckAllTiles();
 
-			Debug.Log("coutn of rooms: " + rooms.Count);
+			Debug.Log("count of rooms: " + rooms.Count);
 		}
 
 		private List<Region> GetRegions(int tileType)
