@@ -195,9 +195,22 @@ namespace Assets.scripts.Mono.MapGenerator
 				return f.x == s.x && f.y == s.y;
 			}
 
-			public string ToString()
+			public override string ToString()
 			{
 				return x + ", " + y;
+			}
+
+			public override bool Equals(object obj)
+			{
+				try
+				{
+					Cords c = (Cords)obj;
+					return c.x == x && c.y == y;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
 			}
 		}
 	}

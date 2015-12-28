@@ -22,11 +22,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		public Tile[,] tileMap;
 		public RegionGenerator regionGen; //TODO remove, not neccessary
 
-		public MeshFilter mesh;
-		public MeshGenerator meshGen;
-
 		public bool isAccessibleFromStart;
 		public bool isStartRegion; // marks that the player starts in this region upon spawning into the map
+		public bool onlyOnePassage = false;
 
 		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
@@ -55,10 +53,17 @@ namespace Assets.scripts.Mono.MapGenerator
 			return this;
 		}
 
-		public void SetMesh(MeshFilter mesh, MeshGenerator meshGen)
+		public override bool Equals(object obj)
 		{
-			this.mesh = mesh;
-			this.meshGen = meshGen;
+			if (obj == null || GetType() != obj.GetType())
+			{
+				return false;
+			}
+
+			MapRegion reg = (MapRegion) obj;
+			if (x == reg.x && y == reg.y)
+				return true;
+			return false;
 		}
 
 		/*public void Disable()
@@ -94,6 +99,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
+		public MeshFilter mesh;
+		public MeshGenerator meshGen;
+
 		private int MAX_REGIONS = 3;
 		private int regionSize;
 
@@ -121,6 +129,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
 
 			regionSize = world.width + 2;
+			
 			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
 
 			switch (mapType)
@@ -146,20 +155,26 @@ namespace Assets.scripts.Mono.MapGenerator
 						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
 						GenerateEmptyRegion(1, 1);
 						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);
+						//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
 
 					break;
 
 			}
 
+			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
+			Utils.Timer.EndTimer("mapprocess");
 		}
 
 		public void ProcessSceneMap()
 		{
-			MapProcessor processor = new MapProcessor(SceneMap, mapType);
+			Debug.Log("processing scene map");
+			MapProcessor processor = new MapProcessor(this, SceneMap, mapType);
 
 			processor.CreatePassages();
 
@@ -209,6 +224,13 @@ namespace Assets.scripts.Mono.MapGenerator
 				regionGenerator = null;
 
 			MapRegion region = new MapRegion(x, y, tileMap, regionGenerator);
+
+			// test
+			/*if (x == 1 && y == 1)
+			{
+				region.onlyOnePassage = true;
+			}*/
+
 			region.AssignTilesToThisRegion();
 			region.SetAccessibleFromStart(isAccessibleFromStart);
 			region.isStartRegion = isStartRegion;
@@ -217,13 +239,12 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeleteMap()
 		{
-			foreach (MapRegion region in regions.Values)
-			{
-				region.meshGen.Delete();
-				Object.Destroy(region.mesh);
-			}
+			// destroy the map mesh
+			meshGen.Delete();
+			Object.Destroy(mesh);
 
 			regions.Clear();
+			SetActive(false);
 		}
 
 		public void LoadMap()
@@ -236,12 +257,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeloadMap()
 		{
-			// destroy the meshes
-			foreach (MapRegion region in regions.Values)
-			{
-				region.meshGen.Delete();
-				Object.Destroy(region.mesh);
-			}
+			// destroy the map mesh
+			meshGen.Delete();
+			Object.Destroy(mesh);
 
 			SetActive(false);
 		}
@@ -253,8 +271,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DrawGizmos()
 		{
-			float xSize = SceneMap.GetLength(0);
-			float ySize = SceneMap.GetLength(1);
+			/*float xSize = SceneMap.GetLength(0);
+			float ySize = SceneMap.GetLength(1);*/
+
+			float xSize = (SceneMap.GetLength(0) - 1) * world.SQUARE_SIZE;
+			float ySize = (SceneMap.GetLength(1) - 1) * world.SQUARE_SIZE;
 
 			int i = 0;
 			for (int x = 0; x < xSize; x++)
@@ -272,17 +293,26 @@ namespace Assets.scripts.Mono.MapGenerator
 						Gizmos.color = Color.magenta;
 					else if (t.GetColor() == 3)
 						Gizmos.color = Color.yellow;
+					else if (t.GetColor() == 4)
+						Gizmos.color = new Color(255, 20, 147);
 					else if (t.GetColor() == 5)
 						Gizmos.color = Color.blue;
 					else if (t.GetColor() == 6)
 						Gizmos.color = Color.red;
+					else if (t.GetColor() == 7)
+						Gizmos.color = new Color(128, 0, 128);
+					else if (t.GetColor() == 8)
+						Gizmos.color = new Color(255, 165, 0);
+					else if (t.GetColor() == 9)
+						Gizmos.color = new Color(128, 0, 0);
 
+					//Vector3 pos = new Vector3((xSize - 1) / 2 - (world.width / 2), (ySize - 1) / 2 - (world.height / 2));
 					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + world.width+2, ((-ySize / 2) + y + .5f) + world.height+2, 0);
 					Gizmos.DrawCube(pos, Vector3.one);
 				}
 			}
 
-			Debug.Log("highlighted " + i );
+			//Debug.Log("highlighted " + i );
 		}
 
 		private Tile GetTile(int x, int y)
@@ -300,7 +330,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		protected void GenerateMapMesh()
 		{
 			// int maps of all regions
-			Dictionary<WorldHolder.Cords, int[,]> map = new Dictionary<WorldHolder.Cords, int[,]>();
+			/*Dictionary<WorldHolder.Cords, int[,]> map = new Dictionary<WorldHolder.Cords, int[,]>();
 
 			// create int maps of all regions
 			for (int x = 0; x < SceneMap.GetLength(0); x++)
@@ -328,10 +358,37 @@ namespace Assets.scripts.Mono.MapGenerator
 							map[c][x % regionSize, y % regionSize] = 0;
 					}
 				}
+			}*/
+
+			int[,] intMap = new int[SceneMap.GetLength(0),SceneMap.GetLength(1)];
+
+			for (int x = 0; x < SceneMap.GetLength(0); x++)
+			{
+				for (int y = 0; y < SceneMap.GetLength(1); y++)
+				{
+					intMap[x, y] = SceneMap[x, y].tileType;
+				}
 			}
 
+			Utils.Timer.StartTimer("meshgenerate");
+			MeshGenerator generator = new MeshGenerator(world.gameObject);
+
+			float xSize = (intMap.GetLength(0) - 1) * world.SQUARE_SIZE;
+			float ySize = (intMap.GetLength(1) - 1) * world.SQUARE_SIZE;
+
+			Vector3 shiftVector = new Vector3((xSize-1) / 2 - (world.width / 2), (ySize-1) / 2 - (world.height / 2));
+			MeshFilter mesh = generator.GenerateMesh("Map mesh", intMap, world.SQUARE_SIZE, shiftVector);
+
+			mesh.transform.position = shiftVector;
+			mesh.gameObject.SetActive(true);
+
+			this.mesh = mesh;
+			this.meshGen = generator;
+
+			Utils.Timer.EndTimer("meshgenerate");
+
 			// iterate through int maps and generate meshes
-			for (int i = 0; i < map.Count; i++)
+			/*for (int i = 0; i < map.Count; i++)
 			{
 				KeyValuePair<WorldHolder.Cords, int[,]> e = map.ElementAt(i);
 
@@ -359,7 +416,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				MapRegion reg;
 				regions.TryGetValue(c, out reg);
 				reg.SetMesh(mesh, generator);
-			}
+			}*/
 
 			//Debug.Log("pocet regionu na renderovani: " + map.Count);
 			/*for (int i = 0; i < map.Count; i++)
@@ -408,6 +465,44 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.TryGetValue(c, out reg);
 
 			return reg;
+		}
+
+		public MapRegion[] GetNeighbourRegions(MapRegion reg)
+		{
+			MapRegion[] neighbours = new MapRegion[4];
+
+			WorldHolder.Cords c;
+			int i = 0;
+
+			c = new WorldHolder.Cords(reg.x + 1, reg.y);
+			if (regions.ContainsKey(c))
+				neighbours[i++] = regions[c];
+
+			c = new WorldHolder.Cords(reg.x, reg.y +1);
+			if (regions.ContainsKey(c))
+				neighbours[i++] = regions[c];
+
+			c = new WorldHolder.Cords(reg.x - 1, reg.y);
+			if (regions.ContainsKey(c))
+				neighbours[i++] = regions[c];
+
+			c = new WorldHolder.Cords(reg.x, reg.y -1);
+			if (regions.ContainsKey(c))
+				neighbours[i++] = regions[c];
+
+			return neighbours;
+		}
+
+		public bool IsNeighbour(MapRegion regA, MapRegion regB)
+		{
+			if (regA == null || regB == null) return false;
+
+			foreach (MapRegion reg in GetNeighbourRegions(regB))
+			{
+				if (regA.Equals(reg))
+					return true;
+			}
+			return false;
 		}
 	}
 }

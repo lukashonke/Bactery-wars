@@ -316,15 +316,15 @@ namespace Assets.scripts.Mono.MapGenerator
 				//edge.highlighted = true;
 			}
 
-			tileA.SetColor(1);
-			tileB.SetColor(1);
+			tileA.SetColor(Tile.GREEN);
+			tileB.SetColor(Tile.GREEN);
 
 			//Debug.DrawLine(TileToWorldPoint(tileA), TileToWorldPoint(tileB), Color.blue, 100f);
 			List<Tile> line = GetLine(tileA, tileB);
 
 			foreach (Tile t in line)
 			{
-				t.SetColor(5);
+				t.SetColor(Tile.BLUE);
 				DrawCircle(t, 5, FLOOR);
 			}
 		}
@@ -391,7 +391,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			for (int i = 0; i < longest; i++)
 			{
 				tiles.Add(GetTile(x, y)); // pridat prvni bod
-				GetTile(x, y).SetColor(1);
+				GetTile(x, y).SetColor(Tile.GREEN);
 
 				if (poOseY)
 				{

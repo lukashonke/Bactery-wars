@@ -11,6 +11,8 @@ namespace Assets.scripts.Mono.MapGenerator
 	/// </summary>
 	public class MapProcessor
 	{
+		private MapHolder mapHolder;
+
 		private Tile[,] tiles;
 		private MapType mapType;
 
@@ -20,8 +22,10 @@ namespace Assets.scripts.Mono.MapGenerator
 		private int width;
 		private int height;
 
-		public MapProcessor(Tile[,] tiles, MapType type)
+		public MapProcessor(MapHolder mapHolder, Tile[,] tiles, MapType type)
 		{
+			this.mapHolder = mapHolder;
+
 			this.tiles = tiles;
 			this.mapType = type;
 
@@ -34,7 +38,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			UncheckAllTiles();
 			AnalyzeRooms();
 
-			ConnectRooms();
+			ConnectRoomsToStart();
 		}
 
 		private void UncheckAllTiles()
@@ -44,29 +48,180 @@ namespace Assets.scripts.Mono.MapGenerator
 				for (int y = 0; y < height; y++)
 				{
 					Tile t = GetTile(x, y);
-					t.Uncheck();
-					//t.SetColor(0);
+					if(t != null)
+						t.Uncheck();
 				}
 			}
 		}
 
-		private void ConnectRooms()
+		private void GetClosestTiles(MapRoom roomA, MapRoom roomB, out Tile bestTileA, out Tile bestTileB, out int bestDistance)
 		{
+			bestDistance = -1;
+			bestTileA = null;
+			bestTileB = null;
+
+			// projedeme vsechny okrajove body roomA
+			for (int tileIndexA = 0; tileIndexA < roomA.edgeTiles.Count; tileIndexA++)
+			{
+				// projedeme vsechny okrajovy body roomB
+				for (int tileIndexB = 0; tileIndexB < roomB.edgeTiles.Count; tileIndexB++)
+				{
+					Tile tileA = roomA.edgeTiles[tileIndexA];
+					Tile tileB = roomB.edgeTiles[tileIndexB];
+
+					// vypocitame vzdalenost kazdych dvou okrajovych bodu obou mistnosti
+					int dx = tileA.tileX - tileB.tileX;
+					int dy = tileA.tileY - tileB.tileY;
+					int dist = dx*dx + dy*dy;
+
+					if (dist < bestDistance || bestDistance == -1)
+					{
+						bestDistance = dist;
+
+						bestTileA = tileA;
+						bestTileB = tileB;
+					}
+				}
+			}
+		}
+
+		private void ConnectRoomsToStart()
+		{
+			Queue<MapRoom> toConnect = new Queue<MapRoom>();
+			List<MapRoom> connectedToStart = new List<MapRoom>();
+			MapRoom startRoom = null;
+
 			foreach (MapRoom room in rooms)
 			{
 				if (room.region.isStartRegion)
-					continue;
-
-				if (room.region.isAccessibleFromStart && room.isAccessibleFromStartRoom)
 				{
+					startRoom = room;
+					startRoom.SetAccessibleFromStartRoom();
 
+					connectedToStart.Add(startRoom);
+
+					// vzit vsechny sousedy startovni mistnosti
+					foreach (MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region))
+					{
+						// jen ty ktere MAJI BYT pripojene
+						if (reg == null || !reg.isAccessibleFromStart)
+							continue;
+
+						// pridat do seznamu k pripojeni
+						foreach (MapRoom r in GetRoomsInRegion(reg))
+							if (!r.isAccessibleFromStartRoom)
+								toConnect.Enqueue(r);
+					}
+				}
+			}
+
+			while (toConnect.Count > 0)
+			{
+				// 1. vzit kazdou mistnost k pripojeni a zkusit ji pripojit k jedne z mistnosti v "connected"
+
+				MapRoom toConnectRoom = toConnect.Dequeue();
+
+				Debug.Log("** connecting " + toConnectRoom.region.x + ", " + toConnectRoom.region.y);
+
+				for(int i = 0; i < connectedToStart.Count; i++)
+				{
+					MapRoom connectedRoom = connectedToStart[i];
+
+					// mistnosti jsou sousedi
+					if (CanBeConnected(toConnectRoom, connectedRoom) && !AreRoomsConnected(toConnectRoom, connectedRoom))
+					{
+						if (connectedRoom.isAccessibleFromStartRoom && connectedRoom.region.onlyOnePassage && connectedRoom.connectedRooms.Count > 0)
+							continue;
+
+						ConnectRooms(toConnectRoom, connectedRoom);
+						connectedToStart.Add(toConnectRoom);
+
+						// vzit vsechny sousedy pripojovane mistnosti
+						foreach (MapRegion reg in mapHolder.GetNeighbourRegions(toConnectRoom.region))
+						{
+							// jen ty ktere MAJI BYT pripojene
+							if (reg == null || !reg.isAccessibleFromStart)
+								continue;
+
+							// pridat do seznamu k pripojeni
+							foreach (MapRoom r in GetRoomsInRegion(reg))
+							{
+								// pokud jeste nejsou pripojene ke startu
+								if(!r.isAccessibleFromStartRoom)
+									toConnect.Enqueue(r);
+							}
+						}
+
+						// pripojit k prvni nalezene
+						if(toConnectRoom.region.onlyOnePassage)
+							break;
+					}
 				}
 			}
 		}
 
 		private void ConnectRooms(MapRoom roomA, MapRoom roomB)
 		{
-			
+			roomA.connectedRooms.Add(roomB);
+			roomB.connectedRooms.Add(roomA);
+
+			if (roomA.isAccessibleFromStartRoom || roomB.isAccessibleFromStartRoom)
+			{
+				roomA.SetAccessibleFromStartRoom();
+				roomB.SetAccessibleFromStartRoom();
+			}
+
+			CreatePassage(roomA, roomB);
+		}
+
+		private void CreatePassage(MapRoom roomA, MapRoom roomB)
+		{
+			Tile bestTileA;
+			Tile bestTileB;
+			int bestDistance;
+
+			GetClosestTiles(roomA, roomB, out bestTileA, out bestTileB, out bestDistance);
+
+			bestTileA.SetColor(Tile.ORANGE);
+			bestTileB.SetColor(Tile.PURPLE);
+
+			List<Tile> line = GetLine(bestTileA, bestTileB);
+			MapPassage passage = new MapPassage(line);
+			passage.CreateMesh();
+
+			foreach (Tile t in line)
+			{
+				t.SetColor(Tile.BROWN);
+				DrawCircle(t, 5, WorldHolder.GROUND);
+			}
+		}
+
+		// obvykle vraci jen jednu mistnost, ale v budoucnu by v regionu mohla byt vice nez jedna mistnost
+		private List<MapRoom> GetRoomsInRegion(MapRegion reg)
+		{
+			List<MapRoom> inRegion = new List<MapRoom>();
+			foreach (MapRoom room in rooms)
+			{
+				if (room.region.Equals(reg))
+				{
+					inRegion.Add(room);
+				}
+			}
+
+			return inRegion;
+		}
+
+		private bool CanBeConnected(MapRoom roomA, MapRoom roomB)
+		{
+			MapRegion regA = roomA.region;
+			MapRegion regB = roomB.region;
+
+			return mapHolder.IsNeighbour(regA, regB);
+		}
+
+		private bool AreRoomsConnected(MapRoom roomA, MapRoom roomB)
+		{
+			return roomA.IsConnected(roomB);
 		}
 
 		private void AnalyzeRooms()
@@ -83,8 +238,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			UncheckAllTiles();
-
-			Debug.Log("count of rooms: " + rooms.Count);
 		}
 
 		private List<Region> GetRegions(int tileType)
@@ -97,7 +250,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				{
 					Tile t = GetTile(x, y);
 
-					if (!t.isChecked && t.tileType == tileType)
+					if (t != null && !t.isChecked && t.tileType == tileType)
 					{
 						Region r = CreateRegion(x, y, tileType);
 
@@ -191,6 +344,108 @@ namespace Assets.scripts.Mono.MapGenerator
 				return null;
 			}
 		}
+
+		private void DrawCircle(Tile t, int r, int tileType)
+		{
+			for (int x = -r; x <= r; x++)
+			{
+				for (int y = -r; y <= r; y++)
+				{
+					if (x * x + y * y <= r * r)
+					{
+						int drawX = t.tileX + x;
+						int drawY = t.tileY + y;
+
+						Tile drawTile = GetTile(drawX, drawY);
+
+						if (drawTile != null)
+							SetTile(drawTile, tileType);
+					}
+				}
+			}
+		}
+
+		public void SetTile(Tile t, int tileType)
+		{
+			if (t.tileX == 0 || t.tileY == 0 || t.tileX == (width - 1) || t.tileY == (height - 1))
+			{
+				if (tileType != WorldHolder.WALL)
+					return;
+			}
+
+			t.tileType = tileType;
+		}
+
+		private List<Tile> GetLine(Tile from, Tile to)
+		{
+			//Debug.Log("drawing line");
+			List<Tile> tiles = new List<Tile>();
+
+			int x = from.tileX;
+			int y = from.tileY;
+
+			int dx = to.tileX - from.tileX;
+			int dy = to.tileY - from.tileY;
+
+			int absdx = Math.Abs(dx);
+			int absdy = Math.Abs(dy);
+
+			int step; // urcuje jakym smerem pujdeme (po ose zapornym nebo kladnym
+			int gradientStep;
+			int longest;
+			int shortest;
+			bool poOseY;
+
+			// zjistime jestli je kratsi vzdalenost dx nebo dy
+			if (absdx < absdy)
+			{
+				longest = absdy;
+				shortest = absdx;
+				step = Math.Sign(dy);
+				gradientStep = Math.Sign(dx);
+				poOseY = true;
+			}
+			else
+			{
+				longest = absdx;
+				shortest = absdy;
+				step = Math.Sign(dx);
+				gradientStep = Math.Sign(dy);
+				poOseY = false;
+			}
+
+			int gradientAccumulation = longest / 2;
+			for (int i = 0; i < longest; i++)
+			{
+				tiles.Add(GetTile(x, y)); // pridat prvni bod
+				GetTile(x, y).SetColor(Tile.GREEN);
+
+				if (poOseY)
+				{
+					y += step;
+				}
+				else
+				{
+					x += step;
+				}
+
+				gradientAccumulation += shortest;
+				if (gradientAccumulation >= longest)
+				{
+					if (poOseY)
+					{
+						x += gradientStep;
+					}
+					else
+					{
+						y += gradientStep;
+					}
+					gradientAccumulation -= longest;
+				}
+			}
+
+			return tiles;
+		} 
 
 		private class Region
 		{
