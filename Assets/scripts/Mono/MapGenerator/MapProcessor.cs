@@ -36,9 +36,20 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void CreatePassages()
 		{
 			UncheckAllTiles();
+			WiddenThinPassages();
 			AnalyzeRooms();
 
 			ConnectRoomsToStart();
+		}
+
+		private void WiddenThinPassages()
+		{
+			Utils.Timer.StartTimer("thinpassages");
+			//TODO analyzovat mista, kde jsou zdi ve tvaru #_# nebo 
+
+
+
+			Utils.Timer.EndTimer("thinpassages");
 		}
 
 		private void UncheckAllTiles()
@@ -186,14 +197,89 @@ namespace Assets.scripts.Mono.MapGenerator
 			bestTileB.SetColor(Tile.PURPLE);
 
 			List<Tile> line = GetLine(bestTileA, bestTileB);
-			MapPassage passage = new MapPassage(line);
-			passage.CreateMesh();
+			List<Tile> passageTiles = new List<Tile>();
 
 			foreach (Tile t in line)
 			{
 				t.SetColor(Tile.BROWN);
-				DrawCircle(t, 5, WorldHolder.GROUND);
+				List<Tile> circle = DrawCircle(t, 5, WorldHolder.GROUND);
+
+				foreach(Tile c in circle)
+					passageTiles.Add(c);
 			}
+			bool makeDoor = roomA.region.isLockedRegion || roomB.region.isLockedRegion;
+			CreatePassageInPoint(line[line.Count/2], makeDoor);
+		}
+
+		private void CreatePassageInPoint(Tile center, bool makeDoor)
+		{
+			center.SetColor(Tile.ORANGE);
+
+			Tile start = GetClosestTileFrom(center, WorldHolder.WALL);
+
+			int dx = start.tileX - center.tileX;
+			int dy = start.tileY - center.tileY;
+
+			Tile end = GetTile(center.tileX - dx, center.tileY - dy);
+			if (end.tileType != WorldHolder.WALL)
+			{
+				end = GetClosestTileFrom(end, WorldHolder.WALL);
+			}
+
+			List<Tile> line = GetLine(start, end);
+
+			foreach (Tile t in line)
+			{
+				t.SetColor(Tile.GREEN);
+			}
+
+			start.SetColor(Tile.MAGENTA);
+			end.SetColor(Tile.PINK);
+
+			MapPassage passage = new MapPassage(line, center, start, end);
+			passage.isDoor = makeDoor;
+			mapHolder.AddPassage(passage);
+		}
+
+		private Tile GetClosestTileFrom(Tile from, int tileType)
+		{
+			if (from.tileType == tileType)
+				return from;
+
+			Tile wall = null;
+
+			int i = 1;
+
+			while (wall == null)
+			{
+				wall = GetTile(from.tileX + i, from.tileY, tileType);
+				if (wall != null)
+					break;
+
+				wall = GetTile(from.tileX, from.tileY + i, tileType);
+				if (wall != null)
+					break;
+
+				wall = GetTile(from.tileX - i, from.tileY, tileType);
+				if (wall != null)
+					break;
+
+				wall = GetTile(from.tileX, from.tileY - i, tileType);
+				if (wall != null)
+					break;
+
+				i++;
+
+				if (i == 100)
+					break;
+			}
+
+			return wall;
+		}
+
+		public void ThrowError()
+		{
+			Debug.LogError("error while processing map of seed " + mapHolder.world.seed);
 		}
 
 		// obvykle vraci jen jednu mistnost, ale v budoucnu by v regionu mohla byt vice nez jedna mistnost
@@ -345,8 +431,25 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		private void DrawCircle(Tile t, int r, int tileType)
+		private Tile GetTile(int x, int y, int tileType)
 		{
+			try
+			{
+				Tile t = Tiles[x, y];
+				if (t != null && t.tileType == tileType)
+					return t;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			return null;
+		}
+
+		private List<Tile> DrawCircle(Tile t, int r, int tileType)
+		{
+			List<Tile> lineTiles = new List<Tile>();
 			for (int x = -r; x <= r; x++)
 			{
 				for (int y = -r; y <= r; y++)
@@ -359,10 +462,18 @@ namespace Assets.scripts.Mono.MapGenerator
 						Tile drawTile = GetTile(drawX, drawY);
 
 						if (drawTile != null)
+						{
 							SetTile(drawTile, tileType);
+
+							// changed properly, add to list to return
+							if(drawTile.tileType == tileType)
+								lineTiles.Add(drawTile);
+						}
 					}
 				}
 			}
+
+			return lineTiles;
 		}
 
 		public void SetTile(Tile t, int tileType)

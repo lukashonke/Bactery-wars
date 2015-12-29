@@ -48,7 +48,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.DungeonCentralClosed);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.DungeonAllOpen);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 

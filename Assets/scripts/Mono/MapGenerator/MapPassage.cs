@@ -3,25 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
 	public class MapPassage
 	{
-		public List<Tile> tiles; 
-		public MapPassage(List<Tile> tiles)
+		public List<Tile> tiles;
+		public Tile centerTile, starTile, endTile;
+
+		public bool isDoor;
+		public GameObject gameObject;
+
+		public MapPassage(List<Tile> tiles, Tile center, Tile start, Tile end)
 		{
 			this.tiles = tiles;
+			centerTile = center;
+
+			starTile = start;
+			endTile = end;
 		}
 
-		public void CreateMesh()
+		/*private void Init()
 		{
-			//TODO nefunguje jeste
-			//TODO sestavit 2D int matici
-			// z ni sestavit mesh, ten pak vlozit do sceny a pomoci shiftvectoru
-			// vypinat a zapinat = vytvoreni pruchodu
-			MeshGenerator meshGen;
-
 			int maxX = -1;
 			int minX = -1;
 			int maxY = -1;
@@ -50,33 +54,59 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 
-			int size = Mathf.Max(maxX, maxY);
-			int i = 0;
-			int[,] tilesInt = new int[size, size];
+			int size = Mathf.Max(maxX - minX, maxY - minY) + 3;
+			tilesInt = new int[size, size];
 			for (int x = 0; x < tilesInt.GetLength(0); x++)
 			{
 				for (int y = 0; y < tilesInt.GetLength(1); y++)
 				{
 					tilesInt[x, y] = 0;
-
-					foreach (Tile t in tiles)
-					{
-						if (t.tileX == x || t.tileY == y)
-						{
-							i++;
-							tilesInt[x, y] = 1;
-						}
-					}
 				}
 			}
 
+			int i = 0;
+			foreach (Tile t in tiles)
+			{
+				int tx = t.tileX - minX;
+				int ty = t.tileY - minY;
+
+				if (tx == (size / 2 - 1) && ty == (size / 2 - 1))
+					centerTile = t;
+
+				i++;
+
+				if (centerTile == null && i == size/2)
+					centerTile = t;
+
+				tilesInt[tx, ty] = 1;
+			}
+
 			Debug.Log(i);
+		}*/
 
+		/*public MeshFilter CreateMesh(Vector3 shiftVector)
+		{
+			//TODO nefunguje jeste
+			//TODO sestavit 2D int matici
+			// z ni sestavit mesh, ten pak vlozit do sceny a pomoci shiftvectoru
+			// vypinat a zapinat = vytvoreni pruchodu
 			meshGen = new MeshGenerator(GameObject.Find("Cave Generator"));
-			MeshFilter mesh = meshGen.GenerateMesh("Passage", tilesInt, 1, new Vector3());
+			mesh = meshGen.GenerateMesh("Passage", tilesInt, 1, shiftVector);
 
-			mesh.transform.position = new Vector3();
+			mesh.transform.position = shiftVector;
 			mesh.gameObject.SetActive(true);
+
+			return mesh;
+		}*/
+
+		public void AssignGameObject(GameObject o)
+		{
+			gameObject = o;
+		}
+
+		public void Delete()
+		{
+			Object.Destroy(gameObject);
 		}
 	}
 }

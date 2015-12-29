@@ -11,7 +11,8 @@ namespace Assets.scripts.Mono.MapGenerator
 	public enum MapType
 	{
 		DungeonAllOpen,
-		DungeonCentralClosed
+		DungeonCentralClosed,
+		Test
 	}
 
 	public class MapRegion
@@ -23,6 +24,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public RegionGenerator regionGen; //TODO remove, not neccessary
 
 		public bool isAccessibleFromStart;
+		public bool isLockedRegion;
 		public bool isStartRegion; // marks that the player starts in this region upon spawning into the map
 		public bool onlyOnePassage = false;
 
@@ -88,7 +90,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	/// </summary>
 	public class MapHolder
 	{
-		private WorldHolder world;
+		public WorldHolder world;
 
 		public bool isActive;
 
@@ -98,6 +100,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
+
+		public List<MapPassage> passages; 
 
 		public MeshFilter mesh;
 		public MeshGenerator meshGen;
@@ -124,9 +128,46 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.mapType = mapType;
 		}
 
+		public void AddPassage(MapPassage p)
+		{
+			passages.Add(p);
+		}
+
+		public void InitPassage(MapPassage p)
+		{
+			if (p.isDoor)
+			{
+				Vector3 start = GetTileWorldPosition(p.starTile);
+				Vector3 end = GetTileWorldPosition(p.endTile);
+				Vector3 centerTile = GetTileWorldPosition(p.centerTile);
+
+				Vector3 line = end - start;
+
+				GameObject doorTemplate = Resources.Load("Prefabs/Map/Dungeon Door") as GameObject;
+
+				Quaternion newRotation = Quaternion.LookRotation(start - end, Vector3.forward);
+				newRotation.x = 0;
+				newRotation.y = 0;
+
+				GameObject door = Object.Instantiate(doorTemplate, centerTile, newRotation) as GameObject;
+				door.transform.localScale = new Vector3(0.2f, (line.magnitude) * 0.1f, 1);
+				//door.layer = 12; // TODO include this in pathfinding? but then require real time update
+
+				p.AssignGameObject(door);
+
+				Debug.DrawRay(GetTileWorldPosition(p.starTile), line, Color.yellow, 20f);
+			}
+		}
+
+		public Vector3 GetTileWorldPosition(Tile t)
+		{
+			return new Vector3((-world.width/2) + t.tileX, (-world.height/2) + t.tileY, 0);
+		}
+
 		public void CreateMap()
 		{
 			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
+			passages = new List<MapPassage>();
 
 			regionSize = world.width + 2;
 			
@@ -134,13 +175,27 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			switch (mapType)
 			{
+					case MapType.Test:
+
+						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateEmptyRegion(0, 2);
+
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);
+
+					break;
 					case MapType.DungeonAllOpen:
 
 						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
 						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 1, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRoom(world.seed, 1, 1, world.randomFillPercent, true, false, true);
 						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
 						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
@@ -200,7 +255,13 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
+
 		protected void GenerateDungeonRoom(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion)
+		{
+			GenerateDungeonRoom(seed, x, y, randomFillPercent, isAccessibleFromStart, isStartRegion, false);
+		}
+
+		protected void GenerateDungeonRoom(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion, bool isLockedRegion)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
@@ -234,6 +295,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			region.AssignTilesToThisRegion();
 			region.SetAccessibleFromStart(isAccessibleFromStart);
 			region.isStartRegion = isStartRegion;
+			region.isLockedRegion = isLockedRegion;
 			regions.Add(new WorldHolder.Cords(x, y), region);
 		}
 
@@ -243,6 +305,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			meshGen.Delete();
 			Object.Destroy(mesh);
 
+			foreach (MapPassage p in passages)
+			{
+				p.Delete();
+			}
+
 			regions.Clear();
 			SetActive(false);
 		}
@@ -250,6 +317,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void LoadMap()
 		{
 			GenerateMapMesh();
+
+			foreach (MapPassage p in passages)
+			{
+				InitPassage(p);
+			}
 
 			GameSystem.Instance.UpdatePathfinding();
 			SetActive(true);
@@ -260,6 +332,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			// destroy the map mesh
 			meshGen.Delete();
 			Object.Destroy(mesh);
+
+			foreach (MapPassage p in passages)
+			{
+				p.Delete();
+			}
 
 			SetActive(false);
 		}
