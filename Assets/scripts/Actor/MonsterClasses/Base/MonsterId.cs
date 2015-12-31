@@ -10,6 +10,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		TestMonster = 0,
 
 		Leukocyte_melee = 1,
-		Leukocyte_ranged = 2
+		Leukocyte_ranged = 2,
+
+
+		TeleporterOut = 100,
+		TeleporterIn = 101
 	}
 }

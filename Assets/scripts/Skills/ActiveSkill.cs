@@ -286,6 +286,9 @@ namespace Assets.scripts.Skills
 			if (!start)
 				return;
 
+			if (Owner.Status.IsStunned())
+				return;
+
 			// start the reuse timer
 			SetReuseTimer();
 

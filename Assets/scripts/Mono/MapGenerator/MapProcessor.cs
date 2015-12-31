@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -36,20 +37,154 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void CreatePassages()
 		{
 			UncheckAllTiles();
-			WiddenThinPassages();
-			AnalyzeRooms();
 
+			//GetTile(40, 26).SetColor(Tile.GREEN);
+			//int count = GetNeighbourWallsCount(GetTile(40, 26), 2);
+			//GetTile(40, 26).SetColor(Tile.GREEN);
+			//Debug.Log(count);
+
+			AnalyzeRooms();
 			ConnectRoomsToStart();
+
+			SpawnTeleporters();
+
+			//WiddenThinPassages(null, 6, 2);
 		}
 
-		private void WiddenThinPassages()
+		private void SpawnTeleporters()
+		{
+			mapHolder.SpawnNpc(MonsterId.TeleporterIn, new Vector3(5, 5, 0));
+			mapHolder.SpawnNpc(MonsterId.TeleporterOut, new Vector3(8, 8, 0));
+		}
+
+		private void WiddenThinPassages(Tile fixedTile, int threshold, int radius)
 		{
 			Utils.Timer.StartTimer("thinpassages");
-			//TODO analyzovat mista, kde jsou zdi ve tvaru #_# nebo 
 
+			List<Tile> toCheck = new List<Tile>();
 
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					Tile t = GetTile(x, y);
+
+					if (t != null && t.tileType == WorldHolder.GROUND)
+					{
+						if (GetNeighbourWallsCount(t) == 0)
+							continue;
+
+						toCheck.Add(t);
+					}
+				}
+			}
+
+			foreach (Tile t in toCheck)
+			{
+				if (fixedTile != null && !t.Equals(fixedTile))
+					continue;
+
+				int count = GetNeighbourWallsCount(t, radius);
+
+				if (count >= threshold)
+				{
+					SetSurroundingTiles(t, WorldHolder.GROUND);
+				}
+			}
 
 			Utils.Timer.EndTimer("thinpassages");
+		}
+
+		private void SetSurroundingTiles(Tile t, int tileType)
+		{
+			foreach (Tile n in GetNeighbours(t.tileX, t.tileY, false))
+			{
+				if (n.tileType != tileType)
+				{
+					SetTile(n, tileType);
+					n.SetColor(Tile.GREEN);
+				}
+			}
+		}
+
+		private int GetNeighbourWallsCount(Tile t)
+		{
+			int count = 0;
+			foreach (Tile n in GetNeighbours(t.tileX, t.tileY, false))
+			{
+				if(n.tileType == WorldHolder.WALL)
+					count++;
+			}
+			return count;
+		}
+
+		/// <summary>
+		/// vrati vsechny sousedy vsech Tiles predanych v parametru tiles
+		/// includeSources - zahrne do vystupu i predavane tiles
+		/// </summary>
+		private List<Tile> GetNeighbourGroundTilesFromTiles(List<Tile> tiles, bool includeSources)
+		{
+			List<Tile> all = new List<Tile>();
+
+			foreach (Tile t in tiles)
+			{
+				if (includeSources)
+				{
+					if (all.Contains(t) == false)
+						all.Add(t);
+				}
+
+				foreach (Tile n in GetNeighbours(t.tileX, t.tileY, false))
+				{
+					if (n.tileType == WorldHolder.WALL)
+						continue;
+
+					if(all.Contains(n) == false)
+						all.Add(n);
+				}
+			}
+			return all;
+		}
+
+		private int GetNeighbourWallsCount(Tile t, int radius)
+		{
+			List<Tile> walls = new List<Tile>();
+
+			if(radius > 1)
+			{
+				List<Tile> neighbours = new List<Tile>();
+				neighbours.Add(t);
+
+				Queue<Tile> toCheck = new Queue<Tile>();
+				toCheck.Enqueue(t);
+
+				for (int i = 0; i < radius; i++)
+				{
+					neighbours = GetNeighbourGroundTilesFromTiles(neighbours, true);
+				}
+
+				foreach (Tile n in neighbours)
+				{
+					//n.SetColor(Tile.BLUE);
+					toCheck.Enqueue(n);
+				}
+
+				while (toCheck.Count > 0)
+				{
+					Tile temp = toCheck.Dequeue();
+
+					foreach (Tile wall in GetNeighbours(temp.tileX, temp.tileY, false))
+					{
+						if (wall.tileType == WorldHolder.WALL && !walls.Contains(wall))
+						{
+							//wall.SetColor(Tile.RED);
+							walls.Add(wall);
+						}
+					}
+				}
+				
+			}
+			return walls.Count;
 		}
 
 		private void UncheckAllTiles()
@@ -132,7 +267,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				MapRoom toConnectRoom = toConnect.Dequeue();
 
-				Debug.Log("** connecting " + toConnectRoom.region.x + ", " + toConnectRoom.region.y);
+				//Debug.Log("** connecting " + toConnectRoom.region.x + ", " + toConnectRoom.region.y);
 
 				for(int i = 0; i < connectedToStart.Count; i++)
 				{

@@ -99,5 +99,10 @@ namespace Assets.scripts.Actor
 				}
 			}
 		}
+
+		public override bool IsInteractable()
+		{
+			return false;
+		}
 	}
 }

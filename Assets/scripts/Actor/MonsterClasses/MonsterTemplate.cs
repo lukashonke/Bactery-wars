@@ -5,7 +5,10 @@ using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.Mono;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
+using UnityEngine.iOS;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
@@ -41,6 +44,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		protected abstract void AddSkills();
 		public abstract MonsterAI CreateAI(Character ch);
+
+		public virtual void OnTalkTo(Character source)
+		{
+			
+		}
 
 		public abstract GroupTemplate GetGroupTemplate();
 	}

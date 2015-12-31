@@ -28,7 +28,7 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			Owner.GetData().MeleeAttack(target.GetData().GetBody(), true);
+			Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
 		}
 	}
 }

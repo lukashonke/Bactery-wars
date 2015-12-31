@@ -16,6 +16,8 @@ namespace Assets.scripts.Mono.MapGenerator
 	{
 		public static WorldHolder instance;
 
+		public static string[] allowedSeeds = { "500", "555", "-516", "777", "-876", "643" };
+
 		// data
 		public Dictionary<Cords, MapHolder> maps;
 		public MapHolder activeMap;
@@ -25,10 +27,13 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int height;
 		public string seed;
 		public bool useRandomSeed;
+
 		[Range(0, 100)]
 		public int randomFillPercent;
 
-		public bool doDebug = false;
+		public bool completelyRandomSeed;
+
+		public bool doDebug = true;
 		public int SQUARE_SIZE = 1;
 		private int MAX_REGIONS = 3;
 
@@ -52,7 +57,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
-			SetActiveLevel(0, 0);
+			SetActiveLevel(0, 0, false);
 		}
 
 		public Cords GenerateNextLevel(int teleporterType)
@@ -71,6 +76,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void SetActiveLevel(int x, int y)
 		{
+			SetActiveLevel(x,y,true);
+		}
+
+		public void SetActiveLevel(int x, int y, bool reloading)
+		{
 			MapHolder map;
 			maps.TryGetValue(new Cords(x, y), out map);
 
@@ -88,7 +98,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			activeMap = map;
-			activeMap.LoadMap();
+			activeMap.LoadMap(reloading);
 		}
 
 		void Update()
@@ -97,7 +107,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				activeMap.DeleteMap();
 				activeMap.CreateMap();
-				activeMap.LoadMap();
+				activeMap.LoadMap(false);
 			}
 
 			if (Input.GetKeyDown(KeyCode.N))
@@ -105,12 +115,14 @@ namespace Assets.scripts.Mono.MapGenerator
 				Cords c = activeMap.Position;
 				Cords newC = new Cords(c.x + 1, c.y);
 
+				bool onlyReload = true;
 				if (!maps.ContainsKey(newC))
 				{
 					GenerateNextLevel(1);
+					onlyReload = false;
 				}
 
-				SetActiveLevel(newC.x, newC.y);
+				SetActiveLevel(newC.x, newC.y, onlyReload);
 			}
 
 			if (Input.GetKeyDown(KeyCode.P))
@@ -123,21 +135,23 @@ namespace Assets.scripts.Mono.MapGenerator
 		}
 
 		// temp from mobile
-		public void Next()
+		public void LoadNextMap()
 		{
 			Cords c = activeMap.Position;
 			Cords newC = new Cords(c.x + 1, c.y);
 
+			bool onlyReload = true;
 			if (!maps.ContainsKey(newC))
 			{
 				GenerateNextLevel(1);
+				onlyReload = false;
 			}
 
-			SetActiveLevel(newC.x, newC.y);
+			SetActiveLevel(newC.x, newC.y, onlyReload);
 		}
 
 		// temp output from mobile
-		public void Prev()
+		public void LoadPreviousMap()
 		{
 			Cords c = activeMap.Position;
 			Cords newC = new Cords(c.x - 1, c.y);
@@ -212,6 +226,14 @@ namespace Assets.scripts.Mono.MapGenerator
 					return false;
 				}
 			}
+		}
+
+		public string GetRandomSeed()
+		{
+			if (completelyRandomSeed)
+				return Random.Range(-1000, 1000) + "";
+
+			return allowedSeeds[Random.Range(0, allowedSeeds.Length)];
 		}
 	}
 }

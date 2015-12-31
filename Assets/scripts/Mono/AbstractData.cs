@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
@@ -555,7 +556,7 @@ namespace Assets.scripts.Mono
 
 			if (QueueMelee)
 			{
-				MeleeAttack(QueueMeleeTarget, QueueMeleeRepeat);
+				MeleeInterract(QueueMeleeTarget, QueueMeleeRepeat);
 				QueueMelee = false;
 			}
 		}
@@ -773,6 +774,17 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public virtual void DeleteMe()
+		{
+			GetOwner().DeleteMe();
+			DisableMe();
+			Destroy(gameObject);
+			if (healthBar != null)
+			{
+				healthBar.enabled = false;
+			}
+		}
+
 		public void DisableMe()
 		{
 			foreach (GameObject o in childs.Values)
@@ -782,6 +794,8 @@ namespace Assets.scripts.Mono
 
 			body.GetComponent<SpriteRenderer>().enabled = false;
 			body.GetComponent<Collider2D>().enabled = false;
+
+			GetOwner().DeleteMe();
 		}
 
 		public void BreakCasting()
@@ -888,8 +902,13 @@ namespace Assets.scripts.Mono
 			return sk != null && sk.IsActive();
 		}
 
-		public void MeleeAttack(GameObject target, bool repeat)
+		public void MeleeInterract(GameObject target, bool repeat)
 		{
+			AbstractData data = target.GetComponent<AbstractData>();
+
+			if (data == null || data.Equals(this)) 
+				return;
+
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
 			// no melee attack
@@ -898,10 +917,18 @@ namespace Assets.scripts.Mono
 
 			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
 			{
-				if(repeat)
-					RepeatingMeleeAttack = true;
+				if (data.GetOwner().IsInteractable())
+				{
+					if (TalkTo(data))
+						return;
+				}
+				else if (GetOwner().CanAttack(data.GetOwner()))
+				{
+					if (repeat)
+						RepeatingMeleeAttack = true;
 
-				sk.Start(target);
+					sk.Start(target);
+				}
 			}
 			else
 			{
@@ -911,6 +938,23 @@ namespace Assets.scripts.Mono
 				QueueMeleeTarget = target;
 				QueueMeleeRepeat = repeat;
 			}
+		}
+
+		private bool TalkTo(AbstractData data)
+		{
+			if (data.isDead || isDead || GetOwner().Status.IsImmobilized() || GetOwner().Status.IsStunned())
+				return false;
+
+			if (data.GetOwner() is Npc)
+			{
+				Npc npc = (Npc) data.GetOwner();
+
+				Debug.Log("talking to ");
+
+				npc.Template.OnTalkTo(GetOwner());
+			}
+
+			return false;
 		}
 
 		public void AbortMeleeAttacking()

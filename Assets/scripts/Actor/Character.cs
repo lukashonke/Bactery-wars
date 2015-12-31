@@ -41,6 +41,15 @@ namespace Assets.scripts.Actor
 			AI = ai;
 		}
 
+		public void DeleteMe()
+		{
+			if(AI != null)
+			AI.StopAITask();
+
+			if(Knownlist != null)
+			Knownlist.Active = false;
+		}
+
 		/// <summary>
 		/// zavolano hned po vytvoreni Characteru (hned po zavolani konstruktorů)
 		/// </summary>
@@ -176,6 +185,9 @@ namespace Assets.scripts.Actor
 
 		public bool CanAttack(Character targetCh)
 		{
+			if (targetCh.IsInteractable())
+				return false;
+
 			return Team != targetCh.Team;
 		}
 
@@ -193,6 +205,11 @@ namespace Assets.scripts.Actor
 
 			AI = ai;
 			AI.StartAITask();
+		}
+
+		public virtual bool IsInteractable()
+		{
+			return true;
 		}
 	}
 }

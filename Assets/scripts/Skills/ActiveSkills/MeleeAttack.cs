@@ -107,7 +107,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			// continue with next attack
 			if (GetOwnerData().RepeatingMeleeAttack)
-				GetOwnerData().MeleeAttack(initTarget, true);
+				GetOwnerData().MeleeInterract(initTarget, true);
 		}
 
 		public override void UpdateLaunched()

@@ -73,12 +73,12 @@ namespace Assets.scripts.Mono
 
 		public void NextLevel()
 		{
-			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().Next();
+			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadNextMap();
 		}
 
 		public void PrevLevel()
 		{
-			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().Prev();
+			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadPreviousMap();
 		}
 
 		public void MenuClick()
@@ -164,13 +164,13 @@ namespace Assets.scripts.Mono
 
 		public void SetMouseOverUi()
 		{
-			Debug.Log("mouse over UI");
+			//Debug.Log("mouse over UI");
 			mouseOverUi = true;
 		}
 
 		public void SetMouseNotOverUi()
 		{
-			Debug.Log("mouse not UI");
+			//Debug.Log("mouse not UI");
 			mouseOverUi = false;
 		}
 	}

@@ -50,7 +50,7 @@ namespace Assets.scripts.Mono.MapGenerator
 							{
 								if (map[x, y].tileType == 1)
 								{
-									map[x, y].SetColor(Tile.BLUE);
+									//map[x, y].SetColor(Tile.BLUE);
 									edgeTiles.Add(tile);
 								}
 							}

@@ -261,7 +261,7 @@ namespace Assets.scripts.Mono
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
 
-								data.MeleeAttack(data.Target, true);
+								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
 							}
 						}
@@ -370,7 +370,7 @@ namespace Assets.scripts.Mono
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
 
-								data.MeleeAttack(data.Target, true);
+								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
 							}
 						}

@@ -151,6 +151,33 @@ namespace Assets.scripts
 			return monster;
 		}
 
+		public Npc RegisterNewNpc(EnemyData data, MonsterId id)
+		{
+			Npc npc = null;
+			npc = new Npc(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
+			data.SetOwner(npc);
+			npc.Init();
+
+			npc.isMinion = false;
+			npc.InitTemplate();
+
+			return npc;
+		}
+
+		public Npc SpawnNpc(MonsterId id, Vector3 position)
+		{
+			Debug.Log("spawning, is minion is ");
+			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
+
+			if (go == null)
+				throw new NullReferenceException("Prefabs/entity/" + id.ToString() + "/" + id);
+
+			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
+			EnemyData data = result.GetComponent<EnemyData>();
+
+			return RegisterNewNpc(data, id);
+		}
+
 		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion)
 		{
 			Debug.Log("spawning, is minion is " + isMinion);

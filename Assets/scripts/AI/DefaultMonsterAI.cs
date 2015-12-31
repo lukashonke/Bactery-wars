@@ -74,7 +74,7 @@ namespace Assets.scripts.AI
 				StartAction(CastSkill(target, sk, dist, false, true, 0f, 0f), 5f);
 			}
 			else
-				Owner.GetData().MeleeAttack(target.GetData().GetBody(), false);
+				Owner.GetData().MeleeInterract(target.GetData().GetBody(), false);
 		}
 	}
 }

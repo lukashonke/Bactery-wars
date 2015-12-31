@@ -62,7 +62,7 @@ namespace Assets.scripts.AI
 			if (topSkill != null)
 				StartAction(CastSkill(target, topSkill, dist, false, true, 0, 0), 10f);
 			else
-				Owner.GetData().MeleeAttack(target.GetData().GetBody(), true);
+				Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
 		}
 	}
 }

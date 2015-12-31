@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -10,9 +12,11 @@ namespace Assets.scripts.Mono.MapGenerator
 {
 	public enum MapType
 	{
+		Test,
+		OpenCave,
 		DungeonAllOpen,
 		DungeonCentralClosed,
-		Test
+		Hardcoded
 	}
 
 	public class MapRegion
@@ -106,6 +110,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		public MeshFilter mesh;
 		public MeshGenerator meshGen;
 
+		private List<Monster> monsters = new List<Monster>();
+		private List<Npc> npcs = new List<Npc>();
+
 		private int MAX_REGIONS = 3;
 		private int regionSize;
 
@@ -177,8 +184,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 					case MapType.Test:
 
-						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
 						GenerateEmptyRegion(0, 2);
 
 						GenerateEmptyRegion(1, 0);
@@ -189,27 +196,48 @@ namespace Assets.scripts.Mono.MapGenerator
 						GenerateEmptyRegion(2, 2);
 
 					break;
+					case MapType.Hardcoded:
+
+						GenerateHardcodedMap(0, 0, "Town", true);
+
+					break;
+
+					case MapType.OpenCave:
+
+						GenerateDungeonRegion(world.seed, 0, 0, 43, true, true);
+						GenerateEmptyRegion(0, 1);
+						GenerateEmptyRegion(0, 2);
+
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);
+
+					break;
+
 					case MapType.DungeonAllOpen:
 
-						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 1, 1, world.randomFillPercent, true, false, true);
-						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 0, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 1, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 1, 1, world.randomFillPercent, true, false, true);
+						GenerateDungeonRegion(world.seed, 1, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 2, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 2, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 2, 2, world.randomFillPercent, true, false);
 
 					break;
 					case MapType.DungeonCentralClosed:
 
-						GenerateDungeonRoom(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRoom(world.seed, 0, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 0, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRoom(world.seed, 1, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
+						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 0, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 1, 0, world.randomFillPercent, true, false);
 						GenerateEmptyRegion(1, 1);
-						GenerateDungeonRoom(world.seed, 1, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(world.seed, 1, 2, world.randomFillPercent, true, false);
 						GenerateEmptyRegion(2, 0);
 						GenerateEmptyRegion(2, 1);
 						GenerateEmptyRegion(2, 2);
@@ -236,6 +264,26 @@ namespace Assets.scripts.Mono.MapGenerator
 			SceneMap = processor.Tiles;
 		}
 
+		public void GenerateHardcodedMap(int regX, int regY, string name, bool isStartRegion)
+		{
+			if (world.useRandomSeed)
+			{
+				world.seed = world.GetRandomSeed();
+			}
+
+			HardcodedRegionGenerator regionGenerator = new HardcodedRegionGenerator(world.width, world.height, world.seed, world.doDebug, name);
+
+			Tile[,] tileMap = regionGenerator.GenerateMap();
+
+			AddToSceneMap(tileMap, regX, regY);
+
+			MapRegion region = new MapRegion(regX, regY, tileMap, regionGenerator);
+			region.AssignTilesToThisRegion();
+			region.SetAccessibleFromStart(true);
+			region.isStartRegion = isStartRegion;
+			regions.Add(new WorldHolder.Cords(regX, regY), region);
+		}
+
 		protected void GenerateEmptyRegion(int regX, int regY)
 		{
 			Tile[,] tileMap = new Tile[world.width+2,world.height+2];
@@ -255,26 +303,25 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-
-		protected void GenerateDungeonRoom(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion)
+		protected void GenerateDungeonRegion(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion)
 		{
-			GenerateDungeonRoom(seed, x, y, randomFillPercent, isAccessibleFromStart, isStartRegion, false);
+			GenerateDungeonRegion(seed, x, y, randomFillPercent, isAccessibleFromStart, isStartRegion, false);
 		}
 
-		protected void GenerateDungeonRoom(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion, bool isLockedRegion)
+		protected void GenerateDungeonRegion(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion, bool isLockedRegion)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
 			if (world.useRandomSeed)
 			{
-				seed = Random.Range(-1000, 1000).ToString();
+				seed = world.GetRandomSeed();
+				Debug.Log(x + " " + y + " is using " + seed);
 			}
 
 			//float xSize = (world.width) * world.SQUARE_SIZE;
 			//float ySize = (world.height) * world.SQUARE_SIZE;
 			//Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
 
-			//TODO make different generators, all applicable on to this method!
 			RegionGenerator regionGenerator = new DungeonRegionGenerator(world.width, world.height, seed, randomFillPercent, world.doDebug);
 
 			Tile[,] tileMap = regionGenerator.GenerateMap();
@@ -310,17 +357,52 @@ namespace Assets.scripts.Mono.MapGenerator
 				p.Delete();
 			}
 
+			foreach (Monster m in monsters)
+			{
+				m.Data.DeleteMe();
+			}
+
+			foreach (Npc m in npcs)
+			{
+				m.Data.DeleteMe();
+			}
+
+			monsters.Clear();
+			npcs.Clear();
+
 			regions.Clear();
 			SetActive(false);
 		}
 
-		public void LoadMap()
+		public void LoadMap(bool reloading)
 		{
 			GenerateMapMesh();
 
 			foreach (MapPassage p in passages)
 			{
 				InitPassage(p);
+			}
+
+			if (reloading)
+			{
+				try
+				{
+					for (int i = 0; i < monsters.Count; i++)
+					{
+						Monster old = monsters[i];
+						monsters[i] = SpawnMonster(old.Template.MonsterId, old.GetData().GetBody().transform.position); //TODO create a dictionary here with containing position because GetData is null!
+					}
+
+					for (int i = 0; i < npcs.Count; i++)
+					{
+						Npc old = npcs[i];
+						npcs[i] = SpawnNpc(old.Template.MonsterId, old.GetData().GetBody().transform.position);
+					}
+				}
+				catch (Exception)
+				{
+					Debug.Log("error");
+				}
 			}
 
 			GameSystem.Instance.UpdatePathfinding();
@@ -336,6 +418,18 @@ namespace Assets.scripts.Mono.MapGenerator
 			foreach (MapPassage p in passages)
 			{
 				p.Delete();
+			}
+
+			foreach (Monster m in monsters)
+			{
+				if(m != null && m.Data != null)
+					m.Data.DeleteMe();
+			}
+
+			foreach (Npc m in npcs)
+			{
+				if (m != null && m.Data != null)
+					m.Data.DeleteMe();
 			}
 
 			SetActive(false);
@@ -580,6 +674,24 @@ namespace Assets.scripts.Mono.MapGenerator
 					return true;
 			}
 			return false;
+		}
+
+		public Npc SpawnNpc(MonsterId monsterId, Vector3 position)
+		{
+			Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
+
+			npcs.Add(npc);
+
+			return npc;
+		}
+
+		public Monster SpawnMonster(MonsterId monsterId, Vector3 position)
+		{
+			Monster m = GameSystem.Instance.SpawnMonster(monsterId, position, false);
+
+			monsters.Add(m);
+
+			return m;
 		}
 	}
 }
