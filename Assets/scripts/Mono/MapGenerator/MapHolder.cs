@@ -110,8 +110,10 @@ namespace Assets.scripts.Mono.MapGenerator
 		public MeshFilter mesh;
 		public MeshGenerator meshGen;
 
-		private List<Monster> monsters = new List<Monster>();
-		private List<Npc> npcs = new List<Npc>();
+		private List<Monster> activeMonsters;
+		private List<Npc> activeNpcs;
+		private List<MonsterSpawnInfo> spawnedMonsters;
+		private List<MonsterSpawnInfo> spawnedNpcs; 
 
 		private int MAX_REGIONS = 3;
 		private int regionSize;
@@ -175,6 +177,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
 			passages = new List<MapPassage>();
+
+			activeMonsters = new List<Monster>();
+			activeNpcs = new List<Npc>();
+			spawnedMonsters = new List<MonsterSpawnInfo>();
+			spawnedNpcs = new List<MonsterSpawnInfo>();
 
 			regionSize = world.width + 2;
 			
@@ -256,7 +263,6 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void ProcessSceneMap()
 		{
-			Debug.Log("processing scene map");
 			MapProcessor processor = new MapProcessor(this, SceneMap, mapType);
 
 			processor.CreatePassages();
@@ -357,21 +363,36 @@ namespace Assets.scripts.Mono.MapGenerator
 				p.Delete();
 			}
 
-			foreach (Monster m in monsters)
+			foreach (Monster m in activeMonsters)
 			{
 				m.Data.DeleteMe();
 			}
 
-			foreach (Npc m in npcs)
+			foreach (Npc m in activeNpcs)
 			{
 				m.Data.DeleteMe();
 			}
 
-			monsters.Clear();
-			npcs.Clear();
+			activeMonsters.Clear();
+			activeNpcs.Clear();
+
+			spawnedMonsters.Clear();
+			spawnedNpcs.Clear();
 
 			regions.Clear();
 			SetActive(false);
+		}
+
+		public class MonsterSpawnInfo
+		{
+			public MonsterId monster;
+			public Vector3 position;
+
+			public MonsterSpawnInfo(MonsterId m, Vector3 pos)
+			{
+				monster = m;
+				position = pos;
+			}
 		}
 
 		public void LoadMap(bool reloading)
@@ -383,27 +404,28 @@ namespace Assets.scripts.Mono.MapGenerator
 				InitPassage(p);
 			}
 
-			if (reloading)
-			{
-				try
-				{
-					for (int i = 0; i < monsters.Count; i++)
-					{
-						Monster old = monsters[i];
-						monsters[i] = SpawnMonster(old.Template.MonsterId, old.GetData().GetBody().transform.position); //TODO create a dictionary here with containing position because GetData is null!
-					}
+			activeMonsters.Clear();
+			activeNpcs.Clear();
 
-					for (int i = 0; i < npcs.Count; i++)
-					{
-						Npc old = npcs[i];
-						npcs[i] = SpawnNpc(old.Template.MonsterId, old.GetData().GetBody().transform.position);
-					}
-				}
-				catch (Exception)
+			try
+			{
+				foreach (MonsterSpawnInfo info in spawnedMonsters)
 				{
-					Debug.Log("error");
+					SpawnMonsterToWorld(info.monster, info.position);
+				}
+
+				foreach (MonsterSpawnInfo info in spawnedNpcs)
+				{
+					SpawnNpcToWorld(info.monster, info.position);
 				}
 			}
+			catch (Exception)
+			{
+				Debug.LogError("error");
+			}
+
+			spawnedMonsters.Clear();
+			spawnedNpcs.Clear();
 
 			GameSystem.Instance.UpdatePathfinding();
 			SetActive(true);
@@ -420,17 +442,29 @@ namespace Assets.scripts.Mono.MapGenerator
 				p.Delete();
 			}
 
-			foreach (Monster m in monsters)
-			{
-				if(m != null && m.Data != null)
-					m.Data.DeleteMe();
-			}
+			spawnedMonsters.Clear();
+			spawnedNpcs.Clear();
 
-			foreach (Npc m in npcs)
+			foreach (Monster m in activeMonsters)
 			{
 				if (m != null && m.Data != null)
+				{
+					spawnedMonsters.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
+				}
 			}
+
+			foreach (Npc m in activeNpcs)
+			{
+				if (m != null && m.Data != null)
+				{
+					spawnedNpcs.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
+					m.Data.DeleteMe();
+				}
+			}
+
+			activeMonsters.Clear();
+			activeNpcs.Clear();
 
 			SetActive(false);
 		}
@@ -676,22 +710,54 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
-		public Npc SpawnNpc(MonsterId monsterId, Vector3 position)
+		private Npc SpawnNpcToWorld(MonsterId monsterId, Vector3 position)
 		{
 			Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
 
-			npcs.Add(npc);
+			activeNpcs.Add(npc);
 
 			return npc;
 		}
 
+		private Monster SpawnMonsterToWorld(MonsterId monsterId, Vector3 position)
+		{
+			Monster npc = GameSystem.Instance.SpawnMonster(monsterId, position, false);
+
+			activeMonsters.Add(npc);
+
+			return npc;
+		}
+
+		public Npc SpawnNpc(MonsterId monsterId, Vector3 position)
+		{
+			return SpawnNpc(monsterId, position, false);
+		}
+
+		public Npc SpawnNpc(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
+		{
+			if (isActive || forceSpawnNow)
+			{
+				return SpawnNpcToWorld(monsterId, position);
+			}
+
+			spawnedNpcs.Add(new MonsterSpawnInfo(monsterId, position));
+			return null;
+		}
+
 		public Monster SpawnMonster(MonsterId monsterId, Vector3 position)
 		{
-			Monster m = GameSystem.Instance.SpawnMonster(monsterId, position, false);
+			return SpawnMonster(monsterId, position, false);
+		}
 
-			monsters.Add(m);
+		public Monster SpawnMonster(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
+		{
+			if (isActive || forceSpawnNow)
+			{
+				return SpawnMonsterToWorld(monsterId, position);
+			}
 
-			return m;
+			spawnedMonsters.Add(new MonsterSpawnInfo(monsterId, position));
+			return null;
 		}
 	}
 }
