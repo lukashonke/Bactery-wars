@@ -31,6 +31,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public bool isLockedRegion;
 		public bool isStartRegion; // marks that the player starts in this region upon spawning into the map
 		public bool onlyOnePassage = false;
+		public bool hasOutTeleporter = false;
 
 		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
@@ -191,16 +192,15 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 					case MapType.Test:
 
-						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
-						GenerateEmptyRegion(0, 2);
-
+						GenerateDungeonRegion(0, 0, world.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, world.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, world.randomFillPercent, false);
 						GenerateEmptyRegion(1, 0);
 						GenerateEmptyRegion(1, 1);
-						GenerateEmptyRegion(1, 2);
+						GenerateDungeonRegion(1, 2, world.randomFillPercent, false);
 						GenerateEmptyRegion(2, 0);
 						GenerateEmptyRegion(2, 1);
-						GenerateEmptyRegion(2, 2);
+						GenerateDungeonRegion(2, 2, world.randomFillPercent, false, false, true);
 
 					break;
 					case MapType.Hardcoded:
@@ -211,7 +211,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					case MapType.OpenCave:
 
-						GenerateDungeonRegion(world.seed, 0, 0, 43, true, true);
+						GenerateDungeonRegion(0, 0, 43, true);
 						GenerateEmptyRegion(0, 1);
 						GenerateEmptyRegion(0, 2);
 
@@ -226,25 +226,25 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					case MapType.DungeonAllOpen:
 
-						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 0, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 1, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 1, 1, world.randomFillPercent, true, false, true);
-						GenerateDungeonRegion(world.seed, 1, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 2, 0, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 2, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 2, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(0, 0, world.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, world.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, world.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, world.randomFillPercent, false);
+						GenerateDungeonRegion(1, 1, world.randomFillPercent, false, true, false);
+						GenerateDungeonRegion(1, 2, world.randomFillPercent, false);
+						GenerateDungeonRegion(2, 0, world.randomFillPercent, false);
+						GenerateDungeonRegion(2, 1, world.randomFillPercent, false);
+						GenerateDungeonRegion(2, 2, world.randomFillPercent, false, false, true);
 
 					break;
 					case MapType.DungeonCentralClosed:
 
-						GenerateDungeonRegion(world.seed, 0, 0, world.randomFillPercent, true, true);
-						GenerateDungeonRegion(world.seed, 0, 1, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 0, 2, world.randomFillPercent, true, false);
-						GenerateDungeonRegion(world.seed, 1, 0, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(0, 0, world.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, world.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, world.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, world.randomFillPercent, false);
 						GenerateEmptyRegion(1, 1);
-						GenerateDungeonRegion(world.seed, 1, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(1, 2, world.randomFillPercent, false, false, true);
 						GenerateEmptyRegion(2, 0);
 						GenerateEmptyRegion(2, 1);
 						GenerateEmptyRegion(2, 2);
@@ -265,7 +265,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			MapProcessor processor = new MapProcessor(this, SceneMap, mapType);
 
-			processor.CreatePassages();
+			processor.Process();
 
 			SceneMap = processor.Tiles;
 		}
@@ -309,14 +309,16 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-		protected void GenerateDungeonRegion(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion)
+		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion)
 		{
-			GenerateDungeonRegion(seed, x, y, randomFillPercent, isAccessibleFromStart, isStartRegion, false);
+			return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false);
 		}
 
-		protected void GenerateDungeonRegion(string seed, int x, int y, int randomFillPercent, bool isAccessibleFromStart, bool isStartRegion, bool isLockedRegion)
+		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
+
+			String seed = world.seed;
 
 			if (world.useRandomSeed)
 			{
@@ -346,10 +348,13 @@ namespace Assets.scripts.Mono.MapGenerator
 			}*/
 
 			region.AssignTilesToThisRegion();
-			region.SetAccessibleFromStart(isAccessibleFromStart);
+			region.SetAccessibleFromStart(true);
 			region.isStartRegion = isStartRegion;
 			region.isLockedRegion = isLockedRegion;
+			region.hasOutTeleporter = hasOutTeleporter;
 			regions.Add(new WorldHolder.Cords(x, y), region);
+
+			return region;
 		}
 
 		public void DeleteMap()
@@ -758,6 +763,34 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			spawnedMonsters.Add(new MonsterSpawnInfo(monsterId, position));
 			return null;
+		}
+
+		public Vector3 GetStartPosition()
+		{
+			foreach (MapRegion region in regions.Values)
+			{
+				if (region.isStartRegion)
+				{
+					Tile mostLeft = null;
+					int mostLeftX = Int32.MaxValue;
+
+					foreach (Tile t in SceneMap)
+					{
+						if (!t.region.Equals(region) || t.tileType != WorldHolder.GROUND)
+							continue;
+
+						if (t.tileX < mostLeftX)
+						{
+							mostLeft = t;
+							mostLeftX = t.tileX;
+						}
+					}
+
+					return GetTileWorldPosition(mostLeft);
+				}
+			}
+
+			return new Vector3();
 		}
 	}
 }

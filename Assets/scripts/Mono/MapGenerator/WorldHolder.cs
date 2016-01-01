@@ -53,7 +53,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.DungeonAllOpen);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.Test);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -234,6 +234,16 @@ namespace Assets.scripts.Mono.MapGenerator
 				return Random.Range(-1000, 1000) + "";
 
 			return allowedSeeds[Random.Range(0, allowedSeeds.Length)];
+		}
+
+		public Vector3 GetStartPosition()
+		{
+			if (activeMap != null)
+			{
+				return activeMap.GetStartPosition();
+			}
+
+			return new Vector3();
 		}
 	}
 }

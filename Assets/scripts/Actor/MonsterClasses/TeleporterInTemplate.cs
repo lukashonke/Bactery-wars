@@ -5,6 +5,7 @@ using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 
@@ -36,7 +37,15 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public override void OnTalkTo(Character source)
 		{
-			WorldHolder.instance.LoadPreviousMap();
+			if (source is Player)
+			{
+				PlayerData data = ((Player) source).GetData();
+
+				WorldHolder.instance.LoadPreviousMap();
+
+				// teleport player to new start
+				data.transform.position = WorldHolder.instance.GetStartPosition();
+			}
 		}
 	}
 }

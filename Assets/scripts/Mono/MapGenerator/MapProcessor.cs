@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Assets.scripts.Mono.MapGenerator
 {
 	/// <summary>
-	/// Dostava jako parametr velkou mapu jako 2D Tile matici a zpracuje ji z globalniho hlediska (propoji regiony, vytvori dvere atd.)
+	/// Dostava jako parametr velkou mapu jako 2D Tile matici a zpracuje ji z globalniho hlediska (propoji regiony, vytvori dvere, spawne portaly atd.)
 	/// </summary>
 	public class MapProcessor
 	{
@@ -34,7 +34,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			height = tiles.GetLength(1);
 		}
 
-		public void CreatePassages()
+		public void Process()
 		{
 			UncheckAllTiles();
 
@@ -53,8 +53,42 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void SpawnTeleporters()
 		{
-			mapHolder.SpawnNpc(MonsterId.TeleporterIn, new Vector3(5, 5, 0));
-			mapHolder.SpawnNpc(MonsterId.TeleporterOut, new Vector3(8, 8, 0));
+			foreach (MapRoom room in rooms)
+			{
+				if (room.region.isStartRegion)
+				{
+					Tile mostLeft = null;
+					int mostLeftX = Int32.MaxValue;
+
+					foreach (Tile t in room.edgeTiles)
+					{
+						if (t.tileX < mostLeftX)
+						{
+							mostLeft = t;
+							mostLeftX = t.tileX;
+						}
+					}
+
+					mapHolder.SpawnNpc(MonsterId.TeleporterIn, mapHolder.GetTileWorldPosition(mostLeft) + Vector3.right*2);
+				}
+
+				if (room.region.hasOutTeleporter)
+				{
+					Tile mostRight = null;
+					int mostRightX = Int32.MinValue;
+
+					foreach (Tile t in room.edgeTiles)
+					{
+						if (t.tileX > mostRightX)
+						{
+							mostRight = t;
+							mostRightX = t.tileX;
+						}
+					}
+
+					mapHolder.SpawnNpc(MonsterId.TeleporterOut, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left*2);
+				}
+			}
 		}
 
 		private void WiddenThinPassages(Tile fixedTile, int threshold, int radius)

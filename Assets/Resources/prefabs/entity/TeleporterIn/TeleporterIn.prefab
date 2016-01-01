@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 492854}
   - 212: {fileID: 21226262}
   - 114: {fileID: 11405494}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26,7 +26,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 406822}
   - 108: {fileID: 10867660}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   - 114: {fileID: 11420584}
   - 50: {fileID: 5082764}
   - 114: {fileID: 11429700}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Teleporter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 430234}
   - 212: {fileID: 21238956}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: dmg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,7 +80,7 @@ GameObject:
   - 4: {fileID: 420740}
   - 198: {fileID: 19832366}
   - 199: {fileID: 19934970}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Body Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1973,6 +1973,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: monsterId
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
