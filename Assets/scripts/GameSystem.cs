@@ -156,7 +156,7 @@ namespace Assets.scripts
 
 		public Npc RegisterNewNpc(EnemyData data, MonsterId id)
 		{
-			Npc npc = null;
+			Npc npc;
 			npc = new Npc(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
 			data.SetOwner(npc);
 			npc.Init();

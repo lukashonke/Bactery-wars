@@ -11458,12 +11458,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
-  scrollSpeed: 0.3
+  scrollSpeed: 0.35
   edgeScrollSpeed: 0
   scrollArea: 25
   followSpeed: 3
   minZoom: 10
-  maxZoom: 20
+  maxZoom: 40
   objectToFollow: {fileID: 436762080}
   follow: 0
   mobile: 0

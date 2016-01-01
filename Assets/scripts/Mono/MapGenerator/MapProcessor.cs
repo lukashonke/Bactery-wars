@@ -448,7 +448,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void ThrowError()
 		{
-			Debug.LogError("error while processing map of seed " + mapHolder.world.seed);
+			Debug.LogError("error while processing map of seed " + mapHolder.World.seed);
 		}
 
 		// obvykle vraci jen jednu mistnost, ale v budoucnu by v regionu mohla byt vice nez jedna mistnost

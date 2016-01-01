@@ -50,7 +50,9 @@ namespace Assets.scripts.Mono
 
 		        cameraPos = new Vector3(-mouseX, -mouseY, 0);
 
-		        transform.position += cameraPos*scrollSpeed;
+		        float zoomBoost = Mathf.Max(1f, Camera.main.orthographicSize/10);
+
+				transform.position += cameraPos * scrollSpeed * zoomBoost;
 	        }
 	        else
 	        {
