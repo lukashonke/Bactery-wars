@@ -48,7 +48,7 @@ GameObject:
   - 50: {fileID: 5082764}
   - 114: {fileID: 11429700}
   m_Layer: 13
-  m_Name: Teleporter
+  m_Name: TeleporterIn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

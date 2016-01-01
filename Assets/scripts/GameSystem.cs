@@ -5,6 +5,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using UnityEngine;
@@ -118,6 +119,8 @@ namespace Assets.scripts
 			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.ClassId);
 
 			player.InitTemplate();
+
+			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
 
 			//TODO init, save, etc
 

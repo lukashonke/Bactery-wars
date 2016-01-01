@@ -16,7 +16,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	{
 		public static WorldHolder instance;
 
-		public static string[] allowedSeeds = { "500", "555", "-516", "777", "-876", "643" };
+		public static string[] allowedSeeds = { "500", "555", "-516", "777", "-876", "643", "725" };
 
 		// data
 		public Dictionary<Cords, MapHolder> maps;
