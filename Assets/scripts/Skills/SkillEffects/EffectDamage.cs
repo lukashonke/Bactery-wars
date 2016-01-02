@@ -35,9 +35,9 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (source.CanAttack(targetCh))
 			{
 				if (RandomOffset > 0)
-					targetCh.ReceiveDamage(Dmg + Random.Range(-RandomOffset, RandomOffset));
+					targetCh.ReceiveDamage(source, Dmg + Random.Range(-RandomOffset, RandomOffset));
 				else
-					targetCh.ReceiveDamage(Dmg);
+					targetCh.ReceiveDamage(source, Dmg);
 			}
 		}
 	}

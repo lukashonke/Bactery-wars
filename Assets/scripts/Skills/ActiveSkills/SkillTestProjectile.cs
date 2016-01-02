@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -12,9 +13,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SkillTestProjectile(string name, int id) : base(name, id)
 		{
 			castTime = 0f;
-			reuse = 0;
+			reuse = 1;
 			coolDown = 0;
 			requireConfirm = true;
+			baseDamage = 10;
+
+			range = 4;
 		}
 
 		public override Skill Instantiate()
@@ -24,7 +28,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(10, 2)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()

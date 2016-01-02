@@ -36,6 +36,23 @@ namespace Assets.scripts.Actor
 		{
         }
 
+		protected Character(string name, AbstractAI ai) : base(name)
+		{
+			AI = ai;
+		}
+
+		public void DeleteMe()
+		{
+			if(AI != null)
+			AI.StopAITask();
+
+			if(Knownlist != null)
+			Knownlist.Active = false;
+		}
+
+		/// <summary>
+		/// zavolano hned po vytvoreni Characteru (hned po zavolani konstruktorů)
+		/// </summary>
 		public void Init()
 		{
 			Knownlist = new Knownlist(this);
@@ -44,7 +61,9 @@ namespace Assets.scripts.Actor
 
 			Knownlist.StartUpdating();
 
-			AI = InitAI();
+			if (AI == null)
+				AI = InitAI();
+
 			AI.StartAITask();
 		}
 
@@ -68,6 +87,9 @@ namespace Assets.scripts.Actor
 		/// <param name="skill"></param>
 		public void CastSkill(Skill skill)
 		{
+			if (Status.IsDead)
+				return;
+
 			// skill is passive - cant cast it
 			if (skill is PassiveSkill)
 				return;
@@ -115,12 +137,11 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
-		public void ReceiveDamage(int damage)
+		public void ReceiveDamage(Character source, int damage)
 		{
-			if (this is Player)
-			{
-				Debug.Log("receiving " + damage);
-			}
+			if (Status.IsDead)
+				return;
+
 			Status.ReceiveDamage(damage);
 
 			if (Status.IsDead)
@@ -129,6 +150,8 @@ namespace Assets.scripts.Actor
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
+
+			AI.AddAggro(source, damage);
 		}
 
 		public ActiveSkill GetMeleeAttackSkill()
@@ -162,19 +185,31 @@ namespace Assets.scripts.Actor
 
 		public bool CanAttack(Character targetCh)
 		{
+			if (targetCh.IsInteractable())
+				return false;
+
 			return Team != targetCh.Team;
 		}
 
 		public bool CanAutoAttack(Character ch)
 		{
-			if (this is Monster)
-			{
-				//TODO add isAggressive params
+			return CanAttack(ch);
+		}
 
-				return CanAttack(ch);
+		public void ChangeAI(AbstractAI ai)
+		{
+			if (AI != null)
+			{
+				AI.StopAITask();
 			}
 
-			return false;
+			AI = ai;
+			AI.StartAITask();
+		}
+
+		public virtual bool IsInteractable()
+		{
+			return true;
 		}
 	}
 }

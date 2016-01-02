@@ -10,6 +10,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0;
 			reuse = 0.5f;
 			coolDown = 0.5f;
+			baseDamage = 10;
+
 			requireConfirm = true;
 		}
 
@@ -57,7 +59,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				if (activeProjectile != null)
 				{
 					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-					rb.velocity = Utils.RotateDirectionVector(mouseDirection.normalized, angle) * 15;
+					rb.velocity = Utils.RotateDirectionVector(GetOwnerData().GetForwardVector(), angle) * 15;
 					angle += 15;
 
 					Debug.DrawLine(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);

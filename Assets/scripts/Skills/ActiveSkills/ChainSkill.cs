@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0f;
 			coolDown = 3f;
 			reuse = 5f;
+			baseDamage = 2;
+			baseDamageFrequency = 0.25f;
+
 			updateFrequency = 0.01f;
 			requireConfirm = true;
 		}
@@ -29,7 +33,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectDamage(2, 0) }; // deal 2 dmg / 250ms
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()
@@ -59,7 +68,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				UpdateMouseDirection(ray.transform);
 				ray.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
 
-				if (lastDmg + 250 < System.Environment.TickCount)
+				if (lastDmg + baseDamageFrequency*1000 < System.Environment.TickCount)
 				{
 					RaycastHit2D[] hits = Physics2D.RaycastAll(ray.transform.position, mouseDirection, 20);
 

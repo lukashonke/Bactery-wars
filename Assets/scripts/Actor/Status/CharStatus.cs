@@ -97,5 +97,20 @@ namespace Assets.scripts.Actor.Status
 		{
 			return ActiveSkills.Count > 0;
 		}
+
+		public bool IsStunned()
+		{
+			return false;
+		}
+
+		public bool IsImmobilized()
+		{
+			if (IsStunned())
+				return true;
+
+			// rooted checks
+
+			return false;
+		}
 	}
 }

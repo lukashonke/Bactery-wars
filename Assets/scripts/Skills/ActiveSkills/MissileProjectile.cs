@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -18,6 +19,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 1f;
 			reuse = 0;
 			coolDown = 0;
+			baseDamage = 15;
+
 			requireConfirm = true;
 		}
 
@@ -28,7 +31,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectDamage(15, 5) };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 2) };
+		}
+
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Damage);
+			AddTrait(SkillTraits.Missile);
 		}
 
 		public override void OnBeingConfirmed()
@@ -38,7 +47,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			GameObject target = GetPlayerMouseHoverTarget();
+			GameObject target = GetTarget();
 			if (target == null)
 			{
 				AbortCast();
@@ -46,7 +55,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 
 			targettedPlayer = target;
-			Debug.Log("setting trget to " + targettedPlayer.name);
 
 			RotatePlayerTowardsMouse();
 			CreateCastingEffect(true);

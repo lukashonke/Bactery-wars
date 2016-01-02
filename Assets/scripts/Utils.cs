@@ -56,5 +56,63 @@ namespace Assets.scripts
 
 			return ch;
 		}
+
+		public static float DistancePwr(Vector3 v1, Vector3 v2)
+		{
+			return (v1 - v2).sqrMagnitude;
+		}
+
+		public class Timer
+		{
+			private static List<Timer> timers = new List<Timer>(); 
+
+			private string name;
+			private int start;
+			private int end;
+
+			public Timer(string name)
+			{
+				this.name = name;
+			}
+
+			private void Start()
+			{
+				start = Environment.TickCount;
+			}
+
+			private void End()
+			{
+				end = Environment.TickCount;
+				Debug.Log("Timer: " + name + " took " + (end-start) + "ms to complete.");
+			}
+
+			public static void StartTimer(string name)
+			{
+				Timer t = new Timer(name);
+				timers.Add(t);
+
+				t.Start();
+			}
+
+			public static void EndTimer(string name)
+			{
+				Timer t = null;
+
+				foreach (Timer tt in timers)
+				{
+					if (tt.name.Equals(name))
+					{
+						t = tt;
+						break;
+					}
+				}
+
+				if (t == null)
+					return;
+
+				t.End();
+				timers.Remove(t);
+			}
+		}
 	}
 }

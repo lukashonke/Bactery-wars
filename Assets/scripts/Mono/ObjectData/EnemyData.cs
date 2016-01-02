@@ -8,19 +8,29 @@ namespace Assets.scripts.Mono.ObjectData
 	{
 		private Monster owner;
 
+		public int monsterId;
+
+		public int distanceToFollowLeader = 8;
+		public bool isAggressive = false;
+		public int aggressionRange = 5;
+
 		// Use this for initialization
 		public new void Start()
 		{
 			base.Start();
 
-			owner = GameSystem.Instance.RegisterNewMonster(this, "Monster");
-
-			Debug.Log("Registering new data for monster ");
+			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
+			//Debug.Log("Registering new data for monster ");
 		}
 
 		public override Character GetOwner()
 		{
 			return owner;
+		}
+
+		public override void SetOwner(Character ch)
+		{
+			owner = (Monster) ch;
 		}
 
 		public override void SetIsDead(bool isDead)
@@ -56,7 +66,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerEnter2D(Collider2D obj)
 		{
-			// kolize s objectem ktery implementuje IDamagable poskodi tohoto hrace
+			/*// kolize s objectem ktery implementuje IDamagable poskodi tohoto hrace
 			GameObject incoming = obj.gameObject;
 			IDamagable id;
 		
@@ -64,7 +74,7 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				id = dmg;
 				owner.ReceiveDamage(id.GetDamage());
-			}
+			}*/
 		}
 
 		public override void OnTriggerExit2D(Collider2D obj)
@@ -77,6 +87,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnCollisionEnter2D(Collision2D coll)
 		{
+			base.OnCollisionEnter2D(coll);
 		}
 
 		public override void OnCollisionExit2D(Collision2D coll)

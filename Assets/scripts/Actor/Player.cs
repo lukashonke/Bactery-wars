@@ -25,6 +25,13 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		public Player(string name, PlayerData dataObject, ClassTemplate template, AbstractAI ai) : base(name, ai)
+		{
+			Data = dataObject;
+
+			Template = template;
+		}
+
 		public new PlayerData GetData()
 		{
 			return (PlayerData) Data;
@@ -50,7 +57,7 @@ namespace Assets.scripts.Actor
 				Skills.AddSkill(newSkill);
 
 				i++;
-				Debug.Log("adding skill to " + i + ": " + newSkill.Name);
+				//Debug.Log("adding skill to " + i + ": " + newSkill.Name);
 			}
 
 			if (Template.MeleeSkill != null)

@@ -18,15 +18,23 @@ namespace Assets.scripts.AI
 			// do nothing
 		}
 
-		public override void OnSwitchIdle()
+		protected override void OnSwitchIdle()
 		{
 		}
 
-		public override void OnSwitchActive()
+		protected override void OnSwitchActive()
 		{
 		}
 
-		public override void OnSwitchAttacking()
+		protected override void OnSwitchAttacking()
+		{
+		}
+
+		public override void AddAggro(Character ch, int points)
+		{
+		}
+
+		public override void RemoveAggro(Character ch, int points)
 		{
 		}
 	}

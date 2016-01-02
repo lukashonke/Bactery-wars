@@ -10,6 +10,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 2f;
 			reuse = 0.5f;
 			coolDown = 0.5f;
+			baseDamage = 10;
+
 			requireConfirm = false;
 		}
 
@@ -33,7 +35,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
 					rb.velocity = GetOwnerData().GetForwardVector(i) * 15;
 
-					Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
+					//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 
 					Object.Destroy(activeProjectile, 5f);
 				}

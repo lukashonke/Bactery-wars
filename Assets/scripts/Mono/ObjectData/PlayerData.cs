@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Assets.scripts.Actor;
+using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using UnityEngine;
@@ -18,25 +19,6 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
-		private GameObject hoverTarget;
-		public GameObject HoverTarget
-		{
-			get { return hoverTarget; }
-			set
-			{
-				if (hoverTarget != null)
-				{
-					if (hoverTarget.Equals(value))
-						return;
-
-					HighlightTarget(hoverTarget, false);
-				}
-
-				hoverTarget = value;
-				HighlightTarget(hoverTarget, true);
-			}
-		}
-
 		public bool TargettingActive { get; set; }
 
 		public new void Start()
@@ -46,6 +28,22 @@ namespace Assets.scripts.Mono.ObjectData
 			TargettingActive = true;
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
+
+			if (aiType != null && !aiType.Equals("default"))
+			{
+				switch (aiType)
+				{
+					case "monster":
+						player.ChangeAI(new DefaultMonsterAI(player));
+						break;
+					case "meleeMonster":
+						player.ChangeAI(new MeleeMonsterAI(player));
+						break;
+					case "rangedMonster":
+						player.ChangeAI(new RangedMonsterAI(player));
+						break;
+				}
+			}
 
             Debug.Log("Registering new data for player " + player.Name);
 		}
@@ -62,9 +60,14 @@ namespace Assets.scripts.Mono.ObjectData
 			base.Update();
 		}
 
+		public override void SetOwner(Character ch)
+		{
+			player = (Player) ch;
+		}
+
 		public override void OnCollisionEnter2D(Collision2D coll)
 		{
-
+			base.OnCollisionEnter2D(coll);
 		}
 
 		public override void OnCollisionExit2D(Collision2D coll)
@@ -106,6 +109,14 @@ namespace Assets.scripts.Mono.ObjectData
 				return;
 			}
 
+#if UNITY_ANDROID
+			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.Equals(skill))
+			{
+				ActiveConfirmationSkill.AbortCast();
+				return;
+			}
+#endif
+
 			//Debug.Log("Launching skill... " + skill.Name);
 
 			//MovementChanged();
@@ -117,6 +128,26 @@ namespace Assets.scripts.Mono.ObjectData
 		public void ConfirmSkillLaunch()
 		{
 			ActiveConfirmationSkill.Start();
+		}
+
+		public void ConfirmSkillLaunch(Vector3 mousePosition)
+		{
+			ActiveConfirmationSkill.Start(mousePosition);
+		}
+
+		public void SetPlayersMoveToTarget(GameObject newTarget)
+		{
+			AbortMeleeAttacking();
+
+			if (!allowMovePointChange)
+				return;
+
+			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
+			{
+				ActiveConfirmationSkill.AbortCast();
+			}
+
+			SetMovementTarget(newTarget);
 		}
 
 		public void SetPlayersMoveToTarget(Vector3 newTarget)
@@ -136,6 +167,9 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void HighlightTarget(GameObject target, bool enable)
 		{
+			if (!(GetOwner().AI is PlayerAI))
+				return;
+
 			if (target == null)
 				return;
 

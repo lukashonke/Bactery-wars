@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.AI;
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
@@ -15,6 +17,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 1.0f;
 			coolDown = 0f;
 			requireConfirm = true;
+			breaksMouseMovement = false;
 		}
 
 		public override Skill Instantiate()
@@ -27,6 +30,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return null;
 		}
 
+		public override void InitTraits()
+		{
+			AddTrait(SkillTraits.Jump);
+		}
+
 		public override bool OnCastStart()
 		{
 			return true;
@@ -34,7 +42,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			GetOwnerData().JumpForward(mouseDirection, 4, 100);
+			if (GetOwnerData().GetOwner().AI is PlayerAI)
+				GetOwnerData().JumpForward(mouseDirection, 8, 100);
+			else
+			{
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), 8, 100);
+			}
 		}
 
 		public override void UpdateLaunched()

@@ -10,11 +10,35 @@ public class Healthbar : MonoBehaviour
 	public int percent;
 	public int currentPercent;
 
-	// Update is called once per frame
-	void Update () 
+	public float distance = 1.5f;
+
+	private GameObject center;
+
+	void Start()
 	{
+		foreach (Transform child in transform.parent.transform)
+		{
+			if (child.gameObject.name.Equals("Healthbar Center"))
+			{
+				center = child.gameObject;
+				break;
+			}
+		}
+	}
+
+	// Update is called once per frame
+	void Update ()
+	{
+		if (center != null)
+		{
+			Vector3 pos = center.transform.position + new Vector3(0, distance, 0);
+			transform.position = pos;
+			transform.rotation = Quaternion.identity;
+		}
+
 		if (hp == 0 && maxHp == 0)
 			return;
+
 
 		percent = (int) (hp/(float) maxHp*100);
 		percent = 100 - percent;
