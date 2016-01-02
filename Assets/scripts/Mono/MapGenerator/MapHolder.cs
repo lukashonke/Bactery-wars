@@ -16,7 +16,10 @@ namespace Assets.scripts.Mono.MapGenerator
 		OpenCave,
 		DungeonAllOpen,
 		DungeonCentralClosed,
-		Hardcoded
+		Hardcoded,
+
+
+		StartClassic,
 	}
 
 	public class MapRegion
@@ -184,67 +187,80 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			switch (mapType)
 			{
+					case MapType.StartClassic:
+
+					GenerateDungeonRegion(0, 0, 35, true);
+					GenerateEmptyRegion(0, 1);
+					GenerateEmptyRegion(0, 2);
+					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true);
+					GenerateEmptyRegion(1, 1);
+					GenerateEmptyRegion(1, 2);
+					GenerateEmptyRegion(2, 0);
+					GenerateEmptyRegion(2, 1);
+					GenerateEmptyRegion(2, 2);
+
+					break;
 					case MapType.Test:
 
-						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-						GenerateEmptyRegion(1, 0);
-						GenerateEmptyRegion(1, 1);
-						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-						GenerateEmptyRegion(2, 0);
-						GenerateEmptyRegion(2, 1);
-						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+					GenerateEmptyRegion(1, 0);
+					GenerateEmptyRegion(1, 1);
+					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+					GenerateEmptyRegion(2, 0);
+					GenerateEmptyRegion(2, 1);
+					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
 
 					break;
 					case MapType.Hardcoded:
 
-						GenerateHardcodedMap(0, 0, "Town", true);
+					GenerateHardcodedMap(0, 0, "Town", true);
 
 					break;
 
 					case MapType.OpenCave:
 
-						GenerateDungeonRegion(0, 0, 43, true);
-						GenerateEmptyRegion(0, 1);
-						GenerateEmptyRegion(0, 2);
+					GenerateDungeonRegion(0, 0, 43, true);
+					GenerateEmptyRegion(0, 1);
+					GenerateEmptyRegion(0, 2);
 
-						GenerateEmptyRegion(1, 0);
-						GenerateEmptyRegion(1, 1);
-						GenerateEmptyRegion(1, 2);
-						GenerateEmptyRegion(2, 0);
-						GenerateEmptyRegion(2, 1);
-						GenerateEmptyRegion(2, 2);
+					GenerateEmptyRegion(1, 0);
+					GenerateEmptyRegion(1, 1);
+					GenerateEmptyRegion(1, 2);
+					GenerateEmptyRegion(2, 0);
+					GenerateEmptyRegion(2, 1);
+					GenerateEmptyRegion(2, 2);
 
 					break;
 
 					case MapType.DungeonAllOpen:
 
-						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
-						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-						GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
-						GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
-						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+					GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
+					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+					GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
+					GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
+					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
 
 					break;
 					case MapType.DungeonCentralClosed:
 
-						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-						GenerateEmptyRegion(1, 1);
-						GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
-						GenerateEmptyRegion(2, 0);
-						GenerateEmptyRegion(2, 1);
-						GenerateEmptyRegion(2, 2);
-						//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
-						//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
-						//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+					GenerateEmptyRegion(1, 1);
+					GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
+					GenerateEmptyRegion(2, 0);
+					GenerateEmptyRegion(2, 1);
+					GenerateEmptyRegion(2, 2);
+					//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+					//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+					//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
 
 					break;
 

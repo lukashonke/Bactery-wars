@@ -30,6 +30,7 @@ namespace Assets.scripts.Actor.PlayerClasses.Base
 		private void Init()
 		{
 			AddType(new DefaultPlayerClass());
+			AddType(new FluPlayerClass());
 		}
 
 		public void AddType(ClassTemplate t)

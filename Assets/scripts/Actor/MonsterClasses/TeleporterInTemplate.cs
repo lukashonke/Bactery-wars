@@ -43,6 +43,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 				WorldHolder.instance.LoadPreviousMap();
 
+				//TODO bug - it teleports anyway
 				// teleport player to new start
 				data.transform.position = WorldHolder.instance.GetStartPosition();
 			}

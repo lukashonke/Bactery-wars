@@ -40,15 +40,10 @@ namespace Assets.scripts.Mono
             // pravy tlacitko stisknuty
 			if (!mobile && Input.GetMouseButton(1))
 	        {
-		        Vector3 cameraPos;
+		        float mouseX = Input.GetAxis("Mouse X");
+		        float mouseY = Input.GetAxis("Mouse Y");
 
-		        float mouseX;
-		        float mouseY;
-
-		        mouseX = Input.GetAxis("Mouse X");
-		        mouseY = Input.GetAxis("Mouse Y");
-
-		        cameraPos = new Vector3(-mouseX, -mouseY, 0);
+		        Vector3 cameraPos = new Vector3(-mouseX, -mouseY, 0);
 
 		        float zoomBoost = Mathf.Max(1f, Camera.main.orthographicSize/10);
 

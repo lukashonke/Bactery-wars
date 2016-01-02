@@ -94,7 +94,9 @@ namespace Assets.scripts
 		// Methods
 		public Player RegisterNewPlayer(PlayerData data, String name)
 		{
-			Player player = new Player(name + (++lastPlayerId), data, ClassTemplateTable.Instance.GetType(ClassId.Default));
+			ClassId cId = (ClassId) Enum.Parse(typeof (ClassId), GameSession.className);
+
+			Player player = new Player(name + (++lastPlayerId), data, ClassTemplateTable.Instance.GetType(cId));
 
 			player.Init();
 
@@ -179,6 +181,13 @@ namespace Assets.scripts
 			EnemyData data = result.GetComponent<EnemyData>();
 
 			return RegisterNewNpc(data, id);
+		}
+
+		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion, int team)
+		{
+			Monster m = SpawnMonster(id, position, isMinion);
+			m.Team = team;
+			return m;
 		}
 
 		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion)
