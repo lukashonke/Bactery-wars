@@ -12,6 +12,9 @@ namespace Assets.scripts.Actor.PlayerClasses
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
+			Shield = 1.0f;
+			CriticalRate = 0;
+			CriticalDamageMul = 2f;
 		}
 
 		protected override void AddSkills()

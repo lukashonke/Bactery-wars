@@ -9,7 +9,9 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Actor
 {
@@ -27,6 +29,9 @@ namespace Assets.scripts.Actor
 		public ActiveSkill MeleeSkill { get; set; }
 		public Knownlist Knownlist { get; private set; }
 		public AbstractAI AI { get; private set; }
+
+		public List<SkillEffect> ActiveEffects { get; private set; }
+		private Coroutine effectUpdateTask;
 
 		public AbstractData Data { get; set; }
 
@@ -56,6 +61,7 @@ namespace Assets.scripts.Actor
 		public void Init()
 		{
 			Knownlist = new Knownlist(this);
+			ActiveEffects = new List<SkillEffect>();
 			Status = InitStatus();
 			Skills = InitSkillSet();
 
@@ -79,6 +85,93 @@ namespace Assets.scripts.Actor
 		public override void OnUpdate()
 		{
 			
+		}
+
+		public void AddEffect(SkillEffect ef, float duration)
+		{
+			ActiveEffects.Add(ef);
+
+			if(duration > 0)
+				StartTask(CancelEffect(ef, duration)); // cancel this effect in 'duration'
+
+			StartEffectUpdate();
+		}
+
+		public void RemoveEffect(SkillEffect ef)
+		{
+			ef.OnRemove();
+			ActiveEffects.Remove(ef);
+
+			if (ActiveEffects.Count == 0)
+			{
+				StopEffectUpdate();
+			}
+		}
+
+		private void StartEffectUpdate()
+		{
+			if (effectUpdateTask == null)
+			{
+				effectUpdateTask = StartTask(UpdateEffects());
+			}
+		}
+
+		private void StopEffectUpdate()
+		{
+			if (effectUpdateTask != null)
+			{
+				StopTask(effectUpdateTask);
+				effectUpdateTask = null;
+			}
+		}
+
+		private IEnumerator UpdateEffects()
+		{
+			while (ActiveEffects.Count > 0)
+			{
+				float currentTime = Time.time;
+
+				for(int i = 0; i < ActiveEffects.Count; i++)
+				{
+					SkillEffect ef = ActiveEffects[i];
+
+					if (ef == null || ef.period <= 0)
+						continue;
+
+					if (ef.lastUpdateTime + ef.period <= currentTime)
+					{
+						// effekt ma urcity pocet opakovani, pote se zrusi
+						if (ef.count != -1)
+						{
+							if (ef.count > 0)
+							{
+								ef.count --;
+								ef.Update();
+								ef.lastUpdateTime = currentTime;
+							}
+							else
+							{
+								RemoveEffect(ef);
+								break;
+							}
+						}
+						else // opakuje se dokud nevyprsi duration
+						{
+							ef.Update();
+							ef.lastUpdateTime = currentTime;
+						}
+					}
+				}
+
+				yield return new WaitForSeconds(0.5f);
+			}
+		}
+
+		private IEnumerator CancelEffect(SkillEffect ef, float duration)
+		{
+			yield return new WaitForSeconds(duration);
+			if(ef != null)
+				RemoveEffect(ef);
 		}
 
 		/// <summary>
@@ -135,6 +228,24 @@ namespace Assets.scripts.Actor
 			}
 
 			Debug.Log("break done");
+		}
+
+		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
+		{
+			bool crit = canCrit && Random.Range(1, 1000) <= Status.CriticalRate;
+
+			if (crit)
+			{
+				baseDamage = (int) (baseDamage*Status.CriticalDamageMul);
+			}
+
+			return baseDamage;
+		}
+
+		public void SetMoveSpeed(int speed)
+		{
+			Status.MoveSpeed = speed;
+			GetData().SetMoveSpeed(speed);
 		}
 
 		public void ReceiveDamage(Character source, int damage)

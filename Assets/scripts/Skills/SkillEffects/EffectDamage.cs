@@ -22,23 +22,25 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void ApplyEffect(Character source, GameObject target)
 		{
-			AbstractData data = target.GetComponentInParent<AbstractData>();
-
-			if (data == null)
-				return;
-
-			Character targetCh = data.GetOwner();
+			Character targetCh = Utils.GetCharacter(target);
 
 			if (targetCh == null)
 				return;
 
 			if (source.CanAttack(targetCh))
 			{
-				if (RandomOffset > 0)
-					targetCh.ReceiveDamage(source, Dmg + Random.Range(-RandomOffset, RandomOffset));
-				else
-					targetCh.ReceiveDamage(source, Dmg);
+				int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
+
+				targetCh.ReceiveDamage(source, damage);
 			}
+		}
+
+		public override void Update()
+		{
+		}
+
+		public override void OnRemove()
+		{
 		}
 	}
 }
