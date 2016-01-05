@@ -135,7 +135,7 @@ namespace Assets.scripts
 
 			MonsterId mId = (MonsterId) Enum.Parse(typeof (MonsterId), ""+id);
 			monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(mId));
-
+			data.SetOwner(monster);
 			monster.Init();
 
 			monster.InitTemplate();

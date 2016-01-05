@@ -11,8 +11,6 @@ namespace Assets.scripts.Mono.ObjectData
 		public int monsterId;
 
 		public int distanceToFollowLeader = 8;
-		public bool isAggressive = false;
-		public int aggressionRange = 5;
 
 		// Use this for initialization
 		public new void Start()

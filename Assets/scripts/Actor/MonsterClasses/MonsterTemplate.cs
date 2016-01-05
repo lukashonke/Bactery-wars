@@ -24,6 +24,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
 
+		public bool IsAggressive = false;
+		public int AggressionRange = 5;
+
 		protected MonsterTemplate()
 		{
 			TemplateSkills = new List<Skill>();

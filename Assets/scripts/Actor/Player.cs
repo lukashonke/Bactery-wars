@@ -123,5 +123,10 @@ namespace Assets.scripts.Actor
 		{
 			GetData().StopCoroutine(t);
 		}
+
+		public override bool IsInteractable()
+		{
+			return false;
+		}
 	}
 }

@@ -133,6 +133,12 @@ namespace Assets.scripts.Mono
 			shootingPosition = GetChildByName("Shooting Position");
 			particleSystems = GetChildByName("ParticleSystems");
 
+			if (particleSystems == null)
+				particleSystems = body;
+
+			if (shootingPosition == null)
+				shootingPosition = body;
+
 			if (GetChildByName("Healthbar") != null)
 			{
 				healthBar = GetChildByName("Healthbar").GetComponent<Healthbar>();
@@ -400,7 +406,7 @@ namespace Assets.scripts.Mono
 				if (this is EnemyData)
 				{
 					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData)this).monsterId));
-					Debug.Log("Registering new data for monster ");
+					Debug.Log("Registering new data for monster which is of type " + ((Monster)GetOwner()).Template.GetType().Name);
 				}
 			}
 		}

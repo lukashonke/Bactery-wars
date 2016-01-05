@@ -384,6 +384,8 @@ namespace Assets.scripts.Skills
 			while (active)
 			{
 				yield return new WaitForSeconds(updateFrequency);
+
+				if (GetOwnerData() != null && GetOwnerData().GetBody() != null)
 				UpdateLaunched();
 			}
 

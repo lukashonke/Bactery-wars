@@ -24,8 +24,8 @@ namespace Assets.scripts.AI
 		{
 			aggro = new Dictionary<Character, int>();
 
-			IsAggressive = ((EnemyData) Owner.GetData()).isAggressive;
-			AggressionRange = ((EnemyData)Owner.GetData()).aggressionRange;
+			IsAggressive = ((Monster) Owner.GetData().GetOwner()).Template.IsAggressive;
+			AggressionRange = ((Monster)Owner.GetData().GetOwner()).Template.AggressionRange;
 		}
 
 		public override void Think()
@@ -58,6 +58,7 @@ namespace Assets.scripts.AI
 
 		private void ThinkIdle()
 		{
+			Debug.Log("idle");
 			if (GetStatus().IsDead)
 				return;
 
@@ -102,6 +103,7 @@ namespace Assets.scripts.AI
 
 		private void ThinkActive()
 		{
+			Debug.Log("active");
 			bool stillActive = false;
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
@@ -138,6 +140,7 @@ namespace Assets.scripts.AI
 
 		private void ThinkAttack()
 		{
+			Debug.Log("attack");
 			Character possibleTarget = SelectMostAggroTarget();
 
 			// no target this monster hates - go back to active
