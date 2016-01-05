@@ -140,7 +140,6 @@ namespace Assets.scripts.AI
 
 		private void ThinkAttack()
 		{
-			Debug.Log("attack");
 			Character possibleTarget = SelectMostAggroTarget();
 
 			// no target this monster hates - go back to active

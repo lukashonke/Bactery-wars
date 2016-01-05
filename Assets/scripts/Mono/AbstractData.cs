@@ -923,15 +923,25 @@ namespace Assets.scripts.Mono
 			if (data == null || data.Equals(this)) 
 				return;
 
+			bool doAttack = true;
+			if (data.GetOwner().IsInteractable())
+			{
+				doAttack = false;
+			}
+
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
 			// no melee attack
-			if (sk == null || sk.IsActive())
+			if (doAttack && (sk == null || sk.IsActive()))
 				return;
 
-			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < sk.range)
+			int range = sk.range;
+			if (!doAttack)
+				range = 4;
+
+			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < range)
 			{
-				if (data.GetOwner().IsInteractable())
+				if (!doAttack)
 				{
 					if (TalkTo(data))
 						return;

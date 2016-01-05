@@ -245,6 +245,11 @@ namespace Assets.scripts.AI
 			return skills;
 		}
 
+		public bool HasMeleeSkill()
+		{
+			return Owner.MeleeSkill != null;
+		}
+
 		public List<Skill> GetAllSkillsWithTrait(params SkillTraits[] traits)
 		{
 			bool containsAll;

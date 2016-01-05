@@ -18,6 +18,8 @@ namespace Assets.scripts.Skills.Base
 		ChainSkill,
 		ChainedProjectile,
 
+		NeutrophileProjectile,
+
 		MeleeAttack,
 	}
 }

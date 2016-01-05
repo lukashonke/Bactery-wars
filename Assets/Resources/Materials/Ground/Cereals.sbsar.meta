@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b8e856313b0881940b3c5e3a9256f06a
-timeCreated: 1449834996
+timeCreated: 1452028258
 licenseType: Free
 SubstanceImporter:
   serializedVersion: 5
@@ -43,14 +43,14 @@ SubstanceImporter:
         texture: {instanceID: 0}
     - name: Saturation
       value:
-        scalar[0]: .5
+        scalar[0]: 0.5
         scalar[1]: 0
         scalar[2]: 0
         scalar[3]: 0
         texture: {instanceID: 0}
     - name: Luminosity
       value:
-        scalar[0]: .5
+        scalar[0]: 0.5
         scalar[1]: 0
         scalar[2]: 0
         scalar[3]: 0
@@ -64,7 +64,7 @@ SubstanceImporter:
         texture: {instanceID: 0}
     - name: Light_Angle
       value:
-        scalar[0]: .125
+        scalar[0]: 0.125
         scalar[1]: 0
         scalar[2]: 0
         scalar[3]: 0
@@ -78,7 +78,7 @@ SubstanceImporter:
         texture: {instanceID: 0}
     - name: Normal
       value:
-        scalar[0]: .5
+        scalar[0]: 0.5
         scalar[1]: 0
         scalar[2]: 0
         scalar[3]: 0
@@ -99,7 +99,7 @@ SubstanceImporter:
         texture: {instanceID: 0}
     - name: Milk_Level
       value:
-        scalar[0]: .5
+        scalar[0]: 0.5
         scalar[1]: 0
         scalar[2]: 0
         scalar[3]: 0
@@ -203,11 +203,11 @@ SubstanceImporter:
         data:
           first:
             name: _Cutoff
-          second: .5
+          second: 0.5
         data:
           first:
             name: _Parallax
-          second: .0192000009
+          second: 0.0192
         data:
           first:
             name: _ZWrite
@@ -215,7 +215,7 @@ SubstanceImporter:
         data:
           first:
             name: _Glossiness
-          second: .430999994
+          second: 0.431
         data:
           first:
             name: _BumpScale
@@ -248,7 +248,7 @@ SubstanceImporter:
         data:
           first:
             name: _Color
-          second: {r: .257352948, g: .257352948, b: .257352948, a: 1}
+          second: {r: 0.25735295, g: 0.25735295, b: 0.25735295, a: 1}
     textureParameters:
     - name: Cereals_Diffuse
       alphaSource: 5
@@ -278,7 +278,7 @@ SubstanceImporter:
     - shaderProp:
         name: _BumpMap
       material: {instanceID: 0}
-      baseUID: 3836037199
+      baseUID: 3836037212
     - shaderProp:
         name: _ParallaxMap
       material: {instanceID: 0}

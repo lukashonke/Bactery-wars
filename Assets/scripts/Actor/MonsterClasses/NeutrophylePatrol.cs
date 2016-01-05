@@ -24,9 +24,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 		protected override void AddSkills()
 		{
 			// no skills
-			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+			//SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile)); 
 		}
 
 		public override MonsterAI CreateAI(Character ch)
