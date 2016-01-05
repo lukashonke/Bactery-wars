@@ -14,6 +14,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject meleeEffect;
 
+		//TODO melee utok nebere damage od hrace
 		public MeleeAttack(string name, int id) : base(name, id)
 		{
 			castTime = 1.0f;

@@ -22,32 +22,32 @@ namespace Assets.scripts.Mono
 	
 		public void OnCollisionEnter2D(Collision2D coll)
 		{
-			data.OnCollisionEnter2D(coll);
+			//data.OnCollisionEnter2D(coll);
 		}
 
 		public void OnCollisionExit2D(Collision2D coll)
 		{
-			data.OnCollisionExit2D(coll);
+			//data.OnCollisionExit2D(coll);
 		}
 
 		public void OnCollisionStay2D(Collision2D coll)
 		{
-			data.OnCollisionStay2D(coll);
+			//data.OnCollisionStay2D(coll);
 		}
 
 		public void OnTriggerEnter2D(Collider2D obj)
 		{
-			data.OnTriggerEnter2D(obj);
+			//data.OnTriggerEnter2D(obj);
 		}
 
 		public void OnTriggerExit2D(Collider2D obj)
 		{
-			data.OnTriggerExit2D(obj);
+			//data.OnTriggerExit2D(obj);
 		}
 
 		public void OnTriggerStay2D(Collider2D obj)
 		{
-			data.OnTriggerStay2D(obj);
+			//data.OnTriggerStay2D(obj);
 		}
 	}
 }

@@ -37,24 +37,38 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			if (isDead)
 			{
-				ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
-				ps.Play();
+				GameObject ch = GetChildByName("Die Effect");
 
-				body.GetComponent<SpriteRenderer>().enabled = false;
-				body.GetComponent<Collider2D>().enabled = false;
+				if (ch != null)
+				{
+					ParticleSystem ps = ch.GetComponent<ParticleSystem>();
+					if (ps != null)
+						ps.Play();
+				}
 
-				if (healthBar != null)
-					healthBar.gameObject.SetActive(false);
+				DisableMe();
+
+				DisableChildObjects();
 
 				Destroy(gameObject, 1f);
 
-				GameObject blood = LoadResource("misc", "Blood", "Blood_red");
+				DropBlood(50);
+			}
+		}
 
-				ps = blood.GetComponent<ParticleSystem>();
-				ps.maxParticles = Random.Range(10, 50);
+		public void DropBlood(int ammount)
+		{
+			ParticleSystem ps;
+            GameObject blood = LoadResource("misc", "Blood", "Blood_red");
 
-				GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
-				Destroy(bloodObject, 10f);
+			GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
+
+			if (bloodObject != null)
+			{
+				ps = bloodObject.GetComponent<ParticleSystem>();
+				ps.maxParticles = Random.Range(10, ammount);
+
+				Destroy(bloodObject, 20f);
 			}
 		}
 

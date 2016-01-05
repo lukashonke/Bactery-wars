@@ -80,18 +80,22 @@ namespace Assets.scripts.AI
 			if (GetGroupLeader() != null && !IsGroupLeader)
 			{
 				Character leader = GetGroupLeader();
-				Vector3 leaderPos = leader.Data.GetBody().transform.position;
 
-				int distToFollow = ((EnemyData) Owner.GetData()).distanceToFollowLeader;
-
-				if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+				if (leader.Data.GetBody() != null)
 				{
-					Vector3 rnd = Random.insideUnitCircle;
-					rnd.z = 0;
+					Vector3 leaderPos = leader.Data.GetBody().transform.position;
 
-					MoveTo(leaderPos + rnd);
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					{
+						Vector3 rnd = Random.insideUnitCircle;
+						rnd.z = 0;
+
+						MoveTo(leaderPos + rnd);
+
+						//Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
+					}
 				}
 			}
 		}

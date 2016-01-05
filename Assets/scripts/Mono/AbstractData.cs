@@ -779,9 +779,15 @@ namespace Assets.scripts.Mono
 			GetOwner().DeleteMe();
 			DisableMe();
 			Destroy(gameObject);
+
+			DisableChildObjects();
+		}
+
+		protected virtual void DisableChildObjects()
+		{
 			if (healthBar != null)
 			{
-				healthBar.enabled = false;
+				healthBar.gameObject.SetActive(false);
 			}
 		}
 
@@ -789,6 +795,9 @@ namespace Assets.scripts.Mono
 		{
 			foreach (GameObject o in childs.Values)
 			{
+				if (o.name.Equals("Die Effect") || o.transform.parent != null && o.transform.parent.name.Equals("Die Effect"))
+					continue;
+
 				o.SetActive(false);
 			}
 
