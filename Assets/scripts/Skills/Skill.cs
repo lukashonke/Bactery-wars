@@ -14,8 +14,7 @@ namespace Assets.scripts.Skills
 	*/
 	public abstract class Skill
 	{
-		public int Id { get; private set; }
-		public string Name { get; private set; }
+		private string name;
 
 		public Character Owner { get; private set; }
 
@@ -38,11 +37,17 @@ namespace Assets.scripts.Skills
 
 		public int MaxLevel { get; set; }
 
-		public Skill(string name, int id)
-		{
-			Id = id;
-			Name = name;
+		public abstract SkillId GetSkillId();
 
+		public string GetName()
+		{
+			return name;
+		}
+
+		public abstract string GetVisibleName();
+
+		public Skill()
+		{
 			// nastavit defaultni parametry
 			MaxLevel = 1;
 
@@ -51,6 +56,8 @@ namespace Assets.scripts.Skills
 
 		public void Init()
 		{
+			name = Enum.GetName(typeof (SkillId), GetSkillId());
+
 			InitTraits();
 			InitDynamicTraits();
 		}
@@ -67,7 +74,7 @@ namespace Assets.scripts.Skills
 		{
 			if (Owner != null)
 			{
-				Debug.LogError("Error : Skill ID " + Id + " uz majitele ma - " + Owner.Name);
+				Debug.LogError("Error : Skill ID " + GetName() + " uz majitele ma - " + Owner.Name);
 				return;
 			}
 

@@ -65,18 +65,18 @@ namespace Assets.scripts.Actor
 			foreach (Skill templateSkill in Template.TemplateSkills)
 			{
 				// vytvorit novy objekt skillu
-				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.Id);
+				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
 				Skills.AddSkill(newSkill);
 
 				i++;
-				Debug.Log("adding to monster skill to " + i + ": " + newSkill.Name);
+				Debug.Log("adding to monster skill to " + i + ": " + newSkill.GetVisibleName());
 			}
 
 			if (Template.MeleeSkill != null)
 			{
-				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.Id);
+				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
 				MeleeSkill = (ActiveSkill)newSkill;

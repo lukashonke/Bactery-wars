@@ -1,11 +1,12 @@
-﻿using Assets.scripts.Skills.SkillEffects;
+﻿using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectileAllAround : SkillTestProjectile
 	{
-		public SkillTestProjectileAllAround(string name, int id) : base(name, id)
+		public SkillTestProjectileAllAround()
 		{
 			castTime = 2f;
 			reuse = 0.5f;
@@ -15,9 +16,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = false;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillTestProjectileAllAround;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Projectile Allaround";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectileAllAround(Name, Id);
+			return new SkillTestProjectileAllAround();
 		}
 
 		public override void OnLaunch()
@@ -28,7 +39,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			for (int i = 0; i < 360; i+=30)
 			{
-				activeProjectile = CreateSkillProjectile("Test Projectile", "projectile_blacktest_i00", true);
+				activeProjectile = CreateSkillProjectile(GetName(), "projectile_blacktest_i00", true);
 
 				if (activeProjectile != null)
 				{

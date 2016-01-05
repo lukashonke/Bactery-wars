@@ -118,7 +118,7 @@ namespace Assets.scripts
 				player.Team = 4;
 			}
 
-			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.ClassId);
+			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.GetClassId());
 
 			player.InitTemplate();
 
@@ -171,7 +171,6 @@ namespace Assets.scripts
 
 		public Npc SpawnNpc(MonsterId id, Vector3 position)
 		{
-			Debug.Log("spawning, is minion is ");
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
 
 			if (go == null)
@@ -192,7 +191,6 @@ namespace Assets.scripts
 
 		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion)
 		{
-			Debug.Log("spawning, is minion is " + isMinion);
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
 
 			if (go == null)

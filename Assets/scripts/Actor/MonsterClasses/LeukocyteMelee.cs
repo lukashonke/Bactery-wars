@@ -11,8 +11,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 {
 	public class LeukocyteMelee : MonsterTemplate
 	{
-		public LeukocyteMelee(MonsterId id)
-			: base(id)
+		public LeukocyteMelee()
 		{
 			MaxHp = 20;
 			MaxMp = 50;
@@ -22,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		protected override void AddSkills()
 		{
 			// no skills
-			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(10));
+			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -33,6 +32,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public override GroupTemplate GetGroupTemplate()
 		{
 			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.Leukocyte_melee;
 		}
 	}
 }

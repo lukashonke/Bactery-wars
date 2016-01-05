@@ -9,8 +9,6 @@ namespace Assets.scripts.Actor.PlayerClasses
 	*/
 	public abstract class ClassTemplate
 	{
-		public ClassId ClassId { get; private set; }
-
 		public List<Skill> TemplateSkills { get; set; }
 		public ActiveSkill MeleeSkill;
 
@@ -21,10 +19,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
 
-		protected ClassTemplate(ClassId classId)
+		protected ClassTemplate()
 		{
-			ClassId = classId;
-
 			TemplateSkills = new List<Skill>();
 
 			InitDefaultStats();
@@ -53,5 +49,6 @@ namespace Assets.scripts.Actor.PlayerClasses
 		}
 
 		protected abstract void AddSkills();
+		public abstract ClassId GetClassId();
 	}
 }

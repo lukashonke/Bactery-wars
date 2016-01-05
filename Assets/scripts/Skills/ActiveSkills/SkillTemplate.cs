@@ -1,18 +1,29 @@
-﻿using Assets.scripts.Skills.SkillEffects;
+﻿using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTemplate : ActiveSkill
 	{
-		public SkillTemplate(string name, int id) : base(name, id)
+		public SkillTemplate()
 		{
 			
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillTemplate;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Skill Template";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new SkillTemplate(Name, Id);
+			return new SkillTemplate();
 		}
 
 		public override SkillEffect[] CreateEffects()

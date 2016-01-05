@@ -15,7 +15,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject meleeEffect;
 
 		//TODO melee utok nebere damage od hrace
-		public MeleeAttack(string name, int id) : base(name, id)
+		public MeleeAttack()
 		{
 			castTime = 1.0f;
 			coolDown = 0f;
@@ -26,9 +26,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			range = 4;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.MeleeAttack;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Melee attack";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new MeleeAttack(Name, Id);
+			return new MeleeAttack();
 		}
 
 		public override SkillEffect[] CreateEffects()

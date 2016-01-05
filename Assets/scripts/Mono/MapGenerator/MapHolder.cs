@@ -464,7 +464,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedMonsters.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
+					spawnedMonsters.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -473,7 +473,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedNpcs.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
+					spawnedNpcs.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}

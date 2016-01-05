@@ -17,7 +17,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private readonly int radius = 3;
 
-        public SkillAreaExplode(string name, int id) : base(name, id)
+        public SkillAreaExplode()
 		{
 			castTime = 1f;
 			coolDown = 0;
@@ -27,9 +27,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillAreaExplode;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Area Explode";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new SkillAreaExplode(Name, Id);
+			return new SkillAreaExplode();
 		}
 
 		public override SkillEffect[] CreateEffects()

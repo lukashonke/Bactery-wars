@@ -10,7 +10,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject activeProjectile;
 
-		public SkillTestProjectile(string name, int id) : base(name, id)
+		public SkillTestProjectile()
 		{
 			castTime = 0f;
 			reuse = 1;
@@ -21,9 +21,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			range = 4;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillTestProjectile;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Test Projectile";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectile(Name, Id);
+			return new SkillTestProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()
@@ -40,7 +50,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			RotatePlayerTowardsMouse();
 
-			CreateCastingEffect(true, "Test Projectile");
+			CreateCastingEffect(true, GetName());
 
 			return true;
 		}

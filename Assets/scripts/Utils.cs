@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.scripts
@@ -60,6 +63,29 @@ namespace Assets.scripts
 		public static float DistancePwr(Vector3 v1, Vector3 v2)
 		{
 			return (v1 - v2).sqrMagnitude;
+		}
+
+		public static List<Type> GetTypesInNamespace(string ns, bool onlyClasses, Type baseClass)
+		{
+			Assembly asm = Assembly.GetExecutingAssembly();
+
+			List<Type> types = new List<Type>();
+
+			foreach (Type t in asm.GetTypes())
+			{
+				if (onlyClasses && !t.IsClass)
+					continue;
+
+				if (!ns.Equals(t.Namespace))
+					continue;
+
+				if (baseClass != null && !t.IsSubclassOf(baseClass))
+					continue;
+
+				types.Add(t);
+			}
+
+			return types;
 		}
 
 		public class Timer

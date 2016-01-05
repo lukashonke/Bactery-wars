@@ -14,7 +14,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject targettedPlayer;
 		private GameObject activeProjectile;
 
-		public MissileProjectile(string name, int id) : base(name, id)
+		public MissileProjectile()
 		{
 			castTime = 1f;
 			reuse = 0;
@@ -24,9 +24,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.MissileProjectile;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Missile Projectile";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new MissileProjectile(Name, Id);
+			return new MissileProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()

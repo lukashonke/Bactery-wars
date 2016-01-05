@@ -14,8 +14,6 @@ namespace Assets.scripts.Actor.MonsterClasses
 {
 	public abstract class MonsterTemplate
 	{
-		public MonsterId MonsterId { get; private set; }
-
 		public List<Skill> TemplateSkills { get; set; }
 		public ActiveSkill MeleeSkill;
 
@@ -26,10 +24,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
 
-		protected MonsterTemplate(MonsterId id)
+		protected MonsterTemplate()
 		{
-			MonsterId = id;
-
 			TemplateSkills = new List<Skill>();
 
 			InitDefaultStats();
@@ -66,5 +62,6 @@ namespace Assets.scripts.Actor.MonsterClasses
 		}
 
 		public abstract GroupTemplate GetGroupTemplate();
+		public abstract MonsterId GetMonsterId();
 	}
 }

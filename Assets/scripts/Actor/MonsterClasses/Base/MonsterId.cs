@@ -12,6 +12,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		Leukocyte_melee = 1,
 		Leukocyte_ranged = 2,
 
+		Neutrophyle_Patrol = 3,
 
 		TeleporterOut = 100,
 		TeleporterIn = 101

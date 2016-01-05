@@ -13,7 +13,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 {
 	public class TeleporterInTemplate : MonsterTemplate
 	{
-		public TeleporterInTemplate(MonsterId id) : base(id)
+		public TeleporterInTemplate()
 		{
 			MaxHp = 20;
 			MaxMp = 50;
@@ -47,6 +47,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 				// teleport player to new start
 				data.transform.position = WorldHolder.instance.GetStartPosition();
 			}
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.TeleporterIn;
 		}
 	}
 }

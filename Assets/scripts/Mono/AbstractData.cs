@@ -757,7 +757,6 @@ namespace Assets.scripts.Mono
 				healthBar.maxHp = visibleMaxHp;
 			}
 		}
-		
 
 		public virtual void SetIsDead(bool isDead)
 		{

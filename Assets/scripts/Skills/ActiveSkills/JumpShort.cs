@@ -11,7 +11,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class JumpShort : ActiveSkill
 	{
-		public JumpShort(string name, int id) : base(name, id)
+		public JumpShort()
 		{
 			castTime = 0f;
 			reuse = 1.0f;
@@ -20,9 +20,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			breaksMouseMovement = false;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.JumpShort;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Jump Short";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new JumpShort(Name, Id);
+			return new JumpShort();
 		}
 
 		public override SkillEffect[] CreateEffects()

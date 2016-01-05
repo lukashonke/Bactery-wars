@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Base
 {
@@ -31,20 +33,29 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 			Init();
 		}
 
+		private void Load()
+		{
+			
+		}
+
 		// Initialize all possible classes here
 		private void Init()
 		{
-			AddType(new WhiteCellTemplate(MonsterId.TestMonster));
-			AddType(new LeukocyteMelee(MonsterId.Leukocyte_melee));
-			AddType(new LeukocyteRanged(MonsterId.Leukocyte_ranged));
+			MonsterTemplate t;
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Actor.MonsterClasses", true, typeof(MonsterTemplate));
 
-			AddType(new TeleporterOutTemplate(MonsterId.TeleporterOut));
-			AddType(new TeleporterInTemplate(MonsterId.TeleporterIn));
+			foreach (Type type in types)
+			{
+				t = Activator.CreateInstance(type) as MonsterTemplate;
+				AddType(t);
+			}
+
+			Debug.Log("Loaded " + this.types.Count + " monster classes.");
 		}
 
 		public void AddType(MonsterTemplate t)
 		{
-			types.Add(t.MonsterId, t);
+			types.Add(t.GetMonsterId(), t);
 		}
 
 		public MonsterTemplate GetType(MonsterId type)

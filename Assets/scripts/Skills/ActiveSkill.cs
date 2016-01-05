@@ -67,8 +67,7 @@ namespace Assets.scripts.Skills
 
 		protected Dictionary<GameObject, Vector3> RangeChecks;
 
-		public ActiveSkill(string name, int id)
-			: base(name, id)
+		public ActiveSkill()
 		{
 			active = false;
 			state = 0;
@@ -112,7 +111,7 @@ namespace Assets.scripts.Skills
 		public virtual void OnBeingConfirmed()
 		{
 			if (confirmObject == null)
-				confirmObject = GetPlayerData().CreateSkillResource("Skill Template", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+				confirmObject = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
 
 			UpdateMouseDirection(confirmObject.transform);
 			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
@@ -170,7 +169,7 @@ namespace Assets.scripts.Skills
 		{
 			if (Owner == null)
 			{
-				Debug.LogError("Error: skill ID " + Id + " nema nastavenyho majitele skillu - nelze ho castit");
+				Debug.LogError("Error: skill ID " + Enum.GetName(typeof(SkillId), GetSkillId()) + " nema nastavenyho majitele skillu - nelze ho castit");
 				return false;
 			}
 
@@ -411,7 +410,7 @@ namespace Assets.scripts.Skills
 
 			if (us == null)
 			{
-				Debug.LogError("a projectile doesnt have UpdateSender " + Name + "; adding it automatically");
+				Debug.LogError("a projectile doesnt have UpdateSender " + GetName() + "; adding it automatically");
 				obj.AddComponent<UpdateSender>().target = this;
 			}
 			else
@@ -423,7 +422,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject LoadSkillResource(string particleObjectName)
 		{
-			GameObject o = GetOwnerData().LoadResource("skill", Name, particleObjectName);
+			GameObject o = GetOwnerData().LoadResource("skill", GetName(), particleObjectName);
 
 			return o;
 		}
@@ -433,7 +432,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetBody().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetBody().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -446,7 +445,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -459,7 +458,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -483,7 +482,7 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, spawnPosition.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -514,13 +513,13 @@ namespace Assets.scripts.Skills
 		/// <param name="makeChild">The particle effect position will move with player</param>
 		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
 		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
 			return o;
 		}
 
@@ -585,7 +584,7 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("couldnt play particle effect " + Name);
+				Debug.LogError("couldnt play particle effect " + GetName());
 			}
 		}
 
@@ -603,7 +602,7 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("couldnt pause particle effect" + Name);
+				Debug.LogError("couldnt pause particle effect" + GetName());
 			}
 		}
 
