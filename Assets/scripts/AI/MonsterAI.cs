@@ -21,7 +21,7 @@ namespace Assets.scripts.AI
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
 
-		private readonly int rambleInterval = 5;
+		private readonly int rambleInterval = 2;
 		private float lastRambleTime;
 		private bool isWalking;
 
@@ -63,7 +63,6 @@ namespace Assets.scripts.AI
 
 		private void ThinkIdle()
 		{
-			Debug.Log("idle");
 			if (GetStatus().IsDead)
 				return;
 
@@ -89,49 +88,183 @@ namespace Assets.scripts.AI
 				}
 			}
 
-			if (State == AIState.IDLE)
+			/*if (State == AIState.IDLE && !isWalking)
 			{
-				if (GetGroupLeader() != null && !IsGroupLeader)
+				SetIsWalking(true);
+			}*/
+
+			if (ReturnHomeIfNeeded())
+				return;
+
+			TryRambleAround();
+		}
+
+		private void ThinkActive()
+		{
+			bool stillActive = false;
+
+			if (Owner.Knownlist.KnownObjects.Count > 0)
+			{
+				foreach (GameObject o in Owner.Knownlist.KnownObjects)
 				{
-					Character leader = GetGroupLeader();
+					if (o == null) continue;
 
-					if (leader.Data.GetBody() != null)
+					Character ch = Utils.GetCharacter(o);
+
+					if (ch == null)
+						continue;
+
+					stillActive = true;
+
+					if (IsAggressive && Owner.CanAutoAttack(ch))
 					{
-						Vector3 leaderPos = leader.Data.GetBody().transform.position;
-
-						int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
-
-						if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+						// find target that can be attacked
+						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
 						{
-							Vector3 rnd = Random.insideUnitCircle;
-							rnd.z = 0;
-
-							MoveTo(leaderPos + rnd);
-
-							//Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
+							AddAggro(ch, 1);
+							NotifyNearby(ch);
 						}
+
+						break;
 					}
 				}
 
-				if (!Owner.GetData().HasTargetToMoveTo)
+				if (aggro.Any())
 				{
-					if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > 20 * 20)
-					{
-						MoveTo(homeLocation);
-					}
-					else if (lastRambleTime + rambleInterval < Time.time)
-					{
-						//if (Random.Range(1, 4) < 3)
-						{
-							lastRambleTime = Time.time;
-							RambleAround();
-						}
-					}
+					SetAIState(AIState.ATTACKING);
+					return;
 				}
+			}
+
+			if (!stillActive)
+			{
+				SetAIState(AIState.IDLE);
+			}
+
+			if (State == AIState.ACTIVE)
+			{
+				if (TryFollowLeader())
+					return;
+
+				if (ReturnHomeIfNeeded())
+					return;
+
+				if (TryRambleAround())
+					return;
 			}
 		}
 
-		protected void RambleAround()
+		private void NotifyNearby(Character target)
+		{
+			// TODO get nearby friendly allies, set their aggro towards the player to 1 too
+		}
+
+		private void ThinkAttack()
+		{
+			SetIsWalking(false);
+
+			Character possibleTarget = SelectMostAggroTarget();
+
+			// no target this monster hates - go back to active
+			if (possibleTarget == null)
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
+
+			if (possibleTarget.Status.IsDead)
+			{
+				RemoveAggro(possibleTarget);
+				return;
+			}
+
+			// target is too far (> attackdistance*2) - abandone attacking
+			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
+			{
+				RemoveAggro(possibleTarget, 1);
+			}
+
+			AttackTarget(possibleTarget);
+		}
+
+		protected bool TryFollowLeader()
+		{
+			if (GetGroupLeader() != null && !IsGroupLeader)
+			{
+				Character leader = GetGroupLeader();
+
+				if (leader.Data.GetBody() != null)
+				{
+					Vector3 leaderPos = leader.Data.GetBody().transform.position;
+
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					{
+						Vector3 rnd = Random.insideUnitCircle;
+						rnd.z = 0;
+
+						SetIsWalking(false);
+						MoveTo(leaderPos + rnd);
+
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		protected bool ReturnHomeIfNeeded()
+		{
+			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
+			{
+				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > 20 * 20)
+				{
+					SetIsWalking(false);
+					MoveTo(homeLocation);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected bool TryRambleAround()
+		{
+			if (!Owner.GetData().HasTargetToMoveTo)
+			{
+				if (lastRambleTime + rambleInterval < Time.time)
+				{
+					//if (Random.Range(1, 4) < 3)
+					{
+						lastRambleTime = Time.time;
+						DoRambleAround();
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		protected void SetIsWalking(bool b)
+		{
+			if (isWalking && !b)
+			{
+				Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
+				isWalking = false;
+			}
+			else if (!isWalking && b)
+			{
+				if (GetTemplate().MaxSpeed > 3)
+					Owner.GetData().SetMoveSpeed(3);
+
+				isWalking = true;
+			}
+		}
+
+		private void DoRambleAround()
 		{
 			bool found = false;
 
@@ -160,8 +293,9 @@ namespace Assets.scripts.AI
 				else
 				{
 					found = true;
-					isWalking = true;
-					Owner.GetData().SetMoveSpeed(3);
+
+					SetIsWalking(true);
+
 					MoveTo(randomPos);
 					Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.green, 5);
 				}
@@ -170,112 +304,6 @@ namespace Assets.scripts.AI
 				if (limit <= 0)
 					break;
 			}
-		}
-
-		private void ThinkActive()
-		{
-			Debug.Log("idle");
-			bool stillActive = false;
-			if (Owner.Knownlist.KnownObjects.Count > 0)
-			{
-				foreach (GameObject o in Owner.Knownlist.KnownObjects)
-				{
-					if (o == null) continue;
-
-					Character ch = Utils.GetCharacter(o);
-
-					if (IsAggressive && ch != null && Owner.CanAutoAttack(ch))
-					{
-						stillActive = true;
-
-						// find target that can be attacked
-						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
-						{
-							AddAggro(ch, 1);
-							NotifyNearby(ch);
-						}
-
-						break;
-					}
-				}
-
-				if (aggro.Any())
-				{
-					SetAIState(AIState.ATTACKING);
-					return;
-				}
-			}
-
-			if (GetGroupLeader() != null && !IsGroupLeader)
-			{
-				Character leader = GetGroupLeader();
-
-				if (leader.Data.GetBody() != null)
-				{
-					Vector3 leaderPos = leader.Data.GetBody().transform.position;
-
-					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
-
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
-					{
-						Vector3 rnd = Random.insideUnitCircle;
-						rnd.z = 0;
-
-						MoveTo(leaderPos + rnd);
-
-						if (isWalking)
-						{
-							Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
-							isWalking = false;
-						}
-
-						//Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
-					}
-				}
-			}
-
-			//TODO tohle funguje spatne! vraci to mezi idle a zpet.. to je nahovno
-			if (!stillActive)
-			{
-				SetAIState(AIState.IDLE);
-			}
-		}
-
-		private void NotifyNearby(Character target)
-		{
-			// TODO get nearby friendly allies, set their aggro towards the player to 1 too
-		}
-
-		private void ThinkAttack()
-		{
-			if (isWalking)
-			{
-				Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
-				isWalking = false;
-			}
-
-			Character possibleTarget = SelectMostAggroTarget();
-
-			// no target this monster hates - go back to active
-			if (possibleTarget == null)
-			{
-				SetAIState(AIState.ACTIVE);
-				return;
-			}
-
-			if (possibleTarget.Status.IsDead)
-			{
-				RemoveAggro(possibleTarget);
-				return;
-			}
-
-			// target is too far (> attackdistance*2) - abandone attacking
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
-			{
-				RemoveAggro(possibleTarget, 1);
-			}
-
-			AttackTarget(possibleTarget);
 		}
 
 		public override void AddAggro(Character ch, int points)

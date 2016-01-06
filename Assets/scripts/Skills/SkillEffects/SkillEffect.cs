@@ -33,5 +33,10 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public abstract void Update();
 		public abstract void OnRemove();
+
+		public virtual void ModifySkillCasttime(ActiveSkill sk, ref float reuse)
+		{
+			
+		}
 	}
 }

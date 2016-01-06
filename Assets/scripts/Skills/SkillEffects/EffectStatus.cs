@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
-	public abstract class EffectDebuff : SkillEffect
+	public abstract class EffectStatus : SkillEffect
 	{
 		protected Character target;
 
 		private float duration;
 
-		public EffectDebuff(float duration)
+		public EffectStatus(float duration)
 		{
 			this.duration = duration;
 		}

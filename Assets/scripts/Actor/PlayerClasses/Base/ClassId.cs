@@ -3,6 +3,7 @@
 	public enum ClassId
 	{
 		Default,
-		Flu
+		Flu,
+		CommonCold
 	}
 }

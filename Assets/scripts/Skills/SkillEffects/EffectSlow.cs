@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
-	public class EffectSlow : EffectDebuff
+	public class EffectSlow : EffectStatus
 	{
 		private int value;
 

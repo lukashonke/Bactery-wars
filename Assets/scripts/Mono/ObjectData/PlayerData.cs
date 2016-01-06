@@ -128,7 +128,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void ConfirmSkillLaunch()
 		{
-			ActiveConfirmationSkill.Start();
+			ActiveConfirmationSkill.Start(Target);
 		}
 
 		public void ConfirmSkillLaunch(Vector3 mousePosition)

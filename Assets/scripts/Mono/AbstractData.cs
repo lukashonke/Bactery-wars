@@ -300,8 +300,18 @@ namespace Assets.scripts.Mono
 			}
 			else
 			{
+				// pokud mame kontrolovat vzdalenost od targetu, je treba obnovovat polohu targetu
+				if (targetMoveObject != null && minRangeToTarget > 0)
+				{
+					targetPositionWorld = targetMoveObject.transform.position;
+
+					CalculatePathfindingNodes();
+				}
+
+				float dist = Vector3.Distance(body.transform.position, targetPositionWorld);
+
 				// update movement
-				if (HasTargetToMoveTo && Vector3.Distance(body.transform.position, targetPositionWorld) > minDistanceClickToMove)
+				if (HasTargetToMoveTo && (dist > minRangeToTarget) && dist > minDistanceClickToMove)
 				{
 					Vector3 currentDestination = targetPositionWorld;
 					if (usesPathfinding && currentPath != null && allowMovePointChange)
@@ -383,6 +393,7 @@ namespace Assets.scripts.Mono
 				else
 				{
 					if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 0);
+
 					HasTargetToMoveTo = false;
 
 					ArrivedAtDestination();
@@ -524,6 +535,23 @@ namespace Assets.scripts.Mono
 		{
 			if (QueueMelee)
 				QueueMelee = false;
+
+			foreach (Skill skill in GetOwner().Skills.Skills)
+			{
+				if (skill is ActiveSkill)
+				{
+					if (((ActiveSkill)skill).IsActive())
+					{
+						((ActiveSkill) skill).OnMove();
+					}
+				}
+			}
+
+			if (GetOwner().MeleeSkill != null)
+			{
+				if (GetOwner().MeleeSkill.IsActive())
+					GetOwner().MeleeSkill.OnMove();
+			}
 		}
 
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
@@ -559,6 +587,7 @@ namespace Assets.scripts.Mono
 				ResetPath();
 			}
 
+			minRangeToTarget = -1;
 			MovementChanged();
 			HasTargetToMoveTo = false;
 		}
@@ -576,6 +605,9 @@ namespace Assets.scripts.Mono
 			{
 				ResetPath();
 			}
+
+			minRangeToTarget = -1;
+			targetMoveObject = null;
 
 			if (QueueMelee)
 			{
@@ -712,6 +744,12 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			if (GetOwner().MeleeSkill != null)
+			{
+				if (GetOwner().MeleeSkill.IsActive() && !GetOwner().MeleeSkill.CanMove())
+					return false;
+			}
+
 			return true;
 		}
 
@@ -738,6 +776,12 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			if (GetOwner().MeleeSkill != null)
+			{
+				if (GetOwner().MeleeSkill.IsActive() && !GetOwner().MeleeSkill.CanMove())
+					return false;
+			}
+
 			return true;
 		}
 
@@ -749,6 +793,11 @@ namespace Assets.scripts.Mono
 		public void SetRotationEnabled(bool val)
 		{
 			rotationEnabled = val;
+		}
+
+		public int GetMoveSpeed()
+		{
+			return moveSpeed;
 		}
 
 		public void SetMoveSpeed(int speed)
@@ -863,6 +912,7 @@ namespace Assets.scripts.Mono
 		{
 			MovementChanged();
 			targetPositionWorld = newTarget;
+			targetMoveObject = null;
 
 			CalculatePathfindingNodes();
 		}
@@ -935,6 +985,9 @@ namespace Assets.scripts.Mono
 
 		public void MeleeInterract(GameObject target, bool repeat)
 		{
+			if (target == null)
+				return;
+
 			AbstractData data = target.GetComponent<AbstractData>();
 
 			if (data == null || data.Equals(this)) 
@@ -949,12 +1002,14 @@ namespace Assets.scripts.Mono
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
 			// no melee attack
-			if (doAttack && (sk == null || sk.IsActive()))
+			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
 				return;
 
 			int range = sk.range;
 			if (!doAttack)
 				range = 4;
+
+			float d = Vector3.Distance(GetBody().transform.position, target.transform.position);
 
 			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < range)
 			{
@@ -968,6 +1023,7 @@ namespace Assets.scripts.Mono
 					if (repeat)
 						RepeatingMeleeAttack = true;
 
+					BreakMovement(false);
 					sk.Start(target);
 				}
 			}
@@ -975,6 +1031,10 @@ namespace Assets.scripts.Mono
 			{
 				RepeatingMeleeAttack = false;
 				MoveTo(target);
+
+				if(range > 1)
+					SetMinRangeToMoveToTarget(range);
+
 				QueueMelee = true;
 				QueueMeleeTarget = target;
 				QueueMeleeRepeat = repeat;
@@ -1001,6 +1061,12 @@ namespace Assets.scripts.Mono
 		public void AbortMeleeAttacking()
 		{
 			RepeatingMeleeAttack = false;
+		}
+
+		private float minRangeToTarget;
+		public void SetMinRangeToMoveToTarget(float range)
+		{
+			minRangeToTarget = range;
 		}
 
 		public void MoveTo(GameObject target)
@@ -1055,6 +1121,11 @@ namespace Assets.scripts.Mono
 		{
 			if (targetMoveObject != null && targetMoveObject.Equals(coll.gameObject))
 			{
+				if (minRangeToTarget > -1)
+				{
+					return; // ignore, this is calculated 
+				}
+
 				BreakMovement(true);
 			}
 		}

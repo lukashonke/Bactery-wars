@@ -21,6 +21,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			baseDamage = 15;
 
+			//TODO add min range parameter and permit casting unless range is met
+
 			requireConfirm = true;
 		}
 
@@ -58,6 +60,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override bool OnCastStart()
 		{
 			GameObject target = GetTarget();
+
+			if (target == null)
+				target = initTarget;
+
+			Debug.Log(target);
+
 			if (target == null)
 			{
 				AbortCast();
@@ -118,7 +126,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject)
 		{
-			if (activeProjectile == null)
+			if (activeProjectile == null || targettedPlayer == null)
 				return;
 
 			// updates: 2/sec

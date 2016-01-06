@@ -10,11 +10,11 @@ GameObject:
   - 4: {fileID: 424148}
   - 212: {fileID: 21295948}
   - 95: {fileID: 9586648}
-  - 61: {fileID: 6134392}
   - 50: {fileID: 5039684}
   - 114: {fileID: 11489058}
   - 114: {fileID: 11439252}
   - 114: {fileID: 11401748}
+  - 58: {fileID: 5895428}
   m_Layer: 0
   m_Name: Neutrophile_Patrol
   m_TagString: Untagged
@@ -105,6 +105,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &163544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 455256}
+  m_Layer: 0
+  m_Name: Healthbar Center
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400334
 Transform:
   m_ObjectHideFlags: 1
@@ -117,7 +132,7 @@ Transform:
   m_Children:
   - {fileID: 470118}
   m_Father: {fileID: 424148}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!4 &414214
 Transform:
   m_ObjectHideFlags: 1
@@ -130,7 +145,7 @@ Transform:
   m_Children:
   - {fileID: 469350}
   m_Father: {fileID: 424148}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!4 &424148
 Transform:
   m_ObjectHideFlags: 1
@@ -138,10 +153,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.614872, y: -7.574708, z: 0}
+  m_LocalPosition: {x: -7.1, y: -5.61, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children:
   - {fileID: 427884}
+  - {fileID: 455256}
   - {fileID: 400334}
   - {fileID: 414214}
   m_Father: {fileID: 0}
@@ -158,6 +174,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 424148}
   m_RootOrder: 0
+--- !u!4 &455256
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 163544}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.16, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 424148}
+  m_RootOrder: 1
 --- !u!4 &469350
 Transform:
   m_ObjectHideFlags: 1
@@ -199,8 +227,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &6134392
-BoxCollider2D:
+--- !u!58 &5895428
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -210,9 +238,9 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0.0000019073486, y: 0}
+  m_Offset: {x: -0.16, y: 0}
   serializedVersion: 2
-  m_Size: {x: 6.82, y: 5.99}
+  m_Radius: 2.14
 --- !u!95 &9586648
 Animator:
   serializedVersion: 3
@@ -220,7 +248,7 @@ Animator:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 86760eac94f6bce408459992a40efe67, type: 2}
   m_CullingMode: 0
@@ -307,7 +335,7 @@ MonoBehaviour:
   maxHp: 10
   percent: 0
   currentPercent: 0
-  distance: 1.5
+  distance: 2.3
 --- !u!114 &11439252
 MonoBehaviour:
   m_ObjectHideFlags: 1

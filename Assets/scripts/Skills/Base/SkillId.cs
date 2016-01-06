@@ -20,6 +20,7 @@ namespace Assets.scripts.Skills.Base
 
 		NeutrophileProjectile,
 
+		CommonColdAutoattack,
 		SneezeShot,
 		Dodge,
 		CellFury,

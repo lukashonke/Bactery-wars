@@ -64,9 +64,11 @@ namespace Assets.scripts.Base
 
 			KnownObjects.Clear();
 
-			//TODO knownlist se nejdriv vymaze, nezpusobi to nejaky problemy?
 			foreach(Collider2D h in hits)
 			{
+				if ("Cave Generator".Equals(h.gameObject.name))
+					continue;
+
 				KnownObjects.Add(h.gameObject);
             }
 		}

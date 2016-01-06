@@ -194,7 +194,10 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			skill.Start();
+			if(skill is ActiveSkill)
+				((ActiveSkill)skill).Start(GetData().Target);
+			else
+				skill.Start();
 		}
 
 		public void NotifyCastingModeChange()

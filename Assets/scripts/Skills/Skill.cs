@@ -70,6 +70,11 @@ namespace Assets.scripts.Skills
 			return this;
 		}
 
+		public bool HasTrait(SkillTraits t)
+		{
+			return Traits.Contains(t);
+		}
+
 		public void SetOwner(Character ch)
 		{
 			if (Owner != null)

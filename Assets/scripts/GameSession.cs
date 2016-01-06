@@ -7,7 +7,7 @@ namespace Assets.scripts
 {
 	public class GameSession
 	{
-		public static string className = "Flu";
+		public static string className = "CommonCold";
 		public static string difficulty = "Easy";
 		public static string gameType = "Normal";
 		public static string profileName = "Lukas";

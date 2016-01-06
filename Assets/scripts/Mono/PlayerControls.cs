@@ -26,8 +26,6 @@ namespace Assets.scripts.Mono
 		// animators
 		private Animator anim;
 
-
-
 		public int currentTouchAction;
 		public const int TOUCH_MOVEMENT = 1;
 		public const int TOUCH_CONFIRMINGSKILL = 2;

@@ -28,7 +28,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public int AggressionRange = 5;
 
 		public bool RambleAround = false;
-		public int RambleAroundMaxDist = 5;
+		public int RambleAroundMaxDist = 20;
 
 		protected MonsterTemplate()
 		{

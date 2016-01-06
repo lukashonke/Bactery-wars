@@ -9,7 +9,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 	{
 		public FluPlayerClass()
 		{
-			MaxHp = 70;
+			MaxHp = 100;
 			MaxMp = 50;
 			MaxSpeed = 10;
 			Shield = 1.0f;

@@ -12,14 +12,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class MeleeAttack : ActiveSkill
 	{
-		private GameObject meleeEffect;
+		private GameObject meleeCasting, meleeHit, meleeExplosion;
+		private GameObject target;
 
 		//TODO melee utok nebere damage od hrace
 		public MeleeAttack()
 		{
-			castTime = 1.0f;
+			castTime = 0.25f;
 			coolDown = 0f;
-			reuse = 0;
+			reuse = 1f;
 			updateFrequency = 0.1f;
 			baseDamage = 10;
 
@@ -49,12 +50,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void InitTraits()
 		{
 			AddTrait(SkillTraits.Damage);
+			AddTrait(SkillTraits.Melee);
 		}
 
 		public override bool OnCastStart()
 		{
 			if (initTarget == null)
 				return false;
+
+			target = initTarget;
 
 			Character chTarget = GetCharacterFromObject(initTarget);
 
@@ -65,8 +69,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
 			{
-				meleeEffect = CreateParticleEffect("Melee2", true, GetOwnerData().GetBody().transform.position);
-				StartParticleEffect(meleeEffect);
+				meleeCasting = CreateParticleEffect("Melee Preparation", true, GetOwnerData().GetBody().transform.position);
+				StartParticleEffect(meleeCasting);
 				GetOwnerData().StartMeleeAnimation(castTime);
 				return true;
 			}
@@ -78,17 +82,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			GetOwnerData().StopMeleeAnimation();
+
+			meleeHit = CreateParticleEffect("Melee Launch", true, GetOwnerData().GetBody().transform.position);
+			StartParticleEffect(meleeHit);
 		}
 
 		public override void OnFinish()
 		{
-			if (meleeEffect != null)
-				DeleteParticleEffect(meleeEffect);
+			if (meleeCasting != null)
+				DeleteParticleEffect(meleeCasting);
+
+			if(meleeHit != null)
+				DeleteParticleEffect(meleeHit, 1.0f);
 
 			if (initTarget != null)
 			{
+				// TODO check angle!!! 
 				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
 				{
+					//RotatePlayerTowardsTarget(initTarget);
 					ApplyEffects(Owner, initTarget);
 				}
 				else
@@ -116,17 +128,33 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnAfterEnd()
 		{
+			if (reuse == 0)
+			{
+				// continue with next attack
+				if (GetOwnerData().RepeatingMeleeAttack)
+					GetOwnerData().MeleeInterract(target, true);
+			}
+		}
+
+		public override void OnAterReuse()
+		{
 			// continue with next attack
 			if (GetOwnerData().RepeatingMeleeAttack)
-				GetOwnerData().MeleeInterract(initTarget, true);
+				GetOwnerData().MeleeInterract(target, true);
 		}
 
 		public override void UpdateLaunched()
 		{
-			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) > range)
+			if (target == null)
+				return;
+
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, target.transform.position) > range)
 			{
-				if(meleeEffect != null)
-					DeleteParticleEffect(meleeEffect);
+				if(meleeCasting != null)
+					DeleteParticleEffect(meleeCasting);
+
+				if(meleeHit != null)
+					DeleteParticleEffect(meleeHit);
 			}
 		}
 
@@ -137,12 +165,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool CanMove()
 		{
-			return !IsActive() && !IsBeingCasted();
+			return true;
 		}
 
 		public override bool CanRotate()
 		{
-			return CanMove();
+			return true;
 		}
 	}
 }

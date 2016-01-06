@@ -166,6 +166,7 @@ namespace Assets.scripts.Skills
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 		public virtual void OnAfterEnd() { }
+		public virtual void OnAterReuse() { }
 
 		protected override void InitDynamicTraits()
 		{
@@ -337,6 +338,8 @@ namespace Assets.scripts.Skills
 		{
 			active = false;
 
+			initTarget = null;
+
 			Owner.Status.ActiveSkills.Remove(this);
 
 			Owner.NotifyCastingModeChange();
@@ -344,11 +347,24 @@ namespace Assets.scripts.Skills
 			UpdateTask = null;
 			Task = null;
 
+			state = SkillState.SKILL_IDLE;
+
 			OnAfterEnd();
+
+			if (reuse > 0)
+				Owner.StartTask(NotifyReuseEnd());
+		}
+
+		private IEnumerator NotifyReuseEnd()
+		{
+			yield return new WaitForSeconds(reuse);
+			OnAterReuse();
 		}
 
 		public override void AbortCast()
 		{
+			DeleteCastingEffect();
+
 			if (state == SkillState.SKILL_CONFIRMING)
 			{
 				GetPlayerData().ActiveConfirmationSkill = null;
@@ -372,12 +388,15 @@ namespace Assets.scripts.Skills
 			if (!OnCastStart())
 			{
 				OnAbort();
-				yield break; //TODO test!
+				yield break;
 			}
 
 			float castTime = this.castTime;
 
-			// TODO apply debuffs, etc here
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillCasttime(this, ref castTime);
+			}
 
 			if (castTime > 0)
 			{
@@ -783,6 +802,11 @@ namespace Assets.scripts.Skills
 			}
 
 			return totalDamageOutput;
+		}
+
+		public virtual void OnMove()
+		{
+			
 		}
 	}
 }

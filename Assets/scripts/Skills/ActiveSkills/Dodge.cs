@@ -9,9 +9,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class JumpShort : ActiveSkill
+	public class Dodge : ActiveSkill
 	{
-		public JumpShort()
+		public Dodge()
 		{
 			castTime = 0f;
 			reuse = 1.0f;
@@ -24,17 +24,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.JumpShort;
+			return SkillId.Dodge;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Jump Short";
+			return "Cold Dodge";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new JumpShort();
+			return new Dodge();
 		}
 
 		public override SkillEffect[] CreateEffects()
