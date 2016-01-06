@@ -18,6 +18,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
+
+			range = 10;
 		}
 
 		public override SkillId GetSkillId()

@@ -6,29 +6,29 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class NeutrophileProjectile : ActiveSkill
+	public class SneezeShot : ActiveSkill
 	{
 		private GameObject activeProjectile;
 
-		public NeutrophileProjectile()
+		public SneezeShot()
 		{
 			castTime = 0f;
-			reuse = 2;
+			reuse = 1;
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 10;
 
-			range = 10;
+			range = 7;
 		}
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.NeutrophileProjectile;
+			return SkillId.SneezeShot;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Neutrophile Projectile";
+			return "Sneeze Shot";
 		}
 
 		public override Skill Instantiate()
@@ -59,16 +59,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			activeProjectile = CreateSkillProjectile("projectile_00", true);
+			GameObject activeProjectile;
 
-			if (activeProjectile != null)
+			int count = 2;
+
+			for (int i = 0; i < count; i++)
 			{
-				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector(0) * 17);
+				activeProjectile = CreateSkillProjectile("projectile_00", true);
+				if (activeProjectile != null)
+				{
+					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+					rb.velocity = (GetOwnerData().GetForwardVector(-10+i*20) * 15);
 
-				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
+					//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 
-				Object.Destroy(activeProjectile, 5f);
+					Object.Destroy(activeProjectile, 5f);
+				}
 			}
 		}
 

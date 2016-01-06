@@ -17,8 +17,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 			MaxMp = 50;
 			MaxSpeed = 10;
 
-			IsAggressive = true;
+			IsAggressive = false;
 			AggressionRange = 10;
+			RambleAround = true;
 		}
 
 		protected override void AddSkills()

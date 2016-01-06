@@ -20,6 +20,11 @@ namespace Assets.scripts.Skills.Base
 
 		NeutrophileProjectile,
 
+		SneezeShot,
+		Dodge,
+		CellFury,
+		MucusWarrior,
+
 		MeleeAttack,
 	}
 }

@@ -28,6 +28,8 @@ namespace Assets.scripts.AI
 		public bool IsGroupLeader { get; set; }
 		public AIGroup Group { get; set; }
 
+		protected Vector3 homeLocation;
+
 		protected AbstractAI(Character o)
 		{
 			Owner = o;
@@ -62,6 +64,7 @@ namespace Assets.scripts.AI
 		private void Init()
 		{
 			AnalyzeSkills();
+			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
 		protected void StartAction(IEnumerator task, float timeLimit)

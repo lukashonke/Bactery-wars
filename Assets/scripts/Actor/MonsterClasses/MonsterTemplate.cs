@@ -27,6 +27,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public bool IsAggressive = false;
 		public int AggressionRange = 5;
 
+		public bool RambleAround = false;
+		public int RambleAroundMaxDist = 5;
+
 		protected MonsterTemplate()
 		{
 			TemplateSkills = new List<Skill>();

@@ -75,7 +75,7 @@ namespace Assets.scripts.Skills
 			coolDown = 5;
 			reuse = 5;
 			updateFrequency = 0.1f;
-			rangeCheckFrequency = 0.2f;
+			rangeCheckFrequency = 0.1f;
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
 			breaksMouseMovement = true;
@@ -111,10 +111,39 @@ namespace Assets.scripts.Skills
 		public virtual void OnBeingConfirmed()
 		{
 			if (confirmObject == null)
+			{
 				confirmObject = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+				UpdateDirectionArrowScale(range, confirmObject);
+			}
 
+			//UpdateParticleSystemRange(range, confirmObject.GetComponent<ParticleSystem>());
 			UpdateMouseDirection(confirmObject.transform);
-			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			RotateArrowToMouseDirection(confirmObject, 0);
+		}
+
+		protected void RotateArrowToMouseDirection(GameObject o, int plusAngle)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(-mouseDirection, Vector3.forward);
+			newRotation.z = newRotation.z + plusAngle;
+			newRotation.x = 0;
+			newRotation.y = 0;
+			confirmObject.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
+		}
+
+		protected void UpdateDirectionArrowScale(int range, GameObject o)
+		{
+			if (range > 10)
+				range = 10;
+
+			o.transform.localScale = new Vector3(0.24f, 0.145f*range, 0);
+		}
+
+		protected void UpdateParticleSystemRange(int range, ParticleSystem ps)
+		{
+			// 5 dist = 1
+			ps.startLifetime = 1;
+			ps.startSpeed = (range);
+			Debug.DrawRay(GetOwnerData().shootingPosition.transform.position, new Vector3(5, 0, 0), Color.red, 10f);
 		}
 
 		public virtual void CancelConfirmation()

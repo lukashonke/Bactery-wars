@@ -462,6 +462,23 @@ namespace Assets.scripts.Mono
 			o.transform.parent = GetBody().transform;
 		}
 
+		public GameObject CreateDirectionArrow(string resourceFolderName, string fileName, bool makeChild, Vector3 spawnPosition, int range)
+		{
+			GameObject go = LoadResource("skill", resourceFolderName, fileName);
+
+			GameObject newObject = Instantiate(go, spawnPosition, GetBody().transform.rotation) as GameObject;
+
+			if (newObject != null)
+			{
+				if (makeChild)
+					SetChild(newObject);
+
+				newObject.tag = gameObject.tag;
+			}
+
+			return newObject;
+		}
+
 		/// <summary>
 		/// Instantiates an object with from: Resources/Prefabs/skill/[resourceFolderName]/[fileName].prefab 
 		/// Places it into [spawnPosition]

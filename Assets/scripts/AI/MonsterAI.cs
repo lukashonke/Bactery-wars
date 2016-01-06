@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -20,12 +21,16 @@ namespace Assets.scripts.AI
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
 
+		private readonly int rambleInterval = 5;
+		private float lastRambleTime;
+		private bool isWalking;
+
 		protected MonsterAI(Character o) : base(o)
 		{
 			aggro = new Dictionary<Character, int>();
 
-			IsAggressive = ((Monster) Owner.GetData().GetOwner()).Template.IsAggressive;
-			AggressionRange = ((Monster)Owner.GetData().GetOwner()).Template.AggressionRange;
+			IsAggressive = GetTemplate().IsAggressive;
+			AggressionRange = GetTemplate().AggressionRange;
 		}
 
 		public override void Think()
@@ -62,6 +67,12 @@ namespace Assets.scripts.AI
 			if (GetStatus().IsDead)
 				return;
 
+			if (aggro.Any())
+			{
+				SetAIState(AIState.ATTACKING);
+				return;
+			}
+
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
 				foreach (GameObject o in Owner.Knownlist.KnownObjects)
@@ -75,6 +86,123 @@ namespace Assets.scripts.AI
 						SetAIState(AIState.ACTIVE);
 						break;
 					}
+				}
+			}
+
+			if (State == AIState.IDLE)
+			{
+				if (GetGroupLeader() != null && !IsGroupLeader)
+				{
+					Character leader = GetGroupLeader();
+
+					if (leader.Data.GetBody() != null)
+					{
+						Vector3 leaderPos = leader.Data.GetBody().transform.position;
+
+						int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+						if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+						{
+							Vector3 rnd = Random.insideUnitCircle;
+							rnd.z = 0;
+
+							MoveTo(leaderPos + rnd);
+
+							//Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
+						}
+					}
+				}
+
+				if (!Owner.GetData().HasTargetToMoveTo)
+				{
+					if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > 20 * 20)
+					{
+						MoveTo(homeLocation);
+					}
+					else if (lastRambleTime + rambleInterval < Time.time)
+					{
+						//if (Random.Range(1, 4) < 3)
+						{
+							lastRambleTime = Time.time;
+							RambleAround();
+						}
+					}
+				}
+			}
+		}
+
+		protected void RambleAround()
+		{
+			bool found = false;
+
+			int limit = 5;
+			while (!found)
+			{
+				int dist = GetTemplate().RambleAroundMaxDist;
+				Vector3 randomPos = new Vector2(homeLocation.x + Random.Range(-dist, dist), homeLocation.y + Random.Range(-dist, dist));
+
+				bool collides = false;
+				foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))
+				{
+					if (r2d.collider == null)
+						continue;
+
+					if (r2d.collider.gameObject.Equals(Owner.GetData().GetBody()))
+						continue;
+
+					collides = true;
+				}
+
+				if (collides)
+				{
+					Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+				}
+				else
+				{
+					found = true;
+					isWalking = true;
+					Owner.GetData().SetMoveSpeed(3);
+					MoveTo(randomPos);
+					Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.green, 5);
+				}
+
+				limit--;
+				if (limit <= 0)
+					break;
+			}
+		}
+
+		private void ThinkActive()
+		{
+			Debug.Log("idle");
+			bool stillActive = false;
+			if (Owner.Knownlist.KnownObjects.Count > 0)
+			{
+				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				{
+					if (o == null) continue;
+
+					Character ch = Utils.GetCharacter(o);
+
+					if (IsAggressive && ch != null && Owner.CanAutoAttack(ch))
+					{
+						stillActive = true;
+
+						// find target that can be attacked
+						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
+						{
+							AddAggro(ch, 1);
+							NotifyNearby(ch);
+						}
+
+						break;
+					}
+				}
+
+				if (aggro.Any())
+				{
+					SetAIState(AIState.ATTACKING);
+					return;
 				}
 			}
 
@@ -95,51 +223,37 @@ namespace Assets.scripts.AI
 
 						MoveTo(leaderPos + rnd);
 
+						if (isWalking)
+						{
+							Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
+							isWalking = false;
+						}
+
 						//Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
 					}
 				}
 			}
-		}
 
-		private void ThinkActive()
-		{
-			Debug.Log("active");
-			bool stillActive = false;
-			if (Owner.Knownlist.KnownObjects.Count > 0)
-			{
-				foreach (GameObject o in Owner.Knownlist.KnownObjects)
-				{
-					if (o == null) continue;
-
-					Character ch = Utils.GetCharacter(o);
-
-					if (IsAggressive && ch != null && Owner.CanAutoAttack(ch))
-					{
-						stillActive = true;
-
-						// find target that can be attacked
-						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
-						{
-							AddAggro(ch, 1);
-						}
-
-
-						break;
-					}
-				}
-
-				if (aggro.Any())
-					SetAIState(AIState.ATTACKING);
-			}
-
+			//TODO tohle funguje spatne! vraci to mezi idle a zpet.. to je nahovno
 			if (!stillActive)
 			{
 				SetAIState(AIState.IDLE);
 			}
 		}
 
+		private void NotifyNearby(Character target)
+		{
+			// TODO get nearby friendly allies, set their aggro towards the player to 1 too
+		}
+
 		private void ThinkAttack()
 		{
+			if (isWalking)
+			{
+				Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
+				isWalking = false;
+			}
+
 			Character possibleTarget = SelectMostAggroTarget();
 
 			// no target this monster hates - go back to active
@@ -292,6 +406,11 @@ namespace Assets.scripts.AI
 		protected override void OnSwitchAttacking()
 		{
 			ThinkInterval = 0.2f;
+		}
+
+		public MonsterTemplate GetTemplate()
+		{
+			return ((Monster)Owner).Template;
 		}
 	}
 }

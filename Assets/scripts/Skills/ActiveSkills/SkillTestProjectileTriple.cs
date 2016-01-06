@@ -36,21 +36,24 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (confirmObject == null)
 			{
 				confirmObject = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-
 				UpdateMouseDirection(confirmObject.transform);
-				confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+				UpdateDirectionArrowScale(range, confirmObject);
+				RotateArrowToMouseDirection(confirmObject, 0);
 
-				GameObject arrow2 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-				arrow2.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, -15));
-				arrow2.transform.parent = confirmObject.transform;
+				/*GameObject arrow2 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				RotateArrowToMouseDirection(arrow2, -15);
+				arrow2.transform.parent = GetOwnerData().GetBody().transform;
+				UpdateDirectionArrowScale(range, arrow2);
 
 				GameObject arrow3 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-				arrow3.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, 15));
-				arrow3.transform.parent = confirmObject.transform;
+				RotateArrowToMouseDirection(arrow3, 15);
+				arrow3.transform.parent = GetOwnerData().GetBody().transform;
+				UpdateDirectionArrowScale(range, arrow3);*/
 			}
 
 			UpdateMouseDirection(confirmObject.transform);
-			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			//confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			RotateArrowToMouseDirection(confirmObject, 0);
 		}
 
 		public override void OnLaunch()

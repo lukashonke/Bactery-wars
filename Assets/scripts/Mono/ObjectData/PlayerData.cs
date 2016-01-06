@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
@@ -150,11 +151,21 @@ namespace Assets.scripts.Mono.ObjectData
 			SetMovementTarget(newTarget);
 		}
 
+		public bool IsPositionWall(Vector3 pos)
+		{
+
+
+			return false;
+		}
+
 		public void SetPlayersMoveToTarget(Vector3 newTarget)
 		{
 			AbortMeleeAttacking();
 
 			if (!allowMovePointChange)
+				return;
+
+			if (IsPositionWall(newTarget))
 				return;
 
 			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
