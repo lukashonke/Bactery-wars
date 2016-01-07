@@ -291,5 +291,10 @@ namespace Assets.scripts.AI
 		{
 			Owner.GetData().MoveTo(target);
 		}
+
+		public virtual void SetMaster(Character master)
+		{
+			
+		}
 	}
 }

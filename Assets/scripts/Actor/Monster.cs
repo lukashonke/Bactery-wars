@@ -18,6 +18,8 @@ namespace Assets.scripts.Actor
 	{
 		public MonsterTemplate Template { get; set; }
 
+		private Character master;
+
 		public bool isMinion;
 
 		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
@@ -32,6 +34,16 @@ namespace Assets.scripts.Actor
 			Data = dataObject;
 
 			Template = template;
+		}
+
+		public void SetMaster(Character m)
+		{
+			master = m;
+		}
+
+		public Character GetMaster()
+		{
+			return master;
 		}
 
 		public new EnemyData GetData()
@@ -90,10 +102,8 @@ namespace Assets.scripts.Actor
 				{
 					for (i = 0; i < e.Value; i++)
 					{
-						Vector3 rndPos = Random.insideUnitSphere;
-						rndPos.z = 0;
-
-						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, GetData().GetBody().transform.position + (rndPos*GetData().distanceToFollowLeader/2), true);
+						Vector3 rndPos = Utils.GenerateRandomPositionAround(GetData().GetBody().transform.position, GetData().distanceToFollowLeader/2f);
+						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, rndPos, true);
 						mon.AI.JoinGroup(this);
 					}
 				}

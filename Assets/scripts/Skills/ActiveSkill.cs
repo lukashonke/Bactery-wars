@@ -470,9 +470,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Loads a prefab template from resources folder (does not instantiate it)
 		/// </summary>
-		protected GameObject LoadSkillResource(string particleObjectName)
+		protected GameObject LoadSkillResource(string objectName)
 		{
-			GameObject o = GetOwnerData().LoadResource("skill", GetName(), particleObjectName);
+			GameObject o = GetOwnerData().LoadResource("skill", GetName(), objectName);
 
 			return o;
 		}
@@ -480,9 +480,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Instantiates GameObject and optionally makes it a child (moves with the player)
 		/// </summary>
-		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver)
+		protected GameObject CreateSkillObject(string objectName, bool makeChild, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetBody().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), objectName, makeChild, GetOwnerData().GetBody().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -493,9 +493,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Instantiates GameObject into defined position and optionally makes it a child (moves with the player)
 		/// </summary>
-		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
+		protected GameObject CreateSkillObject(string objectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), objectName, makeChild, spawnPosition);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);

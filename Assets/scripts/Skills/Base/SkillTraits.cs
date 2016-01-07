@@ -14,6 +14,7 @@ namespace Assets.scripts.Skills.Base
 		Missile,
 		BuffDamage,
 		BuffDefense,
+		SpawnMinion,
 
 		Melee,
 

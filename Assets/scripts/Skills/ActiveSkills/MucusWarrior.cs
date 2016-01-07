@@ -1,4 +1,7 @@
-﻿using Assets.scripts.Base;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
@@ -6,51 +9,51 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SneezeShot : ActiveSkill
+	public class MucusWarrior : ActiveSkill
 	{
-		private GameObject activeProjectile;
+		private Monster minion;
 
-		public SneezeShot()
+		private float lifetime;
+
+		public MucusWarrior()
 		{
 			castTime = 0f;
-			reuse = 1;
+			reuse = 10f;
 			coolDown = 0;
-			requireConfirm = true;
-			baseDamage = 10;
+			requireConfirm = false;
 
-			range = 13;
+			lifetime = 10f;
 		}
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.SneezeShot;
+			return SkillId.MucusWarrior;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Sneeze Shot";
+			return "Mucus Warrior";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new SneezeShot();
+			return new MucusWarrior();
 		}
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 10)};
+			return null;
 		}
 
 		public override void InitTraits()
 		{
-			AddTrait(SkillTraits.Damage);
+			AddTrait(SkillTraits.SpawnMinion);
 		}
 
 		public override bool OnCastStart()
 		{
-			RotatePlayerTowardsMouse();
-
-			CreateCastingEffect(true, "SkillTemplate");
+			if(castTime > 0)
+				CreateCastingEffect(true, "SkillTemplate");
 
 			return true;
 		}
@@ -59,22 +62,36 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			GameObject activeProjectile;
+			//ApplyEffects(Owner, Owner.GetData().gameObject);
 
-			int count = 2;
+			Spawn();
+		}
 
-			for (int i = 0; i < count; i++)
+		private Coroutine despawnTask;
+
+		private void Spawn()
+		{
+			GameObject mo = CreateSkillObject("MucusWarrior", false, true);
+			mo.transform.position = Utils.GenerateRandomPositionAround(GetOwnerData().GetBody().transform.position, 5);
+
+			minion = Utils.GetCharacter(mo) as Monster;
+			minion.SetMaster(Owner);
+
+			despawnTask = Owner.StartTask(ScheduleDespawn());
+		}
+
+		private IEnumerator ScheduleDespawn()
+		{
+			yield return new WaitForSeconds(lifetime);
+
+			Despawn();
+		}
+
+		private void Despawn()
+		{
+			if (minion != null)
 			{
-				activeProjectile = CreateSkillProjectile("projectile_00", true);
-				if (activeProjectile != null)
-				{
-					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-					rb.velocity = (GetOwnerData().GetForwardVector(-5+i*10) * 15);
-
-					//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
-					Object.Destroy(activeProjectile, 5f);
-				}
+				minion.GetData().SetIsDead(true);
 			}
 		}
 
@@ -85,6 +102,18 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject)
 		{
+			Character ch = Utils.GetCharacter(gameObject);
+
+			if (ch == null)
+				return;
+
+			if (ch.Status.IsDead)
+			{
+				if (despawnTask != null)
+				{
+					Owner.StopTask(despawnTask);
+				}
+			}
 		}
 
 		public override void MonoStart(GameObject gameObject)
@@ -98,12 +127,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
-				return;
-
-			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
-			DestroyProjectile(gameObject);
 		}
 
 		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)

@@ -61,10 +61,21 @@ namespace Assets.scripts.AI
 			}
 		}
 
+		public Character GetMaster()
+		{
+			return ((Monster) Owner).GetMaster();
+		}
+
 		private void ThinkIdle()
 		{
 			if (GetStatus().IsDead)
 				return;
+
+			if (GetMaster() != null)
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
 
 			if (aggro.Any())
 			{
@@ -136,6 +147,10 @@ namespace Assets.scripts.AI
 				}
 			}
 
+			// always active if you have a master
+			if (GetMaster() != null)
+				stillActive = true;
+
 			if (!stillActive)
 			{
 				SetAIState(AIState.IDLE);
@@ -189,7 +204,28 @@ namespace Assets.scripts.AI
 
 		protected bool TryFollowLeader()
 		{
-			if (GetGroupLeader() != null && !IsGroupLeader)
+			if (GetMaster() != null)
+			{
+				Character master = GetMaster();
+
+				if (master.Data.GetBody() != null)
+				{
+					Vector3 leaderPos = master.Data.GetBody().transform.position;
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					{
+						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, 2);
+						rnd.z = 0;
+
+						SetIsWalking(false);
+						MoveTo(leaderPos + rnd);
+
+						return true;
+					}
+				}
+			}
+			else if (GetGroupLeader() != null && !IsGroupLeader)
 			{
 				Character leader = GetGroupLeader();
 

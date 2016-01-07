@@ -8,6 +8,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Mono;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts
 {
@@ -40,6 +41,66 @@ namespace Assets.scripts
 			Vector3 target = mousePos - t.position;
 			Quaternion r = Quaternion.LookRotation(target);
 			return r;
+		}
+
+		public static Vector3 GenerateRandomPositionOnCircle(Vector3 pos, float circle)
+		{
+			/*int limit = 6;
+
+			while (--limit > 0)
+			{
+				Vector3 v = new Vector3(pos.x + Random.Range(-range, range), pos.y + Random.Range(-range, range), 0);
+
+				if (IsInsideWalls(v))
+					continue;
+
+				return v;
+			}*/
+
+			return pos;
+		}
+
+		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float range, float minRange)
+		{
+			int limit = 6;
+
+			while (--limit > 0)
+			{
+				float randX = Random.Range(-range, range) - minRange;
+				float randY = Random.Range(-range, range) - minRange;
+
+				Vector3 v = new Vector3(pos.x + randX, pos.y +randY, 0);
+
+				if (IsInsideWalls(v)) //TODO also check colliders of o
+					continue;
+
+				return v;
+			}
+
+			return pos;
+		}
+
+		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float range)
+		{
+			int limit = 6;
+
+			while (--limit > 0)
+			{
+				Vector3 v = new Vector3(pos.x + Random.Range(-range, range), pos.y + Random.Range(-range, range), 0);
+
+				if(IsInsideWalls(v))
+					continue;
+
+				return v;
+			}
+
+			return pos;
+		}
+
+		public static bool IsInsideWalls(Vector3 v)
+		{
+			//TODO
+			return false;
 		}
 
 		public static Vector3 RotateDirectionVector(Vector3 vector, int angle)
