@@ -131,7 +131,7 @@ namespace Assets.scripts
 
 		public Monster RegisterNewMonster(EnemyData data, String name, int id)
 		{
-			Monster monster = null;
+			Monster monster;
 
 			MonsterId mId = (MonsterId) Enum.Parse(typeof (MonsterId), ""+id);
 			monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(mId));
@@ -145,7 +145,7 @@ namespace Assets.scripts
 
 		public Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion)
 		{
-			Monster monster = null;
+			Monster monster;
 			monster = new Monster(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
 			data.SetOwner(monster);
 			monster.Init();

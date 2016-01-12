@@ -30,6 +30,8 @@ namespace Assets.scripts.Actor
 		public Knownlist Knownlist { get; private set; }
 		public AbstractAI AI { get; private set; }
 
+		public List<Monster> summons; 
+
 		public List<SkillEffect> ActiveEffects { get; private set; }
 		private Coroutine effectUpdateTask;
 
@@ -53,6 +55,16 @@ namespace Assets.scripts.Actor
 
 			if(Knownlist != null)
 			Knownlist.Active = false;
+
+			if (this is Monster)
+			{
+				if (((Monster) this).GetMaster() != null)
+				{
+					((Monster) this).GetMaster().RemoveSummon((Monster) this);
+				}
+			}
+
+			RemoveAllSummons();
 		}
 
 		/// <summary>
@@ -64,6 +76,7 @@ namespace Assets.scripts.Actor
 			ActiveEffects = new List<SkillEffect>();
 			Status = InitStatus();
 			Skills = InitSkillSet();
+			summons = new List<Monster>();
 
 			Knownlist.StartUpdating();
 
@@ -324,6 +337,33 @@ namespace Assets.scripts.Actor
 		public virtual bool IsInteractable()
 		{
 			return true;
+		}
+
+		private void RemoveAllSummons()
+		{
+			foreach (Monster m in summons)
+			{
+				if (m != null)
+				{
+					m.GetData().SetIsDead(true);
+				}
+			}
+		}
+
+		public void AddSummon(Monster m)
+		{
+			summons.Add(m);
+			m.SetMaster(this);
+		}
+
+		public void RemoveSummon(Monster m)
+		{
+			summons.Remove(m);
+		}
+
+		public bool HasSummons()
+		{
+			return summons.Count > 0;
 		}
 	}
 }

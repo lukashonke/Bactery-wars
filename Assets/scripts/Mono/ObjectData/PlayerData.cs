@@ -49,6 +49,11 @@ namespace Assets.scripts.Mono.ObjectData
             Debug.Log("Registering new data for player " + player.Name);
 		}
 
+		public new void Awake()
+		{
+			base.Awake();
+		}
+
 		public override void Update()
 		{
 			// if the player is waiting to confirm skill casting, call the skills method to render the confirmation elements (eg. arrow to select where the skill should be casted, etc)
@@ -151,29 +156,22 @@ namespace Assets.scripts.Mono.ObjectData
 			SetMovementTarget(newTarget);
 		}
 
-		public bool IsPositionWall(Vector3 pos)
-		{
-
-
-			return false;
-		}
-
-		public void SetPlayersMoveToTarget(Vector3 newTarget)
+		public bool SetPlayersMoveToTarget(Vector3 newTarget)
 		{
 			AbortMeleeAttacking();
 
 			if (!allowMovePointChange)
-				return;
+				return false;
 
-			if (IsPositionWall(newTarget))
-				return;
+			if (Utils.IsInsideWalls(GetBody().transform.position, newTarget))
+				return false;
 
 			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
 			{
 				ActiveConfirmationSkill.AbortCast();
 			}
 
-			SetMovementTarget(newTarget);
+			return SetMovementTarget(newTarget);
 		}
 
 		public void HighlightTarget(GameObject target, bool enable)

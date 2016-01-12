@@ -71,6 +71,7 @@ namespace Assets.scripts.AI
 			if (GetStatus().IsDead)
 				return;
 
+			// pokud ma mastera, musi byt vzdy v aktivnim stavu (pro sledovani pohybu mastera, atd.)
 			if (GetMaster() != null)
 			{
 				SetAIState(AIState.ACTIVE);
@@ -116,28 +117,40 @@ namespace Assets.scripts.AI
 
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
-				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				// muze si sam vybirat cile pouze pokud nema mastera
+				if (GetMaster() == null)
 				{
-					if (o == null) continue;
-
-					Character ch = Utils.GetCharacter(o);
-
-					if (ch == null)
-						continue;
-
-					stillActive = true;
-
-					if (IsAggressive && Owner.CanAutoAttack(ch))
+					foreach (GameObject o in Owner.Knownlist.KnownObjects)
 					{
-						// find target that can be attacked
-						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
-						{
-							AddAggro(ch, 1);
-							NotifyNearby(ch);
-						}
+						if (o == null) continue;
 
-						break;
+						Character ch = Utils.GetCharacter(o);
+						if (ch == null)
+							continue;
+
+						stillActive = true;
+
+						if (IsAggressive && Owner.CanAutoAttack(ch))
+						{
+							// find target that can be attacked
+							if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
+							{
+								AddAggro(ch, 1);
+								NotifyNearbyAggroAdded(ch);
+							}
+
+							break;
+						}
 					}
+				}
+
+				// pokud master utoci, summon zacne utocit take (v attack metode se vybere cil mastera)
+				if (GetMaster() != null)
+				{
+					if (GetMaster().AI.State == AIState.ATTACKING)
+					{
+						AddAggro(GetMaster().AI.GetMainTarget(), 1);
+					}					
 				}
 
 				if (aggro.Any())
@@ -147,13 +160,14 @@ namespace Assets.scripts.AI
 				}
 			}
 
-			// always active if you have a master
-			if (GetMaster() != null)
+			// vzdy aktivni pokud ma mastera
+			if (!stillActive && GetMaster() != null)
 				stillActive = true;
 
 			if (!stillActive)
 			{
 				SetAIState(AIState.IDLE);
+				return;
 			}
 
 			if (State == AIState.ACTIVE)
@@ -169,14 +183,44 @@ namespace Assets.scripts.AI
 			}
 		}
 
-		private void NotifyNearby(Character target)
+		private void NotifyNearbyAggroAdded(Character target)
 		{
 			// TODO get nearby friendly allies, set their aggro towards the player to 1 too
+		}
+
+		private void NotifySummonsAboutAttack(Character target)
+		{
+			/*if (Owner.HasSummons())
+			{
+				foreach (Monster summon in Owner.summons)
+				{
+					MonsterAI ai = summon.AI as MonsterAI;
+				}
+			}*/
+		}
+
+		private bool CheckIfTooFarFromMaster()
+		{
+			if (GetMaster() != null)
+			{
+				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
+				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+				if (dist > distToFollow*distToFollow + 6*6)
+					return true;
+			}
+			return false;
 		}
 
 		private void ThinkAttack()
 		{
 			SetIsWalking(false);
+
+			if (CheckIfTooFarFromMaster())
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
 
 			Character possibleTarget = SelectMostAggroTarget();
 
@@ -193,6 +237,10 @@ namespace Assets.scripts.AI
 				return;
 			}
 
+			//TODO make sure ma tohle byt volano jen jednou ?
+			NotifyNearbyAggroAdded(possibleTarget);
+			NotifySummonsAboutAttack(possibleTarget);
+
 			// target is too far (> attackdistance*2) - abandone attacking
 			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
 			{
@@ -204,6 +252,10 @@ namespace Assets.scripts.AI
 
 		protected bool TryFollowLeader()
 		{
+			if (Owner.GetData().HasTargetToMoveTo)
+				return false;
+
+			// ma mastera - charakter ktery tento objekt vlastni
 			if (GetMaster() != null)
 			{
 				Character master = GetMaster();
@@ -213,18 +265,25 @@ namespace Assets.scripts.AI
 					Vector3 leaderPos = master.Data.GetBody().transform.position;
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
 					{
-						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, 2);
+						Debug.Log("true");
+						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow-1);
 						rnd.z = 0;
 
 						SetIsWalking(false);
 						MoveTo(leaderPos + rnd);
 
+						Debug.DrawRay(Owner.GetData().GetBody().transform.position, leaderPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+
 						return true;
 					}
+					else
+					{
+						Debug.Log("false");
+					}
 				}
-			}
+			} // ma skupinu - nasleduje vudce ale udrzuje si jinak samostatnost
 			else if (GetGroupLeader() != null && !IsGroupLeader)
 			{
 				Character leader = GetGroupLeader();
@@ -237,7 +296,7 @@ namespace Assets.scripts.AI
 
 					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
 					{
-						Vector3 rnd = Random.insideUnitCircle;
+						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow - 1);
 						rnd.z = 0;
 
 						SetIsWalking(false);
@@ -253,6 +312,9 @@ namespace Assets.scripts.AI
 
 		protected bool ReturnHomeIfNeeded()
 		{
+			if (GetMaster() != null)
+				return false;
+
 			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
 			{
 				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > 20 * 20)
@@ -268,6 +330,9 @@ namespace Assets.scripts.AI
 
 		protected bool TryRambleAround()
 		{
+			if (GetMaster() != null)
+				return false;
+
 			if (!Owner.GetData().HasTargetToMoveTo)
 			{
 				if (lastRambleTime + rambleInterval < Time.time)
@@ -308,7 +373,7 @@ namespace Assets.scripts.AI
 			while (!found)
 			{
 				int dist = GetTemplate().RambleAroundMaxDist;
-				Vector3 randomPos = new Vector2(homeLocation.x + Random.Range(-dist, dist), homeLocation.y + Random.Range(-dist, dist));
+				Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist);
 
 				bool collides = false;
 				foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))
@@ -409,6 +474,8 @@ namespace Assets.scripts.AI
 
 			int randomDir = Random.Range(-randomAngleAdd, randomAngleAdd);
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, randomDir)) * dirVector;
+
+			//TODO add wall checking ! 
 
 			/*RaycastHit2D hit = Physics2D.Linecast(Owner.GetData().GetBody().transform.position, nv);
 

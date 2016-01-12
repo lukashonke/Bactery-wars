@@ -154,7 +154,11 @@ namespace Assets.scripts.Mono
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
+		}
 
+		//TODO improve this - nemelo by to byt v jedne oddelene metode
+		public void Awake()
+		{
 			seeker = GetComponent<Seeker>();
 			if (usesPathfinding && seeker == null)
 				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
@@ -259,6 +263,40 @@ namespace Assets.scripts.Mono
 			currentPathNode = 0;
 		}
 
+		private float lastCheckVelocityTime;
+		private bool wasCloseTozero;
+		private const float VELOCITY_CHECK_INTERVAL = 1f;
+
+		private void CheckVelocityToStop()
+		{
+			if (HasTargetToMoveTo && lastCheckVelocityTime + VELOCITY_CHECK_INTERVAL < Time.time)
+			{
+				Debug.Log(rb.velocity);
+				lastCheckVelocityTime = Time.time;
+
+				if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
+				{
+					if (!wasCloseTozero)
+					{
+						wasCloseTozero = true;
+						Debug.Log("close to zero set to true");
+						
+					}
+					else
+					{
+						Debug.Log("breaking movementEnabled!");
+						BreakMovement(true);
+						wasCloseTozero = false;
+					}
+				}
+				else
+				{
+					Debug.Log("close to zero set to false...");
+					wasCloseTozero = false;
+				}
+			}
+		}
+
 		private Vector3 lastFoundWaypointPosition;
 		private float lastFoundWaypointTime;
 
@@ -300,6 +338,8 @@ namespace Assets.scripts.Mono
 			}
 			else
 			{
+				CheckVelocityToStop();
+
 				// pokud mame kontrolovat vzdalenost od targetu, je treba obnovovat polohu targetu
 				if (targetMoveObject != null && minRangeToTarget > 0)
 				{
@@ -417,7 +457,7 @@ namespace Assets.scripts.Mono
 				if (this is EnemyData)
 				{
 					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData)this).monsterId));
-					Debug.Log("Registering new data for monster which is of type " + ((Monster)GetOwner()).Template.GetType().Name);
+					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " + ((Monster)GetOwner()).Template.GetType().Name);
 				}
 			}
 		}
@@ -908,13 +948,14 @@ namespace Assets.scripts.Mono
 			CalculatePathfindingNodes();
 		}
 
-		public void SetMovementTarget(Vector3 newTarget)
+		public bool SetMovementTarget(Vector3 newTarget)
 		{
 			MovementChanged();
 			targetPositionWorld = newTarget;
 			targetMoveObject = null;
 
 			CalculatePathfindingNodes();
+			return true;
 		}
 
 		public Vector3 GetMovementTarget()
@@ -1083,18 +1124,20 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void MoveTo(Vector3 target)
+		public bool MoveTo(Vector3 target)
 		{
 			if (this is PlayerData)
 			{
 				HasTargetToMoveTo = true;
-				((PlayerData)this).SetPlayersMoveToTarget(target);
+				return ((PlayerData)this).SetPlayersMoveToTarget(target);
 			}
 			else if (this is EnemyData)
 			{
 				HasTargetToMoveTo = true;
-				((EnemyData)this).SetMovementTarget(target); //TODO might cause problems
+				return ((EnemyData)this).SetMovementTarget(target);
 			}
+
+			return false;
 		}
 
 		public void SetKeyboardMovement(float horizontal, float vertical)

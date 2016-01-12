@@ -21,6 +21,11 @@ namespace Assets.scripts.Mono.ObjectData
 			//Debug.Log("Registering new data for monster ");
 		}
 
+		public new void Awake()
+		{
+			base.Awake();
+		}
+
 		public override Character GetOwner()
 		{
 			return owner;

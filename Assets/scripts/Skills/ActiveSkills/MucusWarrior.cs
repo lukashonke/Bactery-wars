@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -22,7 +25,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			requireConfirm = false;
 
-			lifetime = 10f;
+			lifetime = 60f;
 		}
 
 		public override SkillId GetSkillId()
@@ -72,10 +75,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private void Spawn()
 		{
 			GameObject mo = CreateSkillObject("MucusWarrior", false, true);
-			mo.transform.position = Utils.GenerateRandomPositionAround(GetOwnerData().GetBody().transform.position, 5);
 
-			minion = Utils.GetCharacter(mo) as Monster;
-			minion.SetMaster(Owner);
+			mo.transform.position = Utils.GenerateRandomPositionAround(GetOwnerData().GetBody().transform.position, 5);
+			mo.RegisterAsMonster();
+
+			minion = mo.GetChar() as Monster;
+			Owner.AddSummon(minion);
 
 			despawnTask = Owner.StartTask(ScheduleDespawn());
 		}
@@ -102,7 +107,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject)
 		{
-			Character ch = Utils.GetCharacter(gameObject);
+			Character ch = gameObject.GetChar();
 
 			if (ch == null)
 				return;

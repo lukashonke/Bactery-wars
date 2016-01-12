@@ -22,6 +22,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Dodge));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
 
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}

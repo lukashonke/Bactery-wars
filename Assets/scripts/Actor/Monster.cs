@@ -39,6 +39,7 @@ namespace Assets.scripts.Actor
 		public void SetMaster(Character m)
 		{
 			master = m;
+			GetData().tag = m.GetData().tag;
 		}
 
 		public Character GetMaster()

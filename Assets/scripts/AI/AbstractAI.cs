@@ -287,9 +287,9 @@ namespace Assets.scripts.AI
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected void MoveTo(Vector3 target)
+		protected bool MoveTo(Vector3 target)
 		{
-			Owner.GetData().MoveTo(target);
+			return Owner.GetData().MoveTo(target);
 		}
 
 		public virtual void SetMaster(Character master)
