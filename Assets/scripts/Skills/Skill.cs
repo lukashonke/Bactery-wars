@@ -94,7 +94,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target)
+		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false)
 		{
 			SkillEffect[] efs = CreateEffects();
 
@@ -102,6 +102,21 @@ namespace Assets.scripts.Skills
 			{
 				foreach (SkillEffect ef in efs)
 				{
+					ef.Source = source;
+
+					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					{
+						Character targetCh = target.GetChar();
+
+						if (targetCh != null && targetCh.HasEffectAlready(ef))
+						{
+							Debug.Log(" ** not applying again " + ef.GetType().Name);
+							continue;
+						}
+					}
+
+					Debug.Log("applying " + ef.GetType().Name);
+
 					ef.ApplyEffect(source, target);
 				}
 			}

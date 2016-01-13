@@ -25,6 +25,7 @@ namespace Assets.scripts.Skills.Base
 		Dodge,
 		CellFury,
 		MucusWarrior,
+		RhinoBeam,
 
 		MeleeAttack,
 	}

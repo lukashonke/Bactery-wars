@@ -28,7 +28,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			//SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
+			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
 		}
 
 		public override MonsterAI CreateAI(Character ch)

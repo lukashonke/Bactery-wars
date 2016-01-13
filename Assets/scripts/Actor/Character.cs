@@ -102,12 +102,29 @@ namespace Assets.scripts.Actor
 
 		public void AddEffect(SkillEffect ef, float duration)
 		{
+			if(ActiveEffects.Count > 5)
+				return;
+
 			ActiveEffects.Add(ef);
 
 			if(duration > 0)
 				StartTask(CancelEffect(ef, duration)); // cancel this effect in 'duration'
 
 			StartEffectUpdate();
+		}
+
+		public bool HasEffectAlready(SkillEffect ef)
+		{
+			if (ef.Source == null)
+				return false;
+
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (ef.GetType().Name.Equals(e.GetType().Name) && ef.Source.Equals(e.Source))
+					return true;
+			}
+
+			return false;
 		}
 
 		public void RemoveEffect(SkillEffect ef)

@@ -150,7 +150,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (target == null)
 				return;
 
-			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, target.transform.position) > range)
+			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, target.transform.position) > range+meleeMaxRangeAdd)
 			{
 				if(meleeCasting != null)
 					DeleteParticleEffect(meleeCasting);

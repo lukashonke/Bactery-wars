@@ -9,6 +9,8 @@ namespace Assets.scripts.Skills.SkillEffects
 {
 	public abstract class SkillEffect
 	{
+		public Character Source { get; set; }
+
 		public float lastUpdateTime;
 
 		protected bool isOffensive;

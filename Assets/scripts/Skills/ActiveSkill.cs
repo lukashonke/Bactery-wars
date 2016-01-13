@@ -222,7 +222,7 @@ namespace Assets.scripts.Skills
 			else
 				return true;
 
-			Debug.Log("the skill is still being reused");
+			//Debug.Log("the skill is still being reused");
 			// not yet
 			return false;
 		}

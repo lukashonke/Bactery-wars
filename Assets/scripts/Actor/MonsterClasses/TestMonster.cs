@@ -9,9 +9,9 @@ using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
-	public class WhiteCellTemplate : MonsterTemplate
+	public class TestMonster : MonsterTemplate
 	{
-		public WhiteCellTemplate()
+		public TestMonster()
 		{
 			MaxHp = 20;
 			MaxMp = 50;
