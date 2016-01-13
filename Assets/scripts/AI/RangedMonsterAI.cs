@@ -67,8 +67,8 @@ namespace Assets.scripts.AI
 				}
 			}
 
-			if(topSkill != null)
-			Debug.Log(topSkill.GetName());
+			//if(topSkill != null)
+			//Debug.Log(topSkill.GetName());
 
 			if (topSkill != null)
 				StartAction(CastSkill(target, topSkill, dist, false, true, 0, 0), 10f);

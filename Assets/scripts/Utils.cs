@@ -75,7 +75,7 @@ namespace Assets.scripts
 			{
 				Vector3 result = new Vector3(pos.x + circleRadius * Mathf.Sin(angle * Mathf.Deg2Rad), pos.y + circleRadius * Mathf.Cos(angle * Mathf.Deg2Rad), 0);
 
-				Debug.DrawLine(pos, result, Color.yellow, 3f);
+				//Debug.DrawLine(pos, result, Color.yellow, 3f);
 				if (IsNotAccessible(result))
 				{
 					angle += 30;
@@ -126,12 +126,12 @@ namespace Assets.scripts
 			{
 				Vector3 v = new Vector3(pos.x + Random.Range(-range, range), pos.y + Random.Range(-range, range), 0);
 
-				Debug.DrawLine(from, v, Color.red, 0.5f);
+				//Debug.DrawLine(from, v, Color.red, 0.5f);
 
 				if (IsNotAccessible(from, v))
 					continue;
 
-				Debug.DrawLine(from, v, Color.green, 0.5f);
+				//Debug.DrawLine(from, v, Color.green, 0.5f);
 
 				return v;
 			}

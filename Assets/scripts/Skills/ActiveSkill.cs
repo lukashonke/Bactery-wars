@@ -113,7 +113,7 @@ namespace Assets.scripts.Skills
 			if (confirmObject == null)
 			{
 				confirmObject = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
-				UpdateDirectionArrowScale(range, confirmObject);
+				UpdateDirectionArrowScale(range > 0 ? range : 5, confirmObject);
 			}
 
 			//UpdateParticleSystemRange(range, confirmObject.GetComponent<ParticleSystem>());
@@ -429,15 +429,20 @@ namespace Assets.scripts.Skills
 
 		protected virtual IEnumerator StartUpdateTask()
 		{
-			while (active)
+			while (active || ReceiveUpdateMethod())
 			{
 				yield return new WaitForSeconds(updateFrequency);
 
 				if (GetOwnerData() != null && GetOwnerData().GetBody() != null)
-				UpdateLaunched();
+					UpdateLaunched();
 			}
 
 			yield return null;
+		}
+
+		protected virtual bool ReceiveUpdateMethod()
+		{
+			return false;
 		}
 
 		protected IEnumerator RangeTaskCheck()
@@ -730,6 +735,9 @@ namespace Assets.scripts.Skills
 
 		protected void DestroyProjectile(GameObject proj)
 		{
+			if (proj == null)
+				return;
+
 			ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
 			if(pd != null)
 				pd.collapse();
