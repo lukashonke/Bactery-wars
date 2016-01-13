@@ -121,6 +121,7 @@ namespace Assets.scripts.AI
 		protected abstract void OnSwitchAttacking();
 		public abstract void AddAggro(Character ch, int points);
 		public abstract void RemoveAggro(Character ch, int points);
+		public abstract int GetAggro(Character ch);
 
 		private IEnumerator AITask()
 		{

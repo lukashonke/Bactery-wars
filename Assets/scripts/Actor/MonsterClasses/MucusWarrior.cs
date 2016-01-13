@@ -4,30 +4,32 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
-using Assets.scripts.Mono.MapGenerator;
-using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
-	public class TeleporterOutTemplate : MonsterTemplate
+	public class MucusWarrior : MonsterTemplate
 	{
-		public TeleporterOutTemplate()
+		public MucusWarrior()
 		{
 			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
+
+			IsAggressive = false;
+			AggressionRange = 15;
 		}
 
 		protected override void AddSkillsToTemplate()
 		{
 			// no skills
+			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			return new DefaultMonsterAI(ch);
+			return new MeleeMonsterAI(ch);
 		}
 
 		public override GroupTemplate GetGroupTemplate()
@@ -35,22 +37,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 			return null;
 		}
 
-		public override void OnTalkTo(Character source)
-		{
-			if (source is Player)
-			{
-				PlayerData data = ((Player)source).GetData();
-
-				WorldHolder.instance.LoadNextMap();
-
-				// teleport player to new start
-				data.transform.position = WorldHolder.instance.GetStartPosition();
-			}
-		}
-
 		public override MonsterId GetMonsterId()
 		{
-			return MonsterId.TeleporterOut;
+			return MonsterId.MucusWarrior;
 		}
 	}
 }

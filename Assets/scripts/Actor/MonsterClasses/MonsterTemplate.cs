@@ -8,7 +8,7 @@ using Assets.scripts.AI;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
-using UnityEngine.iOS;
+using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
@@ -51,7 +51,12 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		protected virtual void Init()
 		{
-			AddSkills();
+			AddSkillsToTemplate();
+		}
+
+		public virtual void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
+		{
+			
 		}
 
 		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)
@@ -59,7 +64,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			MeleeSkill = skill;
 		}
 
-		protected abstract void AddSkills();
+		protected abstract void AddSkillsToTemplate();
 		public abstract MonsterAI CreateAI(Character ch);
 
 		public virtual void OnTalkTo(Character source)

@@ -67,6 +67,8 @@ namespace Assets.scripts.Actor
 
 				MeleeSkill = (ActiveSkill) newSkill;
 			}
+
+			Template.InitSkillsOnPlayer(Skills, MeleeSkill);
 		}
 
 		/// <summary>

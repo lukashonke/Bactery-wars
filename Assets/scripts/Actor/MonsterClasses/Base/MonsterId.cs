@@ -14,6 +14,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		Neutrophyle_Patrol = 3,
 
+		MucusWarrior = 4,
+
 		TeleporterOut = 100,
 		TeleporterIn = 101
 	}

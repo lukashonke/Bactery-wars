@@ -19,6 +19,8 @@ namespace Assets.scripts.Skills.SkillEffects
 			this.multiplier = multiplier;
 			this.fixedValue = fixedValue;
 			this.traitToAffect = toAffect;
+
+			isOffensive = false;
 		}
 
 		protected override void ApplyEffect()

@@ -18,7 +18,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			MaxSpeed = 10;
 		}
 
-		protected override void AddSkills()
+		protected override void AddSkillsToTemplate()
 		{
 			// no skills
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));

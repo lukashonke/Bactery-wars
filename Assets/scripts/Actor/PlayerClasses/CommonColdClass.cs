@@ -17,7 +17,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			CriticalDamageMul = 2f;
 		}
 
-		protected override void AddSkills()
+		protected override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Dodge));

@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public MucusWarrior()
 		{
 			castTime = 0f;
-			reuse = 10f;
+			reuse = 60f;
 			coolDown = 0;
 			requireConfirm = false;
 
@@ -76,7 +76,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			GameObject mo = CreateSkillObject("MucusWarrior", false, true);
 
-			mo.transform.position = Utils.GenerateRandomPositionAround(GetOwnerData().GetBody().transform.position, 5);
+			mo.transform.position = Utils.GenerateRandomPositionOnCircle(GetOwnerData().GetBody().transform.position, 5);
 			mo.RegisterAsMonster();
 
 			minion = mo.GetChar() as Monster;

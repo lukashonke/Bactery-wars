@@ -15,6 +15,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject meleeCasting, meleeHit, meleeExplosion;
 		private GameObject target;
 
+		private float meleeMaxRangeAdd = 1f;
+
 		//TODO melee utok nebere damage od hrace
 		public MeleeAttack()
 		{
@@ -98,7 +100,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (initTarget != null)
 			{
 				// TODO check angle!!! 
-				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range)
+				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range + meleeMaxRangeAdd)
 				{
 					//RotatePlayerTowardsTarget(initTarget);
 					ApplyEffects(Owner, initTarget);

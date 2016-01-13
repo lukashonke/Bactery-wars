@@ -163,7 +163,7 @@ namespace Assets.scripts.Mono.ObjectData
 			if (!allowMovePointChange)
 				return false;
 
-			if (Utils.IsInsideWalls(GetBody().transform.position, newTarget))
+			if (Utils.IsNotAccessible(GetBody().transform.position, newTarget))
 				return false;
 
 			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)

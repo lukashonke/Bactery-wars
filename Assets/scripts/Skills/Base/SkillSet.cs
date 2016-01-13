@@ -29,5 +29,16 @@ namespace Assets.scripts.Skills.Base
 		{
 			return Skills[order];
 		}
+
+		public Skill GetSkill(SkillId id)
+		{
+			foreach (Skill s in Skills)
+			{
+				if (s.GetSkillId() == id)
+					return s;
+			}
+
+			return null;
+		}
 	}
 }

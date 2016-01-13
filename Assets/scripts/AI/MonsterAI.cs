@@ -66,13 +66,18 @@ namespace Assets.scripts.AI
 			return ((Monster) Owner).GetMaster();
 		}
 
+		public bool HasMaster()
+		{
+			return ((Monster) Owner).HasMaster();
+		}
+
 		private void ThinkIdle()
 		{
 			if (GetStatus().IsDead)
 				return;
 
 			// pokud ma mastera, musi byt vzdy v aktivnim stavu (pro sledovani pohybu mastera, atd.)
-			if (GetMaster() != null)
+			if (HasMaster())
 			{
 				SetAIState(AIState.ACTIVE);
 				return;
@@ -118,7 +123,7 @@ namespace Assets.scripts.AI
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
 				// muze si sam vybirat cile pouze pokud nema mastera
-				if (GetMaster() == null)
+				if (!HasMaster())
 				{
 					foreach (GameObject o in Owner.Knownlist.KnownObjects)
 					{
@@ -145,8 +150,14 @@ namespace Assets.scripts.AI
 				}
 
 				// pokud master utoci, summon zacne utocit take (v attack metode se vybere cil mastera)
-				if (GetMaster() != null)
+				if (HasMaster())
 				{
+					if (CheckIfTooFarFromMaster())
+					{
+						TryFollowLeader();
+						return;
+					}
+
 					if (GetMaster().AI.State == AIState.ATTACKING)
 					{
 						AddAggro(GetMaster().AI.GetMainTarget(), 1);
@@ -201,12 +212,12 @@ namespace Assets.scripts.AI
 
 		private bool CheckIfTooFarFromMaster()
 		{
-			if (GetMaster() != null)
+			if (HasMaster())
 			{
 				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
 				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-				if (dist > distToFollow*distToFollow + 6*6)
+				if (dist > distToFollow*distToFollow + 10*10)
 					return true;
 			}
 			return false;
@@ -216,13 +227,13 @@ namespace Assets.scripts.AI
 		{
 			SetIsWalking(false);
 
+			Character possibleTarget = SelectMostAggroTarget();
+
 			if (CheckIfTooFarFromMaster())
 			{
 				SetAIState(AIState.ACTIVE);
 				return;
 			}
-
-			Character possibleTarget = SelectMostAggroTarget();
 
 			// no target this monster hates - go back to active
 			if (possibleTarget == null)
@@ -253,10 +264,28 @@ namespace Assets.scripts.AI
 		protected bool TryFollowLeader()
 		{
 			if (Owner.GetData().HasTargetToMoveTo)
-				return false;
+			{
+				if (HasMaster())
+				{
+					bool retargetMove = false;
+
+					Vector3 leaderPos = GetMaster().Data.GetBody().transform.position;
+					Vector3 moveDestination = Owner.GetData().GetMovementTarget();
+
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(moveDestination, leaderPos) > (distToFollow*distToFollow))
+					{
+						retargetMove = true;
+					}
+
+					if (!retargetMove)
+						return false;
+				}
+			}
 
 			// ma mastera - charakter ktery tento objekt vlastni
-			if (GetMaster() != null)
+			if (HasMaster())
 			{
 				Character master = GetMaster();
 
@@ -267,20 +296,15 @@ namespace Assets.scripts.AI
 
 					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
 					{
-						Debug.Log("true");
-						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow-1);
+						Vector3 rnd = Utils.GenerateFixedPositionAroundObject(master.GetData().gameObject, distToFollow-1, -90);
 						rnd.z = 0;
 
 						SetIsWalking(false);
-						MoveTo(leaderPos + rnd);
+						MoveTo(rnd);
 
-						Debug.DrawRay(Owner.GetData().GetBody().transform.position, leaderPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+						//Debug.DrawRay(Owner.GetData().GetBody().transform.position, leaderPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
 
 						return true;
-					}
-					else
-					{
-						Debug.Log("false");
 					}
 				}
 			} // ma skupinu - nasleduje vudce ale udrzuje si jinak samostatnost
@@ -300,7 +324,7 @@ namespace Assets.scripts.AI
 						rnd.z = 0;
 
 						SetIsWalking(false);
-						MoveTo(leaderPos + rnd);
+						MoveTo(rnd);
 
 						return true;
 					}
@@ -312,7 +336,7 @@ namespace Assets.scripts.AI
 
 		protected bool ReturnHomeIfNeeded()
 		{
-			if (GetMaster() != null)
+			if (HasMaster())
 				return false;
 
 			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
@@ -330,7 +354,7 @@ namespace Assets.scripts.AI
 
 		protected bool TryRambleAround()
 		{
-			if (GetMaster() != null)
+			if (HasMaster())
 				return false;
 
 			if (!Owner.GetData().HasTargetToMoveTo)
@@ -422,6 +446,18 @@ namespace Assets.scripts.AI
 			}
 		}
 
+		public void ClearAggro()
+		{
+			aggro.Clear();
+		}
+
+		public override int GetAggro(Character ch)
+		{
+			int val = 0;
+			aggro.TryGetValue(ch, out val);
+			return val;
+		}
+
 		public void RemoveAggro(Character ch)
 		{
 			RemoveAggro(ch, 0);
@@ -499,7 +535,7 @@ namespace Assets.scripts.AI
 
 		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
-			if (!noRangeCheck && sk.range != 0)
+			if (target != null && !noRangeCheck && sk.range != 0)
 			{
 				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
 				{
@@ -519,7 +555,10 @@ namespace Assets.scripts.AI
 			}
 
 			Owner.GetData().BreakMovement(true);
-			RotateToTarget(target);
+
+			if(target != null)
+				RotateToTarget(target);
+
 			Owner.CastSkill(sk);
 			currentAction = null;
 		}
@@ -531,7 +570,7 @@ namespace Assets.scripts.AI
 
 		protected override void OnSwitchActive()
 		{
-			ThinkInterval = 0.5f;
+			ThinkInterval = 0.25f;
 		}
 
 		protected override void OnSwitchAttacking()

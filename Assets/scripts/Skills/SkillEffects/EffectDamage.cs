@@ -31,6 +31,8 @@ namespace Assets.scripts.Skills.SkillEffects
 			{
 				int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
 
+				source.OnAttack(targetCh);
+
 				targetCh.ReceiveDamage(source, damage);
 			}
 		}

@@ -46,6 +46,9 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (source.CanAttack(target))
 			{
 				int dmg = source.CalculateDamage(damage, target, crit);
+
+				source.OnAttack(target);
+
 				target.ReceiveDamage(source, dmg);
 			}
 		}

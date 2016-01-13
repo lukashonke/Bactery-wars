@@ -2,6 +2,7 @@
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using UnityEditor;
 
 namespace Assets.scripts.Actor.PlayerClasses
 {
@@ -17,7 +18,12 @@ namespace Assets.scripts.Actor.PlayerClasses
 			CriticalDamageMul = 2f;
 		}
 
-		protected override void AddSkills()
+		public override void InitSkillsOnPlayer(SkillSet set, ActiveSkill meleeSkill)
+		{
+			meleeSkill.castTime = 0f;
+		}
+
+		protected override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileTriple)); // the projectile test skill triple

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.PlayerClasses
 {
@@ -40,7 +41,12 @@ namespace Assets.scripts.Actor.PlayerClasses
 
 		protected virtual void Init()
 		{
-			AddSkills();
+			AddSkillsToTemplate();
+		}
+
+		public virtual void InitSkillsOnPlayer(SkillSet set, ActiveSkill meleeSkill)
+		{
+
 		}
 
 		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)
@@ -48,7 +54,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			MeleeSkill = skill;
 		}
 
-		protected abstract void AddSkills();
+		protected abstract void AddSkillsToTemplate();
 		public abstract ClassId GetClassId();
 	}
 }

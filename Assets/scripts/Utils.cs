@@ -9,7 +9,6 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
-using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -48,41 +47,64 @@ namespace Assets.scripts
 			return r;
 		}
 
-		public static Vector3 GenerateRandomPositionOnCircle(Vector3 pos, float circle)
+		public static Vector3 GenerateFixedPositionAroundObject(GameObject o, float circleRadius, int fixedAngle)
 		{
-			//TODO finish
-			/*int limit = 6;
+			AbstractData data = o.GetData();
+			Vector3 dir = data.GetForwardVector();
+			Vector3 newRot = RotateDirectionVector(dir, fixedAngle)*circleRadius;
 
+			Vector3 target = o.transform.position + newRot;
+
+			if (IsNotAccessible(target))
+			{
+				return GenerateRandomPositionAround(o.transform.position, 5, 2);
+			}
+
+			return o.transform.position + newRot;
+		}
+
+		public static Vector3 GenerateRandomPositionOnCircle(Vector3 pos, float circleRadius, int fixedAngle=-1)
+		{
+			int angle = Random.Range(1, 360);
+
+			if (fixedAngle > 0)
+				angle = fixedAngle;
+
+			int limit = 12;
 			while (--limit > 0)
 			{
-				Vector3 v = new Vector3(pos.x + Random.Range(-range, range), pos.y + Random.Range(-range, range), 0);
+				Vector3 result = new Vector3(pos.x + circleRadius * Mathf.Sin(angle * Mathf.Deg2Rad), pos.y + circleRadius * Mathf.Cos(angle * Mathf.Deg2Rad), 0);
 
-				if (IsInsideWalls(v))
+				Debug.DrawLine(pos, result, Color.yellow, 3f);
+				if (IsNotAccessible(result))
+				{
+					angle += 30;
+					angle = angle%360;
 					continue;
+				}
 
-				return v;
-			}*/
+				return result;
+			}
 
 			return pos;
 		}
 
-		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float range, float minRange)
+		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float maxRange, float minRange)
 		{
-			return GenerateRandomPositionAround(pos, pos, range, minRange);
+			return GenerateRandomPositionAround(pos, pos, maxRange, minRange);
 		}
 
-		public static Vector3 GenerateRandomPositionAround(Vector3 from, Vector3 pos, float range, float minRange)
+		public static Vector3 GenerateRandomPositionAround(Vector3 from, Vector3 pos, float maxRange, float minRange)
 		{
-			//TODO add min range (to avoid colliders for example)
 			int limit = 6;
 			while (--limit > 0)
 			{
-				float randX = Random.Range(-range, range) - minRange;
-				float randY = Random.Range(-range, range) - minRange;
+				float randX = Random.Range(minRange, maxRange);
+				float randY = Random.Range(minRange, maxRange);
 
 				Vector3 v = new Vector3(pos.x + randX, pos.y +randY, 0);
 
-				if (IsInsideWalls(from, v)) //TODO also check colliders of o
+				if (IsNotAccessible(from, v))
 					continue;
 
 				return v;
@@ -104,8 +126,12 @@ namespace Assets.scripts
 			{
 				Vector3 v = new Vector3(pos.x + Random.Range(-range, range), pos.y + Random.Range(-range, range), 0);
 
-				if(IsInsideWalls(from, v))
+				Debug.DrawLine(from, v, Color.red, 0.5f);
+
+				if (IsNotAccessible(from, v))
 					continue;
+
+				Debug.DrawLine(from, v, Color.green, 0.5f);
 
 				return v;
 			}
@@ -113,18 +139,19 @@ namespace Assets.scripts
 			return pos;
 		}
 
-		public static bool IsInsideWalls(Vector3 v)
+		public static bool IsNotAccessible(Vector3 v)
 		{
 			Vector3 start = WorldHolder.instance.activeMap.GetStartPosition();
-			return IsInsideWalls(start, v);
+			return IsNotAccessible(start, v);
 		}
 
 		//TODO optimize? 
-		public static bool IsInsideWalls(Vector3 from, Vector3 v)
+		public static bool IsNotAccessible(Vector3 from, Vector3 v)
 		{
-			Debug.DrawRay(from, v - from, Color.green, 2f);
+			//Debug.DrawRay(from, v - from, Color.green, 2f);
 			int count = 0;
 			Vector3 dir = v - from;
+			dir.Normalize();
 
 			Vector3 point = from;
 

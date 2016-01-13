@@ -9,6 +9,7 @@ namespace Assets.scripts.Skills.SkillEffects
 {
 	public abstract class EffectStatus : SkillEffect
 	{
+		protected Character source;
 		protected Character target;
 
 		private float duration;
@@ -20,6 +21,8 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void ApplyEffect(Character source, GameObject target)
 		{
+			this.source = source;
+
 			Character targetCh = Utils.GetCharacter(target);
 
 			if (targetCh == null)

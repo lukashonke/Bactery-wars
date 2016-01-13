@@ -43,6 +43,14 @@ namespace Assets.scripts.AI
 				return;
 			}*/
 
+			List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
+
+			foreach (Skill s in spawnSkills)
+			{
+				if (s.CanUse())
+					StartAction(CastSkill(null, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
+			}
+
 			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
 
 			// 1. get the most damage skill and cast if it is available

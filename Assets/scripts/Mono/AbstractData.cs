@@ -172,7 +172,7 @@ namespace Assets.scripts.Mono
 		private Coroutine nextSearch;
 		private bool searchingPath;
 
-		public void SearchPath()
+		private void SearchPath()
 		{
 			//Debug.Log("searching new path");
 
@@ -271,7 +271,6 @@ namespace Assets.scripts.Mono
 		{
 			if (HasTargetToMoveTo && lastCheckVelocityTime + VELOCITY_CHECK_INTERVAL < Time.time)
 			{
-				Debug.Log(rb.velocity);
 				lastCheckVelocityTime = Time.time;
 
 				if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
@@ -279,19 +278,19 @@ namespace Assets.scripts.Mono
 					if (!wasCloseTozero)
 					{
 						wasCloseTozero = true;
-						Debug.Log("close to zero set to true");
+						//Debug.Log("close to zero set to true");
 						
 					}
 					else
 					{
-						Debug.Log("breaking movementEnabled!");
+						//Debug.Log("breaking movementEnabled!");
 						BreakMovement(true);
 						wasCloseTozero = false;
 					}
 				}
 				else
 				{
-					Debug.Log("close to zero set to false...");
+					//Debug.Log("close to zero set to false...");
 					wasCloseTozero = false;
 				}
 			}
@@ -1026,7 +1025,7 @@ namespace Assets.scripts.Mono
 
 		public void MeleeInterract(GameObject target, bool repeat)
 		{
-			if (target == null)
+			if (target == null || gameObject == null)
 				return;
 
 			AbstractData data = target.GetComponent<AbstractData>();

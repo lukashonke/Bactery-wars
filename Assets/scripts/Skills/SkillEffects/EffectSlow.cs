@@ -19,6 +19,8 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (target == null)
 				return;
 
+			source.OnAttack(target);
+
 			target.SetMoveSpeed(target.Status.MoveSpeed - value);
 		}
 

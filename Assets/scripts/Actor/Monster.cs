@@ -20,6 +20,7 @@ namespace Assets.scripts.Actor
 
 		private Character master;
 
+		private bool hasMaster;
 		public bool isMinion;
 
 		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
@@ -36,15 +37,48 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
-		public void SetMaster(Character m)
+		public void SetMaster(Character master)
 		{
-			master = m;
-			GetData().tag = m.GetData().tag;
+			if (master != null)
+			{
+				this.master = master;
+				GetData().tag = master.GetData().tag;
+				Team = master.Team;
+				hasMaster = true;
+			}
+			else
+			{
+				hasMaster = false;
+			}
+		}
+
+		public void MasterAttacked(Character target)
+		{
+			if(((MonsterAI)AI).GetAggro(target) == 0)
+				((MonsterAI)AI).AddAggro(target, 1);
+		}
+
+		public void MasterIsAttacked(Character attacker)
+		{
+			if (((MonsterAI)AI).GetAggro(attacker) == 0)
+				((MonsterAI)AI).AddAggro(attacker, 1);
+		}
+
+		public void MasterForcedStopAttack()
+		{
+			MonsterAI ai = (MonsterAI) AI;
+
+			ai.ClearAggro();
 		}
 
 		public Character GetMaster()
 		{
 			return master;
+		}
+
+		public bool HasMaster()
+		{
+			return hasMaster;
 		}
 
 		public new EnemyData GetData()
@@ -94,6 +128,8 @@ namespace Assets.scripts.Actor
 
 				MeleeSkill = (ActiveSkill)newSkill;
 			}
+
+			Template.InitSkillsOnMonster(Skills, MeleeSkill);
 
 			GroupTemplate gt = Template.GetGroupTemplate();
 			if (!isMinion && gt != null)

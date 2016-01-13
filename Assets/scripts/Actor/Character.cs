@@ -323,6 +323,50 @@ namespace Assets.scripts.Actor
 			return CanAttack(ch);
 		}
 
+		public void OnAttack(Character target)
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterAttacked(target);
+				}
+			}	
+
+			target.OnAttacked(this);		
+		}
+
+		public void OnAttacked(Character attacker)
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterIsAttacked(attacker);
+				}
+			}
+		}
+
+		public void ForceStopAttack()
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterForcedStopAttack();
+				}
+			}
+		}
+
 		public void ChangeAI(AbstractAI ai)
 		{
 			if (AI != null)
@@ -341,8 +385,10 @@ namespace Assets.scripts.Actor
 
 		private void RemoveAllSummons()
 		{
-			foreach (Monster m in summons)
+			for (int i = 0; i < summons.Count; i++)
 			{
+				Monster m = summons[i];
+
 				if (m != null)
 				{
 					m.GetData().SetIsDead(true);

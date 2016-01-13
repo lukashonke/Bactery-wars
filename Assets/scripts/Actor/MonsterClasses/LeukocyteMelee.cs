@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			AggressionRange = 15;
 		}
 
-		protected override void AddSkills()
+		protected override void AddSkillsToTemplate()
 		{
 			// no skills
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));

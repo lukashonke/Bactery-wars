@@ -14,7 +14,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			MaxSpeed = 10;
 		}
 
-		protected override void AddSkills()
+		protected override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileTriple)); // the projectile test skill triple

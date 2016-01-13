@@ -11950,11 +11950,23 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 424148, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 105476, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5039684, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}
+      propertyPath: m_AngularDrag
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1da382dc952f86645a26ef118868b6d7, type: 2}

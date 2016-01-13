@@ -11,12 +11,14 @@ namespace Assets.scripts.Skills.SkillEffects
 	{
 		public float lastUpdateTime;
 
+		protected bool isOffensive;
+
 		public float period = -1;
 		public int count = -1;
 
 		protected SkillEffect()
 		{
-			
+			isOffensive = true;
 		}
 
 		protected void AddToTarget(Character target, float duration)
@@ -37,6 +39,11 @@ namespace Assets.scripts.Skills.SkillEffects
 		public virtual void ModifySkillCasttime(ActiveSkill sk, ref float reuse)
 		{
 			
+		}
+
+		protected bool IsOffensive()
+		{
+			return isOffensive;
 		}
 	}
 }

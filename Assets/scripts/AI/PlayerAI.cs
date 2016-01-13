@@ -37,5 +37,10 @@ namespace Assets.scripts.AI
 		public override void RemoveAggro(Character ch, int points)
 		{
 		}
+
+		public override int GetAggro(Character ch)
+		{
+			return 0;
+		}
 	}
 }
