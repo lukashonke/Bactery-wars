@@ -257,6 +257,7 @@ namespace Assets.scripts.Skills
 		public override void SetReuseTimer()
 		{
 			LastUsed = Environment.TickCount;
+			GetOwnerData().SetSkillReuseTimer(this);
 		}
 
 		public void Start(Vector3 inputPosition)

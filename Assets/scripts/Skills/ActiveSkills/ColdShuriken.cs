@@ -27,7 +27,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public ColdShuriken()
 		{
 			castTime = 0f;
-			reuse = 0;
+			reuse = 35f;
 			coolDown = 0;
 			range = -1;
 			baseDamage = 20;

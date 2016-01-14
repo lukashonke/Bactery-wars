@@ -14,7 +14,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public Dodge()
 		{
 			castTime = 0f;
-			reuse = 1.0f;
+			reuse = 7f;
 			coolDown = 0f;
 			requireConfirm = true;
 			breaksMouseMovement = false;

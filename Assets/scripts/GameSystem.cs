@@ -53,7 +53,6 @@ namespace Assets.scripts
 
 		private int lastPlayerId = 0;
 
-
 		// starts the game, loads data, etc
 		public void Start(GameController gc)
 		{

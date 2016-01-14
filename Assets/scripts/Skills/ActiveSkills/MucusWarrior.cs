@@ -21,11 +21,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public MucusWarrior()
 		{
 			castTime = 0f;
-			reuse = 60f;
+			reuse = 20f;
 			coolDown = 0;
 			requireConfirm = false;
 
-			lifetime = 60f;
+			lifetime = 15f;
 		}
 
 		public override SkillId GetSkillId()

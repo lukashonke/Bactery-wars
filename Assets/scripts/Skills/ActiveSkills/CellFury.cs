@@ -10,10 +10,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject activeProjectile;
 
+		private readonly float reuseVal = 0.5f;
+
 		public CellFury()
 		{
 			castTime = 0f;
-			reuse = 1;
+			reuse = 15f;
 			coolDown = 0;
 			requireConfirm = false;
 			baseDamage = 10;
@@ -36,7 +38,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectMeleeReuse(1, 0.5f, 10, SkillTraits.Melee), };
+			return new SkillEffect[] {new EffectMeleeReuse(1, 0.5f, 5, SkillTraits.Melee), };
 		}
 
 		public override void InitTraits()

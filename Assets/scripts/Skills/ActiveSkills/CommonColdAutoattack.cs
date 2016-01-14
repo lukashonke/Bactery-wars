@@ -14,11 +14,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public CommonColdAutoattack()
 		{
-			castTime = 0;
+			castTime = 0.25f;
 			reuse = 1f;
-			coolDown = 0;
+			coolDown = 0f;
 			requireConfirm = false;
-			baseDamage = 10;
+			baseDamage = 5;
 
 			range = 10;
 		}

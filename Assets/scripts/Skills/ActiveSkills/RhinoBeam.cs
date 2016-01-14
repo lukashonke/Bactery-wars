@@ -17,7 +17,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public RhinoBeam()
 		{
 			castTime = 0f;
-			coolDown = 4f;
+			coolDown = 5f;
 			reuse = 30f;
 
 			// 10dmg/sec

@@ -1041,6 +1041,8 @@ namespace Assets.scripts.Mono
 
 			ActiveSkill sk = GetOwner().GetMeleeAttackSkill();
 
+			//TODO pridat zpetnou vazbu pokud melee utok jeste neni mozny - idealne ho zretezit co nejdrive nebo to vyresi animace?
+
 			// no melee attack
 			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
 				return;
@@ -1177,5 +1179,9 @@ namespace Assets.scripts.Mono
 		public abstract void OnTriggerEnter2D(Collider2D obj);
 		public abstract void OnTriggerExit2D(Collider2D obj);
 		public abstract void OnTriggerStay2D(Collider2D obj);
+
+		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill)
+		{
+		}
 	}
 }

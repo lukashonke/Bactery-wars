@@ -17,6 +17,8 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>Datova trida hrace</summary>
 		public Player player;
 
+		public PlayerUI ui;
+
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
@@ -45,6 +47,8 @@ namespace Assets.scripts.Mono.ObjectData
 						break;
 				}
 			}
+
+			ui = GetComponent<PlayerUI>();
 
             Debug.Log("Registering new data for player " + player.Name);
 		}
@@ -99,6 +103,11 @@ namespace Assets.scripts.Mono.ObjectData
 		public override void OnTriggerStay2D(Collider2D obj)
 		{
 
+		}
+
+		public override void SetSkillReuseTimer(ActiveSkill activeSkill)
+		{
+			ui.SetReuseTimer(activeSkill);
 		}
 
 		/// <summary>

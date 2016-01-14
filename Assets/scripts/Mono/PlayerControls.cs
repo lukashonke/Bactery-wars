@@ -368,6 +368,8 @@ namespace Assets.scripts.Mono
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
 
+								Debug.Log("melee interract");
+
 								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
 							}

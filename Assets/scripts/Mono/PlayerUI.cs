@@ -1,6 +1,9 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Skills;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -24,6 +27,8 @@ namespace Assets.scripts.Mono
 		public GameObject gameMenu = null;
 		public GameObject menuPanel = null;
 		public GameObject settingsPanel = null;
+
+		private float[,] timers;
 
 		// Use this for initialization
 		void Start()
@@ -58,6 +63,8 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			timers = new float[9,9];
+
 			if (settingsPanel != null)
 			settingsPanel.SetActive(false);
 
@@ -68,7 +75,47 @@ namespace Assets.scripts.Mono
 		// Update is called once per frame
 		void Update()
 		{
+			for (int i = 0; i < timers.GetLength(0); i++)
+			{
+				if (timers[i,0] > 0)
+				{
+					float max = timers[i, 1];
+					float passed = Time.time - timers[i,0];
+					float ratio = passed / max;
 
+					if (ratio >= 1)
+					{
+						ratio = 1;
+						timers[i, 0] = 0;
+					}
+
+					Debug.Log(ratio);
+					ratio = (ratio);
+
+					Image but = skillButtons[i-1].GetComponent<Image>();
+					but.color = new Color(ratio, ratio, ratio);
+				}
+			}
+		}
+
+		public void SetReuseTimer(Skill sk)
+		{
+			int id = -1;
+
+			for (int i = 0; i < data.GetOwner().Skills.Skills.Count; i++)
+			{
+				if (sk.GetName().Equals(data.GetOwner().Skills.Skills[i].GetName()))
+				{
+					id = i+1;
+					break;
+				}
+			}
+
+			if (id == -1)
+				return;
+
+			timers[id,0] = Time.time;
+			timers[id,1] = ((ActiveSkill)sk).reuse;
 		}
 
 		public void NextLevel()

@@ -13,10 +13,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SneezeShot()
 		{
 			castTime = 0f;
-			reuse = 1;
+			reuse = 5f;
 			coolDown = 0;
 			requireConfirm = true;
-			baseDamage = 10;
+			baseDamage = 20;
 
 			range = 13;
 		}
@@ -38,7 +38,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 10)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 0)};
 		}
 
 		public override void InitTraits()

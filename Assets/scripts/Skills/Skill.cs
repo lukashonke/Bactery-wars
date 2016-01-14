@@ -115,7 +115,7 @@ namespace Assets.scripts.Skills
 						}
 					}
 
-					Debug.Log("applying " + ef.GetType().Name);
+					//Debug.Log("applying " + ef.GetType().Name);
 
 					ef.ApplyEffect(source, target);
 				}

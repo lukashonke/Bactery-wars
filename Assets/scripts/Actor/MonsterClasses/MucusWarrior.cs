@@ -13,12 +13,18 @@ namespace Assets.scripts.Actor.MonsterClasses
 	{
 		public MucusWarrior()
 		{
-			MaxHp = 20;
+			MaxHp = 30;
 			MaxMp = 50;
-			MaxSpeed = 10;
+			MaxSpeed = 12;
 
 			IsAggressive = false;
 			AggressionRange = 15;
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
+		{
+			meleeSkill.baseDamage = 5;
+			meleeSkill.reuse = 2f;
 		}
 
 		protected override void AddSkillsToTemplate()
