@@ -1,0 +1,1550 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+  dslVersion="1.0.0.0"
+  Id="18838665-24db-4820-9875-625feb316d4a"
+  name="Base"
+  visibility="Private" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
+  <referencesInternal>
+    <reference
+      Id="817685bd-6ed7-4317-a32e-b519ed1386c5"
+      handle="viewcode://./CodeSchema_Namespace?Namespace%3DAssets.scripts.Skills.Base"
+      tag="ViewCode" />
+  </referencesInternal>
+  <packagedElements>
+    <packageHasNamedElement>
+      <enumeration
+        Id="26786368-74a3-4d68-90f6-cb0783dead9f"
+        name="SkillTraits"
+        isAbstract="false"
+        isLeaf="false">
+        <referencesInternal>
+          <reference
+            Id="96d110b9-e31b-458f-b824-f3f4c96e5910"
+            handle="viewcode://./CodeSchema_Enum?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTraits"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="12023ed4-5e12-45aa-97f9-473f19de8c64"
+            name="enum"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="6bc69c47-5886-4a69-888c-4cb827b4bb09">
+                <propertyInstance
+                  Id="b5f34fca-98a5-4a4c-b2c8-11cabe665a31"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="9fb536ed-01d6-4d53-b902-8dc18d458125">
+                <propertyInstance
+                  Id="1bf37708-9b74-4cbf-b399-a5fafac5258d"
+                  name="BaseType"
+                  value="int" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="601a0760-7c45-4bba-b8d5-b6631686f7cd">
+                <propertyInstance
+                  Id="3f24e9e0-6f0a-4cfd-8534-f0abd0b246e4"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2a7c73dd-7255-49d4-8a8a-992fb5ef2a71"
+        name="SkillTraits"
+        visibility="Private"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="860c22fc-e787-44c3-b1ee-e5eb350ce107"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3D(Name%3DSkillTraits ArrayRank%3D1 ParentType%3DSkillTraits)"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="55140952-de50-4c03-87a4-7f92b94f4bed"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="21448c1a-cbce-4107-98e3-7b304af7a0b3">
+                <propertyInstance
+                  Id="9b36c054-c11c-4a36-8cc8-483096f5ffdc"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="8a106642-7e6c-4f7e-af6b-81fc9ae27fff">
+                <propertyInstance
+                  Id="d0d32117-8d45-49d5-9b63-ca1f9690b688"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="ab529490-fad5-4197-b5b5-69b9b15aee92">
+                <propertyInstance
+                  Id="68274703-e97d-4a6c-894d-688ee675b64b"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="8ec5dc7c-e2d2-40a1-bff2-67cd9038f374">
+                <propertyInstance
+                  Id="3da7b38b-01ad-4996-8be1-baf2ff729c0f"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="796964c4-cc4b-44af-80c7-69a7e9bbc75f">
+                <propertyInstance
+                  Id="4ec0af37-6b91-4e6f-9ea8-ad50be5e61cb"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="133a98b2-4013-4d7e-a89b-214c7d602e04"
+        name="SkillSet"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="de14c0eb-c90d-4f1d-8be6-74eb6a39d6fe"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="592804e0-790c-40ea-8454-5e13b87db494"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="20b970cf-50c4-4c9f-b872-e6988a293b38">
+                <propertyInstance
+                  Id="284771dd-687a-4e87-9885-e3810cc08007"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="0ddb3517-5720-489b-9e6f-04e9cbccc8d8">
+                <propertyInstance
+                  Id="802b066f-2d3b-4cb4-a7a9-47aa7f5652ff"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="4a15a886-4624-44f5-9c86-b02211137038">
+                <propertyInstance
+                  Id="33770fdb-f3f5-4900-a194-8900c3d61ea8"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="c2a64667-8b11-434d-aa09-45ed978375b5">
+                <propertyInstance
+                  Id="d0437144-37b8-45ba-81a0-0001c1ae07f5"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="d84036f8-8645-4cea-9278-c9ce299c09bb">
+                <propertyInstance
+                  Id="313b3f80-aa6f-470e-a46b-bd3b0737b708"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+        <targetEnds>
+          <association
+            Id="d9628dde-2956-412c-a759-bb0656c5545b"
+            isDerived="false"
+            sourceEndRoleName="SkillSet"
+            targetEndRoleName="Skills"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="33725d0a-8cd6-4bf2-b271-50f19ff72320"
+              LastKnownName="List&lt;Skill‎&gt;"
+              LastKnownLocation="Package9_0048.uml" />
+            <description>Property Skills references type List&lt;Skill‎&gt;.</description>
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a5d045b1-20d5-4964-b0eb-928e3f28cc2c"
+                  name="SkillSet"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="4c68d8b9-2650-4c02-b25f-fa7de071ae13"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="7706f89e-06be-439b-9309-e87def0816f5"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ce3850ce-d7a0-43d7-8018-7539954cff5f"
+                  name="Skills"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="d5bc8bf8-55ed-43ac-b391-5ef686fcdb27"
+                      name="Lower"
+                      value="1" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="0d326382-7374-498f-8a20-2fe61d352986"
+                      name="Upper"
+                      value="1" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="6c8aabd9-cc0c-4bf3-bd61-43c6a46ca4ca"
+            name="Skills"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <referencesInternal>
+              <reference
+                Id="dbf50d41-9217-435a-8ae5-99b8a89d680b"
+                handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3DSkills"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="4b3690df-5014-43f1-a90e-106917495288"
+                name="property"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="779f62b4-4fd2-4f6b-bf6a-fb126f7a4792">
+                    <propertyInstance
+                      Id="9bf74ecd-294a-407a-b269-bd2937298215"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5bf7e705-d9a4-4149-b90c-b39f610c63c7">
+                    <propertyInstance
+                      Id="9a305367-3aa0-4d40-bcb7-7e4dfe9887a2"
+                      name="Get"
+                      value="public" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6b59c553-443b-4457-af85-d06bda249193">
+                    <propertyInstance
+                      Id="eeff54a0-17ff-4746-81ab-11eece198fbd"
+                      name="HasBody"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d21f8106-a00a-4ccf-970f-33512f5b07ea">
+                    <propertyInstance
+                      Id="4633868d-24c9-41e8-83a8-49ef04f14d1e"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="52abf650-6369-4436-862e-c656725f8c10">
+                    <propertyInstance
+                      Id="3b8bf92b-2a61-4dd2-bcdb-2fa157465e9a"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="3be0d980-4e75-49e8-bc91-e3222d243221">
+                    <propertyInstance
+                      Id="a446d9e6-ea02-415e-a2cb-c6a6034c9708"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="2379088c-c865-47a0-a35a-b2256987fde5">
+                    <propertyInstance
+                      Id="cdf42875-e704-4572-8b6d-2ec557d0170a"
+                      name="Set"
+                      value="public" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <type_NamedElement>
+              <classMoniker
+                Id="33725d0a-8cd6-4bf2-b271-50f19ff72320"
+                LastKnownName="List&lt;Skill‎&gt;"
+                LastKnownLocation="Package9_0048.uml" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="a07c72b5-b68f-4ff4-99d7-71dba07e612c"
+            name="AddSkill"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="0d2941e3-b3a5-47fd-94ed-c2593c9714a1"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DAddSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="ed30e92c-0616-4da9-9b54-f1b24d9f4883"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="1608dcc5-d74f-416c-a750-4fd5dc2793f9">
+                    <propertyInstance
+                      Id="78f39182-7852-4580-866c-fb7e29891d12"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6c123748-10a7-43ec-a880-62a5bdd3ba7b">
+                    <propertyInstance
+                      Id="16eff762-dd6b-4116-b0aa-4b576178e511"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="86974fb6-659a-42e9-8eb1-380a40a5507f">
+                    <propertyInstance
+                      Id="dda1c547-955d-4596-9955-011f383bd409"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="fa1160fc-44db-4bdc-abd4-4469cfe6d53a">
+                    <propertyInstance
+                      Id="0c38f704-631a-41c7-90ed-8a17a0e7a7e7"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6c8519d4-a482-409a-a3e7-8e2f2265145a">
+                    <propertyInstance
+                      Id="694c0425-33f3-4ac1-955d-eda5888b1e86"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="7b9e86a1-8b9d-4895-b314-3dfd4ce5d819">
+                    <propertyInstance
+                      Id="46d60199-aa20-469d-a7f5-b50b7e8b13ef"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a2d0347e-4b8f-48cb-b697-d48bf29d4876"
+                  name="sk"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="bbd995ca-685b-49a3-80d2-453ed69bcf40"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DAddSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)]) ParameterIdentifier%3Dsk"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="bb831c07-2112-44cf-b351-25f86cd43dbc"
+            name="GetSkill"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="b9d0dcf5-32d5-4a18-a005-bfeba91798ea"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DGetSkill OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv3.5%2FProfile%2FUnity Subset v3.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DInt32)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="2edbab24-1c15-42ab-9e53-6331db2a54d8"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="fe9828d2-af1e-4d21-aa7a-037526e6a288">
+                    <propertyInstance
+                      Id="f6c8d10e-6a31-4d56-b5ab-0858a3a513f0"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="056900bd-a53f-479e-8a5d-0324140bad04">
+                    <propertyInstance
+                      Id="97ba1498-fe18-46ac-a3a4-4e6d29f764fb"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="806cf1e7-f5ab-41f1-8b86-2cd3c1516a53">
+                    <propertyInstance
+                      Id="6d0aa4e9-7ef4-4534-8761-0e7a7a40a3fa"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="95be5450-6f30-497c-b967-864c5653193a">
+                    <propertyInstance
+                      Id="8359b7ed-beaf-49e2-8e22-1b73305025f0"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="3e4b1519-49d6-4d3a-b88d-077d9ed309c6">
+                    <propertyInstance
+                      Id="19a3bf5b-f248-4a46-b350-b7981dd0355b"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5fd4e8c5-c702-4e03-9a73-f4bcf433d227">
+                    <propertyInstance
+                      Id="4430a8d1-7311-4ae6-950b-30c215d88f35"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e4e70a98-b637-4ce0-a4a7-8365438b6cdb"
+                  direction="Return">
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ff364196-f55e-4a47-88f7-6e49b6174d3e"
+                  name="order"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="ecb58d08-602c-42f2-b3fa-4008dd44e916"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DGetSkill OverloadingParameters%3D[(Assembly%3D&quot;file:%2F%2F%2FC:%2FProgram Files (x86)%2FReference Assemblies%2FMicrosoft%2FFramework%2F.NETFramework%2Fv3.5%2FProfile%2FUnity Subset v3.5%2Fmscorlib.dll&quot; Namespace%3DSystem Type%3DInt32)]) ParameterIdentifier%3Dorder"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <primitiveTypeMoniker
+                      Id="220a3521-e091-4221-bae9-3ef9018e845c"
+                      LastKnownName="Integer"
+                      LastKnownLocation="ModelingProject2.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="cc03da3c-cd85-436e-9f9c-a35d12f8f900"
+            name="RemoveSkill"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="d27f7da0-bdbe-4784-a1fe-93bcd1de2fe3"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DRemoveSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="4bdf89a1-71c2-4242-91e9-ea07947db8b5"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d591e19d-5aa2-4a9f-9030-5347eda43668">
+                    <propertyInstance
+                      Id="0d2ded8f-d298-49f6-b7ae-d9cf603ec664"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="fffcfdbe-3ec9-42c7-9266-b5dc12ea0b15">
+                    <propertyInstance
+                      Id="f8d3610c-2497-4078-a422-3a84fff55547"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ab608d26-9fb1-4eb1-abb5-f3b8fe3ceb0b">
+                    <propertyInstance
+                      Id="53f6438a-f338-4253-a7e5-b9a2d9ba9dc2"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="b9fbe56f-15e7-4869-b9a3-f323d5cd833c">
+                    <propertyInstance
+                      Id="bfa845c0-f5f8-4a66-9028-2d4dbe2cc646"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="f605017f-8741-49b7-b855-7c77824d1238">
+                    <propertyInstance
+                      Id="4f108d7e-dc7f-4f81-9d26-1949e58e3734"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="876bb26a-c22c-448b-aeee-ecd93bf853bd">
+                    <propertyInstance
+                      Id="d781fa2d-f84e-4fdf-ab9c-843a18c2f36f"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f5fac056-5e39-42a9-a720-ebd4eeab3fa1"
+                  name="sk"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="4c403c0f-088c-4f50-9191-390112f96ffa"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D(Name%3DRemoveSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)]) ParameterIdentifier%3Dsk"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="f7aab5c6-33db-418f-b1af-04c1b4bde6b5"
+            name="SkillSet"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="ee9d3566-72c0-4f6f-bf2e-2280ec7aa93d"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillSet Member%3D.ctor"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="bd83fbb7-c49f-4edf-90c7-e04c0813a9e7"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="3cb5ae9f-0698-4313-9999-2bf3fee66d95">
+                    <propertyInstance
+                      Id="6ede7f5d-ae87-40bc-a724-c584a3360193"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="29e24a69-d81c-4949-837c-a32374bcc034">
+                    <propertyInstance
+                      Id="2149183f-1412-4a3f-a984-f2cccfdd2bc8"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="f2a8219b-1bf7-41a0-8f9a-1220362a74ca">
+                    <propertyInstance
+                      Id="efd8b0aa-35cd-432d-bddb-826be778ecbf"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="0985e476-c71d-43e4-94bd-88426afcb959">
+                    <propertyInstance
+                      Id="182a755f-3796-4140-8ddf-28f7e5b1e76c"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="2a430d4b-7f40-4d6f-b646-c15b5a38f3e3">
+                    <propertyInstance
+                      Id="dece9397-624f-4c3f-8388-e227b55b6faf"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="19ad3ee1-834f-462d-b004-5330c917df9d">
+                    <propertyInstance
+                      Id="acae3af1-30a9-435d-9414-f44478f35da5"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <enumeration
+        Id="a127dfcd-9174-4090-b827-40d54373e033"
+        name="SkillId"
+        isAbstract="false"
+        isLeaf="false">
+        <referencesInternal>
+          <reference
+            Id="5f9eb538-06dd-4ab9-ae00-5fb0c709433a"
+            handle="viewcode://./CodeSchema_Enum?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillId"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="afe3e6b7-0fb0-4942-8464-d7ddf530124a"
+            name="enum"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="12148574-1d4a-43a0-b7a6-bce222925f73">
+                <propertyInstance
+                  Id="fd1078cc-507a-433c-8350-62be384a4499"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="695a5a88-fb13-40e9-8af0-651ffcf19684">
+                <propertyInstance
+                  Id="25cf517e-b81b-4bfd-8fda-0c619e02e5d8"
+                  name="BaseType"
+                  value="int" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="f76abe24-d625-4ced-bf30-3ee88f52520f">
+                <propertyInstance
+                  Id="dd5ca758-51a2-4064-a932-36c88c01c0a4"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+      </enumeration>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ec8ec339-c438-4d1e-b05c-0d839de5a5a9"
+        name="SkillTable"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <referencesInternal>
+          <reference
+            Id="e27d9112-b7a8-40e9-9dc7-5399d94dae3c"
+            handle="viewcode://./CodeSchema_Class?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable"
+            tag="ViewCode" />
+        </referencesInternal>
+        <appliedStereotypesInternal>
+          <stereotypeInstance
+            Id="f4d4458d-e992-47da-a35b-b42d3634186d"
+            name="class"
+            profile="CSharpProfile">
+            <propertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="213cd482-e875-4510-98c2-e64dfbf055bd">
+                <propertyInstance
+                  Id="58a19d9f-4911-4932-9411-4a2563175059"
+                  name="ClrAttributes" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="51914fb1-b4b9-4809-9ce7-a01abdd5a98d">
+                <propertyInstance
+                  Id="5c747440-2ef9-4e52-b6ce-1f72769b3525"
+                  name="IsPartial"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="4c9d8e20-8774-49d1-85be-09cf71bba219">
+                <propertyInstance
+                  Id="5720d1c3-ecbc-4257-948b-8b9c9efa83d7"
+                  name="IsStatic"
+                  value="False" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="e9721680-b58a-4156-82fa-c961314164e3">
+                <propertyInstance
+                  Id="6aca1fe0-3677-4998-8bcf-bf107ad65f30"
+                  name="IsUnsafe"
+                  value="false" />
+              </stereotypeInstanceHasPropertyInstances>
+              <stereotypeInstanceHasPropertyInstances
+                Id="a4f2a455-8d85-4b0a-81a8-316577357668">
+                <propertyInstance
+                  Id="e68614a1-e4d9-40cf-afca-de29a85cc91f"
+                  name="PackageVisibility"
+                  value="internal" />
+              </stereotypeInstanceHasPropertyInstances>
+            </propertyInstances>
+          </stereotypeInstance>
+        </appliedStereotypesInternal>
+        <targetEnds>
+          <association
+            Id="86a961d6-a426-489e-a366-41da34868578"
+            isDerived="false"
+            sourceEndRoleName="SkillTable"
+            targetEndRoleName="Instance"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ec8ec339-c438-4d1e-b05c-0d839de5a5a9"
+              LastKnownName="SkillTable"
+              LastKnownLocation="Package8_0048.uml" />
+            <description>Property Instance references type SkillTable.</description>
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7adc89f4-0f2f-451e-8ae0-c43e4b1240fa"
+                  name="SkillTable"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="63786b0e-06b2-4110-b5ff-90966e6bfad1"
+                      name="Lower"
+                      value="*" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="4038bf6c-1717-4891-a6a1-688e6593ff89"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="fbd1027b-ca35-492c-b7ac-6c2a4c210d4e"
+                  name="Instance"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="5fb551ea-185d-4d1d-a59e-6f974b24f8e6"
+                      name="Lower"
+                      value="1" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="a05eb167-70d5-4c14-bbb4-830e41b3c969"
+                      name="Upper"
+                      value="1" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="64af2ad8-77d4-4160-99fb-d54e015f54bd"
+            name="Instance"
+            isLeaf="false"
+            isStatic="true"
+            isReadOnly="true"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <referencesInternal>
+              <reference
+                Id="3b3fd6ce-340e-4036-9536-ece860829205"
+                handle="viewcode://./CodeSchema_Property?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3DInstance"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="9b2a3936-aa6e-4732-8de7-1aebb10dcec8"
+                name="property"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="8b3aef95-3c55-42f4-a95c-351484566bb7">
+                    <propertyInstance
+                      Id="15bbcbeb-7f88-4787-843c-c061c3f8d190"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="428f8708-7a3d-49f5-b4c5-f4057df3be72">
+                    <propertyInstance
+                      Id="a6c3c660-3492-4ad6-98fa-ad286a20c249"
+                      name="Get"
+                      value="public" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="13ac1906-3926-4453-a555-1deb398127fa">
+                    <propertyInstance
+                      Id="3010553f-444e-4361-8742-6c504c24dd3b"
+                      name="HasBody"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="e042e3bc-fe98-46d6-bd15-9e1b45ce0aba">
+                    <propertyInstance
+                      Id="e9e76b0d-e1a5-4849-af4e-a18d29d66783"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="bde5f2df-936b-4a1b-a667-b474c06af1af">
+                    <propertyInstance
+                      Id="d67a3ae7-3489-4dfc-9c5a-891490005f13"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="c799acc6-52a3-4646-b57b-70b6736e9095">
+                    <propertyInstance
+                      Id="743b900e-bdd1-40b4-97a6-312a3f881c10"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ecb65ba8-223d-4a1c-b88e-de3119cddd3b">
+                    <propertyInstance
+                      Id="b527722b-9819-4a33-802e-645404ec5b40"
+                      name="Set"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <type_NamedElement>
+              <classMoniker
+                Id="ec8ec339-c438-4d1e-b05c-0d839de5a5a9"
+                LastKnownName="SkillTable"
+                LastKnownLocation="Package8_0048.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="ab890695-d7fc-459c-ba8b-ba2f9f3984ce"
+            name="instance"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="true"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <referencesInternal>
+              <reference
+                Id="bb63fd04-f6bc-4ef4-82e0-d7ec4bad69ba"
+                handle="viewcode://./CodeSchema_Field?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3Dinstance"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="f9a51dd5-2d9f-4597-b307-876c5674b98a"
+                name="field"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="064a47c2-bd20-4223-9769-7c6d051bef1b">
+                    <propertyInstance
+                      Id="b64d8127-96e8-40ad-8073-21f12ab079a5"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="66d7d76e-b7cf-4753-a972-449a91924421">
+                    <propertyInstance
+                      Id="292bd55d-daf5-45c6-a0d4-b192203a44ee"
+                      name="IsConst"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="72bf97bb-ce16-4e1c-9e1b-24b4f94987ee">
+                    <propertyInstance
+                      Id="c6443df3-a618-4fac-a2e9-ed6dfae16ad8"
+                      name="IsNullable"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="1fce5abc-05a1-4949-b3af-f42fe0bc068d">
+                    <propertyInstance
+                      Id="8359f4c3-cf01-4fd2-a0da-70aa3cfbc613"
+                      name="IsVolatile"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="90c4a622-1e5a-4a69-9f4e-fb3a0fba901e">
+                    <propertyInstance
+                      Id="f6b11c52-ef69-426f-b15e-12af4d3c5759"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <type_NamedElement>
+              <classMoniker
+                Id="ec8ec339-c438-4d1e-b05c-0d839de5a5a9"
+                LastKnownName="SkillTable"
+                LastKnownLocation="Package8_0048.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="7ea5b3c8-126f-4d72-b870-4c0706356f99"
+            name="skills"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <referencesInternal>
+              <reference
+                Id="fa36a21b-1826-4323-9e27-1534251e05d3"
+                handle="viewcode://./CodeSchema_Field?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3Dskills"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="0459bbae-32dd-4504-ba3b-b81e3981524e"
+                name="field"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="e9276b64-2ff5-4e49-bdb4-00e1e6942529">
+                    <propertyInstance
+                      Id="505a00af-f4c3-4e71-bf84-3bc16641fd9a"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ac903c42-b728-4ab9-8883-3a8b36cb8b23">
+                    <propertyInstance
+                      Id="e23eaebc-101a-4cf5-952f-a0ff3f3fda0c"
+                      name="IsConst"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="086d73ef-54df-437f-b63d-3f9546b29193">
+                    <propertyInstance
+                      Id="e508ef63-5663-4f27-81dd-a04fa1c46dd2"
+                      name="IsNullable"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="215cf99c-c895-48fe-9ed1-6f3b633ed1e0">
+                    <propertyInstance
+                      Id="9329619d-c698-4524-8380-01596e263553"
+                      name="IsVolatile"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="14fc38a2-80d1-4ae6-ac79-a5c020ccc19e">
+                    <propertyInstance
+                      Id="513ecb84-038d-49e8-817a-f6ee775a627e"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <type_NamedElement>
+              <classMoniker
+                Id="a34b0d4d-b35e-47b5-a25a-9c0e555596e3"
+                LastKnownName="Dictionary&lt;SkillId‎, Skill‎&gt;"
+                LastKnownLocation="Package9_0048.uml" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="e543fea5-71c6-4f56-93a0-f2ba8162ea5b"
+            name="AddSkill"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="ed9f1ba7-b1bd-4b85-beeb-1f958624d210"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DAddSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="898e84fb-95ad-4991-a243-75291e5310e7"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="e690e101-7080-4f78-a8c0-df27e9566a84">
+                    <propertyInstance
+                      Id="af9c5794-fd1f-46cc-85a9-a9765a716906"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="371d859b-fe60-45ba-a1eb-688af07037b9">
+                    <propertyInstance
+                      Id="bb09514b-75df-49a8-ad3a-f19d7800aedf"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="c7985c38-1b4d-4f45-a04e-a618ae6928a8">
+                    <propertyInstance
+                      Id="3b6509aa-725a-4fbf-ad19-bccf4200ef59"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="218b1e70-889f-446f-801d-5c00a84f3369">
+                    <propertyInstance
+                      Id="9c9ef5b7-50d1-4f7d-ba1e-b4619d4ff44a"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="35a03738-036d-462b-b80e-9a7fce90c074">
+                    <propertyInstance
+                      Id="a58fe983-3ea8-4a61-b3d8-5be093072834"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ca652805-a350-4d8c-9666-f14978b33a36">
+                    <propertyInstance
+                      Id="ae5f188d-88f8-4009-8532-083562bb75d2"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="3b4a56d8-496b-4065-be44-5518b288a4cb"
+                  name="sk"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="db9b6604-38a3-4bb7-9ea5-463ce7f01544"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DAddSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)]) ParameterIdentifier%3Dsk"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="efc3c987-a19a-4c01-aa74-70bc9c09f0a3"
+            name="CreateSkill"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="09eee7bb-efbd-492d-a16e-7298d071cf9b"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DCreateSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillId)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="70326686-03f4-4696-bc9f-6960c2a6b9ef"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="3676b857-0fd0-471f-9b07-fcf0e17fd161">
+                    <propertyInstance
+                      Id="c4528f27-2b32-4143-8c5d-f2c0209efd40"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5c9c741c-07b1-4bf9-b4af-d0688f882c74">
+                    <propertyInstance
+                      Id="8b3756d0-60bc-4a03-a76e-a5715ddd7a36"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="ed3a9a40-1a53-47d2-910b-8ae46ee31a94">
+                    <propertyInstance
+                      Id="4e86c5b2-fd46-496d-8d63-b59a033d7d2b"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5f2704fc-a66d-46ef-a7c7-3404612986af">
+                    <propertyInstance
+                      Id="fcd81f6e-c779-4215-ac5a-fb966dc02171"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5986f0eb-77b5-4e73-85e4-20afac65c76b">
+                    <propertyInstance
+                      Id="74c47008-5baf-4c7e-b857-a66c398a93ac"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="a92ef3f6-a729-41a4-a469-b9f9f7273ec1">
+                    <propertyInstance
+                      Id="94b6177a-bdc5-4326-8b89-1a4b8d0d5aa1"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="697e8848-fb8e-4f55-b7e5-e7eab4ae96b7"
+                  direction="Return">
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c6582929-fbec-4189-8e6b-ca9e5228f3fe"
+                  name="id"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="e72b6e6f-c41e-453e-b7cb-637f5021e5ff"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DCreateSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillId)]) ParameterIdentifier%3Did"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <enumerationMoniker
+                      Id="a127dfcd-9174-4090-b827-40d54373e033"
+                      LastKnownName="SkillId"
+                      LastKnownLocation="Package8_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="dc98ce37-afd3-487a-bd42-4688ad55b2e6"
+            name="GetSkill"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="36cbae40-9575-4de1-9758-b0914f4a2eb4"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DGetSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillId)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="6bd60a6b-f6b4-414d-86f1-ebb5c6b763e8"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="1f89a782-2b06-4885-8576-8a58a43fb75b">
+                    <propertyInstance
+                      Id="fc70fde7-f8a7-4d88-aaf8-9e07a3dba766"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d5a4cf91-44f7-4cdc-907c-7bfc8e07201c">
+                    <propertyInstance
+                      Id="df031381-77b7-4ef2-a4e7-709aee591457"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="41b30ce7-a032-4fe7-8e0d-959e0b19c847">
+                    <propertyInstance
+                      Id="35ef055a-4d75-47a0-9ef2-f3434c92166c"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="06e74ff4-551e-4462-8abf-4eaec845adef">
+                    <propertyInstance
+                      Id="639ae551-7c07-44ae-826d-c717f2fa14c2"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="d3190edf-5987-40bb-9fe3-b6784742ee50">
+                    <propertyInstance
+                      Id="64a46593-744a-4ce0-9601-f18bad2c0f57"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="140aeb48-77d3-4d46-8eca-8dc625a029b3">
+                    <propertyInstance
+                      Id="8078bfa2-3735-4438-94b4-66c03976d3a6"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="548da8d6-9879-4b6c-8a29-afc848ceb0b8"
+                  direction="Return">
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="0df8fa78-aea1-4b80-921a-79b6fffe6811"
+                  name="id"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="de740e50-2e11-4ecf-a753-0266811f2fdd"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DGetSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillId)]) ParameterIdentifier%3Did"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <enumerationMoniker
+                      Id="a127dfcd-9174-4090-b827-40d54373e033"
+                      LastKnownName="SkillId"
+                      LastKnownLocation="Package8_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="0a50f30b-ba65-400a-a13d-b41018ab6ab1"
+            name="RemoveSkill"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="97932ffa-3fdf-4583-b209-677cc5633735"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DRemoveSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)])"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="cc644093-78af-4aa7-82b8-e7e46412f703"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="8b9e79a9-bf92-4b3c-a135-db3f716515b4">
+                    <propertyInstance
+                      Id="3cf59e95-80d2-4d92-81e1-e35b5d4dc76f"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="75b6d552-212f-49ee-9db0-1232b09418e7">
+                    <propertyInstance
+                      Id="91c4757c-f178-47be-ad45-917420013130"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="6bd2af12-cb2a-4fac-b775-e3e201a146bc">
+                    <propertyInstance
+                      Id="8a8d3115-74ce-4fbe-981a-960950684827"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="f4b3b007-bc61-4762-aeeb-bea96f8cce2b">
+                    <propertyInstance
+                      Id="39fd5966-f4a7-4ac2-9457-4c725b8a1e9d"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="bb67088e-224c-4ac3-8fd7-5c2cacb3e847">
+                    <propertyInstance
+                      Id="e1eae739-df58-42de-a043-c07ba0529bd5"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="503c5029-dbf1-4bf0-879f-3f3ecde4c8f1">
+                    <propertyInstance
+                      Id="038e4f51-87ad-47d8-b23c-cb640b069ccd"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="881f1013-33bc-4b4b-b603-de8f33814d3c"
+                  name="sk"
+                  direction="In">
+                  <referencesInternal>
+                    <reference
+                      Id="ad5dbc59-19cf-4b99-a22a-3aa84e724903"
+                      handle="viewcode://./CodeSchema_Parameter?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D(Name%3DRemoveSkill OverloadingParameters%3D[(Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills Type%3DSkill)]) ParameterIdentifier%3Dsk"
+                      tag="ViewCode" />
+                  </referencesInternal>
+                  <type_NamedElement>
+                    <classMoniker
+                      Id="4db7479c-209e-444c-87e6-dd14b5d03c82"
+                      LastKnownName="Skill"
+                      LastKnownLocation="Package7_0048.uml" />
+                  </type_NamedElement>
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="57d9593f-9699-4874-9974-e571e7fa3db7"
+            name="SkillTable"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="5693dc43-019a-4305-ab64-f1d8242fb495"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3D.ctor"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="13653934-6e96-48dc-b502-3454a48d2e00"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="c082f3c5-0411-4c70-88a8-8f0a4ad254b8">
+                    <propertyInstance
+                      Id="dc4f7c7c-f705-4db1-b693-c6a54413c13f"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="958190ad-e3ea-48df-96cc-a9cb512ef76a">
+                    <propertyInstance
+                      Id="cc8e9a55-273e-4d60-8a77-3111d5a096f1"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="647afb28-9477-40ef-9560-b526002af110">
+                    <propertyInstance
+                      Id="b7c69caf-d868-476a-89b0-37b1520b1d77"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="dab79962-a438-4ea9-a1d7-63dc73a9b8d0">
+                    <propertyInstance
+                      Id="3621a949-7f5a-4a62-b47f-fda8abe1b76e"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="5b454ad6-eb76-4486-a34c-8729e68bb22e">
+                    <propertyInstance
+                      Id="c33d4dc8-945a-4794-a5e1-7f12c6fb963e"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="8a0bba32-6d0f-4961-b412-0182a2b96e71">
+                    <propertyInstance
+                      Id="0fad2b85-9a22-4497-b3d4-12e5d8afc88e"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+          </operation>
+          <operation
+            Id="302dd67b-65c4-4f3d-bedc-2ab736c566bf"
+            name="Load"
+            visibility="Private"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <referencesInternal>
+              <reference
+                Id="856617c5-4fe0-4cee-a195-55a6e35fb5e0"
+                handle="viewcode://./CodeSchema_Method?Assembly%3Dfile:%2F%2F%2FC:%2FProjekt%2FBactery-wars%2FTemp%2FUnityVS_bin%2FDebug%2FAssembly-CSharp.dll Namespace%3DAssets.scripts.Skills.Base Type%3DSkillTable Member%3DLoad"
+                tag="ViewCode" />
+            </referencesInternal>
+            <appliedStereotypesInternal>
+              <stereotypeInstance
+                Id="23366f92-e8f1-4013-ab30-fd52726c4fe5"
+                name="method"
+                profile="CSharpProfile">
+                <propertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="28591e51-840d-4db2-a43a-c38310c79c12">
+                    <propertyInstance
+                      Id="c1c500c1-28fd-43be-be1c-58eb14b69b82"
+                      name="ClrAttributes" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="9aeab084-c442-4427-afdb-f14738f548ea">
+                    <propertyInstance
+                      Id="b1c7a3d2-31b8-4990-afc0-de71951c6859"
+                      name="IsPartial"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="8481c4ff-5ec7-4d88-b8e1-d7119f23e6b5">
+                    <propertyInstance
+                      Id="03ca70d3-f082-46e1-a694-fa53dbee0d8d"
+                      name="IsUnsafe"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="bb40aa5c-ecae-4fae-8936-4290413554e5">
+                    <propertyInstance
+                      Id="3f13fc71-3fe5-4235-9299-f215a1e26b0c"
+                      name="Inheritance"
+                      value="none" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="54ccb270-5a32-4bd4-98d2-73cf8e023ac3">
+                    <propertyInstance
+                      Id="fab16058-b01b-4626-8b21-6ea5412ab713"
+                      name="PackageVisibility"
+                      value="internal" />
+                  </stereotypeInstanceHasPropertyInstances>
+                  <stereotypeInstanceHasPropertyInstances
+                    Id="cb2605bd-df1c-4c33-9389-b7dbc7604376">
+                    <propertyInstance
+                      Id="0522da15-2ba4-4145-9eb9-f6c703760fc9"
+                      name="params"
+                      value="false" />
+                  </stereotypeInstanceHasPropertyInstances>
+                </propertyInstances>
+              </stereotypeInstance>
+            </appliedStereotypesInternal>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+  </packagedElements>
+</package>
