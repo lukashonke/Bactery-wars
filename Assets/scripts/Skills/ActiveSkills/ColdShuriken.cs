@@ -23,7 +23,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private readonly float radiusToSelectNextTarget = 20;
 		private readonly int speed = 20;
 
-
 		public ColdShuriken()
 		{
 			castTime = 0f;
@@ -86,6 +85,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 				rb.velocity = (GetOwnerData().GetForwardVector(0) * speed);
 				activeProjectileRigidBody = rb;
 
+			    SetNextTarget();
+
 				Object.Destroy(activeProjectile, destroyTime);
 			}
 		}
@@ -112,8 +113,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			activeProjectileRigidBody.velocity = newDir*(speed);
 		}
 
-		private float lastTargetResearch;
-
 		public override void UpdateLaunched()
 		{
 			if (targetsLeft <= 0)
@@ -122,11 +121,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 			}
 
-			//if (lastTargetResearch + 0.2f <= Time.time)
-			{
-				lastTargetResearch = Time.time;
-				AdjustToNextTarget();
-			}
+			AdjustToNextTarget();
 		}
 
 		private void NewTargetSelected()
@@ -158,6 +153,68 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
+	    private void SetNextTarget()
+	    {
+            List<Collider2D> possibleHitsList = new List<Collider2D>();
+            Collider2D[] possibleHits = Physics2D.OverlapCircleAll(activeProjectile.gameObject.transform.position, radiusToSelectNextTarget);
+            foreach (Collider2D c in possibleHits)
+                possibleHitsList.Add(c);
+
+            possibleHitsList.Sort((x, y) => Utils.DistancePwr(x.transform.position, GetOwnerData().GetBody().transform.position).CompareTo(Utils.DistancePwr(y.transform.position, GetOwnerData().GetBody().transform.position)));
+
+            bool targetFound = false;
+
+            // v prvnim cyklu zkusim najit blizky target ktery se jeste nehitnul
+            foreach (Collider2D c in possibleHitsList)
+            {
+                Character charTarget = c.gameObject.GetChar();
+
+                if (charTarget != null && Owner.CanAttack(charTarget))
+                {
+                    if (targetsHit.Contains(charTarget))
+                        continue;
+
+                    currentTarget = charTarget;
+                    targetFound = true;
+                    targetsLeft--;
+                    targetsHit.Add(currentTarget);
+
+                    break;
+                }
+            }
+
+            // target nenalezen - resetuju uz hitnute targety a zkusim to znovu
+            if (!targetFound)
+            {
+                targetsHit.Clear();
+                foreach (Collider2D c in possibleHitsList)
+                {
+                    Character charTarget = c.gameObject.GetChar();
+
+                    if (charTarget != null && Owner.CanAttack(charTarget))
+                    {
+                        currentTarget = charTarget;
+                        targetFound = true;
+                        targetsLeft--;
+                        targetsHit.Add(currentTarget);
+
+                        break;
+                    }
+                }
+            }
+
+            if (!targetFound)
+            {
+                //Debug.Log("target not found");
+                DestroyProjectile(activeProjectile);
+            }
+            else
+            {
+                //Debug.DrawLine(activeProjectile.transform.position, currentTarget.GetData().transform.position, Color.green, 1f);
+                NewTargetSelected();
+            }
+	    }
+
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
 			// ignorovat kolizi se samotnym hracem
@@ -173,71 +230,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				{
 					ApplyEffects(Owner, other.gameObject);
 
-					List<Collider2D> possibleHitsList = new List<Collider2D>();
-					Collider2D[] possibleHits = Physics2D.OverlapCircleAll(other.gameObject.transform.position, radiusToSelectNextTarget);
-					foreach(Collider2D c in possibleHits)
-						possibleHitsList.Add(c);
-
-					possibleHitsList.Sort((x, y) => Utils.DistancePwr(x.transform.position, GetOwnerData().GetBody().transform.position).CompareTo(Utils.DistancePwr(y.transform.position, GetOwnerData().GetBody().transform.position)));
-
-					Debug.Log("=====");
-					foreach (var v in possibleHitsList)
-						Debug.Log(v);
-					Debug.Log("=====");
-
-					bool targetFound = false;
-
-					// v prvnim cyklu zkusim najit blizky target ktery se jeste nehitnul
-					foreach (Collider2D c in possibleHitsList)
-					{
-						Character charTarget = c.gameObject.GetChar();
-
-						if (charTarget != null && Owner.CanAttack(charTarget))
-						{
-							if (targetsHit.Contains(charTarget))
-								continue;
-
-							currentTarget = charTarget;
-							targetFound = true;
-							targetsLeft--;
-							targetsHit.Add(currentTarget);
-
-							break;
-						}
-					}
-
-					// target nenalezen - resetuju uz hitnute targety a zkusim to znovu
-					if (!targetFound)
-					{
-						targetsHit.Clear();
-						foreach (Collider2D c in possibleHitsList)
-						{
-							Character charTarget = c.gameObject.GetChar();
-
-							if (charTarget != null && Owner.CanAttack(charTarget))
-							{
-								currentTarget = charTarget;
-								targetFound = true;
-								targetsLeft--;
-								targetsHit.Add(currentTarget);
-
-								break;
-							}
-						}
-					}
-
-					if (!targetFound)
-					{
-						Debug.Log("target not found");
-						DestroyProjectile(activeProjectile);
-					}
-					else
-					{
-
-						Debug.Log("CURRENT TARGET " + currentTarget);
-						Debug.DrawLine(activeProjectile.transform.position, currentTarget.GetData().transform.position, Color.green, 1f);
-						NewTargetSelected();
-					}
+					SetNextTarget();
 				}
 			}
 		}

@@ -6,6 +6,8 @@ using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
+using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
@@ -17,6 +19,8 @@ namespace Assets.scripts.Actor
 	public class Monster : Character
 	{
 		public MonsterTemplate Template { get; set; }
+
+        public MonsterSpawnInfo SpawnInfo { get; private set; }
 
 		private Character master;
 
@@ -36,6 +40,11 @@ namespace Assets.scripts.Actor
 
 			Template = template;
 		}
+
+	    public void SetSpawnInfo(MonsterSpawnInfo info)
+	    {
+	        SpawnInfo = info;
+	    }
 
 		public void SetMaster(Character master)
 		{
@@ -88,7 +97,8 @@ namespace Assets.scripts.Actor
 
 		protected override AbstractAI InitAI()
 		{
-			return Template.CreateAI(this);
+			MonsterAI ai = Template.CreateAI(this);
+		    return ai;
 		}
 
 		protected override CharStatus InitStatus()
@@ -140,6 +150,7 @@ namespace Assets.scripts.Actor
 					for (i = 0; i < e.Value; i++)
 					{
 						Vector3 rndPos = Utils.GenerateRandomPositionAround(GetData().GetBody().transform.position, GetData().distanceToFollowLeader/2f);
+
 						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, rndPos, true);
 						mon.AI.JoinGroup(this);
 					}

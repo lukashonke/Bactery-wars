@@ -7,6 +7,7 @@ using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
@@ -47,6 +48,13 @@ namespace Assets.scripts.Actor
 		{
 			AI = ai;
 		}
+
+	    public void DoDie()
+	    {
+	        GetData().SetIsDead(true);
+            WorldHolder.instance.activeMap.NotifyCharacterDied(this);
+            DeleteMe();
+	    }
 
 		public void DeleteMe()
 		{
@@ -290,7 +298,7 @@ namespace Assets.scripts.Actor
 
 			if (Status.IsDead)
 			{
-				GetData().SetIsDead(true);
+				DoDie();
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
@@ -408,7 +416,7 @@ namespace Assets.scripts.Actor
 
 				if (m != null)
 				{
-					m.GetData().SetIsDead(true);
+					m.DoDie();
 				}
 			}
 		}

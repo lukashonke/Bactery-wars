@@ -13,7 +13,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public NeutrophileProjectile()
 		{
 			castTime = 0f;
-			reuse = 2;
+			reuse = 2f;
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 10;

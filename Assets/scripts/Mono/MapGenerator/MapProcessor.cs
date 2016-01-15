@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -48,8 +49,24 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			SpawnTeleporters();
 
-			//WiddenThinPassages(null, 6, 2);
+		    SpawnMonsters();
+
+		    //WiddenThinPassages(null, 6, 2);
 		}
+
+        private void SpawnMonsters()
+	    {
+	        foreach (MapRoom room in rooms)
+			{
+			    if (room.region.isStartRegion)
+			    {
+                    MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, mapHolder.GetTileWorldPosition(room.tiles[25]));
+                    info.SetRegion(room.region);
+
+                    mapHolder.AddMonsterToMap(info);
+			    }
+            }
+	    }
 
 		private void SpawnTeleporters()
 		{
@@ -69,7 +86,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
-					mapHolder.SpawnNpc(MonsterId.TeleporterIn, mapHolder.GetTileWorldPosition(mostLeft) + Vector3.right*2);
+					mapHolder.AddNpcToMap(MonsterId.TeleporterIn, mapHolder.GetTileWorldPosition(mostLeft) + Vector3.right*2);
 				}
 
 				if (room.region.hasOutTeleporter)
@@ -86,7 +103,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
-					mapHolder.SpawnNpc(MonsterId.TeleporterOut, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left*2);
+					mapHolder.AddNpcToMap(MonsterId.TeleporterOut, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left*2);
 				}
 			}
 		}
@@ -377,10 +394,10 @@ namespace Assets.scripts.Mono.MapGenerator
 					passageTiles.Add(c);
 			}
 			bool makeDoor = roomA.region.isLockedRegion || roomB.region.isLockedRegion;
-			CreatePassageInPoint(line[line.Count/2], makeDoor);
+			CreatePassageInPoint(line[line.Count/2], makeDoor, roomA, roomB);
 		}
 
-		private void CreatePassageInPoint(Tile center, bool makeDoor)
+		private void CreatePassageInPoint(Tile center, bool makeDoor, MapRoom roomA, MapRoom roomB)
 		{
 			center.SetColor(Tile.ORANGE);
 
@@ -405,7 +422,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			start.SetColor(Tile.MAGENTA);
 			end.SetColor(Tile.PINK);
 
-			MapPassage passage = new MapPassage(line, center, start, end);
+			MapPassage passage = new MapPassage(line, center, start, end, roomA, roomB);
 			passage.isDoor = makeDoor;
 			mapHolder.AddPassage(passage);
 		}

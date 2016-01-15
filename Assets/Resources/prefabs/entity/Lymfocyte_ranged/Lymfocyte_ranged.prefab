@@ -16,7 +16,7 @@ GameObject:
   - 114: {fileID: 11401748}
   - 58: {fileID: 5895428}
   m_Layer: 0
-  m_Name: Neutrophile_Patrol
+  m_Name: Lymfocyte_ranged
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -390,7 +390,7 @@ MonoBehaviour:
   rotationEnabled: 1
   repathRate: 0.25
   lastClickPositionWorld: {x: 0, y: 0, z: 0}
-  monsterId: 3
+  monsterId: 6
   distanceToFollowLeader: 8
 --- !u!198 &19864474
 ParticleSystem:
@@ -3576,7 +3576,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: monsterId
-      value: 3
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

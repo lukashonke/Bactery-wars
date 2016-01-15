@@ -409,6 +409,8 @@ namespace Assets.scripts.Skills
 
 			OnLaunch();
 
+            //TODO if player dies he finishes casting anyway
+
 			float coolDown = this.coolDown;
 
 			// TODO apply cooldown modifying stuff here

@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.ObjectData
@@ -49,7 +50,7 @@ namespace Assets.scripts.Mono.ObjectData
 						ps.Play();
 				}
 
-				DisableMe();
+				DisableObjectData();
 
 				DisableChildObjects();
 

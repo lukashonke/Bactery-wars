@@ -98,6 +98,7 @@ namespace Assets.scripts.Mono
 		public bool QueueMelee { get; set; }
 		public bool QueueMeleeRepeat { get; set; }
 		public GameObject QueueMeleeTarget { get; set; }
+        private bool fixedRotation;
 
 		protected bool allowMovePointChange;
 		protected bool forcedVelocity;
@@ -383,13 +384,14 @@ namespace Assets.scripts.Mono
 					bool move = true;
 					bool rotate = true;
 
+                    // no path available yet, dont move and wait
 					if (usesPathfinding && currentPath == null && searchingPath)
 					{
 						rotate = false;
 						move = false;
 					}
 
-					if (angle - 90 > 1 && !canMoveWhenNotRotated)
+					if (angle - 90 > 1 && !canMoveWhenNotRotated && !fixedRotation)
 						move = false;
 
 					if (!CanMove())
@@ -615,6 +617,9 @@ namespace Assets.scripts.Mono
 
 		public void BreakMovement(bool arrivedAtDestination)
 		{
+            // unfix the rotation
+		    fixedRotation = false;
+
 			if (arrivedAtDestination)
 			{
 				targetMoveObject = null;
@@ -633,6 +638,9 @@ namespace Assets.scripts.Mono
 
 		private void ArrivedAtDestination()
 		{
+            // unfix the rotation
+		    fixedRotation = false;
+
 			// the player had fixed position and velocity to move to, if he is there already, unfix this
 			if (!allowMovePointChange && forcedVelocity)
 			{
@@ -803,6 +811,9 @@ namespace Assets.scripts.Mono
 			if (!rotationEnabled)
 				return false;
 
+		    if (fixedRotation)
+		        return false;
+
 			foreach (Skill skill in GetOwner().Skills.Skills)
 			{
 				if (skill is ActiveSkill)
@@ -873,21 +884,18 @@ namespace Assets.scripts.Mono
 		{
 			if (isDead)
 			{
-				DisableMe();
+				DisableObjectData();
 
 				Destroy(gameObject, 5f);
 
-				if (healthBar != null)
-				{
-					healthBar.enabled = false;
-				}
+			    DisableChildObjects();
 			}
 		}
 
 		public virtual void DeleteMe()
 		{
 			GetOwner().DeleteMe();
-			DisableMe();
+			DisableObjectData();
 			Destroy(gameObject);
 
 			DisableChildObjects();
@@ -901,7 +909,7 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void DisableMe()
+		public void DisableObjectData()
 		{
 			foreach (GameObject o in childs.Values)
 			{
@@ -913,8 +921,6 @@ namespace Assets.scripts.Mono
 
 			body.GetComponent<SpriteRenderer>().enabled = false;
 			body.GetComponent<Collider2D>().enabled = false;
-
-			GetOwner().DeleteMe();
 		}
 
 		public void BreakCasting()
@@ -1125,17 +1131,19 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public bool MoveTo(Vector3 target)
+		public bool MoveTo(Vector3 target, bool fixedRotation=false)
 		{
 			if (this is PlayerData)
 			{
 				HasTargetToMoveTo = true;
-				return ((PlayerData)this).SetPlayersMoveToTarget(target);
+                this.fixedRotation = fixedRotation;
+                return ((PlayerData)this).SetPlayersMoveToTarget(target);
 			}
 			else if (this is EnemyData)
 			{
 				HasTargetToMoveTo = true;
-				return ((EnemyData)this).SetMovementTarget(target);
+                this.fixedRotation = fixedRotation;
+                return ((EnemyData)this).SetMovementTarget(target);
 			}
 
 			return false;

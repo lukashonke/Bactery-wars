@@ -48,7 +48,7 @@ namespace Assets.scripts
 
 		public void SpawnTestMob()
 		{
-			GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
+			//GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
 		}
 	}
 }

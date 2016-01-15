@@ -16,6 +16,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		MucusWarrior = 4,
 
+        Lymfocyte_melee = 5,
+        Lymfocyte_ranged = 6,
+
 		TeleporterOut = 100,
 		TeleporterIn = 101
 	}

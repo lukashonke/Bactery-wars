@@ -19,6 +19,7 @@ namespace Assets.scripts.Skills.Base
 		ChainedProjectile,
 
 		NeutrophileProjectile,
+	    PushbackProjectile,
 
 		CommonColdAutoattack,
 		SneezeShot,

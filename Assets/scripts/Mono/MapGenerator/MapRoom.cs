@@ -8,13 +8,17 @@ namespace Assets.scripts.Mono.MapGenerator
 {
 	/// <summary>
 	/// Reprezentuje jednu mistnost na mape (vsechny mistnosti jsou propojene tunelem, centralni mistnost muze obsahovat bosse)
+	/// Mistnost neobsahuje oblasti ve kterych se hrac muze pohybovat
 	/// </summary>
 	public class MapRoom
 	{
-		// region kteremu tato mistnost nalezi
+		/// region kteremu tato mistnost nalezi
 		public MapRegion region;
 
+        /// obsahuje vsechny Tily ktere tvori mistnost (takze neobsahuje zdi)
 		public List<Tile> tiles;
+
+        /// obsahuje okrajove zdi
 		public List<Tile> edgeTiles;
 		public List<MapRoom> connectedRooms;
 		public int roomSize;

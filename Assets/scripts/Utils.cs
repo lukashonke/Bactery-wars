@@ -102,10 +102,19 @@ namespace Assets.scripts
 				float randX = Random.Range(minRange, maxRange);
 				float randY = Random.Range(minRange, maxRange);
 
+			    if (Random.Range(0, 2) == 0)
+			        randX *= -1;
+
+			    if (Random.Range(0, 2) == 0)
+			        randY *= -1;
+
 				Vector3 v = new Vector3(pos.x + randX, pos.y +randY, 0);
 
-				if (IsNotAccessible(from, v))
+			    if (IsNotAccessible(from, v))
+			    {
+			        Debug.DrawLine(from, v, Color.red, 3f);
 					continue;
+			    }
 
 				return v;
 			}

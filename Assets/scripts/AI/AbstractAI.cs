@@ -20,7 +20,9 @@ namespace Assets.scripts.AI
 		public float ThinkInterval { get; set; }
 		private bool active;
 		private Coroutine mainTask;
+
 		protected Coroutine currentAction;
+	    protected bool currentActionCancelable;
 
 		private Character MainTarget { get; set; }
 		protected List<Character> Targets { get; private set; }
@@ -67,10 +69,23 @@ namespace Assets.scripts.AI
 			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
-		protected void StartAction(IEnumerator task, float timeLimit)
+		protected bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
 		{
-			currentAction = Owner.StartTask(task);
-			Owner.StartTask(ActionTimeLimit(timeLimit));
+		    if (currentAction == null || currentActionCancelable || forceReplace)
+		    {
+                //TODO cancel the previous action?
+		        if (currentAction != null)
+		        {
+		            BreakCurrentAction();
+		        }
+
+                currentAction = Owner.StartTask(task);
+                currentActionCancelable = canBeCancelled;
+                Owner.StartTask(ActionTimeLimit(timeLimit));
+		        return true;
+            }
+
+		    return false;
 		}
 
 		private IEnumerator ActionTimeLimit(float timeLimit)
@@ -84,7 +99,9 @@ namespace Assets.scripts.AI
 			if (currentAction != null)
 			{
 				Owner.StopTask(currentAction);
+
 				currentAction = null;
+			    currentActionCancelable = true;
 			}
 		}
 
@@ -288,9 +305,9 @@ namespace Assets.scripts.AI
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected bool MoveTo(Vector3 target)
+		protected bool MoveTo(Vector3 target, bool fixedRotation=false)
 		{
-			return Owner.GetData().MoveTo(target);
+			return Owner.GetData().MoveTo(target, fixedRotation);
 		}
 
 		public virtual void SetMaster(Character master)

@@ -96,7 +96,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (minion != null)
 			{
-				minion.GetData().SetIsDead(true);
+				minion.DoDie();
 			}
 		}
 

@@ -41,10 +41,13 @@ namespace Assets.scripts.Actor.MonsterClasses
 			{
 				PlayerData data = ((Player)source).GetData();
 
-				WorldHolder.instance.LoadNextMap();
+			    if (WorldHolder.instance.activeMap.CanTeleportToNext())
+			    {
+                    WorldHolder.instance.LoadNextMap();
 
-				// teleport player to new start
-				data.transform.position = WorldHolder.instance.GetStartPosition();
+                    // teleport player to new start
+                    data.transform.position = WorldHolder.instance.GetStartPosition();
+			    }
 			}
 		}
 

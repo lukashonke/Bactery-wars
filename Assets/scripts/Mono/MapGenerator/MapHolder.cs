@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Base;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -22,10 +23,18 @@ namespace Assets.scripts.Mono.MapGenerator
 		StartClassic,
 	}
 
+    /// <summary>
+    /// Obsahuje jeden region (oblast o rozloze 50x50 nebo podle nastaveni), vcetne vsech zdi, podlah apod.
+    /// Kazdy region obvykle obsahuje jednu mistnost (MapRoom), ktera reprezentuje oblast v regionu, po ktere muze hrac chodit
+    /// </summary>
 	public class MapRegion
 	{
-		private bool active;
+		public int Status { get; set; }
 
+        public static readonly int STATUS_HOSTILE = 1;
+        public static readonly int STATUS_CONQUERED = 2;
+
+        public bool empty;
 		public int x, y;
 		public Tile[,] tileMap;
 		public RegionGenerator regionGen; //TODO remove, not neccessary
@@ -36,6 +45,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public bool onlyOnePassage = false;
 		public bool hasOutTeleporter = false;
 
+
 		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
 			this.x = x;
@@ -43,7 +53,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.regionGen = regionGen;
 			this.tileMap = tileMap;
 
-			active = true;
+		    Status = STATUS_HOSTILE;
 		}
 
 		public void AssignTilesToThisRegion()
@@ -70,6 +80,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
+        public MapRoom GetMapRoom()
+        {
+            return WorldHolder.instance.activeMap.GetRoom(this);
+        }
+
 		/*public void Disable()
 		{
 			if (mesh == null)
@@ -85,6 +100,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			mesh.gameObject.SetActive(true);
 			active = true;
 		}*/
+
+        public void SetEmpty()
+        {
+            empty = true;
+        }
 	}
 
 	/// <summary>
@@ -100,6 +120,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		private WorldHolder.Cords position;
 		private MapType mapType;
 
+	    private MapProcessor mapProcessor;
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
@@ -121,7 +142,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return position; }
 		}
 
-		public MapType MapType1
+		public MapType MapType
 		{
 			get { return mapType; }
 		}
@@ -139,6 +160,29 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			passages.Add(p);
 		}
+
+        public MapPassage GetPassage(MapRegion regionA, MapRegion regionB)
+	    {
+	        foreach (MapPassage passage in passages)
+	        {
+	            if (regionA.Equals(passage.roomA.region) && regionB.Equals(passage.roomB.region))
+	            {
+	                return passage;
+	            }
+
+                if (regionB.Equals(passage.roomA.region) && regionA.Equals(passage.roomB.region))
+                {
+                    return passage;
+                }
+	        }
+
+            return null;
+	    }
+
+	    public void OpenPassage(MapPassage p)
+	    {
+            p.SetEnabled(false);	        
+	    }
 
 		public void InitPassage(MapPassage p)
 		{
@@ -170,6 +214,23 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			return new Vector3((-World.width/2) + t.tileX, (-World.height/2) + t.tileY, 0);
 		}
+
+	    public Tile GetTileFromWorldPosition(Vector3 pos)
+	    {
+	        int x = Mathf.RoundToInt(pos.x + World.width/2);
+	        int y = Mathf.RoundToInt(pos.y + World.width/2);
+
+	        return SceneMap[x, y];
+	    }
+
+        public MapRegion GetRegionFromWorldPosition(Vector3 pos)
+        {
+            Tile t = GetTileFromWorldPosition(pos);
+            if (t != null)
+                return t.region;
+
+            return null;
+        }
 
 		public void CreateMap()
 		{
@@ -273,11 +334,17 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void ProcessSceneMap()
 		{
-			MapProcessor processor = new MapProcessor(this, SceneMap, mapType);
+			mapProcessor = new MapProcessor(this, SceneMap, mapType);
 
-			processor.Process();
+			mapProcessor.Process();
 
-			SceneMap = processor.Tiles;
+		    Debug.Log(GetTileWorldPosition(SceneMap[0,0]));
+            Debug.Log(GetTileWorldPosition(SceneMap[50, 50]));
+
+            GetTile(0, 0).SetColor(Tile.BLUE);
+            GetTile(50, 50).SetColor(Tile.BLUE);
+
+			SceneMap = mapProcessor.Tiles;
 		}
 
 		public void GenerateHardcodedMap(int regX, int regY, string name, bool isStartRegion)
@@ -315,6 +382,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			AddToSceneMap(tileMap, regX, regY);
 
 			MapRegion region = new MapRegion(regX, regY, tileMap, null);
+		    region.SetEmpty();
 			region.AssignTilesToThisRegion();
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
@@ -398,25 +466,14 @@ namespace Assets.scripts.Mono.MapGenerator
 			SetActive(false);
 		}
 
-		public class MonsterSpawnInfo
-		{
-			public MonsterId monster;
-			public Vector3 position;
-
-			public MonsterSpawnInfo(MonsterId m, Vector3 pos)
-			{
-				monster = m;
-				position = pos;
-			}
-		}
-
 		public void LoadMap(bool reloading)
 		{
 			GenerateMapMesh();
 
 			foreach (MapPassage p in passages)
 			{
-				InitPassage(p);
+                if(p.enabled)
+				    InitPassage(p);
 			}
 
 			activeMonsters.Clear();
@@ -426,12 +483,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				foreach (MonsterSpawnInfo info in spawnedMonsters)
 				{
-					SpawnMonsterToWorld(info.monster, info.position);
+				    AddMonsterToMap(info, true);
 				}
 
 				foreach (MonsterSpawnInfo info in spawnedNpcs)
 				{
-					SpawnNpcToWorld(info.monster, info.position);
+				    AddNpcToMap(info.MonsterId, info.SpawnPos, true);
 				}
 			}
 			catch (Exception)
@@ -464,7 +521,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedMonsters.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
+					spawnedMonsters.Add(m.SpawnInfo);
 					m.Data.DeleteMe();
 				}
 			}
@@ -687,6 +744,17 @@ namespace Assets.scripts.Mono.MapGenerator
 			return reg;
 		}
 
+        //TODO can there be more than one room? if so, return it as array
+        public MapRoom GetRoom(MapRegion region)
+	    {
+            foreach (MapRoom room in mapProcessor.rooms)
+            {
+                if (room.region.Equals(region))
+                    return room;
+            }
+            return null;
+	    }
+
 		public MapRegion[] GetNeighbourRegions(MapRegion reg)
 		{
 			MapRegion[] neighbours = new MapRegion[4];
@@ -725,55 +793,157 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
-		private Npc SpawnNpcToWorld(MonsterId monsterId, Vector3 position)
+        /////////////////////
+
+		/*private Npc SpawnNpcToWorld(MonsterId monsterId, Vector3 position)
 		{
 			Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
 
-			activeNpcs.Add(npc);
+			RegisterNpcToMap(npc);
 
 			return npc;
-		}
+		}*/
 
-		private Monster SpawnMonsterToWorld(MonsterId monsterId, Vector3 position)
+		/*private Monster SpawnMonsterToWorld(MonsterId monsterId, Vector3 position)
 		{
 			Monster npc = GameSystem.Instance.SpawnMonster(monsterId, position, false);
 
-			activeMonsters.Add(npc);
+			RegisterMonsterToMap(npc);
 
 			return npc;
-		}
+		}*/
 
-		public Npc SpawnNpc(MonsterId monsterId, Vector3 position)
-		{
-			return SpawnNpc(monsterId, position, false);
-		}
-
-		public Npc SpawnNpc(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
+		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
 		{
 			if (isActive || forceSpawnNow)
 			{
-				return SpawnNpcToWorld(monsterId, position);
+                Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
+
+                RegisterNpcToMap(npc);
+
+			    return npc;
 			}
 
 			spawnedNpcs.Add(new MonsterSpawnInfo(monsterId, position));
 			return null;
 		}
 
-		public Monster SpawnMonster(MonsterId monsterId, Vector3 position)
-		{
-			return SpawnMonster(monsterId, position, false);
-		}
+	    public Monster AddMonsterToMap(MonsterSpawnInfo info, bool forceSpawnNow=false)
+	    {
+	        if (isActive || forceSpawnNow)
+	        {
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false);
+                m.SetSpawnInfo(info);
 
-		public Monster SpawnMonster(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
-		{
-			if (isActive || forceSpawnNow)
-			{
-				return SpawnMonsterToWorld(monsterId, position);
-			}
+                RegisterMonsterToMap(m, info);
+	            return m;
+	        }
+	        else
+	        {
+                spawnedMonsters.Add(info);
+	            return null;
+	        }
+	    }
 
-			spawnedMonsters.Add(new MonsterSpawnInfo(monsterId, position));
-			return null;
-		}
+	    public void RegisterMonsterToMap(Monster m, MonsterSpawnInfo info=null)
+	    {
+            //auto create monsterspawninfo
+            if (info == null)
+            {
+                Vector3 pos = m.GetData().GetBody().transform.position;
+                info = new MonsterSpawnInfo(m.Template.GetMonsterId(), pos);
+
+                MapRegion reg = GetRegionFromWorldPosition(pos);
+
+                if (reg == null)
+                {
+                    Debug.LogError("Cant assign region for monster " + m.Name + " on pos " + pos + ", monster now registered!");
+                    return;
+                }
+
+                info.SetRegion(reg);
+            }
+
+            activeMonsters.Add(m);
+	    }
+
+	    public void RegisterNpcToMap(Npc m)
+	    {
+	        activeNpcs.Add(m);
+	    }
+
+	    public void NotifyCharacterDied(Character ch)
+	    {
+	        if (ch is Player)
+	        {
+	            //do nothing
+	        }
+            else if (ch is Npc)
+            {
+                // shouldnt happen
+            }
+            else if (ch is Monster)
+            {
+                // this monster was added from editor and is not registered to the map - ignore its dead here
+                if (((Monster) ch).SpawnInfo == null)
+                    return;
+
+                for(int i = 0; i < activeMonsters.Count; i++)
+                {
+                    Monster temp = activeMonsters[i];
+
+                    if (temp.Equals(ch))
+                    {
+                        activeMonsters.Remove(temp);
+                        UpdateRegionStatus(temp.SpawnInfo.Region);
+                        break;
+                    }
+                }
+            }
+	    }
+
+	    private void UpdateRegionStatus(MapRegion region)
+	    {
+	        int countInRegion = 0;
+
+	        foreach (Monster m in activeMonsters)
+	        {
+	            if (m.SpawnInfo.Region.Equals(region) && m.SpawnInfo.mustDieToProceed)
+	            {
+	                countInRegion++;
+	            }
+	        }
+
+            Debug.Log(countInRegion);
+
+	        if (countInRegion > 0)
+	            return;
+
+	        region.Status = MapRegion.STATUS_CONQUERED;
+
+            foreach(MapRegion neighbour in GetNeighbourRegions(region))
+	        {
+	            if(neighbour == null || neighbour.empty)
+                    continue;
+
+	            if (neighbour.isLockedRegion)
+	            {
+	                MapPassage pas = GetPassage(region, neighbour);
+
+	                if (pas != null)
+	                {
+                        Debug.Log("opened!");
+	                    OpenPassage(pas);
+	                }
+	                else
+	                {
+	                    Debug.LogError("cant find passage");
+	                }
+	            }
+	        }
+
+	        //TODO check if any monsters are left inside a region, if yes and the region is locked, open it 
+	    }
 
 		public Vector3 GetStartPosition()
 		{
@@ -802,5 +972,33 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return new Vector3();
 		}
+
+	    public bool CanTeleportToNext()
+	    {
+	        foreach (MapRegion reg in regions.Values)
+	        {
+	            if (reg.hasOutTeleporter)
+	            {
+	                UpdateRegionStatus(reg);
+
+                    if(reg.Status == MapRegion.STATUS_CONQUERED)
+                        return true;
+	            }
+	        }
+
+	        return false;
+	    }
+
+        /*private class MonsterSpawnInfo
+        {
+            public MonsterId monster;
+            public Vector3 position;
+
+            public MonsterSpawnInfo(MonsterId m, Vector3 pos)
+            {
+                monster = m;
+                position = pos;
+            }
+        }*/
 	}
 }

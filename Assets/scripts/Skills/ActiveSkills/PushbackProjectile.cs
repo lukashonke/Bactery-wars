@@ -6,56 +6,51 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class CommonColdAutoattack : ActiveSkill
+	public class PushbackProjectile : ActiveSkill
 	{
-		private GameObject target;
-
 		private GameObject activeProjectile;
 
-		public CommonColdAutoattack()
+        public PushbackProjectile()
 		{
-			castTime = 0;
-			reuse = 1f;
-			coolDown = 0f;
-			requireConfirm = false;
-			baseDamage = 5;
+			castTime = 1f;
+			reuse = 5f;
+			coolDown = 0;
+			requireConfirm = true;
+			baseDamage = 10;
 
-			range = 10;
+			range = 25;
 		}
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.CommonColdAutoattack;
+            return SkillId.PushbackProjectile;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Common Cold Melee";
+            return "Pushback Projectile";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new CommonColdAutoattack();
+            return new PushbackProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 10)};
 		}
 
 		public override void InitTraits()
 		{
 			AddTrait(SkillTraits.Damage);
-			AddTrait(SkillTraits.Melee);
 		}
 
 		public override bool OnCastStart()
 		{
-			target = initTarget;
-			RotatePlayerTowardsTarget(initTarget);
+			RotatePlayerTowardsMouse();
 
-			if(castTime > 0)
-				CreateCastingEffect(true, "SkillTemplate");
+			CreateCastingEffect(true, "SkillTemplate");
 
 			return true;
 		}
@@ -64,15 +59,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			RotatePlayerTowardsTarget(target);
-
-			GameObject activeProjectile;
-
 			activeProjectile = CreateSkillProjectile("projectile_00", true);
+
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector() * 20);
+				rb.velocity = (GetOwnerData().GetForwardVector(0) * 27);
+
+				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 
 				Object.Destroy(activeProjectile, 5f);
 			}
@@ -83,35 +77,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void OnAfterEnd()
-		{
-			if (castTime > 0)
-			{
-				// continue with next attack
-				if (GetOwnerData().RepeatingMeleeAttack)
-					GetOwnerData().MeleeInterract(target, true);
-			}
-		}
-
-		public override void OnAterReuse()
-		{
-			// continue with next attack
-			if (GetOwnerData().RepeatingMeleeAttack)
-				GetOwnerData().MeleeInterract(target, true);
-		}
-
-		public override void OnMove()
-		{
-			 AbortCast();
-		}
-
 		public override void MonoUpdate(GameObject gameObject)
 		{
 		}
 
 		public override void MonoStart(GameObject gameObject)
 		{
-			
+            Vector3 pushDir = GetOwnerData().GetForwardVector(0).normalized * -1;
+            GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 170, ForceMode2D.Impulse);
 		}
 
 		public override void MonoDestroy(GameObject gameObject)
@@ -162,7 +135,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool CanMove()
 		{
-			return !IsActive() && !IsBeingCasted();
+			if (IsBeingCasted())
+				return false;
+			return true;
 		}
 
 		public override bool CanRotate()

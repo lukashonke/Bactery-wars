@@ -24,16 +24,14 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		protected override void AddSkillsToTemplate()
 		{
-			// no skills
-			//SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
-
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
-			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			return new RangedMonsterAI(ch);
+			RangedMonsterAI a = new RangedMonsterAI(ch);
+		    a.evadeInterval = 2f;
+		    return a;
 		}
 
 		public override GroupTemplate GetGroupTemplate()

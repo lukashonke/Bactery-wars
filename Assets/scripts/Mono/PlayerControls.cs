@@ -126,6 +126,22 @@ namespace Assets.scripts.Mono
 			usingTouches = true;
 #endif
 
+		    if (ui.adminMode)
+		    {
+		        if (!ui.MouseOverUI && Input.GetMouseButtonDown(0))
+		        {
+                    ui.AdminClick(Camera.main.ScreenToWorldPoint(Input.mousePosition), 0);
+		        }
+
+                if (!ui.MouseOverUI && Input.GetMouseButtonDown(1))
+		        {
+		            ui.AdminClick(Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
+		        }
+
+		        return;
+		    }
+
+
 			Vector3 inputPosition;
 			bool touched = false;
 			Touch firstTouch = new Touch();

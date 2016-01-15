@@ -35,7 +35,7 @@ namespace Assets.scripts.AI
 
 		public override void Think()
 		{
-			if (Owner == null)
+			if (Owner == null || Owner.GetData() == null)
 				return;
 
 			if (GetStatus().IsDead)
@@ -532,6 +532,20 @@ namespace Assets.scripts.AI
 
 			currentAction = null;
 		}
+
+        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation)
+        {
+            MoveTo(target, fixedRotation);
+
+            yield return null;
+
+            while (Owner.GetData().HasTargetToMoveTo)
+            {
+                yield return null;
+            }
+
+            currentAction = null;
+        }
 
 		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{

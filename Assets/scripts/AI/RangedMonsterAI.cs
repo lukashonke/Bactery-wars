@@ -6,12 +6,22 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
 	public class RangedMonsterAI : MonsterAI
 	{
+        private float lastEvadeTime;
+
+        // how often does he think about evading; -1 to disable
+	    public float evadeInterval = -1;
+
+        // -1 to make it always 100% 
+        public float evadeChance = -1;
+
 		public RangedMonsterAI(Character o) : base(o)
 		{
 		}
@@ -31,7 +41,7 @@ namespace Assets.scripts.AI
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
-			if (isCasting || currentAction != null)
+			if (isCasting)
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
@@ -43,13 +53,29 @@ namespace Assets.scripts.AI
 				return;
 			}*/
 
+            // try spawn skills
 			List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
-
 			foreach (Skill s in spawnSkills)
 			{
 				if (s.CanUse())
 					StartAction(CastSkill(null, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
 			}
+
+            if (evadeInterval > -1 && lastEvadeTime + evadeInterval < Time.time)
+		    {
+		        if (evadeChance < 0 || Random.Range(1, 100) < evadeChance)
+		        {
+		            Vector3 pos = Utils.GenerateRandomPositionAround(Owner.GetData().GetBody().transform.position, 4f, 3f);
+
+                    Debug.DrawLine(pos, Owner.GetData().transform.position, Color.blue, 4f);
+
+		            if (StartAction(MoveAction(pos, true), 3f))
+		            {
+                        lastEvadeTime = Time.time;
+                        return;
+		            }
+		        }
+		    }
 
 			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
 
