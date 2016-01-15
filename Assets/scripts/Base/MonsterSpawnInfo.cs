@@ -15,7 +15,6 @@ namespace Assets.scripts.Base
         public Vector3 SpawnPos { get; set; }
         public MapRegion Region { get; private set; }
 
-        //public Monster activeMonster;
         public bool mustDieToProceed = true;
 
         public MonsterSpawnInfo(MonsterId id, Vector3 spawnPos, MapRegion region=null)

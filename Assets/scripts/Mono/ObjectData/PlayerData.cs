@@ -50,6 +50,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 			ui = GetComponent<PlayerUI>();
 
+		    IsVisibleToPlayer = true;
+
             Debug.Log("Registering new data for player " + player.Name);
 		}
 

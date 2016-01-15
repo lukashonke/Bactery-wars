@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Mono;
 using UnityEngine;
 
 namespace Assets.scripts.Base
@@ -23,8 +24,18 @@ namespace Assets.scripts.Base
 		{
 			Owner = o;
 			KnownObjects = new List<GameObject>();
-			VisibleRadius = 20;
-			UpdateDelay = 1f;
+
+		    if (Owner is Player)
+		    {
+		        VisibleRadius = 17;
+		        UpdateDelay = 0.5f;
+		    }
+		    else // less frequent updates but more visibility
+		    {
+		        VisibleRadius = 30;
+		        UpdateDelay = 2.0f;
+		    }
+
 			Active = true;
 		}
 
@@ -60,14 +71,39 @@ namespace Assets.scripts.Base
 				return;
 			}
 
+		    bool isPlayer = Owner is Player;
+
 			Collider2D[] hits = Physics2D.OverlapCircleAll(Owner.Data.GetBody().transform.position, VisibleRadius);
 
+		    if (isPlayer)
+		    {
+                foreach (GameObject o in KnownObjects)
+                {
+                    AbstractData d = o.GetData();
+
+                    if (d != null)
+                    {
+                        d.IsVisibleToPlayer = false;
+                    }
+                }
+		    }
+		    
 			KnownObjects.Clear();
 
 			foreach(Collider2D h in hits)
 			{
-				if ("Cave Generator".Equals(h.gameObject.name))
+				if ("Cave Generator".Equals(h.gameObject.name) || h.gameObject.Equals(Owner.GetData().gameObject))
 					continue;
+
+			    if (isPlayer)
+			    {
+                    AbstractData d = h.gameObject.GetData();
+
+                    if (d != null)
+                    {
+                        d.IsVisibleToPlayer = true;
+                    }
+			    }
 
 				KnownObjects.Add(h.gameObject);
             }

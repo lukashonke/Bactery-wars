@@ -48,6 +48,8 @@ namespace Assets.scripts.Mono
 		public Healthbar healthBar;
 		private Seeker seeker;
 
+        public bool IsVisibleToPlayer { get; set; }
+
 		private GameObject target;
 		public GameObject Target
 		{
@@ -155,6 +157,10 @@ namespace Assets.scripts.Mono
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
+
+		    IsVisibleToPlayer = false;
+		    currentlyVisible = false;
+            SetVisibility(false);
 		}
 
 		//TODO improve this - nemelo by to byt v jedne oddelene metode
@@ -300,8 +306,42 @@ namespace Assets.scripts.Mono
 		private Vector3 lastFoundWaypointPosition;
 		private float lastFoundWaypointTime;
 
+	    private bool currentlyVisible;
+
+	    public void SetVisibility(bool b)
+	    {
+	        if (!GameSystem.Instance.Controller.fogOfWar)
+	            return;
+
+            if (healthBar != null)
+            {
+                healthBar.gameObject.SetActive(b);
+            }
+
+            foreach (GameObject o in childs.Values)
+            {
+                if (o.name.Equals("Die Effect") || o.transform.parent != null && o.transform.parent.name.Equals("Die Effect"))
+                    continue;
+
+                o.SetActive(b);
+            }
+
+            body.GetComponent<SpriteRenderer>().enabled = b;
+            body.GetComponent<Collider2D>().isTrigger = !b;
+	        currentlyVisible = b;
+	    }
+
 		public virtual void Update()
 		{
+            if (currentlyVisible && !IsVisibleToPlayer)
+            {
+                SetVisibility(false);
+            }
+            else if (!currentlyVisible && IsVisibleToPlayer)
+            {
+                SetVisibility(true);
+            }
+
 			if (!HasTargetToMoveTo && keyboardMovementAllowed)
 			{
 				if (allowMovePointChange && CanMove())

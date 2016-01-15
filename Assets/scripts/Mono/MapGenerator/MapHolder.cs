@@ -250,10 +250,10 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 					case MapType.StartClassic:
 
-					GenerateDungeonRegion(0, 0, 35, true);
+					GenerateDungeonRegion(0, 0, 35, true, new []{344});
 					GenerateEmptyRegion(0, 1);
 					GenerateEmptyRegion(0, 2);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true);
+					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290});
 					GenerateEmptyRegion(1, 1);
 					GenerateEmptyRegion(1, 2);
 					GenerateEmptyRegion(2, 0);
@@ -387,22 +387,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion)
+        protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null)
 		{
-			return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false);
+            return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter)
+		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
 			String seed = World.seed;
 
-			if (World.useRandomSeed)
+		    if (allowedSeeds != null)
+		    {
+		        seed = allowedSeeds[Random.Range(0, allowedSeeds.Length)] + "";
+		    }
+			else if (World.useRandomSeed)
 			{
 				seed = World.GetRandomSeed();
-				Debug.Log(x + " " + y + " is using " + seed);
 			}
+
+			Debug.Log(x + " " + y + " is using " + seed);
 
 			//float xSize = (world.width) * world.SQUARE_SIZE;
 			//float ySize = (world.height) * world.SQUARE_SIZE;
@@ -941,8 +946,6 @@ namespace Assets.scripts.Mono.MapGenerator
 	                }
 	            }
 	        }
-
-	        //TODO check if any monsters are left inside a region, if yes and the region is locked, open it 
 	    }
 
 		public Vector3 GetStartPosition()
