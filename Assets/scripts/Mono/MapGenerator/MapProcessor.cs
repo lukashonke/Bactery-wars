@@ -297,12 +297,34 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					connectedToStart.Add(startRoom);
 
+                    Queue<MapRegion> neighbours = new Queue<MapRegion>();
+                    foreach(MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region))
+                        neighbours.Enqueue(reg);
+
 					// vzit vsechny sousedy startovni mistnosti
-					foreach (MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region))
+					while(neighbours.Count > 0)
 					{
+					    MapRegion reg = neighbours.Dequeue();
+
 						// jen ty ktere MAJI BYT pripojene
 						if (reg == null || !reg.isAccessibleFromStart)
 							continue;
+
+                        // jde o child region
+					    if (reg.HasParentRegion() && reg.parentRegion.Equals(startRoom.region))
+					    {
+                            foreach (MapRoom r in GetRoomsInRegion(reg))
+                                connectedToStart.Add(r);
+
+                            // pridat vsechny sousedy child regionu
+					        foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
+					        {
+					            if(r != null && r.isAccessibleFromStart && !neighbours.Contains(r))
+                                    neighbours.Enqueue(r);
+					        }
+
+					        continue;
+					    }
 
 						// pridat do seznamu k pripojeni
 						foreach (MapRoom r in GetRoomsInRegion(reg))
@@ -339,6 +361,11 @@ namespace Assets.scripts.Mono.MapGenerator
 							// jen ty ktere MAJI BYT pripojene
 							if (reg == null || !reg.isAccessibleFromStart)
 								continue;
+
+                            if (reg.HasParentRegion() && reg.parentRegion.Equals(toConnectRoom.region))
+						    {
+						        //TODO
+						    }
 
 							// pridat do seznamu k pripojeni
 							foreach (MapRoom r in GetRoomsInRegion(reg))
@@ -393,6 +420,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				foreach(Tile c in circle)
 					passageTiles.Add(c);
 			}
+
 			bool makeDoor = roomA.region.isLockedRegion || roomB.region.isLockedRegion;
 			CreatePassageInPoint(line[line.Count/2], makeDoor, roomA, roomB);
 		}
@@ -485,10 +513,42 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private bool CanBeConnected(MapRoom roomA, MapRoom roomB)
 		{
-			MapRegion regA = roomA.region;
-			MapRegion regB = roomB.region;
+            MapRegion regA = roomA.region;
+            MapRegion regB = roomB.region;
 
-			return mapHolder.IsNeighbour(regA, regB);
+            List<MapRegion> regionsA = new List<MapRegion>();
+            List<MapRegion> regionsB = new List<MapRegion>();
+
+            regionsA.Add(regA);
+            regionsB.Add(regB);
+
+            // najit child regiony
+            foreach (MapRegion region in mapHolder.regions.Values)
+		    {
+		        if (region.HasParentRegion())
+		        {
+                    if (region.parentRegion.Equals(regA))
+                        regionsA.Add(region);
+
+                    else if (region.parentRegion.Equals(regB))
+                        regionsB.Add(region);
+		        }
+		    }
+
+		    bool areNeighbours = false;
+		    foreach (MapRegion ra in regionsA)
+		    {
+		        foreach (MapRegion rb in regionsB)
+		        {
+		            if (mapHolder.IsNeighbour(ra, rb))
+		            {
+		                areNeighbours = true;
+		                return areNeighbours;
+		            }
+		        }
+		    }
+
+		    return areNeighbours;
 		}
 
 		private bool AreRoomsConnected(MapRoom roomA, MapRoom roomB)

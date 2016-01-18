@@ -31,11 +31,14 @@ namespace Assets.scripts.Mono.MapGenerator
 	{
 		public int Status { get; set; }
 
+        public MapRegion parentRegion;
+
         public static readonly int STATUS_HOSTILE = 1;
         public static readonly int STATUS_CONQUERED = 2;
 
         public bool empty;
 		public int x, y;
+        public int sizeX, sizeY;
 		public Tile[,] tileMap;
 		public RegionGenerator regionGen; //TODO remove, not neccessary
 
@@ -56,13 +59,25 @@ namespace Assets.scripts.Mono.MapGenerator
 		    Status = STATUS_HOSTILE;
 		}
 
+        public bool HasParentRegion()
+        {
+            return parentRegion != null;
+        }
+
 		public void AssignTilesToThisRegion()
 		{
 			for (int i = 0; i < tileMap.GetLength(0); i++)
 			{
 				for (int j = 0; j < tileMap.GetLength(1); j++)
 				{
-					tileMap[i, j].AssignRegion(this);
+				    try
+				    {
+                        tileMap[i, j].AssignRegion(this);
+				    }
+				    catch (Exception)
+				    {
+				        Debug.LogError("error for ij " + i + ", " + j);
+				    }
 				}
 			}
 		}
@@ -135,7 +150,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		private List<MonsterSpawnInfo> spawnedNpcs; 
 
 		private int MAX_REGIONS = 3;
-		private int regionSize;
+		private int regionSizeX;
+        private int regionSizeY;
+
+	    private int regionWidth;
+        private int regionHeight;
 
 		public WorldHolder.Cords Position
 		{
@@ -147,13 +166,15 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight)
 		{
 			this.World = world;
 
 			this.name = name;
 			this.position = position;
 			this.mapType = mapType;
+		    this.regionWidth = regionWidth;
+		    this.regionHeight = regionHeight;
 		}
 
 		public void AddPassage(MapPassage p)
@@ -212,13 +233,13 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public Vector3 GetTileWorldPosition(Tile t)
 		{
-			return new Vector3((-World.width/2) + t.tileX, (-World.height/2) + t.tileY, 0);
+			return new Vector3((-regionWidth/2) + t.tileX, (-regionHeight/2) + t.tileY, 0);
 		}
 
 	    public Tile GetTileFromWorldPosition(Vector3 pos)
 	    {
-	        int x = Mathf.RoundToInt(pos.x + World.width/2);
-	        int y = Mathf.RoundToInt(pos.y + World.width/2);
+	        int x = Mathf.RoundToInt(pos.x + regionWidth/2);
+	        int y = Mathf.RoundToInt(pos.y + regionHeight/2);
 
 	        return SceneMap[x, y];
 	    }
@@ -242,15 +263,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			spawnedMonsters = new List<MonsterSpawnInfo>();
 			spawnedNpcs = new List<MonsterSpawnInfo>();
 
-			regionSize = World.width + 2;
+			regionSizeX = regionWidth + 2;
+            regionSizeY = regionHeight + 2;
 			
-			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
+			SceneMap = new Tile[regionSizeX * MAX_REGIONS, regionSizeY * MAX_REGIONS];
 
 			switch (mapType)
 			{
 					case MapType.StartClassic:
 
-					GenerateDungeonRegion(0, 0, 35, true, new []{344});
+                    GenerateDungeonRegion(0, 0, 35, true, new []{344}, 2, 1); //0-1; 0
+					GenerateDungeonRegion(2, 0, World.randomFillPercent, false, true, true, new []{290});
+
+                    GenerateEmptyRegion(0, 1);
+					GenerateEmptyRegion(1, 1);
+                    GenerateEmptyRegion(2, 1);
+
+					GenerateEmptyRegion(0, 2);
+					GenerateEmptyRegion(1, 2);
+					GenerateEmptyRegion(2, 2);
+
+					/*GenerateDungeonRegion(0, 0, 35, true, new []{344});
 					GenerateEmptyRegion(0, 1);
 					GenerateEmptyRegion(0, 2);
 					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290});
@@ -258,12 +291,26 @@ namespace Assets.scripts.Mono.MapGenerator
 					GenerateEmptyRegion(1, 2);
 					GenerateEmptyRegion(2, 0);
 					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
+					GenerateEmptyRegion(2, 2);*/
 
 					break;
 					case MapType.Test:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+                    GenerateDungeonRegion(0, 0, 35, true, new []{344}); //0-1; 0
+					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290}, 2, 1);
+
+                    GenerateEmptyRegion(0, 1);
+					GenerateEmptyRegion(1, 1);
+                    GenerateEmptyRegion(2, 1);
+
+					GenerateEmptyRegion(0, 2);
+					GenerateEmptyRegion(1, 2);
+					GenerateEmptyRegion(2, 2);
+
+
+
+
+					/*GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
 					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
 					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
 					GenerateEmptyRegion(1, 0);
@@ -271,7 +318,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
 					GenerateEmptyRegion(2, 0);
 					GenerateEmptyRegion(2, 1);
-					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);*/
 
 					break;
 					case MapType.Hardcoded:
@@ -354,7 +401,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				World.seed = World.GetRandomSeed();
 			}
 
-			HardcodedRegionGenerator regionGenerator = new HardcodedRegionGenerator(World.width, World.height, World.seed, World.doDebug, name);
+			HardcodedRegionGenerator regionGenerator = new HardcodedRegionGenerator(regionWidth, regionHeight, World.seed, World.doDebug, name);
 
 			Tile[,] tileMap = regionGenerator.GenerateMap();
 
@@ -369,7 +416,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		protected void GenerateEmptyRegion(int regX, int regY)
 		{
-			Tile[,] tileMap = new Tile[World.width+2,World.height+2];
+			Tile[,] tileMap = new Tile[regionWidth+2,regionHeight+2];
 
 			for (int x = 0; x < tileMap.GetLength(0); x++)
 			{
@@ -387,12 +434,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-        protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null)
+        protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
-            return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds);
+            return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds, sizeX, sizeY);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null)
+		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
@@ -413,32 +460,77 @@ namespace Assets.scripts.Mono.MapGenerator
 			//float ySize = (world.height) * world.SQUARE_SIZE;
 			//Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
 
-			RegionGenerator regionGenerator = new DungeonRegionGenerator(World.width, World.height, seed, randomFillPercent, World.doDebug);
+		    MapRegion parentRegion = null;
 
-			Tile[,] tileMap = regionGenerator.GenerateMap();
+            RegionGenerator regionGenerator = new DungeonRegionGenerator(regionWidth*sizeX, regionHeight*sizeY, seed, randomFillPercent, World.doDebug);
+            Tile[,] tileMap = regionGenerator.GenerateMap();
 
-			AddToSceneMap(tileMap, x, y);
+		    for (int i = 0; i < sizeX; i++)
+		    {
+		        for (int j = 0; j < sizeY; j++)
+		        {
+		            Tile[,] subTileMap = GetSubTileMap(tileMap, i, j);
 
-			if (!GameController.DEV_BUILD)
-				regionGenerator = null;
+		            if (i == 0 && j == 0)
+		            {
+                        parentRegion = new MapRegion(x + i, y + j, subTileMap, regionGenerator);
 
-			MapRegion region = new MapRegion(x, y, tileMap, regionGenerator);
+                        parentRegion.AssignTilesToThisRegion();
+                        parentRegion.isAccessibleFromStart = true;
+                        parentRegion.isStartRegion = isStartRegion;
+                        parentRegion.isLockedRegion = isLockedRegion;
+                        parentRegion.hasOutTeleporter = hasOutTeleporter;
+                        regions.Add(new WorldHolder.Cords(x+i, y+j), parentRegion);
+		            }
+		            else
+		            {
+                        MapRegion region = new MapRegion(x+i, y+j, subTileMap, regionGenerator);
+		                region.parentRegion = parentRegion;
 
-			// test
-			/*if (x == 1 && y == 1)
-			{
-				region.onlyOnePassage = true;
-			}*/
+                        region.AssignTilesToThisRegion();
+                        region.isAccessibleFromStart = true;
+                        region.isStartRegion = isStartRegion;
+                        region.isLockedRegion = isLockedRegion;
+                        region.hasOutTeleporter = hasOutTeleporter;
+                        regions.Add(new WorldHolder.Cords(x+i, y+j), region);
+		            }
 
-			region.AssignTilesToThisRegion();
-			region.isAccessibleFromStart = true;
-			region.isStartRegion = isStartRegion;
-			region.isLockedRegion = isLockedRegion;
-			region.hasOutTeleporter = hasOutTeleporter;
-			regions.Add(new WorldHolder.Cords(x, y), region);
+                    AddToSceneMap(subTileMap, x + i, y + j);
+		        }
+		    }
 
-			return region;
+			return parentRegion;
 		}
+
+	    private Tile[,] GetSubTileMap(Tile[,] tileMap, int i, int j)
+	    {
+            Tile[,] newMap = new Tile[regionSizeX,regionSizeY];
+
+            for (int x = 0; x < newMap.GetLength(0); x++)
+	        {
+                for (int y = 0; y < newMap.GetLength(1); y++)
+                {
+                    Tile t = null;
+
+                    try
+                    {
+                        t = tileMap[x + (i*regionSizeX), y + (j*regionSizeY)];
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    if (t == null)
+                    {
+                        t = new Tile(x + (i*regionSizeX), y + (j*regionSizeY), WorldHolder.WALL);
+                    }
+
+                    newMap[x, y] = t;
+	            }
+	        }
+
+	        return newMap;
+	    }
 
 		public void DeleteMap()
 		{
@@ -504,7 +596,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			spawnedMonsters.Clear();
 			spawnedNpcs.Clear();
 
-			GameSystem.Instance.UpdatePathfinding();
+			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
 			SetActive(true);
 		}
 
@@ -589,7 +681,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						Gizmos.color = new Color(128, 0, 0);
 
 					//Vector3 pos = new Vector3((xSize - 1) / 2 - (world.width / 2), (ySize - 1) / 2 - (world.height / 2));
-					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + World.width+2, ((-ySize / 2) + y + .5f) + World.height+2, 0);
+					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + regionWidth+2, ((-ySize / 2) + y + .5f) + regionHeight+2, 0);
 					Gizmos.DrawCube(pos, Vector3.one);
 				}
 			}
@@ -648,7 +740,14 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				for (int y = 0; y < SceneMap.GetLength(1); y++)
 				{
-					intMap[x, y] = SceneMap[x, y].tileType;
+				    try
+				    {
+                        intMap[x, y] = SceneMap[x, y].tileType;
+				    }
+				    catch (Exception)
+				    {
+				        Debug.Log("NPE for " + x + ", " + y);
+				    }
 				}
 			}
 
@@ -658,7 +757,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			float xSize = (intMap.GetLength(0) - 1) * World.SQUARE_SIZE;
 			float ySize = (intMap.GetLength(1) - 1) * World.SQUARE_SIZE;
 
-			Vector3 shiftVector = new Vector3((xSize-1) / 2 - (World.width / 2), (ySize-1) / 2 - (World.height / 2));
+			Vector3 shiftVector = new Vector3((xSize-1) / 2 - (regionWidth / 2), (ySize-1) / 2 - (regionHeight / 2));
 			MeshFilter mesh = generator.GenerateMesh("Map mesh", intMap, World.SQUARE_SIZE, shiftVector);
 
 			mesh.transform.position = shiftVector;
@@ -722,8 +821,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				for (int y = 0; y < tiles.GetLength(1); y++)
 				{
-					int newX = (regionX*regionSize) + x;
-					int newY = (regionY*regionSize) + y;
+					int newX = (regionX*regionSizeX) + x;
+					int newY = (regionY*regionSizeY) + y;
 
 					Tile t = tiles[x, y];
 
@@ -736,8 +835,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public MapRegion GetRegion(Vector2 pos)
 		{
-			float xSize = (World.width + 1) * World.SQUARE_SIZE;
-			float ySize = (World.height + 1) * World.SQUARE_SIZE;
+			float xSize = (regionWidth + 1) * World.SQUARE_SIZE;
+			float ySize = (regionHeight + 1) * World.SQUARE_SIZE;
 
 			float regionX = (pos.x + xSize / 2) / xSize;
 			float regionY = (pos.y + ySize / 2) / ySize;
@@ -760,28 +859,28 @@ namespace Assets.scripts.Mono.MapGenerator
             return null;
 	    }
 
-		public MapRegion[] GetNeighbourRegions(MapRegion reg)
+		public List<MapRegion> GetNeighbourRegions(MapRegion reg)
 		{
-			MapRegion[] neighbours = new MapRegion[4];
+            List<MapRegion> neighbours = new List<MapRegion>();
 
 			WorldHolder.Cords c;
 			int i = 0;
 
 			c = new WorldHolder.Cords(reg.x + 1, reg.y);
-			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+		    if (regions.ContainsKey(c))
+		        neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x, reg.y +1);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x - 1, reg.y);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x, reg.y -1);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			return neighbours;
 		}

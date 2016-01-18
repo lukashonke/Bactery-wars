@@ -24,7 +24,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		// inspector configuration for generated maps
 		public int width;
-		public int height;
+        public int height;
 		public string seed;
 		public bool useRandomSeed;
 
@@ -53,7 +53,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.StartClassic);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.Test, width, height);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -67,7 +67,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			Debug.Log("generating.. " + newCords.ToString());
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.DungeonAllOpen);
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.DungeonAllOpen, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
