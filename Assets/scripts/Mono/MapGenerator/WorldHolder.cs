@@ -131,6 +131,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				SetActiveLevel(newC.x, newC.y);
 			}
+
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                SaveCurrentMap();
+            }
 		}
 
 		// temp from mobile
@@ -244,5 +249,32 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return new Vector3();
 		}
+
+	    public void SaveCurrentMap()
+	    {
+	        String prev = System.IO.File.ReadAllText("mapSeeds.txt");
+
+	        StringBuilder sb = new StringBuilder();
+
+	        sb.Append(prev);
+
+	        sb.AppendLine(Enum.GetName(typeof (MapType), activeMap.MapType));
+	        foreach (MapRegion region in activeMap.regions.Values)
+	        {
+	            if (!region.HasParentRegion())
+	            {
+	                if (region.hadRandomSeed)
+	                {
+	                    sb.Append(region.x + " " + region.y + " " + region.fillPercent + " " + region.seed + " (s:" + region.sizeX + ", " + region.sizeY + ")");
+	                    sb.AppendLine();
+	                }
+	            }
+	        }
+
+            sb.AppendLine();
+
+            System.IO.File.WriteAllText("mapSeeds.txt", sb.ToString());
+            Debug.Log("Saved!");
+	    }
 	}
 }

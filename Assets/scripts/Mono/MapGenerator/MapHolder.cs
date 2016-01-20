@@ -46,6 +46,10 @@ namespace Assets.scripts.Mono.MapGenerator
 		public bool onlyOnePassage = false;
 		public bool hasOutTeleporter = false;
 
+        public int fillPercent;
+        public string seed;
+        public bool hadRandomSeed;
+
 		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
 			this.x = x;
@@ -475,8 +479,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		    //Debug.Log(GetTileWorldPosition(SceneMap[0,0]));
             //Debug.Log(GetTileWorldPosition(SceneMap[50, 50]));
 
-            GetTile(0, 0).SetColor(Tile.BLUE);
-            GetTile(50, 50).SetColor(Tile.BLUE);
+            //GetTile(0, 0).SetColor(Tile.BLUE);
+            //GetTile(50, 50).SetColor(Tile.BLUE);
 
 			SceneMap = mapProcessor.Tiles;
 		}
@@ -560,6 +564,10 @@ namespace Assets.scripts.Mono.MapGenerator
 		            if (i == 0 && j == 0)
 		            {
                         parentRegion = new MapRegion(x + i, y + j, subTileMap, regionGenerator);
+
+		                parentRegion.hadRandomSeed = allowedSeeds == null;
+		                parentRegion.seed = seed;
+		                parentRegion.fillPercent = randomFillPercent;
 
                         parentRegion.AssignTilesToThisRegion();
                         parentRegion.isAccessibleFromStart = true;
@@ -1171,7 +1179,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					if (pas != null)
 					{
-						Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
+						//Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
 						OpenPassage(pas);
 					}
 					else

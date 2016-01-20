@@ -112,5 +112,221 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			return otherRoom.roomSize.CompareTo(roomSize);
 		}
+
+	    public static int DIRECTION_UP = 1;
+	    public static int DIRECTION_DOWN = 2;
+        public static int DIRECTION_RIGHT = 3;
+        public static int DIRECTION_LEFT = 4;
+
+        public Tile[] GetTilesWithSpaceAround(int minFreeRadius, int preferredDirection, int count)
+        {
+            Tile[] toReturn = new Tile[count];
+
+            List<Tile> sortedTiles = new List<Tile>();
+            foreach (Tile t in tiles)
+                sortedTiles.Add(t);
+
+            switch (preferredDirection)
+            {
+                case 1:
+                    sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
+                    break;
+                case 2:
+                    sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+                    break;
+                case 3:
+                    sortedTiles = sortedTiles.OrderByDescending(o => o.tileX).ToList();
+                    break;
+                case 4:
+                    sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+                    break;
+            }
+
+            int index = 0;
+
+            List<Tile> checkedTiles = new List<Tile>();
+
+            foreach (Tile t in sortedTiles)
+            {
+                if (checkedTiles.Contains(t))
+                    continue;
+
+                if (CheckFreeRadiusAroundTile(t, sortedTiles, minFreeRadius, checkedTiles))
+                {
+                    t.SetColor(Tile.MAGENTA);
+                    toReturn[index++] = t;
+                }
+
+                if (index >= count)
+                    break;
+            }
+
+            return toReturn;
+        }
+
+	    public enum RoomType
+	    {
+	        TINY,
+            SMALL,
+            MEDIUM,
+            LARGE,
+            HUGE
+	    }
+
+	    public Tile[] GetSubRoom(RoomType type, int preferredDirection, int count)
+	    {
+	        switch (type)
+	        {
+	            case RoomType.TINY:
+	                return GetSubRoom(40, 3, preferredDirection, count);
+	                break;
+	            case RoomType.SMALL:
+                    return GetSubRoom(75, 4, preferredDirection, count);
+	                break;
+	            case RoomType.MEDIUM:
+                    return GetSubRoom(105, 5, preferredDirection, count);
+	                break;
+	            case RoomType.LARGE:
+                    return GetSubRoom(200, 7, preferredDirection, count);
+	                break;
+	            case RoomType.HUGE:
+                    return GetSubRoom(265, 8, preferredDirection, count);
+	                break;
+	        }
+
+	        return null;
+	    }
+
+	    public Tile[] GetSubRoom(int minTiles, int maxRadius, int preferredDirection, int count)
+	    {
+	        Tile[] toReturn = new Tile[count];
+
+	        List<Tile> sortedTiles = new List<Tile>();
+	        foreach (Tile t in tiles)
+	            sortedTiles.Add(t);
+
+	        switch (preferredDirection)
+	        {
+	            case 1:
+	                sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
+	                break;
+	            case 2:
+	                sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+	                break;
+	            case 3:
+	                sortedTiles = sortedTiles.OrderByDescending(o => o.tileX).ToList();
+	                break;
+	            case 4:
+	                sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+	                break;
+	        }
+
+	        int index = 0;
+
+	        List<Tile> checkedTiles = new List<Tile>();
+
+	        foreach (Tile t in sortedTiles)
+	        {
+	            if (checkedTiles.Contains(t))
+	                continue;
+
+	            if (CheckForTilesInRadius(t, sortedTiles, maxRadius, minTiles, checkedTiles))
+	            {
+	                t.SetColor(Tile.ORANGE);
+	                toReturn[index++] = t;
+	            }
+
+	            if (index >= count)
+	                break;
+	        }
+
+	        return toReturn;
+	    }
+
+	    private bool CheckForTilesInRadius(Tile t, List<Tile> sortedTiles, int maxRadius, int minTiles, List<Tile> roomTiles)
+	    {
+	        List<Tile> temp = new List<Tile>();
+
+	        int minX = t.tileX - maxRadius;
+	        int maxX = t.tileX + maxRadius;
+
+	        int minY = t.tileY - maxRadius;
+	        int maxY = t.tileY + maxRadius;
+
+	        int count = 0;
+
+	        foreach (Tile neighbour in sortedTiles)
+	        {
+	            if (neighbour.tileX >= minX && neighbour.tileX <= maxX && neighbour.tileY >= minY && neighbour.tileY <= maxY)
+	            {
+	                temp.Add(neighbour);
+	                count++;
+
+	                if (count >= minTiles)
+	                    break;
+	            }
+	        }
+
+	        if (count >= minTiles)
+	        {
+	            if (roomTiles != null)
+	            {
+	                foreach (Tile tt in temp)
+	                {
+	                    tt.SetColor(Tile.PURPLE);
+	                    roomTiles.Add(tt);
+	                }
+	            }
+
+	            return true;
+	        }
+
+	        return false;
+	    }
+
+	    /// <summary>
+	    /// Misto okolo pozadovaneho tilu musi byt UPLNE prazdne od vsech zdi
+	    /// </summary>
+	    /// <returns></returns>
+	    private bool CheckFreeRadiusAroundTile(Tile t, List<Tile> sortedTiles, int radiusToCheck, List<Tile> neighbours)
+	    {
+	        List<Tile> temp = new List<Tile>();
+	        int minX = t.tileX - radiusToCheck;
+	        int maxX = t.tileX + radiusToCheck;
+
+	        int minY = t.tileY - radiusToCheck;
+	        int maxY = t.tileY + radiusToCheck;
+
+	        int count = 0;
+	        int minCount = (maxX - minX + 1)*(maxY - minY + 1);
+
+	        foreach (Tile neighbour in sortedTiles)
+	        {
+	            if (neighbour.tileX >= minX && neighbour.tileX <= maxX && neighbour.tileY >= minY && neighbour.tileY <= maxY)
+	            {
+	                temp.Add(neighbour);
+	                // tile je uvnitr kontrolovane oblasti kolem naseho bodu
+	                count ++;
+	            }
+	        }
+
+	        if (count >= minCount)
+	        {
+	            if (neighbours != null)
+	            {
+	                foreach (Tile tt in temp)
+	                    neighbours.Add(tt);
+	            }
+
+	            return true;
+	        }
+
+	        return false;
+	    }
+
+	    public Tile GetTileWithSpaceAround(int minFreeRadius, int preferredDirection)
+	    {
+	        return GetTilesWithSpaceAround(minFreeRadius, preferredDirection, 1)[0];
+	    }
 	}
 }

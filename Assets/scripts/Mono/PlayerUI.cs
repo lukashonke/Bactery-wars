@@ -143,6 +143,11 @@ namespace Assets.scripts.Mono
 			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadNextMap();
 		}
 
+	    public void SaveLevel()
+	    {
+            GameObject.Find("Cave Generator").GetComponent<WorldHolder>().SaveCurrentMap();
+	    }
+
 		public void PrevLevel()
 		{
 			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadPreviousMap();
