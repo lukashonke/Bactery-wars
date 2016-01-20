@@ -52,7 +52,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.Test, width, height);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.StartClassic, width, height);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 

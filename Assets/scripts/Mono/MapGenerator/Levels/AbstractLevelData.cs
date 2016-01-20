@@ -19,6 +19,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public abstract void SpawnMonsters();
 		public abstract int GetRegionWidth();
 		public abstract int GetRegionHeight();
-		public abstract int GetMaxRegions();
+		public abstract int GetMaxRegionsX();
+	    public abstract int GetMaxRegionsY();
 	}
 }

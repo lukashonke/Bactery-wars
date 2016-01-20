@@ -167,7 +167,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		private List<MonsterSpawnInfo> spawnedMonsters;
 		private List<MonsterSpawnInfo> spawnedNpcs; 
 
-		private int maxRegions = 3;
+		private int maxRegionsX = 3;
+        private int maxRegionsY = 3;
 		private int regionSizeX;
         private int regionSizeY;
 
@@ -212,8 +213,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			if (levelData.GetRegionHeight() > 0)
 				this.regionHeight = levelData.GetRegionHeight();
 
-			if (levelData.GetMaxRegions() > 0)
-				maxRegions = levelData.GetMaxRegions();
+			if (levelData.GetMaxRegionsX() > 0)
+				maxRegionsX = levelData.GetMaxRegionsX();
+
+            if (levelData.GetMaxRegionsY() > 0)
+                maxRegionsY = levelData.GetMaxRegionsY();
 		}
 
 		public void AddPassage(MapPassage p)
@@ -315,9 +319,9 @@ namespace Assets.scripts.Mono.MapGenerator
 			regionSizeX = regionWidth + 2;
             regionSizeY = regionHeight + 2;
 			
-			SceneMap = new Tile[regionSizeX * maxRegions, regionSizeY * maxRegions];
+			SceneMap = new Tile[regionSizeX * maxRegionsX, regionSizeY * maxRegionsY];
 
-			generatedRegionsMap = new int[maxRegions, maxRegions];
+            generatedRegionsMap = new int[maxRegionsX, maxRegionsY];
 
 			if (levelData != null)
 			{
