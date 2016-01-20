@@ -1,0 +1,33 @@
+StartClassic
+0 0 40 118 (s:0, 0)
+
+StartClassic
+0 0 40 -909 (s:0, 0)
+
+StartClassic
+0 0 40 -167 (s:0, 0)
+
+StartClassic
+0 0 40 569 (s:0, 0)
+
+StartClassic
+0 0 40 949 (s:0, 0)
+
+StartClassic
+0 0 40 -43 (s:0, 0)
+
+StartClassic
+0 0 40 -696 (s:0, 0)
+
+StartClassic
+0 0 40 281 (s:0, 0)
+
+StartClassic
+0 0 40 434 (s:0, 0)
+
+StartClassic
+0 0 40 -156 (s:0, 0)
+
+StartClassic
+0 0 40 987 (s:0, 0)
+

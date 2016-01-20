@@ -20,7 +20,7 @@ namespace Assets.scripts.Mono
 
 		public GameObject objectToFollow;
 
-		public bool follow = false;
+		public static bool follow = false;
 		public bool mobile = false;
 
 		// Use this for initialization

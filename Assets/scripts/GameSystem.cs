@@ -57,8 +57,6 @@ namespace Assets.scripts
 		public void Start(GameController gc)
 		{
 			Controller = gc;
-
-            Debug.Log("gamesystem initnut");
 		}
 
 		// Handles real-time updates

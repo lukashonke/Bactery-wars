@@ -364,19 +364,27 @@ namespace Assets.scripts.Skills
 
 		public override void AbortCast()
 		{
-			DeleteCastingEffect();
-
-			if (state == SkillState.SKILL_CONFIRMING)
+			if (IsActive())
 			{
-				GetPlayerData().ActiveConfirmationSkill = null;
-				CancelConfirmation();
-				state = SkillState.SKILL_IDLE;
-				return;
+				OnFinish();
 			}
 
-			Owner.StopTask(Task);
+			//if (IsBeingCasted())
+			{
+				DeleteCastingEffect();
 
-			End();
+				if (state == SkillState.SKILL_CONFIRMING)
+				{
+					GetPlayerData().ActiveConfirmationSkill = null;
+					CancelConfirmation();
+					state = SkillState.SKILL_IDLE;
+					return;
+				}
+
+				Owner.StopTask(Task);
+
+				End();
+			}
 		}
 
 		protected virtual IEnumerator SkillTask()

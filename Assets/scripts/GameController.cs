@@ -34,6 +34,18 @@ namespace Assets.scripts
 				}
 			}
 
+			try
+			{
+				if(isAndroid == false)
+					GameObject.Find("SettingsMenu").GetComponent<Canvas>().enabled = true;
+				if(isAndroid)
+					GameObject.Find("SettingsMenu_Mobile").GetComponent<Canvas>().enabled = true;
+			}
+			catch (Exception)
+			{
+				
+			}
+
 			Input.simulateMouseWithTouches = false;
 
 			GameSystem.Instance.Start(this);

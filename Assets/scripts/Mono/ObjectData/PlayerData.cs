@@ -17,6 +17,7 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>Datova trida hrace</summary>
 		public Player player;
 
+		[HideInInspector]
 		public PlayerUI ui;
 
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
@@ -39,10 +40,10 @@ namespace Assets.scripts.Mono.ObjectData
 					case "monster":
 						player.ChangeAI(new DefaultMonsterAI(player));
 						break;
-					case "meleeMonster":
+					case "melee":
 						player.ChangeAI(new MeleeMonsterAI(player));
 						break;
-					case "rangedMonster":
+					case "ranged":
 						player.ChangeAI(new RangedMonsterAI(player));
 						break;
 				}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
@@ -61,6 +62,9 @@ namespace Assets.scripts.Mono
 				settingsPanel = GameObject.Find("SettingsMenu");
 			}
 
+			gameMenu.GetComponent<Canvas>().enabled = true;
+			settingsPanel.GetComponent<Canvas>().enabled = true;
+
 			skillButtons = new GameObject[9];
 			for (int i = 1; i <= 9; i++)
 			{
@@ -76,10 +80,10 @@ namespace Assets.scripts.Mono
 			timers = new float[9,9];
 
 			if (settingsPanel != null)
-			settingsPanel.SetActive(false);
+				settingsPanel.SetActive(false);
 
 			if(menuPanel != null)
-			menuPanel.SetActive(false);
+				menuPanel.SetActive(false);
 
             // admin setting
 		    adminPanel = GameObject.Find("AdminPanel");
@@ -116,6 +120,8 @@ namespace Assets.scripts.Mono
 					but.color = new Color(ratio, ratio, ratio);
 				}
 			}
+
+			UpdateAdminInfo();
 		}
 
 		public void SetReuseTimer(Skill sk)
@@ -153,6 +159,30 @@ namespace Assets.scripts.Mono
 			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadPreviousMap();
 		}
 
+		public void SetAdminMapSeedInfo(string s)
+		{
+			
+		}
+
+		public void UpdateAdminInfo()
+		{
+			if (!adminMode)
+				return;
+
+			if ((int) Time.time%1 == 0)
+			{
+				StringBuilder sb = new StringBuilder();
+
+				sb.AppendLine("Map Type " + Enum.GetName(typeof (MapType), WorldHolder.instance.activeMap.MapType));
+				Vector3 pos = data.GetBody().transform.position;
+
+				int left = WorldHolder.instance.activeMap.GetMonstersLeft(WorldHolder.instance.activeMap.GetRegionFromWorldPosition(pos).GetParentOrSelf());
+				sb.AppendLine("Room monsters left " + left);
+
+				GameObject.Find("AdminMapInfo").GetComponent<Text>().text = sb.ToString();
+			}
+		}
+
 		public void MenuClick()
 		{
 			if(menuPanel.activeSelf)
@@ -165,14 +195,27 @@ namespace Assets.scripts.Mono
 		{
 			if (settingsPanel.activeSelf)
 			{
+				mouseOverUi = false;
 				GameSystem.Instance.Paused = false;
 				settingsPanel.SetActive(false);
 			}
 			else
 			{
+				mouseOverUi = true;
 				GameSystem.Instance.Paused = true;
 				settingsPanel.SetActive(true);
 			}
+		}
+
+		public void ToggleChanged()
+		{
+			bool val = GameObject.Find("ToggleCameraMovement").GetComponent<Toggle>().isOn;
+
+			CameraMovement.follow = val;
+
+			val = GameObject.Find("PlayerUsePathfinding").GetComponent<Toggle>().isOn;
+
+			data.usesPathfinding = val;
 		}
 
 		public void RestartGame()
@@ -329,7 +372,7 @@ namespace Assets.scripts.Mono
 
 	    public void RegenerateLevel()
 	    {
-	        
+	        WorldHolder.instance.RegenMap();
 	    }
 
         private void UpdateAdminControls()

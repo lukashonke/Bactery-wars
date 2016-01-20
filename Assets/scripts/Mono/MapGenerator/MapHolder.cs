@@ -1179,7 +1179,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					if (pas != null)
 					{
-						//Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
+						Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
 						OpenPassage(pas);
 					}
 					else
@@ -1189,6 +1189,27 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 	    }
+
+		public int GetMonstersLeft(MapRegion reg)
+		{
+			int c = 0;
+			if (reg == null)
+			{
+				return activeMonsters.Count;
+			}
+			else
+			{
+				foreach (Monster m in activeMonsters)
+				{
+					if (m.SpawnInfo.Region.GetParentOrSelf().Equals(reg))
+					{
+						c ++;
+					}
+				}
+			}
+
+			return c;
+		}
 
 		public Vector3 GetStartPosition()
 		{

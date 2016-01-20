@@ -264,7 +264,7 @@ namespace Assets.scripts.Actor
 			{
 				sk = Status.ActiveSkills[i];
 
-				if (sk.IsBeingCasted())
+				if (sk.IsBeingCasted() || sk.IsActive())
 					sk.AbortCast();
 			}
 

@@ -174,7 +174,6 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-
 			if (usingTouches)
 			{
 				/*if (ui.MouseOverUI && touched)

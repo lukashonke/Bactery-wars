@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -98,15 +99,29 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			activeMap = map;
 			activeMap.LoadMap(reloading);
+
+			// update seeds info for admin
+			StringBuilder sb = new StringBuilder();
+
+			foreach (MapRegion region in activeMap.regions.Values)
+				if(region.HasParentRegion() == false && !region.empty)
+				sb.Append(region.x + ";" + region.y + " " + region.seed + " ");
+
+			GameObject.Find("AdminSeeds").GetComponent<Text>().text = sb.ToString();
+		}
+
+		public void RegenMap()
+		{
+			activeMap.DeleteMap();
+			activeMap.CreateMap();
+			activeMap.LoadMap(false);
 		}
 
 		void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				activeMap.DeleteMap();
-				activeMap.CreateMap();
-				activeMap.LoadMap(false);
+				RegenMap();
 			}
 
 			if (Input.GetKeyDown(KeyCode.N))

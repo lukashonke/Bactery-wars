@@ -17,11 +17,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public RhinoBeam()
 		{
 			castTime = 0f;
-			coolDown = 5f;
+			coolDown = 4f;
 			reuse = 30f;
 
 			// 10dmg/sec
-			baseDamage = 5;
+			baseDamage = 10;
 			baseDamageFrequency = 0.5f;
 
 			range = 15;
