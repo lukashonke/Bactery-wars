@@ -20,9 +20,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 4f;
 			reuse = 30f;
 
-			// 10dmg/sec
-			baseDamage = 10;
-			baseDamageFrequency = 0.5f;
+			// 20dmg/sec
+			baseDamage = 5;
+			baseDamageFrequency = 0.25f;
 
 			range = 15;
 

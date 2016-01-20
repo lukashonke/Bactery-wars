@@ -24,6 +24,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 20f;
 			coolDown = 0;
 			requireConfirm = false;
+			canBeCastSimultaneously = true;
 
 			lifetime = 15f;
 		}

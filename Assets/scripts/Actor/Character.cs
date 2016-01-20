@@ -225,6 +225,23 @@ namespace Assets.scripts.Actor
 			if (skill is PassiveSkill)
 				return;
 
+			if (skill is ActiveSkill)
+			{
+				ActiveSkill s = (ActiveSkill) skill;
+
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill && ((ActiveSkill) sk).IsActive()) //TODO check for can be casted simultaneously
+					{
+						if (!s.canBeCastSimultaneously)
+						{
+							return;
+						}
+					}
+				}
+			}
+			
+
 			// reuse check
 			if (!skill.CanUse())
 			{

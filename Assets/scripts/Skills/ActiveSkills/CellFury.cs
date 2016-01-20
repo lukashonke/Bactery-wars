@@ -18,6 +18,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 15f;
 			coolDown = 0;
 			requireConfirm = false;
+			canBeCastSimultaneously = true;
 			baseDamage = 10;
 		}
 

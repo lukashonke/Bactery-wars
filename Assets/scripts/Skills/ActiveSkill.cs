@@ -40,6 +40,7 @@ namespace Assets.scripts.Skills
 		public float reuse;
 		public int range;
 		public int baseDamage;
+		public bool canBeCastSimultaneously;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -76,6 +77,7 @@ namespace Assets.scripts.Skills
 			reuse = 5;
 			updateFrequency = 0.1f;
 			rangeCheckFrequency = 0.1f;
+			canBeCastSimultaneously = false;
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
 			breaksMouseMovement = true;
