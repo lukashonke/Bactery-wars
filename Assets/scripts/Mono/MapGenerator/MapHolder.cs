@@ -5,6 +5,7 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -14,12 +15,9 @@ namespace Assets.scripts.Mono.MapGenerator
 	public enum MapType
 	{
 		Test,
-		OpenCave,
 		DungeonAllOpen,
 		DungeonCentralClosed,
 		Hardcoded,
-
-
 		StartClassic,
 	}
 
@@ -48,7 +46,6 @@ namespace Assets.scripts.Mono.MapGenerator
 		public bool onlyOnePassage = false;
 		public bool hasOutTeleporter = false;
 
-
 		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
 			this.x = x;
@@ -63,6 +60,26 @@ namespace Assets.scripts.Mono.MapGenerator
         {
             return parentRegion != null;
         }
+
+	    public MapRegion GetParentOrSelf()
+	    {
+		    if (parentRegion != null)
+			    return parentRegion;
+		    return this;
+	    }
+
+	    public bool IsInFamily(MapRegion reg)
+	    {
+			// jeden z nich je rodic
+		    if (this.Equals(reg.parentRegion) || reg.Equals(parentRegion))
+			    return true;
+
+			// maji spolecneho rodice
+		    if (reg.parentRegion != null && reg.parentRegion.Equals(parentRegion))
+			    return true;
+
+		    return false;
+	    }
 
 		public void AssignTilesToThisRegion()
 		{
@@ -136,6 +153,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		private MapType mapType;
 
 	    private MapProcessor mapProcessor;
+		public AbstractLevelData levelData;
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
@@ -179,12 +197,19 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void AddPassage(MapPassage p)
 		{
+			Debug.Log("adding passage for " + p.roomA.region.x + ", " + p.roomA.region.y + " AND " + p.roomB.region.x + ", " + p.roomB.region.y);
 			passages.Add(p);
 		}
 
         public MapPassage GetPassage(MapRegion regionA, MapRegion regionB)
-	    {
-	        foreach (MapPassage passage in passages)
+        {
+	        if (regionA.HasParentRegion())
+		        regionA = regionA.parentRegion;
+
+			if (regionB.HasParentRegion())
+				regionB = regionB.parentRegion;
+
+			foreach (MapPassage passage in passages)
 	        {
 	            if (regionA.Equals(passage.roomA.region) && regionB.Equals(passage.roomB.region))
 	            {
@@ -202,7 +227,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    public void OpenPassage(MapPassage p)
 	    {
-            p.SetEnabled(false);	        
+			if(p.enabled)
+				p.SetEnabled(false);	        
 	    }
 
 		public void InitPassage(MapPassage p)
@@ -268,110 +294,133 @@ namespace Assets.scripts.Mono.MapGenerator
 			
 			SceneMap = new Tile[regionSizeX * MAX_REGIONS, regionSizeY * MAX_REGIONS];
 
+			AbstractLevelData lvlData = null;
+
 			switch (mapType)
 			{
+				case MapType.StartClassic:
+					lvlData = new StartLevelData(this);
+					break;
+			}
+
+			if (lvlData != null)
+			{
+				levelData = lvlData;
+				levelData.Generate();
+			}
+			else
+			{
+				switch (mapType)
+				{
 					case MapType.StartClassic:
 
-                    GenerateDungeonRegion(0, 0, 35, true, new []{344}, 2, 1); //0-1; 0
-					GenerateDungeonRegion(2, 0, World.randomFillPercent, false, true, true, new []{290});
+						GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }, 2, 1); //0-1; 0
+						GenerateDungeonRegion(2, 0, World.randomFillPercent, false, true, true, new[] { 290 });
 
-                    GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(1, 1);
-                    GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(0, 1);
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(2, 1);
 
-					GenerateEmptyRegion(0, 2);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 2);
+						GenerateEmptyRegion(0, 2);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 2);
 
-					/*GenerateDungeonRegion(0, 0, 35, true, new []{344});
-					GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(0, 2);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290});
-					GenerateEmptyRegion(1, 1);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);*/
+						/*GenerateDungeonRegion(0, 0, 35, true, new []{344});
+						GenerateEmptyRegion(0, 1);
+						GenerateEmptyRegion(0, 2);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290});
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);*/
 
-					break;
+						break;
 					case MapType.Test:
 
-                    GenerateDungeonRegion(0, 0, 35, true, new []{344}); //0-1; 0
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290}, 2, 1);
+						/*GenerateDungeonRegion(0, 0, 35, true, new []{344}); // 0 0
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false, true, false, new []{290}, 2, 1); // 0 1; 1 1
 
-                    GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(1, 1);
-                    GenerateEmptyRegion(2, 1);
+						GenerateDungeonRegion(2, 1, 35, false, new[] { 344 }); // 2 1
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 2 0
+						GenerateDungeonRegion(0, 2, 35, false, new[] { 344 }); // 2 1
 
-					GenerateEmptyRegion(0, 2);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 2);
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 2);*/
 
+						/*GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(0, 1, 35, false, true, false, new[] { 344 }, 1, 2); // 0, 2
 
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 2); // 0 1; 1 1
 
+						GenerateDungeonRegion(1, 0, 35, false, true, false, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 0 0*/
 
-					/*GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateEmptyRegion(1, 0);
-					GenerateEmptyRegion(1, 1);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);*/
+						GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(0, 1, 35, false, true, false, new[] { 344 }, 1, 2); // 0, 2
 
-					break;
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 1); // 0 1; 1 1
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 1); // 0 1; 1 1
+
+						GenerateDungeonRegion(1, 0, 35, false, true, false, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 0 0
+
+						/*GenerateDungeonRegion(0, 0, 35, true, false, false, new[] { 344 }, 1, 3); // 0 0
+						GenerateDungeonRegion(1, 2, 35, false, true, false, new[] { 344 }, 2, 1); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }, 1, 2); // 0 0
+
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 0);*/
+
+						/*GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 1);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);*/
+
+						break;
 					case MapType.Hardcoded:
 
-					GenerateHardcodedMap(0, 0, "Town", true);
+						GenerateHardcodedMap(0, 0, "Town", true);
 
-					break;
-
-					case MapType.OpenCave:
-
-					GenerateDungeonRegion(0, 0, 43, true);
-					GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(0, 2);
-
-					GenerateEmptyRegion(1, 0);
-					GenerateEmptyRegion(1, 1);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
-
-					break;
+						break;
 
 					case MapType.DungeonAllOpen:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
 
-					break;
+						break;
 					case MapType.DungeonCentralClosed:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-					GenerateEmptyRegion(1, 1);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
-					//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
-					//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
-					//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+						GenerateEmptyRegion(1, 1);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);
+						//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
 
-					break;
+						break;
 
+				}
 			}
 
 			Utils.Timer.StartTimer("mapprocess");
@@ -385,8 +434,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			mapProcessor.Process();
 
-		    Debug.Log(GetTileWorldPosition(SceneMap[0,0]));
-            Debug.Log(GetTileWorldPosition(SceneMap[50, 50]));
+		    //Debug.Log(GetTileWorldPosition(SceneMap[0,0]));
+            //Debug.Log(GetTileWorldPosition(SceneMap[50, 50]));
 
             GetTile(0, 0).SetColor(Tile.BLUE);
             GetTile(50, 50).SetColor(Tile.BLUE);
@@ -414,7 +463,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-		protected void GenerateEmptyRegion(int regX, int regY)
+		public void GenerateEmptyRegion(int regX, int regY)
 		{
 			Tile[,] tileMap = new Tile[regionWidth+2,regionHeight+2];
 
@@ -434,12 +483,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-        protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
+        public MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
             return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds, sizeX, sizeY);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
+		public MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
@@ -598,6 +647,17 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
 			SetActive(true);
+
+			UpdateRegions();
+		}
+
+		private void UpdateRegions()
+		{
+			foreach (MapRegion r in regions.Values)
+			{
+				if(!r.HasParentRegion())
+					UpdateRegionStatus(r);
+			}
 		}
 
 		public void DeloadMap()
@@ -965,10 +1025,16 @@ namespace Assets.scripts.Mono.MapGenerator
                     return;
                 }
 
+	            if (reg.HasParentRegion())
+		            reg = reg.parentRegion;
+			
                 info.SetRegion(reg);
+	            m.SetSpawnInfo(info);
             }
 
-            activeMonsters.Add(m);
+			Debug.Log("monster " + m.Name + " has now region " + m.SpawnInfo.Region.x + ", " + m.SpawnInfo.Region.y + " assigned!");
+
+			activeMonsters.Add(m);
 	    }
 
 	    public void RegisterNpcToMap(Npc m)
@@ -1006,8 +1072,12 @@ namespace Assets.scripts.Mono.MapGenerator
             }
 	    }
 
-	    private void UpdateRegionStatus(MapRegion region)
+	    public void UpdateRegionStatus(MapRegion region)
 	    {
+			// only parent regions can use this method to open doors, etc
+		    if (region.HasParentRegion())
+			    return;
+
 	        int countInRegion = 0;
 
 	        foreach (Monster m in activeMonsters)
@@ -1018,33 +1088,59 @@ namespace Assets.scripts.Mono.MapGenerator
 	            }
 	        }
 
-            Debug.Log(countInRegion);
+            Debug.Log("there are " + countInRegion + " monsters in " + region.x + ", " + region.y);
 
 	        if (countInRegion > 0)
 	            return;
 
+		    if (region.x == 1 && region.y == 1)
+		    {
+			    
+		    }
+
 	        region.Status = MapRegion.STATUS_CONQUERED;
 
-            foreach(MapRegion neighbour in GetNeighbourRegions(region))
-	        {
-	            if(neighbour == null || neighbour.empty)
-                    continue;
+			Queue<MapRegion> neighbours = new Queue<MapRegion>();
+			foreach (MapRegion reg in GetNeighbourRegions(region))
+				neighbours.Enqueue(reg);
 
-	            if (neighbour.isLockedRegion)
-	            {
-	                MapPassage pas = GetPassage(region, neighbour);
+			List<MapRegion> checks = new List<MapRegion>();
 
-	                if (pas != null)
-	                {
-                        Debug.Log("opened!");
-	                    OpenPassage(pas);
-	                }
-	                else
-	                {
-	                    Debug.LogError("cant find passage");
-	                }
-	            }
-	        }
+			// vzit vsechny sousedy startovni mistnosti
+			while (neighbours.Count > 0)
+			{
+				MapRegion neighbour = neighbours.Dequeue();
+
+				checks.Add(neighbour);
+
+				if (neighbour == null)
+					continue;
+
+				if (neighbour.IsInFamily(region)) // soused patri do rodiny - toho nemusime odemykat
+				{
+					foreach (MapRegion r in GetNeighbourRegions(neighbour))
+					{
+						if (r != null && !neighbours.Contains(r) && !checks.Contains(r))
+							neighbours.Enqueue(r);
+					}
+
+					continue;
+				}
+				else if (neighbour.isLockedRegion) // soused je zamceny a nepatri do rodiny - odemkneme ho
+				{
+					MapPassage pas = GetPassage(region, neighbour);
+
+					if (pas != null)
+					{
+						Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
+						OpenPassage(pas);
+					}
+					else
+					{
+						Debug.LogError("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
+					}
+				}
+			}
 	    }
 
 		public Vector3 GetStartPosition()
@@ -1074,6 +1170,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return new Vector3();
 		}
+
+		public List<MapRoom> GetMapRooms()
+		{
+			return mapProcessor.rooms;
+		} 
 
 	    public bool CanTeleportToNext()
 	    {

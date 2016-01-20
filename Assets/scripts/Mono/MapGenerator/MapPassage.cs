@@ -121,7 +121,15 @@ namespace Assets.scripts.Mono.MapGenerator
 	    public void SetEnabled(bool b)
 	    {
 	        enabled = b;
-	        gameObject.SetActive(b);
+
+		    if (gameObject != null)
+		    {
+		        gameObject.SetActive(b);
+		    }
+		    else
+		    {
+			    Debug.LogWarning("mappassage gameobject is null for regions " + roomA.region.x + ", " + roomA.region.y + " and " + roomB.region.x + ", " + roomB.region.y);
+		    }
 	    }
 	}
 }

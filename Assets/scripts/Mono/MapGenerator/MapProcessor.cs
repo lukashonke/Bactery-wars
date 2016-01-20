@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -51,21 +53,37 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		    SpawnMonsters();
 
-		    //WiddenThinPassages(null, 6, 2);
+			//WiddenThinPassages(null, 6, 2);
+		}
+
+		private void UpdateRegions()
+		{
+			foreach (MapRoom room in rooms)
+			{
+				mapHolder.UpdateRegionStatus(room.region.GetParentOrSelf());
+			}
 		}
 
         private void SpawnMonsters()
-	    {
-	        foreach (MapRoom room in rooms)
-			{
-			    if (room.region.isStartRegion)
-			    {
-                    MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, mapHolder.GetTileWorldPosition(room.tiles[25]));
-                    info.SetRegion(room.region);
+        {
+	        AbstractLevelData data = mapHolder.levelData;
 
-                    mapHolder.AddMonsterToMap(info);
-			    }
-            }
+	        if (data != null)
+	        {
+		        data.SpawnMonsters();
+	        }
+	        else // just for test
+	        {
+				Debug.LogWarning("a map doesnt have abstractleveldata set! spawning default mobs");
+
+				foreach (MapRoom room in rooms)
+				{
+					MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, mapHolder.GetTileWorldPosition(room.tiles[25]));
+					info.SetRegion(room.region.GetParentOrSelf());
+
+					mapHolder.AddMonsterToMap(info);
+				}
+			}
 	    }
 
 		private void SpawnTeleporters()
@@ -288,6 +306,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			List<MapRoom> connectedToStart = new List<MapRoom>();
 			MapRoom startRoom = null;
 
+			List<MapRegion> checks;
+
 			foreach (MapRoom room in rooms)
 			{
 				if (room.region.isStartRegion)
@@ -301,17 +321,21 @@ namespace Assets.scripts.Mono.MapGenerator
                     foreach(MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region))
                         neighbours.Enqueue(reg);
 
+					checks = new List<MapRegion>();
+
 					// vzit vsechny sousedy startovni mistnosti
 					while(neighbours.Count > 0)
 					{
 					    MapRegion reg = neighbours.Dequeue();
 
+						checks.Add(reg);
+
 						// jen ty ktere MAJI BYT pripojene
 						if (reg == null || !reg.isAccessibleFromStart)
 							continue;
 
-                        // jde o child region
-					    if (reg.HasParentRegion() && reg.parentRegion.Equals(startRoom.region))
+                        // soused startovniho regionu je jeho potomek - jsou spojeny - pridat do seznamu connectedToStart
+					    if (reg.IsInFamily(startRoom.region))
 					    {
                             foreach (MapRoom r in GetRoomsInRegion(reg))
                                 connectedToStart.Add(r);
@@ -319,7 +343,7 @@ namespace Assets.scripts.Mono.MapGenerator
                             // pridat vsechny sousedy child regionu
 					        foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
 					        {
-					            if(r != null && r.isAccessibleFromStart && !neighbours.Contains(r))
+					            if(r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !checks.Contains(r))
                                     neighbours.Enqueue(r);
 					        }
 
@@ -342,7 +366,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				//Debug.Log("** connecting " + toConnectRoom.region.x + ", " + toConnectRoom.region.y);
 
-				for(int i = 0; i < connectedToStart.Count; i++)
+				int max = connectedToStart.Count;
+				for(int i = 0; i < max; i++)
 				{
 					MapRoom connectedRoom = connectedToStart[i];
 
@@ -352,28 +377,52 @@ namespace Assets.scripts.Mono.MapGenerator
 						if (connectedRoom.isAccessibleFromStartRoom && connectedRoom.region.onlyOnePassage && connectedRoom.connectedRooms.Count > 0)
 							continue;
 
+						//Debug.Log("propojuji " + toConnectRoom.region.x + ", " + toConnectRoom.region.y + " s " + connectedRoom.region.x + ", " + connectedRoom.region.y);
+
 						ConnectRooms(toConnectRoom, connectedRoom);
 						connectedToStart.Add(toConnectRoom);
 
-						// vzit vsechny sousedy pripojovane mistnosti
+						Queue<MapRegion> neighbours = new Queue<MapRegion>();
 						foreach (MapRegion reg in mapHolder.GetNeighbourRegions(toConnectRoom.region))
+							neighbours.Enqueue(reg);
+
+						checks = new List<MapRegion>();
+
+						// vzit vsechny sousedy startovni mistnosti
+						while (neighbours.Count > 0)
 						{
+							MapRegion reg = neighbours.Dequeue();
+
+							checks.Add(reg);
+
 							// jen ty ktere MAJI BYT pripojene
 							if (reg == null || !reg.isAccessibleFromStart)
 								continue;
 
-                            if (reg.HasParentRegion() && reg.parentRegion.Equals(toConnectRoom.region))
-						    {
-						        //TODO
-						    }
+							// soused startovniho regionu je jeho potomek - jsou spojeny - pridat do seznamu connectedToStart
+							if (reg.IsInFamily(toConnectRoom.region))
+							{
+								//Debug.Log("region " + reg.x + ", " + reg.y + " je ve family s toConnect (" + toConnectRoom.region.x + ", " + toConnectRoom.region.y + ")");
+								foreach (MapRoom r in GetRoomsInRegion(reg))
+									connectedToStart.Add(r);
+
+								// pridat vsechny sousedy child regionu
+								foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
+								{
+									if (r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !r.IsInFamily(reg) && !checks.Contains(r))
+									{
+										//Debug.Log("pridavam souseda (reg " + reg.x + ", " + reg.y + ")  : " + r.x + ", " + r.y);
+										neighbours.Enqueue(r);
+									}
+								}
+
+								continue;
+							}
 
 							// pridat do seznamu k pripojeni
-							foreach (MapRoom r in GetRoomsInRegion(reg))
-							{
-								// pokud jeste nejsou pripojene ke startu
-								if(!r.isAccessibleFromStartRoom)
+							foreach (MapRoom r in GetRoomsInRegion(reg.GetParentOrSelf()))
+								if (!r.isAccessibleFromStartRoom)
 									toConnect.Enqueue(r);
-							}
 						}
 
 						// pripojit k prvni nalezene
@@ -513,6 +562,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private bool CanBeConnected(MapRoom roomA, MapRoom roomB)
 		{
+			if (roomA.region.Equals(roomB.region))
+				return false;
+
             MapRegion regA = roomA.region;
             MapRegion regB = roomB.region;
 

@@ -73,7 +73,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public override GroupTemplate GetGroupTemplate()
 		{
-		    return new GroupTemplate().Add(MonsterId.MucusWarrior, 2);
+			return null;
 		}
 
 		public override MonsterId GetMonsterId()

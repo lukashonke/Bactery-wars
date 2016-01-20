@@ -79,6 +79,9 @@ namespace Assets.scripts.Base
 		    {
                 foreach (GameObject o in KnownObjects)
                 {
+	                if (o == null)
+		                continue;
+
                     AbstractData d = o.GetData();
 
                     if (d != null)
