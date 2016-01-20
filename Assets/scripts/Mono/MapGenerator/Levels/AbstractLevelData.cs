@@ -7,7 +7,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 {
 	public abstract class AbstractLevelData
 	{
-		public readonly MapType type = MapType.StartClassic;
+		public MapType type;
 		protected MapHolder map;
 
 		public AbstractLevelData(MapHolder holder)
@@ -17,5 +17,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public abstract void Generate();
 		public abstract void SpawnMonsters();
+		public abstract int GetRegionWidth();
+		public abstract int GetRegionHeight();
+		public abstract int GetMaxRegions();
 	}
 }

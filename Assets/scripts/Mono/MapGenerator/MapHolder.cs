@@ -167,7 +167,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		private List<MonsterSpawnInfo> spawnedMonsters;
 		private List<MonsterSpawnInfo> spawnedNpcs; 
 
-		private int MAX_REGIONS = 3;
+		private int maxRegions = 3;
 		private int regionSizeX;
         private int regionSizeY;
 
@@ -193,6 +193,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.mapType = mapType;
 		    this.regionWidth = regionWidth;
 		    this.regionHeight = regionHeight;
+
+			levelData = null;
+
+			switch (mapType)
+			{
+				case MapType.StartClassic:
+					levelData = new StartLevelData(this);
+					break;
+				case MapType.Test:
+					levelData = new TestLevelData(this);
+					break;
+			}
+
+			if(levelData.GetRegionWidth() > 0)
+				this.regionWidth = levelData.GetRegionWidth();
+
+			if (levelData.GetRegionHeight() > 0)
+				this.regionHeight = levelData.GetRegionHeight();
+
+			if (levelData.GetMaxRegions() > 0)
+				maxRegions = levelData.GetMaxRegions();
 		}
 
 		public void AddPassage(MapPassage p)
@@ -279,6 +300,8 @@ namespace Assets.scripts.Mono.MapGenerator
             return null;
         }
 
+		private int[,] generatedRegionsMap;
+
 		public void CreateMap()
 		{
 			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
@@ -292,20 +315,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			regionSizeX = regionWidth + 2;
             regionSizeY = regionHeight + 2;
 			
-			SceneMap = new Tile[regionSizeX * MAX_REGIONS, regionSizeY * MAX_REGIONS];
+			SceneMap = new Tile[regionSizeX * maxRegions, regionSizeY * maxRegions];
 
-			AbstractLevelData lvlData = null;
+			generatedRegionsMap = new int[maxRegions, maxRegions];
 
-			switch (mapType)
+			if (levelData != null)
 			{
-				case MapType.StartClassic:
-					lvlData = new StartLevelData(this);
-					break;
-			}
-
-			if (lvlData != null)
-			{
-				levelData = lvlData;
 				levelData.Generate();
 			}
 			else
@@ -419,13 +434,32 @@ namespace Assets.scripts.Mono.MapGenerator
 						//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
 
 						break;
-
 				}
 			}
+
+			GenerateMissingEmptyRegions();
 
 			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
 			Utils.Timer.EndTimer("mapprocess");
+		}
+
+		private void GenerateMissingEmptyRegions()
+		{
+			int count = 0;
+			for (int i = 0; i < generatedRegionsMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < generatedRegionsMap.GetLength(1); j++)
+				{
+					if (generatedRegionsMap[i, j] == 0)
+					{
+						count ++;
+						GenerateEmptyRegion(i, j);
+					}
+				}
+			}
+
+			Debug.Log("generated mising " +count + " empty regions");
 		}
 
 		public void ProcessSceneMap()
@@ -877,6 +911,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		protected void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
 		{
+			generatedRegionsMap[regionX, regionY] = 1;
+
 			for (int x = 0; x < tiles.GetLength(0); x++)
 			{
 				for (int y = 0; y < tiles.GetLength(1); y++)

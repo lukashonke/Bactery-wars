@@ -35,7 +35,6 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public bool doDebug = true;
 		public int SQUARE_SIZE = 1;
-		private int MAX_REGIONS = 3;
 
 		public const int WALL = 1;
 		public const int GROUND = 0;
@@ -67,7 +66,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			Debug.Log("generating.. " + newCords.ToString());
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.DungeonAllOpen, 100, 50);
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.Test, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);

@@ -96,7 +96,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private void AdjustToNextTarget()
 		{
-			if (activeProjectile == null || currentTarget == null)
+			if (activeProjectile == null || currentTarget == null || currentTarget.GetData() == null)
 				return;
 
 			Vector3 current = origVel;

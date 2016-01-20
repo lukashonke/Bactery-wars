@@ -2,7 +2,6 @@
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
-using UnityEditor;
 
 namespace Assets.scripts.Actor.PlayerClasses
 {

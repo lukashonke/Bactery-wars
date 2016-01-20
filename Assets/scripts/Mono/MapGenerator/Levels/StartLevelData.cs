@@ -11,6 +11,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 		public StartLevelData(MapHolder holder) : base(holder)
 		{
+			type = MapType.StartClassic;
 		}
 
 		public override void Generate()
@@ -34,6 +35,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 				map.AddMonsterToMap(info);
 			}
+		}
+
+		public override int GetRegionWidth()
+		{
+			return 50;
+		}
+
+		public override int GetRegionHeight()
+		{
+			return 50;
+		}
+
+		public override int GetMaxRegions()
+		{
+			return -1;
 		}
 	}
 }
