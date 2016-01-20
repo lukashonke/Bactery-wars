@@ -35,7 +35,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			roomSize = tiles.Count;
 			connectedRooms = new List<MapRoom>();
 
-			region = tiles[0].region;
+		    region = tiles[0].region.GetParentOrSelf();
 
 			edgeTiles = new List<Tile>();
 

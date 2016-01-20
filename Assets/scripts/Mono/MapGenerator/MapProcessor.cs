@@ -318,8 +318,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					connectedToStart.Add(startRoom);
 
                     Queue<MapRegion> neighbours = new Queue<MapRegion>();
-                    foreach(MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region))
-                        neighbours.Enqueue(reg);
+                    foreach(MapRegion reg in mapHolder.GetNeighbourRegions(startRoom.region)) 
+                        if(!reg.empty)
+                            neighbours.Enqueue(reg);
 
 					checks = new List<MapRegion>();
 
@@ -384,7 +385,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 						Queue<MapRegion> neighbours = new Queue<MapRegion>();
 						foreach (MapRegion reg in mapHolder.GetNeighbourRegions(toConnectRoom.region))
-							neighbours.Enqueue(reg);
+                            if (!reg.empty)
+							    neighbours.Enqueue(reg);
 
 						checks = new List<MapRegion>();
 
@@ -396,7 +398,7 @@ namespace Assets.scripts.Mono.MapGenerator
 							checks.Add(reg);
 
 							// jen ty ktere MAJI BYT pripojene
-							if (reg == null || !reg.isAccessibleFromStart)
+							if (reg == null || !reg.isAccessibleFromStart) // TODO check if already connected?
 								continue;
 
 							// soused startovniho regionu je jeho potomek - jsou spojeny - pridat do seznamu connectedToStart
@@ -551,7 +553,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			List<MapRoom> inRegion = new List<MapRoom>();
 			foreach (MapRoom room in rooms)
 			{
-				if (room.region.Equals(reg))
+				if (room.region.Equals(reg.GetParentOrSelf()))
 				{
 					inRegion.Add(room);
 				}

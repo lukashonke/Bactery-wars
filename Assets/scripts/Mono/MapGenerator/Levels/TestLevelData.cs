@@ -58,7 +58,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 	    public override int GetMaxRegionsY()
 	    {
-	        return -1;
+	        return 4;
 	    }
 	}
 }

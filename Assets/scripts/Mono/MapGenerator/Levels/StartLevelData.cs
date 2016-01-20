@@ -17,8 +17,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public override void Generate()
 		{
 			map.GenerateDungeonRegion(0, 0, 35, true, false, false, new[] { 344 }); // 0 0
-			map.GenerateDungeonRegion(1, 0, 35, false, true, false, new[] { 344 }); // 0, 2
-            map.GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }, 1, 2); // 0, 2
+			map.GenerateDungeonRegion(1, 0, 47, false, true, false, new [] { 319, -501}); // 0, 2
+            map.GenerateDungeonRegion(2, 0, 45, false, true, true, new [] { 147 }, 1, 2); // 0, 2
 		}
 
 		public override void SpawnMonsters()

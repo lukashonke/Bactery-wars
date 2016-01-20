@@ -539,9 +539,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			else if (World.useRandomSeed)
 			{
 				seed = World.GetRandomSeed();
+                Debug.Log(x + " " + y + " is using " + seed);
 			}
-
-			Debug.Log(x + " " + y + " is using " + seed);
 
 			//float xSize = (world.width) * world.SQUARE_SIZE;
 			//float ySize = (world.height) * world.SQUARE_SIZE;
@@ -1128,7 +1127,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	            }
 	        }
 
-            Debug.Log("there are " + countInRegion + " monsters in " + region.x + ", " + region.y);
+            //Debug.Log("there are " + countInRegion + " monsters in " + region.x + ", " + region.y);
 
 	        if (countInRegion > 0)
 	            return;
@@ -1166,7 +1165,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					continue;
 				}
-				else if (neighbour.isLockedRegion) // soused je zamceny a nepatri do rodiny - odemkneme ho
+				else if (neighbour.isLockedRegion && neighbour.empty == false) // soused je zamceny a nepatri do rodiny - odemkneme ho
 				{
 					MapPassage pas = GetPassage(region, neighbour);
 
@@ -1177,7 +1176,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					}
 					else
 					{
-						Debug.LogError("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
+						Debug.LogWarning("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
 					}
 				}
 			}
