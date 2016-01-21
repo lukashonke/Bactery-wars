@@ -217,6 +217,12 @@ namespace Assets.scripts.Mono
 
 			val = GameObject.Find("FogOfWar").GetComponent<Toggle>().isOn;
 			GameSystem.Instance.Controller.fogOfWar = val;
+
+			val = GameObject.Find("AutoAttackTargetting").GetComponent<Toggle>().isOn;
+			data.autoAttackTargetting = val;
+
+			val = GameObject.Find("CastingBreaksMovement").GetComponent<Toggle>().isOn;
+			data.castingBreaksMovement = val;
 		}
 
 		public void RestartGame()

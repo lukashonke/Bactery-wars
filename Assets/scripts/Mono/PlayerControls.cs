@@ -44,9 +44,14 @@ namespace Assets.scripts.Mono
 
 		private void HandleSkillControls()
 		{
-			if (Input.GetKeyDown(KeyCode.Q) || Input.GetMouseButtonDown(1))
+			if (Input.GetKeyDown(KeyCode.Q))
 			{
-				data.StartMeleeTargeting();
+				data.StartMeleeTargeting(false);
+			}
+
+			if (Input.GetMouseButtonDown(1))
+			{
+				data.StartMeleeTargeting(true);
 			}
 
 			if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -367,7 +372,7 @@ namespace Assets.scripts.Mono
 							data.ConfirmSkillLaunch();
 						}
 
-						if (Input.GetMouseButtonDown(1))
+						if (Input.GetMouseButtonDown(1) && !data.ActiveConfirmationSkill.Equals(data.GetOwner().MeleeSkill)) //TODO temp solution for right click melee not cancelling
 						{
 							data.ActiveConfirmationSkill.AbortCast();
 						}

@@ -25,6 +25,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.RhinoBeam));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ColdShuriken));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround));
 
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CommonColdAutoattack));
 		}

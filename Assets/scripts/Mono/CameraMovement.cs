@@ -38,7 +38,7 @@ namespace Assets.scripts.Mono
 		public void Update()
 		{
             // pravy tlacitko stisknuty
-			if (!mobile && Input.GetMouseButton(1))
+			if (!mobile && Input.GetMouseButton(2))
 	        {
 		        float mouseX = Input.GetAxis("Mouse X");
 		        float mouseY = Input.GetAxis("Mouse Y");

@@ -71,7 +71,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 
-						for (int i = 0; i < 3; i++)
+						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
 							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, pos);
@@ -79,13 +79,27 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 							map.AddMonsterToMap(info);
 						}
 
-						for (int i = 0; i < 3; i++)
+						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
 							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, pos);
 							info.SetRegion(room.region.GetParentOrSelf());
 							map.AddMonsterToMap(info);
 						}
+					}
+
+					rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 1, 2);
+
+					foreach (Tile t in rooms)
+					{
+						if (t == null)
+							break;
+
+						Vector3 leaderPos = map.GetTileWorldPosition(t);
+
+						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, leaderPos);
+						info.SetRegion(room.region.GetParentOrSelf());
+						map.AddMonsterToMap(info);
 					}
                 }
 		    }

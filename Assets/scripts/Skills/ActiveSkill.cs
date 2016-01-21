@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -42,6 +43,7 @@ namespace Assets.scripts.Skills
 		public int baseDamage;
 		public bool canBeCastSimultaneously;
 		public bool resetMoveTarget;
+		public bool movementAbortsSkill;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -278,9 +280,10 @@ namespace Assets.scripts.Skills
 			Start();
 		}
 
+		// only player can call this method!
 		public bool DoAutoattack()
 		{
-			/*if (state == SkillState.SKILL_IDLE)
+			if (GetPlayerData().autoAttackTargetting && state == SkillState.SKILL_IDLE)
 			{
 				// the player has another skill waiting to be confirmed -> set this skil back to idle
 				if (GetPlayerData().ActiveConfirmationSkill != null &&
@@ -292,7 +295,7 @@ namespace Assets.scripts.Skills
 				GetPlayerData().ActiveConfirmationSkill = this;
 				state = SkillState.SKILL_CONFIRMING;
 				return false;
-			}*/
+			}
 
 			Owner.CastSkill(this);
 			return true;
@@ -345,7 +348,7 @@ namespace Assets.scripts.Skills
 			if (Owner.Status.IsStunned())
 				return;
 
-			if (resetMoveTarget)
+			if (resetMoveTarget && GetPlayerData() != null && GetPlayerData().castingBreaksMovement)
 			{
 				GetOwnerData().HasTargetToMoveTo = false;
 			}

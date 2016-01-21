@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.AI;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -14,6 +15,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private float lastDmg = 0;
 
+		private readonly float rotateSpeed = 20;
+
 		public RhinoBeam()
 		{
 			castTime = 0f;
@@ -25,6 +28,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamageFrequency = 0.25f;
 
 			range = 15;
+
+			movementAbortsSkill = true;
 
 			updateFrequency = 0.01f;
 			requireConfirm = true;
@@ -77,10 +82,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (ray != null)
 			{
-				RotatePlayerTowardsMouse();
+				Quaternion newRotation = Quaternion.LookRotation(GetOwnerData().GetBody().transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
+				newRotation.x = 0;
+				newRotation.y = 0;
+
+				newRotation = Quaternion.Lerp(GetOwnerData().GetBody().transform.rotation, newRotation, rotateSpeed*0.001f);
+
+				GetOwnerData().SetRotation(newRotation, true);
 
 				UpdateMouseDirection(ray.transform);
-				ray.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+
+				ray.transform.rotation = Quaternion.Lerp(ray.transform.rotation, Utils.GetRotationToDirectionVector(mouseDirection), rotateSpeed*0.001f);
 
 				if (lastDmg + baseDamageFrequency < Time.time)
 				{

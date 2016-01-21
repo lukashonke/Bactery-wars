@@ -25,6 +25,11 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public bool TargettingActive { get; set; }
 
+
+		// test parameters
+		public bool autoAttackTargetting = false;
+		public bool castingBreaksMovement = true;
+
 		public new void Start()
 		{
 			base.Start();
@@ -169,9 +174,26 @@ namespace Assets.scripts.Mono.ObjectData
 			SetMovementTarget(newTarget);
 		}
 
+		private void CheckSkillsToAbort()
+		{
+			foreach (Skill sk in GetOwner().Skills.Skills)
+			{
+				if (sk is ActiveSkill)
+				{
+					ActiveSkill s = (ActiveSkill) sk;
+
+					if (s.IsActive() && s.movementAbortsSkill)
+					{
+						s.AbortCast();
+					}
+				}
+			}
+		}
+
 		public bool SetPlayersMoveToTarget(Vector3 newTarget)
 		{
 			AbortMeleeAttacking();
+			CheckSkillsToAbort();
 
 			if (!allowMovePointChange)
 				return false;
@@ -214,11 +236,14 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
-		public void StartMeleeTargeting()
+		public void StartMeleeTargeting(bool rightClick)
 		{
 			if (ActiveConfirmationSkill != null && !ActiveConfirmationSkill.Equals(GetOwner().MeleeSkill))
 			{
 				BreakCasting();
+
+				if (rightClick)
+					return;
 			}
 
 			if (GetOwner().MeleeSkill != null && GetOwner().CanCastSkill(GetOwner().MeleeSkill) && GetOwner().MeleeSkill.CanUse())

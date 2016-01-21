@@ -250,8 +250,10 @@ namespace Assets.scripts.AI
 				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
 				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-				if (dist > distToFollow*distToFollow + 10*10)
+				if (dist > distToFollow*distToFollow + 30*30)
+				{
 					return true;
+				}
 			}
 			return false;
 		}
