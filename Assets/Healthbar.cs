@@ -47,6 +47,7 @@ public class Healthbar : MonoBehaviour
 					if (t.gameObject.name.Equals("cooldown"))
 					{
 						cooldownMarker = t.gameObject;
+						mat = cooldownMarker.GetComponent<SpriteRenderer>().material;
 						break;
 					}
 				}
@@ -54,6 +55,8 @@ public class Healthbar : MonoBehaviour
 			}
 		}
 	}
+
+	private Material mat;
 
 	// Update is called once per frame
 	void Update ()
@@ -97,6 +100,15 @@ public class Healthbar : MonoBehaviour
 
 			if (currentPercentCooldown != percent)
 			{
+				if (percent == 100)
+				{
+					mat.SetColor("_Color", new Color(227 / 255f, 176 / 255f, 57 / 255f, 187 / 255f));
+				}
+				else if(currentPercentCooldown == 100)
+				{
+					mat.SetColor("_Color", new Color(176 / 255f, 145 / 255f, 73 / 255f, 187 / 255f));
+				}
+
 				cooldownMarker.transform.localScale = new Vector3(0.0341f * percent, 0.68f, 0);
 				currentPercentCooldown = percent;
 			}

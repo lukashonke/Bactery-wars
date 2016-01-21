@@ -44,7 +44,7 @@ namespace Assets.scripts.Mono
 
 		private void HandleSkillControls()
 		{
-			if (Input.GetKeyDown(KeyCode.Q))
+			if (Input.GetKeyDown(KeyCode.Q) || Input.GetMouseButtonDown(1))
 			{
 				data.StartMeleeTargeting();
 			}

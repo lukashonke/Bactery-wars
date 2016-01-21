@@ -374,7 +374,7 @@ namespace Assets.scripts.AI
 
 			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
 			{
-				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > 20 * 20)
+				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
 				{
 					SetIsWalking(false);
 					MoveTo(homeLocation);
@@ -433,6 +433,7 @@ namespace Assets.scripts.AI
 				Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist);
 
 				//TODO region check
+				//TODO add object collision check on target around, to check if he can fit
 
 				bool collides = false;
 				foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))

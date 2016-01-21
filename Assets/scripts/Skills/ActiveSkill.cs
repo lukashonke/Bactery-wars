@@ -278,7 +278,7 @@ namespace Assets.scripts.Skills
 			Start();
 		}
 
-		public bool Autoattack()
+		public bool DoAutoattack()
 		{
 			/*if (state == SkillState.SKILL_IDLE)
 			{

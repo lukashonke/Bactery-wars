@@ -39,10 +39,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 	                foreach (Tile t in rooms)
 	                {
-						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
-						info.SetRegion(room.region.GetParentOrSelf());
+		                if (t == null)
+			                break;
 
-						map.AddMonsterToMap(info);
+		                try
+		                {
+							MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
+							info.SetRegion(room.region.GetParentOrSelf());
+
+							map.AddMonsterToMap(info);
+		                }
+		                catch (Exception)
+		                {
+			                Debug.LogError("null world pos for tile " + t.tileX + ", " + t.tileY + " " + t.tileType);
+		                }
+						
 	                }
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -51,6 +62,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 					foreach (Tile t in rooms)
 					{
+						if (t == null)
+							break;
+
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
 						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, leaderPos);
