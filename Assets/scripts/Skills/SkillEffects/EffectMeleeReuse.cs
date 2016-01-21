@@ -33,6 +33,19 @@ namespace Assets.scripts.Skills.SkillEffects
 			Debug.Log("removing");
 		}
 
+		public override void ModifySkillReuse(ActiveSkill sk, ref float reuse)
+		{
+			if (sk.HasTrait(traitToAffect))
+			{
+				reuse *= multiplier;
+
+				if (fixedValue > -1)
+				{
+					reuse = fixedValue;
+				}
+			}
+		}
+
 		public override void ModifySkillCasttime(ActiveSkill sk, ref float reuse)
 		{
 			if (sk.HasTrait(traitToAffect))

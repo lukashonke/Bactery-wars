@@ -18,6 +18,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
+			resetMoveTarget = false;
 
 			range = 10;
 		}

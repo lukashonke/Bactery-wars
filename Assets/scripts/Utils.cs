@@ -122,12 +122,12 @@ namespace Assets.scripts
 			return pos;
 		}
 
-		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float range)
+		public static Vector3 GenerateRandomPositionAround(Vector3 pos, float range, MapRegion targetRegion=null)
 		{
-			return GenerateRandomPositionAround(pos, pos, range);
+			return GenerateRandomPositionAround(pos, pos, range, targetRegion);
 		}
 
-		public static Vector3 GenerateRandomPositionAround(Vector3 from, Vector3 pos, float range)
+		public static Vector3 GenerateRandomPositionAround(Vector3 from, Vector3 pos, float range, MapRegion targetRegion=null)
 		{
 			int limit = 6;
 

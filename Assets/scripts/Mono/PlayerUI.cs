@@ -141,7 +141,7 @@ namespace Assets.scripts.Mono
 				return;
 
 			timers[id,0] = Time.time;
-			timers[id,1] = ((ActiveSkill)sk).reuse;
+			timers[id,1] = ((ActiveSkill)sk).GetReuse();
 		}
 
 		public void NextLevel()
@@ -210,16 +210,18 @@ namespace Assets.scripts.Mono
 		public void ToggleChanged()
 		{
 			bool val = GameObject.Find("ToggleCameraMovement").GetComponent<Toggle>().isOn;
-
 			CameraMovement.follow = val;
 
 			val = GameObject.Find("PlayerUsePathfinding").GetComponent<Toggle>().isOn;
-
 			data.usesPathfinding = val;
+
+			val = GameObject.Find("FogOfWar").GetComponent<Toggle>().isOn;
+			GameSystem.Instance.Controller.fogOfWar = val;
 		}
 
 		public void RestartGame()
 		{
+			OpenSettings();
 			Application.LoadLevel(Application.loadedLevel);
 		}
 

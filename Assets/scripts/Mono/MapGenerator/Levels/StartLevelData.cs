@@ -27,33 +27,56 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public override void SpawnMonsters()
 		{
             Utils.Timer.StartTimer("spawnmap");
-		    foreach (MapRoom room in map.GetMapRooms())
+		    foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-
-                    room.GetSubRoom(MapRoom.RoomType.MEDIUM, 2, 3);
+                    room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 3);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
+                    Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
 
-                    room.GetSubRoom(MapRoom.RoomType.MEDIUM, 2, 3);
+	                foreach (Tile t in rooms)
+	                {
+						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
+						info.SetRegion(room.region.GetParentOrSelf());
+
+						map.AddMonsterToMap(info);
+	                }
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
-                    //TODO spawn mobs here
-                    room.GetSubRoom(MapRoom.RoomType.MEDIUM, 2, 3);
+					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.HUGE, 2, 1);
+
+					foreach (Tile t in rooms)
+					{
+						Vector3 leaderPos = map.GetTileWorldPosition(t);
+
+						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, leaderPos);
+						info.SetRegion(room.region.GetParentOrSelf());
+						map.AddMonsterToMap(info);
+
+						for (int i = 0; i < 3; i++)
+						{
+							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
+							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, pos);
+							info.SetRegion(room.region.GetParentOrSelf());
+							map.AddMonsterToMap(info);
+						}
+
+						for (int i = 0; i < 3; i++)
+						{
+							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
+							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, pos);
+							info.SetRegion(room.region.GetParentOrSelf());
+							map.AddMonsterToMap(info);
+						}
+					}
                 }
 		    }
+
             Utils.Timer.EndTimer("spawnmap");
-
-		    /*foreach (MapRoom room in map.GetMapRooms())
-			{
-				MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, map.GetTileWorldPosition(room.tiles[25]));
-				info.SetRegion(room.region.GetParentOrSelf());
-
-				map.AddMonsterToMap(info);
-			}*/
 		}
 
 		public override int GetRegionWidth()

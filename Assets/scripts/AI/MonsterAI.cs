@@ -141,7 +141,7 @@ namespace Assets.scripts.AI
 							if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
 							{
 								AddAggro(ch, 1);
-								NotifyNearbyAggroAdded(ch);
+								//NotifyNearbyAggroAdded(ch);
 							}
 
 							break;
@@ -194,9 +194,42 @@ namespace Assets.scripts.AI
 			}
 		}
 
+		private float lastNotify;
+		public float notifyInterval = 1;
+
 		private void NotifyNearbyAggroAdded(Character target)
 		{
-			// TODO get nearby friendly allies, set their aggro towards the player to 1 too
+			if (!GetTemplate().AlertsAllies)
+				return;
+
+			if (lastNotify + notifyInterval < Time.time)
+			{
+				lastNotify = Time.time;
+				Collider2D[] colliders = Physics2D.OverlapCircleAll(Owner.GetData().GetBody().transform.position, AggressionRange);
+
+				foreach (Collider2D c in colliders)
+				{
+					if (c.gameObject == null)
+						continue;
+
+					AbstractData d = c.gameObject.GetData();
+
+					if (d == null)
+						continue;
+
+					if (d.GetOwner() is Monster)
+					{
+						Monster monster = (Monster)d.GetOwner();
+
+						if (monster.AI.State != AIState.ATTACKING)
+						{
+							Debug.Log("notified " + monster.Name);
+							monster.AI.AddAggro(target, 1);
+							continue;
+						}
+					}
+				}
+			}
 		}
 
 		private void NotifySummonsAboutAttack(Character target)
@@ -398,6 +431,8 @@ namespace Assets.scripts.AI
 			{
 				int dist = GetTemplate().RambleAroundMaxDist;
 				Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist);
+
+				//TODO region check
 
 				bool collides = false;
 				foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))

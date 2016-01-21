@@ -25,6 +25,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 1f;
 			updateFrequency = 0.1f;
 			baseDamage = 10;
+			resetMoveTarget = false; 
 
 			range = 4;
 		}

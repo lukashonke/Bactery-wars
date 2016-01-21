@@ -145,7 +145,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void ConfirmSkillLaunch()
 		{
-			ActiveConfirmationSkill.Start(Target);
+			if(ActiveConfirmationSkill.CanUse() && GetOwner().CanCastSkill(ActiveConfirmationSkill))
+				ActiveConfirmationSkill.Start(Target);
 		}
 
 		public void ConfirmSkillLaunch(Vector3 mousePosition)
@@ -210,6 +211,19 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				//sr.material.SetColor("_Emission", Color.black);
 				sr.material.color = Color.white;
+			}
+		}
+
+		public void StartMeleeTargeting()
+		{
+			if (ActiveConfirmationSkill != null && !ActiveConfirmationSkill.Equals(GetOwner().MeleeSkill))
+			{
+				BreakCasting();
+			}
+
+			if (GetOwner().MeleeSkill != null && GetOwner().CanCastSkill(GetOwner().MeleeSkill) && GetOwner().MeleeSkill.CanUse())
+			{
+				GetOwner().MeleeSkill.DoAutoattack();
 			}
 		}
 

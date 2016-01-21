@@ -27,6 +27,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public bool IsAggressive = false;
 		public int AggressionRange = 5;
 
+		public bool AlertsAllies = false;
+
 		public bool RambleAround = false;
 		public int RambleAroundMaxDist = 20;
 

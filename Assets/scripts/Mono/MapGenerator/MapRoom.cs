@@ -173,31 +173,31 @@ namespace Assets.scripts.Mono.MapGenerator
             HUGE
 	    }
 
-	    public Tile[] GetSubRoom(RoomType type, int preferredDirection, int count)
+	    public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count)
 	    {
 	        switch (type)
 	        {
 	            case RoomType.TINY:
-	                return GetSubRoom(40, 3, preferredDirection, count);
+	                return GetSubRooms(40, 3, preferredDirection, count);
 	                break;
 	            case RoomType.SMALL:
-                    return GetSubRoom(75, 4, preferredDirection, count);
+                    return GetSubRooms(75, 4, preferredDirection, count);
 	                break;
 	            case RoomType.MEDIUM:
-                    return GetSubRoom(105, 5, preferredDirection, count);
+                    return GetSubRooms(105, 5, preferredDirection, count);
 	                break;
 	            case RoomType.LARGE:
-                    return GetSubRoom(200, 7, preferredDirection, count);
+                    return GetSubRooms(200, 7, preferredDirection, count);
 	                break;
 	            case RoomType.HUGE:
-                    return GetSubRoom(265, 8, preferredDirection, count);
+                    return GetSubRooms(265, 8, preferredDirection, count);
 	                break;
 	        }
 
 	        return null;
 	    }
 
-	    public Tile[] GetSubRoom(int minTiles, int maxRadius, int preferredDirection, int count)
+	    public Tile[] GetSubRooms(int minTiles, int maxRadius, int preferredDirection, int count)
 	    {
 	        Tile[] toReturn = new Tile[count];
 

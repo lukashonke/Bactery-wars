@@ -44,6 +44,11 @@ namespace Assets.scripts.Mono
 
 		private void HandleSkillControls()
 		{
+			if (Input.GetKeyDown(KeyCode.Q))
+			{
+				data.StartMeleeTargeting();
+			}
+
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
 				data.LaunchSkill(1);

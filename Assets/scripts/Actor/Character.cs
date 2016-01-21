@@ -64,6 +64,24 @@ namespace Assets.scripts.Actor
 			if(Knownlist != null)
 			Knownlist.Active = false;
 
+			try
+			{
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill)
+					{
+						if (((ActiveSkill)sk).IsActive() || ((ActiveSkill)sk).IsBeingCasted())
+						{
+							((ActiveSkill)sk).AbortCast();
+						}
+					}
+				}
+			}
+			catch (Exception)
+			{
+				Debug.LogError("error while aborting skills !");
+			}
+
 			if (this is Monster)
 			{
 				if (((Monster) this).GetMaster() != null)
@@ -212,35 +230,42 @@ namespace Assets.scripts.Actor
 				RemoveEffect(ef);
 		}
 
+		public bool CanCastSkill(Skill skill)
+		{
+			if (Status.IsDead || Status.IsStunned()) 
+				return false;
+
+			if (skill is ActiveSkill)
+			{
+				ActiveSkill s = (ActiveSkill)skill;
+
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill && ((ActiveSkill)sk).IsActive()) //TODO check for can be casted simultaneously
+					{
+						if (!s.canBeCastSimultaneously)
+						{
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Spusti kouzleni skillu
 		/// </summary>
 		/// <param name="skill"></param>
 		public void CastSkill(Skill skill)
 		{
-			if (Status.IsDead)
+			if (!CanCastSkill(skill))
 				return;
 
 			// skill is passive - cant cast it
 			if (skill is PassiveSkill)
 				return;
-
-			if (skill is ActiveSkill)
-			{
-				ActiveSkill s = (ActiveSkill) skill;
-
-				foreach (Skill sk in Skills.Skills)
-				{
-					if (sk is ActiveSkill && ((ActiveSkill) sk).IsActive()) //TODO check for can be casted simultaneously
-					{
-						if (!s.canBeCastSimultaneously)
-						{
-							return;
-						}
-					}
-				}
-			}
-			
 
 			// reuse check
 			if (!skill.CanUse())

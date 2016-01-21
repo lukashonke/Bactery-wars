@@ -20,6 +20,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			IsAggressive = false;
 			AggressionRange = 10;
 			RambleAround = true;
+			AlertsAllies = true;
 		}
 
 		protected override void AddSkillsToTemplate()

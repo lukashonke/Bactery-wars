@@ -51,8 +51,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			target = initTarget;
-			RotatePlayerTowardsTarget(initTarget);
+			if (initTarget != null)
+			{
+				target = initTarget;
+				RotatePlayerTowardsTarget(initTarget);
+			}
+			else
+			{
+				RotatePlayerTowardsMouse();
+			}
 
 			if(castTime > 0)
 				CreateCastingEffect(true, "SkillTemplate");
@@ -64,7 +71,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			RotatePlayerTowardsTarget(target);
+			if (target != null)
+			{
+				RotatePlayerTowardsTarget(target);
+			}
+			else
+			{
+				RotatePlayerTowardsMouse();
+			}
 
 			GameObject activeProjectile;
 
@@ -85,7 +99,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnAfterEnd()
 		{
-			if (castTime > 0)
+			if (castTime > 0 && target != null)
 			{
 				// continue with next attack
 				if (GetOwnerData().RepeatingMeleeAttack)
@@ -95,9 +109,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnAterReuse()
 		{
-			// continue with next attack
-			if (GetOwnerData().RepeatingMeleeAttack)
-				GetOwnerData().MeleeInterract(target, true);
+			if (target != null)
+			{
+				// continue with next attack
+				if (GetOwnerData().RepeatingMeleeAttack)
+					GetOwnerData().MeleeInterract(target, true);
+			}
 		}
 
 		public override void OnMove()

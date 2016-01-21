@@ -41,12 +41,12 @@ namespace Assets.scripts.Mono
 		protected Dictionary<string, GameObject> childs;
 
 		/// <summary>GameObjecty reprezentujici fyzicke a graficke telo objektu </summary>
-		[HideInInspector] public GameObject body;
+		public GameObject body;
 
-		[HideInInspector] public Rigidbody2D rb;
-		[HideInInspector] protected Animator anim;
-		[HideInInspector] public GameObject particleSystems;
-		[HideInInspector] public Healthbar healthBar;
+		public Rigidbody2D rb;
+		protected Animator anim;
+		public GameObject particleSystems;
+		public Healthbar healthBar;
 
 		private Seeker seeker;
 

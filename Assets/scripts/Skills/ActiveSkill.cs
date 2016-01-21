@@ -41,6 +41,7 @@ namespace Assets.scripts.Skills
 		public int range;
 		public int baseDamage;
 		public bool canBeCastSimultaneously;
+		public bool resetMoveTarget;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -55,7 +56,7 @@ namespace Assets.scripts.Skills
 		public bool MovementBreaksConfirmation { get; protected set; }
 
 		/// the time when the skill was last used
-		protected int LastUsed { get; private set; }
+		public float LastUsed { get; private set; }
 
 		/// represents the vector that usually points from the player_object to the mouse direction
 		protected Vector3 mouseDirection;
@@ -81,6 +82,9 @@ namespace Assets.scripts.Skills
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
 			breaksMouseMovement = true;
+			resetMoveTarget = true;
+
+			LastUsed = -1000f;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}
@@ -213,10 +217,10 @@ namespace Assets.scripts.Skills
 
 			if (reuse > 0)
 			{
-				int time = Environment.TickCount;
+				float time = Time.time;
 
 				// the reuse time has passed
-				if (LastUsed + (reuse * 1000) < time)
+				if (LastUsed + (GetReuse()) < time)
 				{
 					return true;
 				}
@@ -258,7 +262,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override void SetReuseTimer()
 		{
-			LastUsed = Environment.TickCount;
+			LastUsed = Time.time;
 			GetOwnerData().SetSkillReuseTimer(this);
 		}
 
@@ -272,6 +276,26 @@ namespace Assets.scripts.Skills
 		{
 			initTarget = target;
 			Start();
+		}
+
+		public bool Autoattack()
+		{
+			/*if (state == SkillState.SKILL_IDLE)
+			{
+				// the player has another skill waiting to be confirmed -> set this skil back to idle
+				if (GetPlayerData().ActiveConfirmationSkill != null &&
+				    GetPlayerData().ActiveConfirmationSkill.state == SkillState.SKILL_CONFIRMING)
+				{
+					GetPlayerData().ActiveConfirmationSkill.AbortCast();
+				}
+
+				GetPlayerData().ActiveConfirmationSkill = this;
+				state = SkillState.SKILL_CONFIRMING;
+				return false;
+			}*/
+
+			Owner.CastSkill(this);
+			return true;
 		}
 
 		public override void Start()
@@ -321,6 +345,11 @@ namespace Assets.scripts.Skills
 			if (Owner.Status.IsStunned())
 				return;
 
+			if (resetMoveTarget)
+			{
+				GetOwnerData().HasTargetToMoveTo = false;
+			}
+
 			// start the reuse timer
 			SetReuseTimer();
 
@@ -354,13 +383,13 @@ namespace Assets.scripts.Skills
 
 			OnAfterEnd();
 
-			if (reuse > 0)
+			if (GetReuse() > 0)
 				Owner.StartTask(NotifyReuseEnd());
 		}
 
 		private IEnumerator NotifyReuseEnd()
 		{
-			yield return new WaitForSeconds(reuse);
+			yield return new WaitForSeconds(GetReuse());
 			OnAterReuse();
 		}
 
@@ -402,12 +431,7 @@ namespace Assets.scripts.Skills
 				yield break;
 			}
 
-			float castTime = this.castTime;
-
-			foreach (SkillEffect ef in Owner.ActiveEffects)
-			{
-				ef.ModifySkillCasttime(this, ref castTime);
-			}
+			float castTime = GetCastTime();
 
 			if (castTime > 0)
 			{
@@ -829,5 +853,30 @@ namespace Assets.scripts.Skills
 		{
 			
 		}
+
+		public float GetReuse()
+		{
+			float reuse = this.reuse;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillReuse(this, ref reuse);
+			}
+			return reuse;
+		}
+
+		public float GetCastTime()
+		{
+			float casttime = this.castTime;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillCasttime(this, ref casttime);
+			}
+
+			return casttime;
+		}
+
+		//TODO finish this for other params too
 	}
 }

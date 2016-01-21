@@ -20,6 +20,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
 			baseDamage = 10;
+			resetMoveTarget = false;
 		}
 
 		public override SkillId GetSkillId()
@@ -39,7 +40,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectMeleeReuse(1, 0.5f, 5, SkillTraits.Melee), };
+			return new SkillEffect[] {new EffectMeleeReuse(1, 0.3f, 5, SkillTraits.Melee), };
 		}
 
 		public override void InitTraits()

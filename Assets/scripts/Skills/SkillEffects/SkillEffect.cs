@@ -43,6 +43,11 @@ namespace Assets.scripts.Skills.SkillEffects
 			
 		}
 
+		public virtual void ModifySkillReuse(ActiveSkill sk, ref float reuse)
+		{
+
+		}
+
 		protected bool IsOffensive()
 		{
 			return isOffensive;
