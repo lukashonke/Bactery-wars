@@ -418,8 +418,16 @@ namespace Assets.scripts.Mono
 								if (currMouseClicker != null)
 									Destroy(currMouseClicker);
 
+								data.MoveButtonDown = true;
+
 								currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
 								//}
+							}
+							else
+							{
+								data.MoveButtonDown = false;
+								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo)
+									data.HasTargetToMoveTo = false;
 							}
 						}
 					}

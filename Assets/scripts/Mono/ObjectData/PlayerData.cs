@@ -25,10 +25,13 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public bool TargettingActive { get; set; }
 
+		public bool MoveButtonDown { get; set; }
+
 
 		// test parameters
 		public bool autoAttackTargetting = false;
 		public bool castingBreaksMovement = true;
+		public bool moveOnlyWhenMousePressed = false;
 
 		public new void Start()
 		{

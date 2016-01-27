@@ -223,6 +223,9 @@ namespace Assets.scripts.Mono
 
 			val = GameObject.Find("CastingBreaksMovement").GetComponent<Toggle>().isOn;
 			data.castingBreaksMovement = val;
+
+			val = GameObject.Find("MoveOnlyWithMousePressed").GetComponent<Toggle>().isOn;
+			data.moveOnlyWhenMousePressed = val;
 		}
 
 		public void RestartGame()
