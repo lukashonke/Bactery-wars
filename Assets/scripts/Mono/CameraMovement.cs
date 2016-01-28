@@ -20,13 +20,16 @@ namespace Assets.scripts.Mono
 
 		public GameObject objectToFollow;
 
-		public static bool follow = false;
+		private bool freeView;
+
+		public static bool cameraFollowsPlayer = true;
 		public bool mobile = false;
 
 		// Use this for initialization
 		public void Start()
 		{
 			controller = GameObject.Find("Player").GetComponent<PlayerControls>();
+			freeView = false;
 
 #if UNITY_ANDROID
 			follow = true;
@@ -37,9 +40,16 @@ namespace Assets.scripts.Mono
 		// Update is called once per frame
 		public void Update()
 		{
+			if (freeView && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+			{
+				freeView = false;
+			}
+
             // pravy tlacitko stisknuty
 			if (!mobile && Input.GetMouseButton(2))
-	        {
+			{
+				freeView = true;
+
 		        float mouseX = Input.GetAxis("Mouse X");
 		        float mouseY = Input.GetAxis("Mouse Y");
 
@@ -107,7 +117,7 @@ namespace Assets.scripts.Mono
 						Camera.main.orthographicSize -= 1;
 				}
 
-				if (follow)
+				if (cameraFollowsPlayer && !freeView)
 				{
 					Vector3 pos = objectToFollow.transform.position;
 					pos.z = -10;

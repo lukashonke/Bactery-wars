@@ -49,7 +49,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			maps = new Dictionary<Cords, MapHolder>();
 
-			darkPlaneTemplate = GameObject.Find("Dark Plane");
+			darkPlaneTemplate = GameObject.Find("Total Background");
 
 			// create the first map
 			GenerateFirstLevel();

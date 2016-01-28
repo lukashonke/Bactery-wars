@@ -8,6 +8,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator.Levels;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.GameCenter;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -471,26 +472,26 @@ namespace Assets.scripts.Mono.MapGenerator
 			Vector3 buttomRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0)-1, 0]);
 			Vector3 topLeft = GetTileWorldPosition(SceneMap[0, SceneMap.GetLength(1) - 1]);
 			Vector3 topRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0) - 1, SceneMap.GetLength(1) - 1]);
+			Vector3 center = Vector3.Lerp(bottomLeft, topRight, 0.5f);
 
 			GameObject templ = WorldHolder.instance.darkPlaneTemplate;
 
 			float height = Vector3.Distance(bottomLeft, topLeft);
 			float width = Vector3.Distance(bottomLeft, buttomRight);
-			float size = 20;
+			float size = 50;
 
-			GameObject bottom = Object.Instantiate(templ, bottomLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
-			bottom.transform.localScale = new Vector3(width, size);
+			/*GameObject background = GameObject.Find("Background");
+			background.transform.position = center + new Vector3(0, 0, 1);
+			background.transform.localScale = new Vector3(width, height);*/
 
-			GameObject top = Object.Instantiate(templ, topLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
-			top.transform.localScale = new Vector3(width, size);
+			GameObject totalBackground = Object.Instantiate(templ, center + new Vector3(0, 0, 11.5f), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
 
-			GameObject right = Object.Instantiate(templ, buttomRight, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
-			right.transform.localScale = new Vector3(size, height);
+			// scales up by size
+			totalBackground.transform.localScale = new Vector3(width+size, height+size);
+			totalBackground.transform.position += new Vector3(size/2, size/2);
 
-			GameObject left = Object.Instantiate(templ, bottomLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
-			left.transform.localScale = new Vector3(size, height);
-
-			// stretch planes across empty regions
+			// now move a bit down to create borders
+			totalBackground.transform.position -= new Vector3(size/4, size/4);
 		}
 
 		private void DeleteDarkPlanes()

@@ -13,7 +13,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 	{
 		public NeutrophylePatrol()
 		{
-			MaxHp = 100;
+			MaxHp = 60;
 			MaxMp = 50;
 			MaxSpeed = 10;
 

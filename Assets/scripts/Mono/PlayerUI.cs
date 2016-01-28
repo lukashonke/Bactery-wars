@@ -210,7 +210,7 @@ namespace Assets.scripts.Mono
 		public void ToggleChanged()
 		{
 			bool val = GameObject.Find("ToggleCameraMovement").GetComponent<Toggle>().isOn;
-			CameraMovement.follow = val;
+			CameraMovement.cameraFollowsPlayer = val;
 
 			val = GameObject.Find("PlayerUsePathfinding").GetComponent<Toggle>().isOn;
 			data.usesPathfinding = val;
