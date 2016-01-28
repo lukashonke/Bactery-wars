@@ -40,12 +40,16 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int WALL = 1;
 		public const int GROUND = 0;
 
+		public GameObject darkPlaneTemplate;
+
 		void Start()
 		{
 			if (instance == null)
 				instance = this;
 
 			maps = new Dictionary<Cords, MapHolder>();
+
+			darkPlaneTemplate = GameObject.Find("Dark Plane");
 
 			// create the first map
 			GenerateFirstLevel();
@@ -67,7 +71,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			Debug.Log("generating.. " + newCords.ToString());
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.Test, 100, 50);
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.SecondLevel, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
@@ -107,7 +111,13 @@ namespace Assets.scripts.Mono.MapGenerator
 				if(region.HasParentRegion() == false && !region.empty)
 				sb.Append(region.x + ";" + region.y + " " + region.seed + " ");
 
-			GameObject.Find("AdminSeeds").GetComponent<Text>().text = sb.ToString();
+			try
+			{
+				GameObject.Find("AdminSeeds").GetComponent<Text>().text = sb.ToString();
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		public void RegenMap()

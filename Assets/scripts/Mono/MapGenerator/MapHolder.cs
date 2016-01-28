@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
@@ -18,7 +19,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		DungeonAllOpen,
 		DungeonCentralClosed,
 		Hardcoded,
+
 		StartClassic,
+		SecondLevel,
 	}
 
     /// <summary>
@@ -209,6 +212,9 @@ namespace Assets.scripts.Mono.MapGenerator
 				case MapType.Test:
 					levelData = new TestLevelData(this);
 					break;
+				case MapType.SecondLevel:
+					levelData = new SecondLevelData(this);
+					break;
 			}
 
 			if(levelData.GetRegionWidth() > 0)
@@ -310,6 +316,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private int[,] generatedRegionsMap;
 
+		private List<GameObject> darknessPlane; 
+
+
 		public void CreateMap()
 		{
 			regions = new Dictionary<WorldHolder.Cords, MapRegion>();
@@ -319,6 +328,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			activeNpcs = new List<Npc>();
 			spawnedMonsters = new List<MonsterSpawnInfo>();
 			spawnedNpcs = new List<MonsterSpawnInfo>();
+
+			darknessPlane = new List<GameObject>();
 
 			regionSizeX = regionWidth + 2;
             regionSizeY = regionHeight + 2;
@@ -450,6 +461,45 @@ namespace Assets.scripts.Mono.MapGenerator
 			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
 			Utils.Timer.EndTimer("mapprocess");
+		}
+
+		private void CreateDarkPlanes() //TODO scale the objects to adjust lightning here
+		{
+			darknessPlane = new List<GameObject>();
+
+			Vector3 bottomLeft = GetTileWorldPosition(SceneMap[0, 0]);
+			Vector3 buttomRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0)-1, 0]);
+			Vector3 topLeft = GetTileWorldPosition(SceneMap[0, SceneMap.GetLength(1) - 1]);
+			Vector3 topRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0) - 1, SceneMap.GetLength(1) - 1]);
+
+			GameObject templ = WorldHolder.instance.darkPlaneTemplate;
+
+			float height = Vector3.Distance(bottomLeft, topLeft);
+			float width = Vector3.Distance(bottomLeft, buttomRight);
+			float size = 20;
+
+			GameObject bottom = Object.Instantiate(templ, bottomLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
+			bottom.transform.localScale = new Vector3(width, size);
+
+			GameObject top = Object.Instantiate(templ, topLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
+			top.transform.localScale = new Vector3(width, size);
+
+			GameObject right = Object.Instantiate(templ, buttomRight, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
+			right.transform.localScale = new Vector3(size, height);
+
+			GameObject left = Object.Instantiate(templ, bottomLeft, Quaternion.Euler(new Vector3(-90, 0, 0))) as GameObject;
+			left.transform.localScale = new Vector3(size, height);
+
+			// stretch planes across empty regions
+		}
+
+		private void DeleteDarkPlanes()
+		{
+			foreach (GameObject o in darknessPlane)
+			{
+				if(o != null)
+					Object.Destroy(o);
+			}
 		}
 
 		private void GenerateMissingEmptyRegions()
@@ -670,6 +720,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			activeMonsters.Clear();
 			activeNpcs.Clear();
 
+			CreateDarkPlanes();
+
 			try
 			{
 				foreach (MonsterSpawnInfo info in spawnedMonsters)
@@ -715,6 +767,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				p.Delete();
 			}
+
+			DeleteDarkPlanes();
 
 			spawnedMonsters.Clear();
 			spawnedNpcs.Clear();
