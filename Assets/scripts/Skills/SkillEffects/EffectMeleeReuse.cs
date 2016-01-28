@@ -48,7 +48,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void ModifySkillCasttime(ActiveSkill sk, ref float reuse)
 		{
-			if (sk.HasTrait(traitToAffect))
+			/*if (sk.HasTrait(traitToAffect))
 			{
 				reuse *= multiplier;
 
@@ -56,7 +56,7 @@ namespace Assets.scripts.Skills.SkillEffects
 				{
 					reuse = fixedValue;
 				}
-			}
+			}*/
 		}
 	}
 }
