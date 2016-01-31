@@ -101,6 +101,22 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 					}
+
+					rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 6, true);
+
+					foreach (Tile t in rooms)
+					{
+						if (t == null)
+							break;
+
+						t.SetColor(Tile.GREEN);
+
+						Vector3 leaderPos = map.GetTileWorldPosition(t);
+
+						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, leaderPos);
+						info.SetRegion(room.region.GetParentOrSelf());
+						map.AddMonsterToMap(info);
+					}
                 }
 		    }
 

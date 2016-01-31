@@ -40,7 +40,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 5)};
 		}
 
 		public override void InitTraits()

@@ -25,12 +25,12 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		protected override void ApplyEffect()
 		{
-			Debug.Log("adding");
+			//Debug.Log("adding");
 		}
 
 		protected override void RemoveEffect()
 		{
-			Debug.Log("removing");
+			//Debug.Log("removing");
 		}
 
 		public override void ModifySkillReuse(ActiveSkill sk, ref float reuse)

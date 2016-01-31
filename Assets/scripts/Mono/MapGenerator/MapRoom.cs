@@ -117,6 +117,9 @@ namespace Assets.scripts.Mono.MapGenerator
 	    public static int DIRECTION_DOWN = 2;
         public static int DIRECTION_RIGHT = 3;
         public static int DIRECTION_LEFT = 4;
+		public static int DIRECTION_CENTER = 5;
+		public static int DIRECTION_CENTER_LEFT = 6;
+		public static int DIRECTION_CENTER_RIGHT = 7;
 
         public Tile[] GetTilesWithSpaceAround(int minFreeRadius, int preferredDirection, int count)
         {
@@ -140,6 +143,26 @@ namespace Assets.scripts.Mono.MapGenerator
                 case 4:
                     sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
                     break;
+				case 5:
+					sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
+		            int center = sortedTiles.Count/2;
+
+					sortedTiles.Sort(
+					delegate(Tile t1, Tile t2)
+					{
+						int diffX1 = Math.Abs(t1.tileX - center);
+						int diffY1 = Math.Abs(t1.tileY - center);
+						int diff1 = diffX1 + diffY1;
+
+						int diffX2 = Math.Abs(t2.tileX - center);
+						int diffY2 = Math.Abs(t2.tileY - center);
+						int diff2 = diffX2 + diffY2;
+
+						return diff1.CompareTo(diff2);
+					}
+					);
+
+		            break;
             }
 
             int index = 0;
@@ -173,31 +196,39 @@ namespace Assets.scripts.Mono.MapGenerator
             HUGE
 	    }
 
-	    public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count)
+	    public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count, bool exclude=true)
 	    {
+			foreach (Tile t in tiles)
+			{
+				if (t.isChecked)
+				{
+					t.SetColor(Tile.RED);
+				}
+			}
+
 	        switch (type)
 	        {
 	            case RoomType.TINY:
-	                return GetSubRooms(40, 3, preferredDirection, count);
+	                return GetSubRooms(40, 3, preferredDirection, count, exclude);
 	                break;
 	            case RoomType.SMALL:
-                    return GetSubRooms(75, 4, preferredDirection, count);
+					return GetSubRooms(75, 4, preferredDirection, count, exclude);
 	                break;
 	            case RoomType.MEDIUM:
-                    return GetSubRooms(105, 5, preferredDirection, count);
+					return GetSubRooms(105, 5, preferredDirection, count, exclude);
 	                break;
 	            case RoomType.LARGE:
-                    return GetSubRooms(200, 7, preferredDirection, count);
+					return GetSubRooms(200, 7, preferredDirection, count, exclude);
 	                break;
 	            case RoomType.HUGE:
-                    return GetSubRooms(265, 8, preferredDirection, count);
+					return GetSubRooms(265, 8, preferredDirection, count, exclude);
 	                break;
 	        }
 
 	        return null;
 	    }
 
-	    public Tile[] GetSubRooms(int minTiles, int maxRadius, int preferredDirection, int count)
+	    public Tile[] GetSubRooms(int minTiles, int maxRadius, int preferredDirection, int count, bool exclude=false)
 	    {
 	        Tile[] toReturn = new Tile[count];
 
@@ -227,10 +258,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        foreach (Tile t in sortedTiles)
 	        {
-	            if (checkedTiles.Contains(t))
+	            if (checkedTiles.Contains(t) || t.isChecked)
 	                continue;
 
-	            if (CheckForTilesInRadius(t, sortedTiles, maxRadius, minTiles, checkedTiles))
+	            if (CheckForTilesInRadius(t, sortedTiles, maxRadius, minTiles, checkedTiles, exclude))
 	            {
 	                t.SetColor(Tile.ORANGE);
 	                toReturn[index++] = t;
@@ -243,7 +274,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	        return toReturn;
 	    }
 
-	    private bool CheckForTilesInRadius(Tile t, List<Tile> sortedTiles, int maxRadius, int minTiles, List<Tile> roomTiles)
+	    private bool CheckForTilesInRadius(Tile t, List<Tile> sortedTiles, int maxRadius, int minTiles, List<Tile> roomTiles, bool exclude)
 	    {
 	        List<Tile> temp = new List<Tile>();
 
@@ -257,6 +288,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        foreach (Tile neighbour in sortedTiles)
 	        {
+				if(neighbour.isChecked)
+					continue;
+
 	            if (neighbour.tileX >= minX && neighbour.tileX <= maxX && neighbour.tileY >= minY && neighbour.tileY <= maxY)
 	            {
 	                temp.Add(neighbour);
@@ -273,6 +307,9 @@ namespace Assets.scripts.Mono.MapGenerator
 	            {
 	                foreach (Tile tt in temp)
 	                {
+						if(exclude)
+							tt.Check();
+
 	                    tt.SetColor(Tile.PURPLE);
 	                    roomTiles.Add(tt);
 	                }

@@ -49,6 +49,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			AnalyzeRooms();
 			ConnectRoomsToStart();
 
+			UncheckAllTiles();
+
 			SpawnTeleporters();
 
 		    SpawnMonsters();
