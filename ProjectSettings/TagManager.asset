@@ -24,7 +24,7 @@ TagManager:
   - Uncollidable
   - Summon
   - NoLight
-  - 
+  - UncollidableWithObjects
   - 
   - 
   - 

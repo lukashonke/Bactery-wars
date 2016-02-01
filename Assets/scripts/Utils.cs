@@ -225,7 +225,7 @@ namespace Assets.scripts
 		public static void RegisterAsMonster(this GameObject o)
 		{
 			EnemyData d = o.GetData() as EnemyData;
-			GameSystem.Instance.RegisterNewMonster(d, d.name, d.monsterId);
+			GameSystem.Instance.RegisterNewMonster(d, d.name, d.monsterId, 1, null);
 		}
 
 		public static void RegisterAsNpc(this GameObject o)

@@ -30,5 +30,7 @@ namespace Assets.scripts.Skills.Base
 		ColdShuriken,
 
 		MeleeAttack,
+		CollisionDamageAttack,
+		CreateCoverMob
 	}
 }

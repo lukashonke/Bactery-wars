@@ -31,7 +31,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-                    room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 3);
+					SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+					SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+					SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
@@ -58,7 +60,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
-					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.HUGE, 2, 1);
+					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.VERYLARGE, 2, 1);
 
 					foreach (Tile t in rooms)
 					{

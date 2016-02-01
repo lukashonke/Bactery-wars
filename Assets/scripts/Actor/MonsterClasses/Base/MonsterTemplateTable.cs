@@ -33,16 +33,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 			Init();
 		}
 
-		private void Load()
-		{
-			
-		}
-
 		// Initialize all possible classes here
 		private void Init()
 		{
 			MonsterTemplate t;
-			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Actor.MonsterClasses", true, typeof(MonsterTemplate));
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Actor.MonsterClasses.Monsters", true, typeof(MonsterTemplate));
 
 			foreach (Type type in types)
 			{
@@ -50,7 +45,17 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 				AddType(t);
 			}
 
-			Debug.Log("Loaded " + this.types.Count + " monster classes.");
+			Debug.Log("Loaded " + types.Count + " monster classes.");
+
+			types = Utils.GetTypesInNamespace("Assets.scripts.Actor.MonsterClasses.Boss", true, typeof(BossTemplate));
+
+			foreach (Type type in types)
+			{
+				t = Activator.CreateInstance(type) as BossTemplate;
+				AddType(t);
+			}
+
+			Debug.Log("Loaded " + types.Count + " boss classes.");
 		}
 
 		public void AddType(MonsterTemplate t)

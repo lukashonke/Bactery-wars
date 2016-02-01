@@ -189,12 +189,35 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    public enum RoomType
 	    {
-	        TINY,
-            SMALL,
-            MEDIUM,
-            LARGE,
-            HUGE
+			EPIC,HUGE,VERYLARGE,LARGE,MEDIUM,SMALL,TINY
 	    }
+
+		public Tile GetLargestSubRoom(bool exclude=true)
+		{
+			Tile room = null;
+
+			foreach (RoomType type in Enum.GetValues(typeof (RoomType)))
+			{
+				Tile[] rooms = GetSubRooms(type, DIRECTION_CENTER, 1, exclude);
+
+				bool exists = false;
+
+				foreach (Tile t in rooms)
+				{
+					if (t != null)
+						exists = true;
+				}
+
+				if (exists)
+				{
+					Debug.Log("found type " + Enum.GetName(typeof(RoomType), type));
+					room = rooms[0];
+					break;
+				}
+			}
+
+			return room;
+		}
 
 	    public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count, bool exclude=true)
 	    {
@@ -220,9 +243,15 @@ namespace Assets.scripts.Mono.MapGenerator
 	            case RoomType.LARGE:
 					return GetSubRooms(200, 7, preferredDirection, count, exclude);
 	                break;
-	            case RoomType.HUGE:
+	            case RoomType.VERYLARGE:
 					return GetSubRooms(265, 8, preferredDirection, count, exclude);
 	                break;
+				case RoomType.HUGE:
+					return GetSubRooms(380, 10, preferredDirection, count, exclude);
+					break;
+				case RoomType.EPIC:
+					return GetSubRooms(500, 12, preferredDirection, count, exclude);
+					break;
 	        }
 
 	        return null;

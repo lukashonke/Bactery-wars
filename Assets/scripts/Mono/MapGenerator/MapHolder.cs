@@ -172,8 +172,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private List<Monster> activeMonsters;
 		private List<Npc> activeNpcs;
-		private List<MonsterSpawnInfo> spawnedMonsters;
-		private List<MonsterSpawnInfo> spawnedNpcs; 
+		private List<MonsterSpawnInfo> spawnableMonsters;
+		private List<MonsterSpawnInfo> spawnableNpcs; 
 
 		private int maxRegionsX = 3;
         private int maxRegionsY = 3;
@@ -233,7 +233,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void AddPassage(MapPassage p)
 		{
-			Debug.Log("adding passage for " + p.roomA.region.x + ", " + p.roomA.region.y + " AND " + p.roomB.region.x + ", " + p.roomB.region.y);
+			//Debug.Log("adding passage for " + p.roomA.region.x + ", " + p.roomA.region.y + " AND " + p.roomB.region.x + ", " + p.roomB.region.y);
 			passages.Add(p);
 		}
 
@@ -298,6 +298,47 @@ namespace Assets.scripts.Mono.MapGenerator
 			return new Vector3((-regionWidth/2) + t.tileX, (-regionHeight/2) + t.tileY, 0);
 		}
 
+		public Tile GetClosestGroundTile(Vector3 pos)
+		{
+			Tile cTile = GetTileFromWorldPosition(pos);
+
+			// check direct neighbours
+			Tile t = GetTile(cTile.tileX - 1, cTile.tileY);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX - 1, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX - 1, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			Debug.LogError("couldnt find!");
+			return cTile;
+		}
+
 	    public Tile GetTileFromWorldPosition(Vector3 pos)
 	    {
 	        int x = Mathf.RoundToInt(pos.x + regionWidth/2);
@@ -327,8 +368,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			activeMonsters = new List<Monster>();
 			activeNpcs = new List<Npc>();
-			spawnedMonsters = new List<MonsterSpawnInfo>();
-			spawnedNpcs = new List<MonsterSpawnInfo>();
+			spawnableMonsters = new List<MonsterSpawnInfo>();
+			spawnableNpcs = new List<MonsterSpawnInfo>();
 
 			darknessPlane = new List<GameObject>();
 
@@ -701,8 +742,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			activeMonsters.Clear();
 			activeNpcs.Clear();
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
 
 			regions.Clear();
 			SetActive(false);
@@ -725,23 +766,23 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			try
 			{
-				foreach (MonsterSpawnInfo info in spawnedMonsters)
+				foreach (MonsterSpawnInfo info in spawnableMonsters)
 				{
 				    AddMonsterToMap(info, true);
 				}
 
-				foreach (MonsterSpawnInfo info in spawnedNpcs)
+				foreach (MonsterSpawnInfo info in spawnableNpcs)
 				{
 				    AddNpcToMap(info.MonsterId, info.SpawnPos, true);
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				Debug.LogError("error");
 			}
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
 
 			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
 			SetActive(true);
@@ -771,14 +812,14 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			DeleteDarkPlanes();
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
 
 			foreach (Monster m in activeMonsters)
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedMonsters.Add(m.SpawnInfo);
+					spawnableMonsters.Add(m.SpawnInfo);
 					m.Data.DeleteMe();
 				}
 			}
@@ -787,7 +828,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedNpcs.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
+					spawnableNpcs.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -1090,7 +1131,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			    return npc;
 			}
 
-			spawnedNpcs.Add(new MonsterSpawnInfo(monsterId, position));
+			// ulozit NPC do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
+			spawnableNpcs.Add(new MonsterSpawnInfo(monsterId, position));
 			return null;
 		}
 
@@ -1098,17 +1140,16 @@ namespace Assets.scripts.Mono.MapGenerator
 	    {
 	        if (isActive || forceSpawnNow)
 	        {
-                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false);
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false, info.level);
                 m.SetSpawnInfo(info);
 
                 RegisterMonsterToMap(m, info);
 	            return m;
 	        }
-	        else
-	        {
-                spawnedMonsters.Add(info);
-	            return null;
-	        }
+
+			// ulozit monster do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
+		    spawnableMonsters.Add(info);
+		    return null;
 	    }
 
 	    public void RegisterMonsterToMap(Monster m, MonsterSpawnInfo info=null)
@@ -1134,7 +1175,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	            m.SetSpawnInfo(info);
             }
 
-			Debug.Log("monster " + m.Name + " has now region " + m.SpawnInfo.Region.x + ", " + m.SpawnInfo.Region.y + " assigned!");
+			//Debug.Log("monster " + m.Name + " has now region " + m.SpawnInfo.Region.x + ", " + m.SpawnInfo.Region.y + " assigned!");
 
 			activeMonsters.Add(m);
 	    }
@@ -1154,6 +1195,10 @@ namespace Assets.scripts.Mono.MapGenerator
             {
                 // shouldnt happen
             }
+			else if (ch is Boss)
+			{
+				NotifyBossDied((Boss)ch);
+			}
             else if (ch is Monster)
             {
                 // this monster was added from editor and is not registered to the map - ignore its dead here
@@ -1173,6 +1218,11 @@ namespace Assets.scripts.Mono.MapGenerator
                 }
             }
 	    }
+
+		private void NotifyBossDied(Boss boss)
+		{
+			
+		}
 
 	    public void UpdateRegionStatus(MapRegion region)
 	    {
@@ -1234,12 +1284,12 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					if (pas != null)
 					{
-						Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
+						//Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
 						OpenPassage(pas);
 					}
 					else
 					{
-						Debug.LogWarning("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
+						//Debug.LogWarning("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
 					}
 				}
 			}

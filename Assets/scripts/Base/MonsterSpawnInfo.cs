@@ -14,6 +14,7 @@ namespace Assets.scripts.Base
         public MonsterId MonsterId { get; private set; }
         public Vector3 SpawnPos { get; set; }
         public MapRegion Region { get; private set; }
+	    public int level;
 
         public bool mustDieToProceed = true;
 
@@ -22,6 +23,7 @@ namespace Assets.scripts.Base
             MonsterId = id;
             SpawnPos = spawnPos;
             Region = region;
+	        level = 1;
         }
 
         public void SetRegion(MapRegion region)

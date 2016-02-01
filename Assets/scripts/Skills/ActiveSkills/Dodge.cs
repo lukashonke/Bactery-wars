@@ -14,13 +14,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public Dodge()
 		{
 			castTime = 0f;
-			reuse = 7f;
+			reuse = 1f;
 			coolDown = 0f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
 			resetMoveTarget = false;
 
-			range = 10;
+			range = 20;
 		}
 
 		public override SkillId GetSkillId()
@@ -56,10 +56,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, range, 100);
+				GetOwnerData().JumpForward(mouseDirection, range, 50);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, 100);
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, 50);
 			}
 		}
 

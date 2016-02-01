@@ -18,8 +18,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
         Lymfocyte_melee = 5,
         Lymfocyte_ranged = 6,
+		HelperCell = 7,
+		PassiveHelperCell = 8,
+		SpiderCell = 9,
+		DementCell = 10,
+		TankCell = 11,
+		TurretCell = 12,
+
+		TestBoss = 200,
 
 		TeleporterOut = 100,
-		TeleporterIn = 101
+		TeleporterIn = 101,
 	}
 }

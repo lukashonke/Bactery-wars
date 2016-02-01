@@ -44,16 +44,30 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public override void SpawnMonsters()
 		{
             Utils.Timer.StartTimer("spawnmap");
-		    foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
+		    foreach (MapRoom room in map.GetMapRooms()) 
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
                     room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 3);
 		        }
-                else if (room.region.GetParentOrSelf().Equals(room1))
-                {
-                    Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
-                }
+		        else if (room.region.GetParentOrSelf().Equals(room1))
+		        {
+			        Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+		        }
+				else if (room.region.GetParentOrSelf().Equals(room2))
+				{
+					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+				}
+				else if (room.region.GetParentOrSelf().Equals(miniboss))
+				{
+					Tile largestRoom = room.GetLargestSubRoom(true);
+
+					SpawnMonsterToRoom(MonsterId.TestBoss, largestRoom, room, 2);
+				}
+				else if (room.region.GetParentOrSelf().Equals(end))
+				{
+					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+				}
 		    }
 
             Utils.Timer.EndTimer("spawnmap");

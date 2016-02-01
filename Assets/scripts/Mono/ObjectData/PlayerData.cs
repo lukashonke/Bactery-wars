@@ -103,7 +103,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerEnter2D(Collider2D obj)
 		{
-
+			base.OnTriggerEnter2D(obj);
 		}
 
 		public override void OnTriggerExit2D(Collider2D obj)

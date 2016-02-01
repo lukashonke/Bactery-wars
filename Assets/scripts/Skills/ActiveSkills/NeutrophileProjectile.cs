@@ -95,6 +95,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (other.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
+			if (other.gameObject.GetChar() != null && !Owner.CanAttack(other.gameObject.GetChar()))
+				return;
+
 			// the only possible collisions are the projectile with target
 			ApplyEffects(Owner, other.gameObject);
 			DestroyProjectile(gameObject);

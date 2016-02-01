@@ -83,6 +83,7 @@ namespace Assets.scripts.Mono
 		public int visibleHp;
 		public int moveSpeed;
 		public int rotateSpeed;
+		public int level;
 
 		[HideInInspector] public bool isDead;
 
@@ -336,6 +337,37 @@ namespace Assets.scripts.Mono
 			currentlyVisible = b;
 		}
 
+		public struct PhysicsPush
+		{
+			public Vector2 force;
+			public ForceMode2D mode;
+
+			public PhysicsPush(Vector2 force, ForceMode2D mode)
+			{
+				this.force = force;
+				this.mode = mode;
+			}
+		}
+
+		private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
+		public void AddPhysicsPush(Vector2 force, ForceMode2D mode)
+		{
+			physicsPushes.Add(new PhysicsPush(force, mode));
+		}
+
+		public virtual void FixedUpdate()
+		{
+			if (physicsPushes.Count > 0)
+			{
+				foreach (PhysicsPush p in physicsPushes)
+				{
+					rb.AddForce(p.force, p.mode);
+				}
+
+				physicsPushes.Clear();
+			}
+		}
+
 		public virtual void Update()
 		{
 			if (currentlyVisible && !IsVisibleToPlayer)
@@ -503,7 +535,7 @@ namespace Assets.scripts.Mono
 			{
 				if (this is EnemyData)
 				{
-					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId));
+					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null));
 					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " +
 					                 ((Monster) GetOwner()).Template.GetType().Name);
 				}
@@ -930,6 +962,11 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public void SetVisibleLevel(int val)
+		{
+			level = val;
+		}
+
 		public virtual void SetIsDead(bool isDead)
 		{
 			if (isDead)
@@ -1148,8 +1185,6 @@ namespace Assets.scripts.Mono
 			{
 				Npc npc = (Npc) data.GetOwner();
 
-				Debug.Log("talking to ");
-
 				npc.Template.OnTalkTo(GetOwner());
 			}
 
@@ -1222,6 +1257,14 @@ namespace Assets.scripts.Mono
 
 		public virtual void OnCollisionEnter2D(Collision2D coll)
 		{
+			foreach (Skill sk in GetOwner().Skills.Skills)
+			{
+				if (sk is ActiveSkill)
+				{
+					((ActiveSkill)sk).OnCollision(false, coll, coll.collider);
+				}
+			}
+
 			if (targetMoveObject != null && targetMoveObject.Equals(coll.gameObject))
 			{
 				if (minRangeToTarget > -1)
@@ -1235,7 +1278,18 @@ namespace Assets.scripts.Mono
 
 		public abstract void OnCollisionExit2D(Collision2D coll);
 		public abstract void OnCollisionStay2D(Collision2D coll);
-		public abstract void OnTriggerEnter2D(Collider2D obj);
+
+		public virtual void OnTriggerEnter2D(Collider2D obj)
+		{
+			foreach (Skill sk in GetOwner().Skills.Skills)
+			{
+				if (sk is ActiveSkill)
+				{
+					((ActiveSkill)sk).OnCollision(true, null, obj);
+				}
+			}
+		}
+
 		public abstract void OnTriggerExit2D(Collider2D obj);
 		public abstract void OnTriggerStay2D(Collider2D obj);
 

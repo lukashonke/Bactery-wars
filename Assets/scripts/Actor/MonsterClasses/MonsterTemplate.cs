@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses.Base;
+using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
@@ -59,6 +61,13 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public virtual void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
 		{
 			
+		}
+
+		public virtual void InitMonsterStats(Monster m, MonsterStatus status, int level)
+		{
+			Debug.Log("level is " + level);
+			//status.MaxHp = status.MaxHp * level;
+			//m.Status.SetHp(status.MaxHp);
 		}
 
 		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)

@@ -128,7 +128,7 @@ namespace Assets.scripts.Actor
 				Skills.AddSkill(newSkill);
 
 				i++;
-				Debug.Log("adding to monster skill to " + i + ": " + newSkill.GetVisibleName());
+				//Debug.Log("adding to monster skill to " + i + ": " + newSkill.GetVisibleName());
 			}
 
 			if (Template.MeleeSkill != null)
@@ -141,6 +141,8 @@ namespace Assets.scripts.Actor
 
 			Template.InitSkillsOnMonster(Skills, MeleeSkill);
 
+			Template.InitMonsterStats(this, (MonsterStatus) Status, Level);
+
 			GroupTemplate gt = Template.GetGroupTemplate();
 			if (!isMinion && gt != null)
 			{
@@ -151,7 +153,8 @@ namespace Assets.scripts.Actor
 					{
 						Vector3 rndPos = Utils.GenerateRandomPositionAround(GetData().GetBody().transform.position, GetData().distanceToFollowLeader/2f);
 
-						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, rndPos, true);
+						//TODO cannot change level of minions - add a parameter
+						Monster mon = GameSystem.Instance.SpawnMonster(e.Key, rndPos, true, 1);
 						mon.AI.JoinGroup(this);
 					}
 				}

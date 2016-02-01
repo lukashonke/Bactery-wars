@@ -44,6 +44,7 @@ namespace Assets.scripts.Skills
 		public bool canBeCastSimultaneously;
 		public bool resetMoveTarget;
 		public bool movementAbortsSkill;
+		public bool triggersOwnerCollision;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -85,6 +86,7 @@ namespace Assets.scripts.Skills
 			MovementBreaksConfirmation = true;
 			breaksMouseMovement = true;
 			resetMoveTarget = true;
+			triggersOwnerCollision = false;
 
 			LastUsed = -1000f;
 
@@ -197,6 +199,22 @@ namespace Assets.scripts.Skills
 				AddTrait(SkillTraits.LongRange);
 		}
 
+		public void OnCollision(bool triggerOnly, Collision2D collision, Collider2D collider)
+		{
+			if (triggersOwnerCollision)
+			{
+
+				if (triggerOnly)
+				{
+					MonoCollisionEnter(GetOwnerData().GetBody(), collision);
+				}
+				else
+				{
+					MonoTriggerEnter(GetOwnerData().GetBody(), collider);
+				}
+			}
+		}
+
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
 		public override void SkillAdded()
 		{
@@ -213,7 +231,7 @@ namespace Assets.scripts.Skills
 
 			if (active)
 			{
-				Debug.Log("skill already in use");
+				//Debug.Log("skill already in use");
 				return false;
 			}
 

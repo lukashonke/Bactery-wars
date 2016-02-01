@@ -116,7 +116,7 @@ namespace Assets.scripts.AI
 			TryRambleAround();
 		}
 
-		private void ThinkActive()
+		protected virtual void ThinkActive()
 		{
 			bool stillActive = false;
 
@@ -258,7 +258,7 @@ namespace Assets.scripts.AI
 			return false;
 		}
 
-		private void ThinkAttack()
+		protected virtual void ThinkAttack()
 		{
 			SetIsWalking(false);
 
@@ -374,7 +374,7 @@ namespace Assets.scripts.AI
 			if (HasMaster())
 				return false;
 
-			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
+			if (!Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
 			{
 				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
 				{
@@ -392,7 +392,7 @@ namespace Assets.scripts.AI
 			if (HasMaster())
 				return false;
 
-			if (!Owner.GetData().HasTargetToMoveTo)
+			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo)
 			{
 				if (lastRambleTime + rambleInterval < Time.time)
 				{

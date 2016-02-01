@@ -35,7 +35,7 @@ namespace Assets.scripts.Mono
 		public GameObject settingsPanel = null;
 
 	    private List<SpawnData> adminSpawnedData;
-        private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.Lymfocyte_ranged };
+        private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.DementCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.TestBoss, MonsterId.HelperCell, MonsterId.PassiveHelperCell,  };
 	    public GameObject adminPanel;
 	    public Dropdown adminSpawnPanel;
 
@@ -248,13 +248,13 @@ namespace Assets.scripts.Mono
 					break;
 			}
 
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false);
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
 		}
 
 		public void TestSpawnMonsters2()
 		{
 			MonsterId mId = MonsterId.TestMonster;
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false);
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
 		}
 
 		public void Skill(int order)
@@ -312,7 +312,7 @@ namespace Assets.scripts.Mono
 
             if (mouseButton == 0)
             {
-                Monster m = GameSystem.Instance.SpawnMonster((MonsterId) Enum.Parse(typeof (MonsterId), adminSpawnPanel.captionText.text), position, false);
+				Monster m = GameSystem.Instance.SpawnMonster((MonsterId)Enum.Parse(typeof(MonsterId), adminSpawnPanel.captionText.text), position, false, 1);
                 WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
             }
             else if (mouseButton == 1)
@@ -362,7 +362,7 @@ namespace Assets.scripts.Mono
 	    {
 	        foreach (SpawnData data in adminSpawnedData)
 	        {
-	            Monster m = GameSystem.Instance.SpawnMonster(data.id, data.pos, false);
+				Monster m = GameSystem.Instance.SpawnMonster(data.id, data.pos, false, 1);
                 WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 	        }
 	    }

@@ -42,6 +42,10 @@ namespace Assets.scripts.Mono
 			ui = GetComponent<PlayerUI>();
 		}
 
+		public void FixedUpdate()
+		{
+		}
+
 		private void HandleSkillControls()
 		{
 			if (Input.GetKeyDown(KeyCode.Q))

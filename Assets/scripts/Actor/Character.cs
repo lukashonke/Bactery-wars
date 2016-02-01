@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
@@ -38,14 +39,23 @@ namespace Assets.scripts.Actor
 
 		public AbstractData Data { get; set; }
 
+		public int Level = 1;
 		public int Team { get; set; }
+
+		public void SetLevel(int level)
+		{
+			Level = level;
+			Data.SetVisibleLevel(level);
+		}
 
 		protected Character(string name) : base(name)
 		{
-        }
+			Level = 1;
+		}
 
 		protected Character(string name, AbstractAI ai) : base(name)
 		{
+			Level = 1;
 			AI = ai;
 		}
 
