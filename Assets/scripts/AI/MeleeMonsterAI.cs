@@ -26,9 +26,10 @@ namespace Assets.scripts.AI
 
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
+			bool forcedVelocity = Owner.GetData().forcedVelocity;
 
 			// already doing something
-			if (isCasting || currentAction != null)
+			if (isCasting || forcedVelocity || currentAction != null)
 				return;
 
 			List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
@@ -46,7 +47,7 @@ namespace Assets.scripts.AI
 			float dist = Vector3.Distance(ownerPos, targetPos);
 
 			ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
-			if (jump != null && jump.CanUse())
+			if (jump != null && jump.CanUse() && !Owner.GetData().forcedVelocity)
 			{
 				if (StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 0.5f))
 					return;

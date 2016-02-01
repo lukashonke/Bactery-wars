@@ -11,6 +11,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class JumpShort : ActiveSkill
 	{
+		public int jumpSpeed = 100;
+
 		public JumpShort()
 		{
 			castTime = 0f;
@@ -50,16 +52,29 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
+			if (castTime > 0)
+				CreateCastingEffect(true, "SkillTemplate");
+
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
+			DeleteCastingEffect();
+
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, range, 100);
+				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, 100);
+				if (initTarget != null)
+				{
+					Vector3 pos = Utils.GetDirectionVector(Owner.GetData().GetBody().transform.position, initTarget.transform.position)*-1;
+					GetOwnerData().JumpForward(pos, range, jumpSpeed);
+				}
+				else
+				{
+					GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
+				}
 			}
 		}
 

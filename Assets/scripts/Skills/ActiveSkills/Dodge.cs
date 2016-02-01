@@ -11,6 +11,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class Dodge : ActiveSkill
 	{
+		public int jumpSpeed = 50;
+
 		public Dodge()
 		{
 			castTime = 0f;
@@ -56,10 +58,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, range, 50);
+				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, 50);
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
 			}
 		}
 

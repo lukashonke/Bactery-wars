@@ -89,7 +89,6 @@ namespace Assets.scripts.Actor
 			}
 			catch (Exception)
 			{
-				Debug.LogError("error while aborting skills !");
 			}
 
 			if (this is Monster)

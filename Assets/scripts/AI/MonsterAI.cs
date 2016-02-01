@@ -608,7 +608,7 @@ namespace Assets.scripts.AI
 
 			Owner.GetData().BreakMovement(true);
 
-			if(target != null)
+			if (target != null)
 				RotateToTarget(target);
 
 			Owner.CastSkill(sk);

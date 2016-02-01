@@ -21,13 +21,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         protected override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
+			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
         }
 
 	    public override MonsterAI CreateAI(Character ch)
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
-	        ai.dodgeRate = 60;
+	        ai.dodgeRate = 75;
             return ai;
         }
 

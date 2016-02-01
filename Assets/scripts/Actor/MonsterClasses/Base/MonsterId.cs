@@ -29,5 +29,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		TeleporterOut = 100,
 		TeleporterIn = 101,
+
+		JumpCell = 13,
+		SuiciderCell = 14,
 	}
 }

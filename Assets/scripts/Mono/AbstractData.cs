@@ -109,8 +109,8 @@ namespace Assets.scripts.Mono
 		public GameObject QueueMeleeTarget { get; set; }
 		private bool fixedRotation;
 
-		protected bool allowMovePointChange;
-		protected bool forcedVelocity;
+		public bool allowMovePointChange;
+		public bool forcedVelocity;
 
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
@@ -688,13 +688,16 @@ namespace Assets.scripts.Mono
 				HasTargetToMoveTo = true;
 				ForceSetMoveDestinaton(body.transform.position + direction.normalized*dist, 0.25f);
 				ForceSetVelocity(direction.normalized*jumpSpeed, 0.25f);
+
+				Debug.DrawLine(body.transform.position, body.transform.position + direction.normalized * dist, Color.red, 1f);
+
 				UpdateHeading();
 			}
 			else
 			{
 				HasTargetToMoveTo = false;
 				SetPosition(
-					Vector3.MoveTowards(body.transform.position, body.transform.position + direction.normalized*dist, dist), false);
+				Vector3.MoveTowards(body.transform.position, body.transform.position + direction.normalized*dist, dist), false);
 				UpdateHeading();
 			}
 		}

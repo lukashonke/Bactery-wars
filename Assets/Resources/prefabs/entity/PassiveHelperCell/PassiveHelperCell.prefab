@@ -392,7 +392,7 @@ MonoBehaviour:
   movementEnabled: 1
   rotationEnabled: 1
   repathRate: 0.25
-  monsterId: 7
+  monsterId: 8
   distanceToFollowLeader: 8
 --- !u!198 &19864474
 ParticleSystem:
@@ -3578,7 +3578,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: monsterId
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Layer

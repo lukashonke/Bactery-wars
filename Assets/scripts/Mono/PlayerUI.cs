@@ -35,7 +35,7 @@ namespace Assets.scripts.Mono
 		public GameObject settingsPanel = null;
 
 	    private List<SpawnData> adminSpawnedData;
-        private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.DementCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.TestBoss, MonsterId.HelperCell, MonsterId.PassiveHelperCell,  };
+        private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.DementCell, MonsterId.JumpCell, MonsterId.TurretCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.TestBoss, MonsterId.HelperCell, MonsterId.PassiveHelperCell,  };
 	    public GameObject adminPanel;
 	    public Dropdown adminSpawnPanel;
 
