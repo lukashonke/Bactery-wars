@@ -17,7 +17,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 15;
 		}
 
-		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			meleeSkill.baseDamage = 5;
 			meleeSkill.reuse = 1f;

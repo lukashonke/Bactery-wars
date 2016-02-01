@@ -20,6 +20,8 @@ namespace Assets.scripts.Skills
 
 		public List<SkillTraits> Traits { get; private set; }
 
+		protected List<SkillEffect> additionalEffects; 
+
 		private int level;
 		public int Level
 		{
@@ -109,17 +111,38 @@ namespace Assets.scripts.Skills
 						Character targetCh = target.GetChar();
 
 						if (targetCh != null && targetCh.HasEffectAlready(ef))
-						{
-							Debug.Log(" ** not applying again " + ef.GetType().Name);
 							continue;
-						}
 					}
-
-					//Debug.Log("applying " + ef.GetType().Name);
 
 					ef.ApplyEffect(source, target);
 				}
 			}
+
+			if (additionalEffects != null)
+			{
+				foreach (SkillEffect ef in additionalEffects)
+				{
+					ef.Source = source;
+
+					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					{
+						Character targetCh = target.GetChar();
+
+						if (targetCh != null && targetCh.HasEffectAlready(ef))
+							continue;
+					}
+
+					ef.ApplyEffect(source, target);
+				}
+			}
+		}
+
+		public void AddAdditionalEffect(SkillEffect e)
+		{
+			if (additionalEffects == null)
+				additionalEffects = new List<SkillEffect>();
+
+			additionalEffects.Add(e);
 		}
 
 		public AbstractData GetOwnerData()

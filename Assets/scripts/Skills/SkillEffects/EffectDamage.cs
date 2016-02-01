@@ -33,8 +33,6 @@ namespace Assets.scripts.Skills.SkillEffects
 
 				source.OnAttack(targetCh);
 
-				Debug.Log("applied " + damage + " to target " + targetCh) ;
-
 				targetCh.ReceiveDamage(source, damage);
 			}
 		}

@@ -58,12 +58,12 @@ namespace Assets.scripts.Actor.MonsterClasses
 			AddSkillsToTemplate();
 		}
 
-		public virtual void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
+		public virtual void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			
+
 		}
 
-		public virtual void InitMonsterStats(Monster m, MonsterStatus status, int level)
+		public virtual void InitMonsterStats(Monster m, int level)
 		{
 			Debug.Log("level is " + level);
 			//status.MaxHp = status.MaxHp * level;

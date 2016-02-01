@@ -32,9 +32,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 		    return a;
 		}
 
-		public override void InitMonsterStats(Monster m, MonsterStatus status, int level)
+		public override void InitMonsterStats(Monster m, int level)
 		{
-			base.InitMonsterStats(m, status, level);
+			base.InitMonsterStats(m, level);
 		}
 
 		public override GroupTemplate GetGroupTemplate()

@@ -25,7 +25,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
 
-		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill)
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 

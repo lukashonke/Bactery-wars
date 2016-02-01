@@ -139,9 +139,9 @@ namespace Assets.scripts.Actor
 				MeleeSkill = (ActiveSkill)newSkill;
 			}
 
-			Template.InitSkillsOnMonster(Skills, MeleeSkill);
+			Template.InitSkillsOnMonster(Skills, MeleeSkill, Level);
 
-			Template.InitMonsterStats(this, (MonsterStatus) Status, Level);
+			Template.InitMonsterStats(this, Level);
 
 			GroupTemplate gt = Template.GetGroupTemplate();
 			if (!isMinion && gt != null)
