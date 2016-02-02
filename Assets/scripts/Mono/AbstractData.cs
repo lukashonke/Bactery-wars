@@ -114,6 +114,7 @@ namespace Assets.scripts.Mono
 
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
+		public bool cancelForcedVelocityOnCollision;
 
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
@@ -1300,6 +1301,11 @@ namespace Assets.scripts.Mono
 					return; // ignore, this is calculated 
 				}
 
+				BreakMovement(true);
+			}
+
+			if (forcedVelocity && cancelForcedVelocityOnCollision)
+			{
 				BreakMovement(true);
 			}
 		}

@@ -13019,6 +13019,10 @@ Prefab:
       propertyPath: m_Mass
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 11466548, guid: 77a44999fe276c243b5018b6899eb268, type: 2}
+      propertyPath: cancelForcedVelocityOnCollision
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 77a44999fe276c243b5018b6899eb268, type: 2}
   m_IsPrefabParent: 0
