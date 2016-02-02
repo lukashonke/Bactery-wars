@@ -9,6 +9,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class PushbackProjectile : ActiveSkill
 	{
 		private GameObject activeProjectile;
+		public int pushbackForce = 170;
 
         public PushbackProjectile()
 		{
@@ -84,7 +85,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoStart(GameObject gameObject)
 		{
             Vector3 pushDir = GetOwnerData().GetForwardVector(0).normalized * -1;
-            GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 170, ForceMode2D.Impulse);
+			GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * pushbackForce, ForceMode2D.Impulse);
 		}
 
 		public override void MonoDestroy(GameObject gameObject)

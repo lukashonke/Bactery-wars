@@ -571,9 +571,9 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation)
+        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, int fixedSpeed=-1)
         {
-            MoveTo(target, fixedRotation);
+            MoveTo(target, fixedRotation, fixedSpeed);
 
             yield return null;
 

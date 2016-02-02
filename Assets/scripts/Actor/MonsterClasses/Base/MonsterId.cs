@@ -35,5 +35,6 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		FourDiagShooterCell = 15,
 		ChargerCell = 16,
 		ArmoredCell = 17,
+		FloatingHelperCell = 18,
 	}
 }

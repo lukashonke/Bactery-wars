@@ -110,7 +110,9 @@ namespace Assets.scripts.Mono
 		public bool QueueMelee { get; set; }
 		public bool QueueMeleeRepeat { get; set; }
 		public GameObject QueueMeleeTarget { get; set; }
+
 		private bool fixedRotation;
+		private int fixedSpeed;
 
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
@@ -487,17 +489,20 @@ namespace Assets.scripts.Mono
 					if (move)
 					{
 						if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
+						
+						int speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
 
 						if (USE_VELOCITY_MOVEMENT)
 						{
 							Vector3 newVelocity = currentDestination - body.transform.position;
 							newVelocity.Normalize();
 
-							SetVelocity(newVelocity*moveSpeed);
+
+							SetVelocity(newVelocity * speed);
 						}
 						else
 						{
-							SetPosition(Vector3.MoveTowards(body.transform.position, currentDestination, Time.deltaTime*moveSpeed), false);
+							SetPosition(Vector3.MoveTowards(body.transform.position, currentDestination, Time.deltaTime * speed), false);
 						}
 					}
 					else
@@ -712,6 +717,7 @@ namespace Assets.scripts.Mono
 		{
 			// unfix the rotation
 			fixedRotation = false;
+			fixedSpeed = -1;
 
 			if (arrivedAtDestination)
 			{
@@ -733,6 +739,7 @@ namespace Assets.scripts.Mono
 		{
 			// unfix the rotation
 			fixedRotation = false;
+			fixedSpeed = -1;
 
 			// the player had fixed position and velocity to move to, if he is there already, unfix this
 			if (!allowMovePointChange && forcedVelocity)
@@ -944,6 +951,16 @@ namespace Assets.scripts.Mono
 		public void SetMoveSpeed(int speed)
 		{
 			moveSpeed = speed;
+		}
+
+		public void SetFixedSpeed(int speed)
+		{
+			fixedSpeed = speed;
+		}
+
+		public int GetFixedSpeed()
+		{
+			return fixedSpeed;
 		}
 
 		public void SetRotateSpeed(int speed)
@@ -1215,32 +1232,38 @@ namespace Assets.scripts.Mono
 			minRangeToTarget = range;
 		}
 
-		public void MoveTo(GameObject target)
-		{
-			if (this is PlayerData)
-			{
-				HasTargetToMoveTo = true;
-				((PlayerData) this).SetPlayersMoveToTarget(target);
-			}
-			else if (this is EnemyData)
-			{
-				HasTargetToMoveTo = true;
-				((EnemyData) this).SetMovementTarget(target); //TODO might cause problems
-			}
-		}
-
-		public bool MoveTo(Vector3 target, bool fixedRotation = false)
+		public void MoveTo(GameObject target, bool fixedRotation=false, int fixedSpeed=-1)
 		{
 			if (this is PlayerData)
 			{
 				HasTargetToMoveTo = true;
 				this.fixedRotation = fixedRotation;
+				this.fixedSpeed = fixedSpeed;
+				((PlayerData) this).SetPlayersMoveToTarget(target);
+			}
+			else if (this is EnemyData)
+			{
+				HasTargetToMoveTo = true;
+				this.fixedRotation = fixedRotation;
+				this.fixedSpeed = fixedSpeed;
+				((EnemyData) this).SetMovementTarget(target); //TODO might cause problems
+			}
+		}
+
+		public bool MoveTo(Vector3 target, bool fixedRotation = false, int fixedSpeed=-1)
+		{
+			if (this is PlayerData)
+			{
+				HasTargetToMoveTo = true;
+				this.fixedRotation = fixedRotation;
+				this.fixedSpeed = fixedSpeed;
 				return ((PlayerData) this).SetPlayersMoveToTarget(target);
 			}
 			else if (this is EnemyData)
 			{
 				HasTargetToMoveTo = true;
 				this.fixedRotation = fixedRotation;
+				this.fixedSpeed = fixedSpeed;
 				return ((EnemyData) this).SetMovementTarget(target);
 			}
 

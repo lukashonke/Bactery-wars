@@ -76,6 +76,7 @@ namespace Assets.scripts.AI
                 //TODO cancel the previous action?
 		        if (currentAction != null)
 		        {
+					Debug.Log("breaking");
 		            BreakCurrentAction();
 		        }
 
@@ -305,9 +306,9 @@ namespace Assets.scripts.AI
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected bool MoveTo(Vector3 target, bool fixedRotation=false)
+		protected bool MoveTo(Vector3 target, bool fixedRotation=false, int fixedSpeed=-1)
 		{
-			return Owner.GetData().MoveTo(target, fixedRotation);
+			return Owner.GetData().MoveTo(target, fixedRotation, fixedSpeed);
 		}
 
 		public virtual void SetMaster(Character master)
