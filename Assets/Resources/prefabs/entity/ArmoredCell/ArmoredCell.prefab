@@ -88,6 +88,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &139556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 453134}
+  - 212: {fileID: 21216728}
+  - 114: {fileID: 11413070}
+  - 61: {fileID: 6166846}
+  m_Layer: 0
+  m_Name: shield
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &159668
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,13 +171,14 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.99969625, y: -5.8312235, z: 0}
+  m_LocalPosition: {x: 2.8730388, y: -5.6017294, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_Children:
   - {fileID: 427884}
   - {fileID: 455256}
   - {fileID: 400334}
   - {fileID: 414214}
+  - {fileID: 453134}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &427884
@@ -174,6 +193,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 424148}
   m_RootOrder: 0
+--- !u!4 &453134
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139556}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.11, y: 3.02, z: 0}
+  m_LocalScale: {x: 0.90839404, y: 0.39450374, z: 0.68094254}
+  m_Children: []
+  m_Father: {fileID: 424148}
+  m_RootOrder: 4
 --- !u!4 &455256
 Transform:
   m_ObjectHideFlags: 1
@@ -241,6 +272,20 @@ CircleCollider2D:
   m_Offset: {x: -0.16, y: 0}
   serializedVersion: 2
   m_Radius: 2.14
+--- !u!61 &6166846
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139556}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: -0.1597759, y: 0.0000012087012}
+  serializedVersion: 2
+  m_Size: {x: 4.5618134, y: 4.463661}
 --- !u!95 &9586648
 Animator:
   serializedVersion: 3
@@ -319,6 +364,19 @@ MonoBehaviour:
     tagsChange: -1
     tagsSet: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+--- !u!114 &11413070
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c21722c35e2194d83a5288fa5d63b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 105476}
+  health: 50
 --- !u!114 &11427464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -390,6 +448,7 @@ MonoBehaviour:
   lastClickPositionWorld: {x: 0, y: 0, z: 0}
   allowMovePointChange: 0
   forcedVelocity: 0
+  cancelForcedVelocityOnCollision: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
@@ -3481,6 +3540,36 @@ ParticleSystemRenderer:
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
+--- !u!212 &21216728
+SpriteRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139556}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_ReflectionProbeUsage: 0
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: a385f4ba05bca384faed298a1247ddb7, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
 --- !u!212 &21218680
 SpriteRenderer:
   m_ObjectHideFlags: 1

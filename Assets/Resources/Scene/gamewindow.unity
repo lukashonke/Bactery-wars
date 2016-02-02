@@ -9819,7 +9819,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!114 &1064541409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10149,7 +10149,7 @@ Transform:
   - {fileID: 1159543941}
   - {fileID: 926347004}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!1 &1094898226
 GameObject:
   m_ObjectHideFlags: 0
@@ -10224,7 +10224,7 @@ Transform:
   m_LocalScale: {x: 155.92337, y: 155.0028, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
 --- !u!1 &1102198789
 GameObject:
   m_ObjectHideFlags: 0
@@ -14810,7 +14810,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!81 &1624055901
 AudioListener:
   m_ObjectHideFlags: 0
@@ -16834,7 +16834,7 @@ RectTransform:
   m_Children:
   - {fileID: 704368918}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -17387,6 +17387,48 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1887973763}
+--- !u!1001 &1893152252
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 2.8730388
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5.6017294
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 424148, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 753b08de6659c924eb3e949d87b8ec2a, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1899823972
 GameObject:
   m_ObjectHideFlags: 0
@@ -17472,7 +17514,7 @@ RectTransform:
   m_Children:
   - {fileID: 494238820}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -17725,7 +17767,7 @@ RectTransform:
   - {fileID: 1106409193}
   - {fileID: 1297734018}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -17760,7 +17802,7 @@ Transform:
   - {fileID: 1176918153}
   - {fileID: 456659220}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
 --- !u!108 &1941238837
 Light:
   m_ObjectHideFlags: 0
@@ -18692,7 +18734,7 @@ Transform:
   m_Children:
   - {fileID: 1903760048}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
 --- !u!114 &2056527964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19764,7 +19806,7 @@ RectTransform:
   - {fileID: 1791080482}
   - {fileID: 1819919244}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -19843,4 +19885,4 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
