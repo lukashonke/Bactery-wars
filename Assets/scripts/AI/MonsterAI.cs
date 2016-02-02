@@ -471,6 +471,9 @@ namespace Assets.scripts.AI
 
 		public override void AddAggro(Character ch, int points)
 		{
+			if(ch == null)
+				return;
+
 			if (!aggro.ContainsKey(ch))
 			{
 				aggro.Add(ch, points);

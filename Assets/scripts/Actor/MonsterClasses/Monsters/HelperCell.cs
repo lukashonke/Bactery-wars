@@ -171,4 +171,72 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			return MonsterId.PassiveHelperCell;
 		}
 	}
+
+	public class ObstacleCell : MonsterTemplate
+	{
+		public ObstacleCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 4;
+
+			IsAggressive = false;
+			AggressionRange = 30;
+			RambleAround = true;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new CoverMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.ObstacleCell;
+		}
+	}
+
+	public class IdleObstacleCell : MonsterTemplate
+	{
+		public IdleObstacleCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 4;
+
+			IsAggressive = false;
+			AggressionRange = 30;
+			RambleAround = true;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new IdleMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.IdleObstacleCell;
+		}
+	}
 }

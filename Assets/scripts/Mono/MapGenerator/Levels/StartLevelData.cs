@@ -31,9 +31,13 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-					//SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
-					//SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
-					//SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+			        MonsterSpawnInfo mob = SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, room.GetLargestSubRoom(), room);
+			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
+
+			        shield.master = mob;
+			        //SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+			        //SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+			        //SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {

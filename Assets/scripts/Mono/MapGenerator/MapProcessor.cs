@@ -78,13 +78,13 @@ namespace Assets.scripts.Mono.MapGenerator
 	        {
 				Debug.LogWarning("a map doesnt have abstractleveldata set! spawning default mobs");
 
-				foreach (MapRoom room in rooms)
+				/*foreach (MapRoom room in rooms)
 				{
 					MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, mapHolder.GetTileWorldPosition(room.tiles[25]));
 					info.SetRegion(room.region.GetParentOrSelf());
 
 					mapHolder.AddMonsterToMap(info);
-				}
+				}*/
 			}
 	    }
 

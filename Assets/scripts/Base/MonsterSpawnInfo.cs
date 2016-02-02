@@ -18,6 +18,8 @@ namespace Assets.scripts.Base
 
         public bool mustDieToProceed = true;
 
+	    public MonsterSpawnInfo master;
+
         public MonsterSpawnInfo(MonsterId id, Vector3 spawnPos, MapRegion region=null)
         {
             MonsterId = id;

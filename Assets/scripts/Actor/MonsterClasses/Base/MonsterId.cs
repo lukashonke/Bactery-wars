@@ -36,5 +36,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		ChargerCell = 16,
 		ArmoredCell = 17,
 		FloatingHelperCell = 18,
+		ObstacleCell = 19,
+		IdleObstacleCell = 20,
 	}
 }

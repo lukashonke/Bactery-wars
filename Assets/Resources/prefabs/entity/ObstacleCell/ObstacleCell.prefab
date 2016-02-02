@@ -15,8 +15,8 @@ GameObject:
   - 114: {fileID: 11439252}
   - 114: {fileID: 11401748}
   - 58: {fileID: 5895428}
-  m_Layer: 11
-  m_Name: DementCell
+  m_Layer: 0
+  m_Name: ObstacleCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 470118}
   - 212: {fileID: 21294238}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: dmg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - 4: {fileID: 414214}
   - 199: {fileID: 19927884}
   - 198: {fileID: 19868314}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Die Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ GameObject:
   - 4: {fileID: 469350}
   - 198: {fileID: 19864474}
   - 199: {fileID: 19964386}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Body Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 427884}
   - 108: {fileID: 10897012}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - 4: {fileID: 400334}
   - 212: {fileID: 21218680}
   - 114: {fileID: 11427464}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 455256}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Healthbar Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,9 +126,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 159668}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.18, y: 5, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.3730373, w: 0.9278164}
+  m_LocalPosition: {x: 0.59530944, y: 0.46065027, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_Children:
   - {fileID: 470118}
   m_Father: {fileID: 424148}
@@ -153,8 +153,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.453323, y: 1.801088, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalPosition: {x: -1.8333042, y: -5.0442896, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 1}
   m_Children:
   - {fileID: 427884}
   - {fileID: 455256}
@@ -218,7 +218,7 @@ Rigidbody2D:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 4
   m_LinearDrag: 0
   m_AngularDrag: 10
   m_GravityScale: 0
@@ -238,9 +238,9 @@ CircleCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: -0.16, y: 0}
+  m_Offset: {x: 0.06, y: -0.04}
   serializedVersion: 2
-  m_Radius: 2.14
+  m_Radius: 0.77
 --- !u!95 &9586648
 Animator:
   serializedVersion: 3
@@ -336,7 +336,7 @@ MonoBehaviour:
   percent: 0
   currentPercent: 0
   currentPercentCooldown: 0
-  distance: 2.3
+  distance: 3.44
 --- !u!114 &11439252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -395,7 +395,7 @@ MonoBehaviour:
   movementEnabled: 1
   rotationEnabled: 1
   repathRate: 0.25
-  monsterId: 10
+  monsterId: 19
   distanceToFollowLeader: 8
 --- !u!198 &19864474
 ParticleSystem:
@@ -3568,7 +3568,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 6f44da0271aa37240b6fa8f1da7d4fd6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 67dca6955220bc84790c7c32db1529bf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3581,11 +3581,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: monsterId
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Layer
-      value: 11
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_CollisionDetection

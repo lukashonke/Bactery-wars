@@ -781,6 +781,8 @@ namespace Assets.scripts.Mono.MapGenerator
 				Debug.LogError("error");
 			}
 
+			ConfigureMonstersAfterSpawn();
+
 			spawnableMonsters.Clear();
 			spawnableNpcs.Clear();
 
@@ -1119,6 +1121,34 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return npc;
 		}*/
+
+		public Monster FindMonsterBySpawnInfo(MonsterSpawnInfo info)
+		{
+			foreach (Monster m in activeMonsters)
+			{
+				if (m != null && m.SpawnInfo.Equals(info))
+					return m;
+			}
+			return null;
+		}
+
+		public void ConfigureMonstersAfterSpawn()
+		{
+			MonsterSpawnInfo spawnInfo;
+			foreach (Monster m in activeMonsters)
+			{
+				if (m == null)
+					continue;
+
+				spawnInfo = m.SpawnInfo;
+
+				if (spawnInfo.master != null)
+				{
+					Monster master = FindMonsterBySpawnInfo(spawnInfo.master);
+					m.SetMaster(master);
+				}
+			}
+		}
 
 		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
 		{

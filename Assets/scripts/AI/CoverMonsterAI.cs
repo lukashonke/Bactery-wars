@@ -11,6 +11,8 @@ namespace Assets.scripts.AI
 {
 	public class CoverMonsterAI : MonsterAI
 	{
+		public Character protectingTarget;
+
 		public CoverMonsterAI(Character o) : base(o)
 		{
 		}
@@ -24,6 +26,10 @@ namespace Assets.scripts.AI
 			if (HasMaster())
 			{
 				closestAlly = GetMaster();
+			}
+			else if (protectingTarget != null)
+			{
+				closestAlly = protectingTarget;
 			}
 			
 			if (currentAction != null)
