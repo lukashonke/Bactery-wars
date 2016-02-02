@@ -218,14 +218,14 @@ Rigidbody2D:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_UseAutoMass: 0
-  m_Mass: 3
+  m_Mass: 10
   m_LinearDrag: 0
   m_AngularDrag: 10
   m_GravityScale: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!58 &5895428
 CircleCollider2D:
@@ -388,6 +388,8 @@ MonoBehaviour:
   level: 0
   isDead: 0
   lastClickPositionWorld: {x: 0, y: 0, z: 0}
+  allowMovePointChange: 0
+  forcedVelocity: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
@@ -3585,6 +3587,14 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 4d4b609faa6305745babb4c1e4e7d362,
         type: 3}
+    - target: {fileID: 0}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Mass
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 105476}
