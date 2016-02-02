@@ -259,7 +259,7 @@ namespace Assets.scripts.Mono
 			else
 			{
 				p.Release(this);
-				Debug.LogError(p.error);
+				//Debug.LogError(p.error);
 			}
 		}
 
@@ -501,7 +501,7 @@ namespace Assets.scripts.Mono
 
 					if (rotate)
 					{
-						SetRotation(Quaternion.Slerp(body.transform.rotation, newRotation, Time.deltaTime*rotateSpeed), false);
+						SetRotation(Quaternion.Lerp(body.transform.rotation, newRotation, Time.deltaTime*rotateSpeed), false);
 					}
 
 					if (move || rotate)
@@ -686,8 +686,8 @@ namespace Assets.scripts.Mono
 			if (USE_VELOCITY_MOVEMENT)
 			{
 				HasTargetToMoveTo = true;
-				ForceSetMoveDestinaton(body.transform.position + direction.normalized*dist, 0.25f);
-				ForceSetVelocity(direction.normalized*jumpSpeed, 0.25f);
+				ForceSetMoveDestinaton(body.transform.position + direction.normalized*dist, 0.75f);
+				ForceSetVelocity(direction.normalized*jumpSpeed, 0.75f);
 
 				Debug.DrawLine(body.transform.position, body.transform.position + direction.normalized * dist, Color.red, 1f);
 
@@ -1003,6 +1003,9 @@ namespace Assets.scripts.Mono
 		{
 			foreach (GameObject o in childs.Values)
 			{
+				if (o == null)
+					continue;
+
 				if (o.name.Equals("Die Effect") || o.transform.parent != null && o.transform.parent.name.Equals("Die Effect"))
 					continue;
 

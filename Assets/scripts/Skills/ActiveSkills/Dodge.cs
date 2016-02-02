@@ -22,7 +22,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			breaksMouseMovement = false;
 			resetMoveTarget = false;
 
-			range = 20;
+			range = 10;
 		}
 
 		public override SkillId GetSkillId()

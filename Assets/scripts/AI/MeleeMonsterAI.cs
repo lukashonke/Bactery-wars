@@ -53,6 +53,13 @@ namespace Assets.scripts.AI
 					return;
 			}
 
+			ActiveSkill dmg = (ActiveSkill)GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
+			if (dmg != null && dmg.CanUse() && !Owner.GetData().forcedVelocity)
+			{
+				if (StartAction(CastSkill(target, dmg, dist, true, false, 0f, 0f), 0.5f))
+					return;
+			}
+
 			if (dodgeRate > 0 && dist > 3)
 			{
 				if (Random.Range(0, 100) < dodgeRate)

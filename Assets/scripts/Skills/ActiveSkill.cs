@@ -195,7 +195,7 @@ namespace Assets.scripts.Skills
 			if (range < 5)
 				AddTrait(SkillTraits.ShortRange);
 
-			if (range > 10)
+			if (range >= 5)
 				AddTrait(SkillTraits.LongRange);
 		}
 

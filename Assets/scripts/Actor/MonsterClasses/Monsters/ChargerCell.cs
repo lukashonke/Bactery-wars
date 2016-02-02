@@ -3,17 +3,16 @@ using Assets.scripts.AI;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
-using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
 {
-    public class SuiciderCell : MonsterTemplate
+    public class ChargerCell : MonsterTemplate
     {
-		public SuiciderCell()
+		public ChargerCell()
         {
-            MaxHp = 25;
+            MaxHp = 30;
             MaxMp = 50;
-            MaxSpeed = 6;
+            MaxSpeed = 1;
 
             IsAggressive = true;
             AggressionRange = 10;
@@ -23,15 +22,22 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         protected override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
         }
 
-		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
-		{
-			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
-			skill.DisableOriginalEffects();
-			skill.AddAdditionalEffect(new EffectKillSelf());
-			skill.AddAdditionalEffect(new EffectAuraDamage(20, 5, 10f));
-		}
+	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+	    {
+		    JumpShort skill = set.GetSkill(SkillId.JumpShort) as JumpShort;
+
+		    skill.jumpSpeed = 25;
+		    skill.range = 20;
+		    skill.reuse = 5f;
+		    skill.castTime = 2f;
+
+			CollisionDamageAttack skill2 = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+
+		    skill2.pushForce = 1000;
+	    }
 
 	    public override MonsterAI CreateAI(Character ch)
         {
@@ -46,7 +52,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         public override MonsterId GetMonsterId()
         {
-            return MonsterId.SuiciderCell;
+            return MonsterId.ChargerCell;
         }
     }
 }

@@ -24,16 +24,26 @@ namespace Assets.scripts.Skills.SkillEffects
 		{
 			Character targetCh = Utils.GetCharacter(target);
 
-			if (targetCh == null)
-				return;
-
-			if (source.CanAttack(targetCh))
+			if (targetCh == null) // target may be a Destroyable object
 			{
-				int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
+				Destroyable d = target.GetComponent<Destroyable>();
 
-				source.OnAttack(targetCh);
+				if (d != null && source.CanAttack(d))
+				{
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), null, true);
+					d.ReceiveDamage(source, damage);
+				}
+			}
+			else // target may be a character
+			{
+				if (source.CanAttack(targetCh))
+				{
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
 
-				targetCh.ReceiveDamage(source, damage);
+					source.OnAttack(targetCh);
+
+					targetCh.ReceiveDamage(source, damage);
+				}
 			}
 		}
 

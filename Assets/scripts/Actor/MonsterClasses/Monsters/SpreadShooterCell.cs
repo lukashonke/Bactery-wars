@@ -3,15 +3,14 @@ using Assets.scripts.AI;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
-using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
 {
-    public class SuiciderCell : MonsterTemplate
+    public class FourDiagShooterCell : MonsterTemplate
     {
-		public SuiciderCell()
+		public FourDiagShooterCell()
         {
-            MaxHp = 25;
+            MaxHp = 40;
             MaxMp = 50;
             MaxSpeed = 6;
 
@@ -22,20 +21,25 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         protected override void AddSkillsToTemplate()
         {
-            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround));
         }
 
-		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
-		{
-			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
-			skill.DisableOriginalEffects();
-			skill.AddAdditionalEffect(new EffectKillSelf());
-			skill.AddAdditionalEffect(new EffectAuraDamage(20, 5, 10f));
-		}
+	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+	    {
+			SkillTestProjectileAllAround skill = set.GetSkill(SkillId.SkillTestProjectileAllAround) as SkillTestProjectileAllAround;
+
+			//TODO random rotation? 
+		    skill.projectileCount = 4;
+		    skill.range = 10;
+		    skill.reuse = 3f;
+		    skill.castTime = 0.5f;
+	    }
 
 	    public override MonsterAI CreateAI(Character ch)
         {
-			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
+			RangedMonsterAI ai = new RangedMonsterAI(ch);
+		    ai.evadeChance = 50;
+		    ai.evadeInterval = 1f;
             return ai;
         }
 
@@ -46,7 +50,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         public override MonsterId GetMonsterId()
         {
-            return MonsterId.SuiciderCell;
+            return MonsterId.FourDiagShooterCell;
         }
     }
 }

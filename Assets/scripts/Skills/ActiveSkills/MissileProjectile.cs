@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -141,6 +142,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
 			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
+			Character ch = other.gameObject.GetChar();
+			if (ch != null && !Owner.CanAttack(ch))
 				return;
 
 			ApplyEffects(Owner, other.gameObject);

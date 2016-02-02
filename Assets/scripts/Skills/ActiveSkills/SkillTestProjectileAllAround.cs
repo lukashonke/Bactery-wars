@@ -6,6 +6,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectileAllAround : SkillTestProjectile
 	{
+		public int projectileCount = 12;
+
 		public SkillTestProjectileAllAround()
 		{
 			castTime = 2f;
@@ -37,7 +39,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			GameObject activeProjectile;
 
-			for (int i = 0; i < 360; i+=30)
+			for (int i = 0; i < 360; i+=(360/projectileCount))
 			{
 				activeProjectile = CreateSkillProjectile(GetName(), "projectile_blacktest_i00", true);
 

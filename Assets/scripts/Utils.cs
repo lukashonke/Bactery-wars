@@ -208,7 +208,12 @@ namespace Assets.scripts
 			AbstractData d = o.GetComponent<AbstractData>();
 
 			if (d == null)
+			{
+				/*Destroyable dest = o.GetComponent<Destroyable>();
+				if(dest != null)
+					return dest.owner.GetChar();*/
 				return null;
+			}
 
 			Character ch = d.GetOwner();
 

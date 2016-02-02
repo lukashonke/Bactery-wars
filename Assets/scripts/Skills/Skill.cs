@@ -20,7 +20,8 @@ namespace Assets.scripts.Skills
 
 		public List<SkillTraits> Traits { get; private set; }
 
-		protected List<SkillEffect> additionalEffects; 
+		protected List<SkillEffect> additionalEffects;
+		protected bool originalEffectsDisabled = false;
 
 		private int level;
 		public int Level
@@ -100,7 +101,7 @@ namespace Assets.scripts.Skills
 		{
 			SkillEffect[] efs = CreateEffects();
 
-			if (efs != null)
+			if (efs != null && !originalEffectsDisabled)
 			{
 				foreach (SkillEffect ef in efs)
 				{
@@ -135,6 +136,11 @@ namespace Assets.scripts.Skills
 					ef.ApplyEffect(source, target);
 				}
 			}
+		}
+
+		public void DisableOriginalEffects()
+		{
+			originalEffectsDisabled = true;
 		}
 
 		public void AddAdditionalEffect(SkillEffect e)

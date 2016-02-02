@@ -386,6 +386,20 @@ namespace Assets.scripts.Actor
 			GameSystem.Instance.StopTask(t);
 		}
 
+		public bool CanAttack(Destroyable destr)
+		{
+			GameObject owner = destr.owner;
+
+			if (owner == null)
+				return true;
+
+			Character ch = owner.GetChar();
+			if (ch == null)
+				return true;
+
+			return CanAttack(ch);
+		}
+
 		public bool CanAttack(Character targetCh)
 		{
 			if (targetCh.IsInteractable())

@@ -32,5 +32,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		JumpCell = 13,
 		SuiciderCell = 14,
+		FourDiagShooterCell = 15,
+		ChargerCell = 16,
+		ArmoredCell = 17,
 	}
 }
