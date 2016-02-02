@@ -90,6 +90,9 @@ namespace Assets.scripts.Mono
 		/// <summary>Vektor reprezentujici otoceni/natoceni (= heading) objektu</summary>
 		protected Vector3 heading;
 
+		// velocity saved on fixedupate - used when calculating collision damage
+		protected Vector3 lastVelocity;
+
 		// current position in world cords to move to
 		protected Vector3 targetPositionWorld;
 		protected GameObject targetMoveObject;
@@ -366,6 +369,8 @@ namespace Assets.scripts.Mono
 
 				physicsPushes.Clear();
 			}
+
+			lastVelocity = rb.velocity;
 		}
 
 		public virtual void Update()
@@ -1263,6 +1268,23 @@ namespace Assets.scripts.Mono
 
 		public virtual void OnCollisionEnter2D(Collision2D coll)
 		{
+			// hit the wall
+			if (coll.gameObject != null && coll.gameObject.name.Equals("Cave Generator"))
+			{
+				float velocity = lastVelocity.sqrMagnitude;
+
+				if (velocity > 100*100)
+				{
+					velocity = lastVelocity.magnitude;
+
+					int damage = (int) (velocity/100f*3);
+
+					Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
+
+					GetOwner().ReceiveDamage(null, damage);
+				}
+			}
+
 			foreach (Skill sk in GetOwner().Skills.Skills)
 			{
 				if (sk is ActiveSkill)

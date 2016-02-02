@@ -17,10 +17,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			castTime = 0f;
 			reuse = 1f;
-			coolDown = 0f;
+			coolDown = 0.75f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
 			resetMoveTarget = false;
+			triggersOwnerCollision = true;
 
 			range = 10;
 		}
@@ -42,7 +43,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return null;
+			return new SkillEffect[] { new EffectPushaway(500), };
 		}
 
 		public override void InitTraits()
@@ -81,14 +82,32 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		{
+		}
+
+		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
+		{
+			if (!IsActive())
+				return;
+
+			if (coll != null && coll.gameObject != null && gameObject != null)
+			{
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
+				{
+					ApplyEffects(Owner, coll.gameObject);
+				}
+			}
+		}
+
 		public override bool CanMove()
 		{
-			return !IsActive(); // cant move unless the jump is finished
+			return true; // cant move unless the jump is finished
 		}
 
 		public override bool CanRotate()
 		{
-			return CanMove();
+			return true;
 		}
 	}
 }

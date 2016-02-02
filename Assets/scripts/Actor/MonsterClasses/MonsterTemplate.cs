@@ -65,7 +65,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public virtual void InitMonsterStats(Monster m, int level)
 		{
-			Debug.Log("level is " + level);
+			//Debug.Log("level is " + level);
 			//status.MaxHp = status.MaxHp * level;
 			//m.Status.SetHp(status.MaxHp);
 		}

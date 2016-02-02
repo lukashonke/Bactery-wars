@@ -203,8 +203,7 @@ namespace Assets.scripts.Skills
 		{
 			if (triggersOwnerCollision)
 			{
-
-				if (triggerOnly)
+				if (!triggerOnly)
 				{
 					MonoCollisionEnter(GetOwnerData().GetBody(), collision);
 				}
