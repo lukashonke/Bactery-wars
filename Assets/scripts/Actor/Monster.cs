@@ -161,6 +161,28 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		public void SpawnAssociatedMonster(MonsterId id, int level)
+		{
+			MapHolder map = SpawnInfo.Map;
+
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, SpawnInfo.SpawnPos);
+			info.level = level;
+			info.SetRegion(this.SpawnInfo.Region);
+
+			map.AddMonsterToMap(info);
+		}
+
+		public void SpawnAssociatedMonster(MonsterId id, int level, Vector3 pos)
+		{
+			MapHolder map = SpawnInfo.Map;
+
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			info.level = level;
+			info.SetRegion(this.SpawnInfo.Region);
+
+			map.AddMonsterToMap(info);
+		}
+
 		public override bool IsInteractable()
 		{
 			return false;

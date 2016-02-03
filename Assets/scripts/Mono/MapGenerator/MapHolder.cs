@@ -830,7 +830,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnableNpcs.Add(new MonsterSpawnInfo(m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
+					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -1162,7 +1162,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			// ulozit NPC do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
-			spawnableNpcs.Add(new MonsterSpawnInfo(monsterId, position));
+			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterId, position));
 			return null;
 		}
 
@@ -1188,7 +1188,7 @@ namespace Assets.scripts.Mono.MapGenerator
             if (info == null)
             {
                 Vector3 pos = m.GetData().GetBody().transform.position;
-                info = new MonsterSpawnInfo(m.Template.GetMonsterId(), pos);
+                info = new MonsterSpawnInfo(this, m.Template.GetMonsterId(), pos);
 
                 MapRegion reg = GetRegionFromWorldPosition(pos);
 

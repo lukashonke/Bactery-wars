@@ -546,7 +546,9 @@ namespace Assets.scripts.Mono
 			{
 				if (this is EnemyData)
 				{
-					SetOwner(GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null));
+					Monster m = GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null);
+					SetOwner(m);
+					WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " +
 					                 ((Monster) GetOwner()).Template.GetType().Name);
 				}

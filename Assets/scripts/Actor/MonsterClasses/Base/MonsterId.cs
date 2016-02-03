@@ -38,5 +38,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		FloatingHelperCell = 18,
 		ObstacleCell = 19,
 		IdleObstacleCell = 20,
+		MorphCellBig = 21,
+		MorphCellMedium = 22,
+		MorphCellSmall = 23,
 	}
 }

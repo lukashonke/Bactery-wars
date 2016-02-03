@@ -50,7 +50,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		                try
 		                {
-							MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
+							MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
 							info.SetRegion(room.region.GetParentOrSelf());
 
 							map.AddMonsterToMap(info);
@@ -73,14 +73,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, leaderPos);
+						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Neutrophyle_Patrol, leaderPos);
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, pos);
+							info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_melee, pos);
 							info.SetRegion(room.region.GetParentOrSelf());
 							map.AddMonsterToMap(info);
 						}
@@ -88,7 +88,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, pos);
+							info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, pos);
 							info.SetRegion(room.region.GetParentOrSelf());
 							map.AddMonsterToMap(info);
 						}
@@ -103,7 +103,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Neutrophyle_Patrol, leaderPos);
+						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Neutrophyle_Patrol, leaderPos);
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 					}
@@ -119,7 +119,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_ranged, leaderPos);
+						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, leaderPos);
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 					}

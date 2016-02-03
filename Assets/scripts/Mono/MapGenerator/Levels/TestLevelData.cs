@@ -34,7 +34,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			foreach (MapRoom room in map.GetMapRooms())
 			{
-				MonsterSpawnInfo info = new MonsterSpawnInfo(MonsterId.Lymfocyte_melee, map.GetTileWorldPosition(room.tiles[25]));
+				MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_melee, map.GetTileWorldPosition(room.tiles[25]));
 				info.SetRegion(room.region.GetParentOrSelf());
 
 				map.AddMonsterToMap(info);

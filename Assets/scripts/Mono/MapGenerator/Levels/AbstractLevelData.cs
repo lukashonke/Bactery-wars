@@ -26,7 +26,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public MonsterSpawnInfo SpawnMonsterToRoom(MonsterId id, Tile roomTile, MapRoom room, int level=1)
 		{
-			MonsterSpawnInfo info = new MonsterSpawnInfo(id, map.GetTileWorldPosition(roomTile));
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, map.GetTileWorldPosition(roomTile));
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 

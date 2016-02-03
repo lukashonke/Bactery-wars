@@ -11,6 +11,7 @@ namespace Assets.scripts.Base
 {
     public class MonsterSpawnInfo
     {
+	    public MapHolder Map { get; set; }
         public MonsterId MonsterId { get; private set; }
         public Vector3 SpawnPos { get; set; }
         public MapRegion Region { get; private set; }
@@ -20,8 +21,9 @@ namespace Assets.scripts.Base
 
 	    public MonsterSpawnInfo master;
 
-        public MonsterSpawnInfo(MonsterId id, Vector3 spawnPos, MapRegion region=null)
+        public MonsterSpawnInfo(MapHolder map, MonsterId id, Vector3 spawnPos, MapRegion region=null)
         {
+	        Map = map;
             MonsterId = id;
             SpawnPos = spawnPos;
             Region = region;

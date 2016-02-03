@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
@@ -61,6 +62,12 @@ namespace Assets.scripts.Actor
 
 	    public void DoDie()
 	    {
+		    if (this is Monster)
+		    {
+			    MonsterTemplate mt = ((Monster) this).Template;
+				mt.OnDie((Monster) this);
+		    }
+
 	        GetData().SetIsDead(true);
             WorldHolder.instance.activeMap.NotifyCharacterDied(this);
             DeleteMe();

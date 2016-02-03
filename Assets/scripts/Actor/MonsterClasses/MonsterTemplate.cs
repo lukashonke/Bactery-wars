@@ -63,6 +63,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		}
 
+		public virtual void OnDie(Monster m)
+		{
+			
+		}
+
 		public virtual void InitMonsterStats(Monster m, int level)
 		{
 			//Debug.Log("level is " + level);
