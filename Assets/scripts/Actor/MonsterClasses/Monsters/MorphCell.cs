@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿using System.Collections.Generic;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Skills.Base;
@@ -75,7 +76,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void OnDie(Monster m)
 		{
-			m.SpawnAssociatedMonster(MonsterId.MorphCellSmall, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellSmall, m.Level, m.GetData().GetBody().transform.position);
+			child.AI.CopyAggroFrom(m.AI);
 		}
 
 		public override GroupTemplate GetGroupTemplate()

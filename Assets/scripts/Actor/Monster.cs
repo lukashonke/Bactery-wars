@@ -172,7 +172,7 @@ namespace Assets.scripts.Actor
 			map.AddMonsterToMap(info);
 		}
 
-		public void SpawnAssociatedMonster(MonsterId id, int level, Vector3 pos)
+		public Monster SpawnAssociatedMonster(MonsterId id, int level, Vector3 pos)
 		{
 			MapHolder map = SpawnInfo.Map;
 
@@ -180,7 +180,7 @@ namespace Assets.scripts.Actor
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 
-			map.AddMonsterToMap(info);
+			return map.AddMonsterToMap(info);
 		}
 
 		public override bool IsInteractable()

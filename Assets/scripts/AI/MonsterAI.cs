@@ -499,6 +499,17 @@ namespace Assets.scripts.AI
 			return val;
 		}
 
+		public override void CopyAggroFrom(AbstractAI sourceAi)
+		{
+			if (sourceAi is MonsterAI)
+			{
+				foreach (KeyValuePair<Character, int> e in ((MonsterAI)sourceAi).aggro)
+				{
+					AddAggro(e.Key, e.Value);
+				}
+			}
+		}
+
 		public void RemoveAggro(Character ch)
 		{
 			RemoveAggro(ch, 0);

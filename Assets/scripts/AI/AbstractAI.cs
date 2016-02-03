@@ -140,6 +140,7 @@ namespace Assets.scripts.AI
 		public abstract void AddAggro(Character ch, int points);
 		public abstract void RemoveAggro(Character ch, int points);
 		public abstract int GetAggro(Character ch);
+		public abstract void CopyAggroFrom(AbstractAI sourceAi);
 
 		private IEnumerator AITask()
 		{

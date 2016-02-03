@@ -42,5 +42,9 @@ namespace Assets.scripts.AI
 		{
 			return 0;
 		}
+
+		public override void CopyAggroFrom(AbstractAI sourceAi)
+		{
+		}
 	}
 }
