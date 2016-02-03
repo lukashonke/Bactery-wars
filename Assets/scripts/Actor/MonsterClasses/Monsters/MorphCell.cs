@@ -34,7 +34,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void OnDie(Monster m)
 		{
-			m.SpawnAssociatedMonster(MonsterId.MorphCellMedium, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellMedium, m.Level, m.GetData().GetBody().transform.position);
+			child.AI.CopyAggroFrom(m.AI);
 		}
 
 		public override GroupTemplate GetGroupTemplate()
