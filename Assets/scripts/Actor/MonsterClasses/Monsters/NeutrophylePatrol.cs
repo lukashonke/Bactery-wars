@@ -8,6 +8,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public NeutrophylePatrol()
 		{
+			Name = "Neutrophyle Patrol";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;

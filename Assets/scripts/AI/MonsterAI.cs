@@ -25,12 +25,52 @@ namespace Assets.scripts.AI
 		private float lastRambleTime;
 		private bool isWalking;
 
+		private Dictionary<string, float> timers;
+
+		private bool useTimers;
+
 		protected MonsterAI(Character o) : base(o)
 		{
 			aggro = new Dictionary<Character, int>();
 
+			useTimers = false;
+
 			IsAggressive = GetTemplate().IsAggressive;
 			AggressionRange = GetTemplate().AggressionRange;
+		}
+
+		protected void UseTimers()
+		{
+			useTimers = true;
+			timers = new Dictionary<string, float>();
+		}
+
+		public void SetTimer(string name)
+		{
+			if (!useTimers)
+				return;
+
+			if (timers.ContainsKey(name))
+			{
+				timers[name] = Time.time;
+			}
+			else
+			{
+				timers.Add(name, Time.time);
+			}
+		}
+
+		public bool GetTimer(string name, float minTimeToPass)
+		{
+			if (!useTimers)
+				return false;
+
+			float time;
+			bool found = timers.TryGetValue(name, out time);
+
+			if (!found)
+				return true;
+			return time + minTimeToPass <= Time.time;
 		}
 
 		public override void Think()
@@ -598,6 +638,35 @@ namespace Assets.scripts.AI
 
             currentAction = null;
         }
+
+		protected virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		{
+			if (!noRangeCheck && sk.range != 0)
+			{
+				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				{
+					dist = Vector3.Distance(target, Owner.GetData().transform.position);
+
+					if (moveTowardsIfRequired)
+					{
+						MoveTo(target);
+						yield return null;
+					}
+					else // too far, cant move closer - break the action
+					{
+						currentAction = null;
+						yield break;
+					}
+				}
+			}
+
+			Owner.GetData().BreakMovement(true);
+
+			RotateToTarget(target);
+
+			Owner.CastSkill(sk);
+			currentAction = null;
+		}
 
 		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{

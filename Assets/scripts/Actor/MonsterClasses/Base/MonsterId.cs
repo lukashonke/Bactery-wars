@@ -25,8 +25,6 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		TankCell = 11,
 		TurretCell = 12,
 
-		TestBoss = 200,
-
 		TeleporterOut = 100,
 		TeleporterIn = 101,
 
@@ -41,5 +39,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		MorphCellBig = 21,
 		MorphCellMedium = 22,
 		MorphCellSmall = 23,
+
+		// bosses
+		TestBoss = 200,
+		TankSpreadshooter = 201,
 	}
 }

@@ -24,18 +24,18 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			{
 				case 1:
 					start = map.GenerateDungeonRegion(0, 1, 40, true, false, false, null); // vlevo uprostred
-					room1 = map.GenerateDungeonRegion(1, 1, 40, false, true, false, null); // uprostred
+					room1 = map.GenerateDungeonRegion(1, 1, 45, false, true, false, null); // uprostred
 					miniboss = map.GenerateDungeonRegion(1, 0, 40, false, true, false, null); // dole uprostred
 
-					room2 = map.GenerateDungeonRegion(1, 2, 40, false, true, false, null); // nahore uprostred
+					room2 = map.GenerateDungeonRegion(1, 2, 45, false, true, false, null); // nahore uprostred
 					end = map.GenerateDungeonRegion(2, 2, 40, false, true, true, null); // nahore vpravo
 					break;
 				case 2:
 					start = map.GenerateDungeonRegion(0, 1, 40, true, false, false, null); // vlevo uprostred
-					room1 = map.GenerateDungeonRegion(1, 1, 40, false, true, false, null); // uprostred
+					room1 = map.GenerateDungeonRegion(1, 1, 45, false, true, false, null); // uprostred
 					miniboss = map.GenerateDungeonRegion(1, 2, 40, false, true, false, null); // nahore uprostred
 
-					room2 = map.GenerateDungeonRegion(1, 0, 40, false, true, false, null); // dole uprostred
+					room2 = map.GenerateDungeonRegion(1, 0, 45, false, true, false, null); // dole uprostred
 					end = map.GenerateDungeonRegion(2, 0, 40, false, true, true, null); // dole vpravo
 					break;
 			}
@@ -48,25 +48,55 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-                    room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 3);
+					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_CENTER, 4);
+
+			        foreach (Tile t in rooms)
+			        {
+				        if (t == null)
+					        break;
+
+				        SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
+			        }
 		        }
 		        else if (room.region.GetParentOrSelf().Equals(room1))
 		        {
 			        Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+
+					foreach (Tile t in rooms)
+					{
+						if (t == null)
+							break;
+
+						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
+					}
 		        }
 				else if (room.region.GetParentOrSelf().Equals(room2))
 				{
 					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+
+					foreach (Tile t in rooms)
+					{
+						if (t == null)
+							break;
+						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
+					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(miniboss))
 				{
 					Tile largestRoom = room.GetLargestSubRoom(true);
 
-					SpawnMonsterToRoom(MonsterId.TestBoss, largestRoom, room, 2);
+					SpawnMonsterToRoom(MonsterId.TankSpreadshooter, largestRoom, room, 1);
 				}
 				else if (room.region.GetParentOrSelf().Equals(end))
 				{
 					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+
+					foreach (Tile t in rooms)
+					{
+						if (t == null)
+							break;
+						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
+					}
 				}
 		    }
 

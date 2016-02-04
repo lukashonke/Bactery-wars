@@ -60,7 +60,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		public void AddType(MonsterTemplate t)
 		{
-			types.Add(t.GetMonsterId(), t);
+			try
+			{
+				types.Add(t.GetMonsterId(), t);
+			}
+			catch (Exception)
+			{
+				Debug.LogError("type " + t.GetMonsterId() + " already exists! ( " + t.GetType().Name + ")");
+			}
 		}
 
 		public MonsterTemplate GetType(MonsterId type)

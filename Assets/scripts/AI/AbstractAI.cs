@@ -65,7 +65,6 @@ namespace Assets.scripts.AI
 
 		private void Init()
 		{
-			AnalyzeSkills();
 			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
@@ -106,12 +105,9 @@ namespace Assets.scripts.AI
 			}
 		}
 
-		private void AnalyzeSkills()
+		public virtual void AnalyzeSkills()
 		{
-			/*foreach (Skill sk in Owner.Skills.Skills)
-			{
-				
-			}*/
+
 		}
 
 		public virtual void SetAIState(AIState st)
@@ -300,6 +296,11 @@ namespace Assets.scripts.AI
 		protected void RotateToTarget(Character target)
 		{
 			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);
+		}
+
+		protected void RotateToTarget(Vector3 target)
+		{
+			Owner.GetData().SetRotation(target, true);
 		}
 
 		protected void MoveTo(Character target)

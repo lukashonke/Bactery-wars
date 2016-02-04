@@ -159,6 +159,8 @@ namespace Assets.scripts.Actor
 					}
 				}
 			}
+
+			AI.AnalyzeSkills();
 		}
 
 		public void SpawnAssociatedMonster(MonsterId id, int level)
