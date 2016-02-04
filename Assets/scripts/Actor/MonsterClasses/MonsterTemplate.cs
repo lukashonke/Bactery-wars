@@ -19,6 +19,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public List<Skill> TemplateSkills { get; set; }
 		public ActiveSkill MeleeSkill;
 
+		public string Name { get; protected set; }
+
 		public int MaxHp { get; protected set; }
 		public int MaxMp { get; protected set; }
 		public int MaxSpeed { get; protected set; }
@@ -41,6 +43,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 			InitDefaultStats();
 
 			Init();
+
+			Name = Enum.GetName(typeof (MonsterId), GetMonsterId());
 		}
 
 		protected void InitDefaultStats()
