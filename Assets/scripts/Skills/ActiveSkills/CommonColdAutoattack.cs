@@ -13,6 +13,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private GameObject activeProjectile;
 
+		public int projectileForce = 30;
+
 		public CommonColdAutoattack()
 		{
 			castTime = 0;
@@ -87,7 +89,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector() * 20);
+				rb.velocity = (GetOwnerData().GetForwardVector() * projectileForce);
 
 				Object.Destroy(activeProjectile, 5f);
 			}

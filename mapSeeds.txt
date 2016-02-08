@@ -1,33 +1,36 @@
-StartClassic
-0 0 40 118 (s:0, 0)
+SecondLevel
+1 0 40 998 (s:0, 0)
 
-StartClassic
-0 0 40 -909 (s:0, 0)
+SecondLevel
+1 2 40 -454 (s:0, 0)
 
-StartClassic
-0 0 40 -167 (s:0, 0)
+SecondLevel
+1 0 40 940 (s:0, 0)
 
-StartClassic
-0 0 40 569 (s:0, 0)
+SecondLevel
+1 2 40 547 (s:0, 0)
 
-StartClassic
-0 0 40 949 (s:0, 0)
+SecondLevel
+1 2 40 -372 (s:0, 0)
 
-StartClassic
-0 0 40 -43 (s:0, 0)
+SecondLevel
+1 2 40 462 (s:0, 0)
 
-StartClassic
-0 0 40 -696 (s:0, 0)
+SecondLevel
+1 0 40 -771 (s:0, 0)
 
-StartClassic
-0 0 40 281 (s:0, 0)
+SecondLevel
+1 0 40 -327 (s:0, 0)
 
-StartClassic
-0 0 40 434 (s:0, 0)
+SecondLevel
+1 0 40 878 (s:0, 0)
 
-StartClassic
-0 0 40 -156 (s:0, 0)
+SecondLevel
+1 2 40 764 (s:0, 0)
 
-StartClassic
-0 0 40 987 (s:0, 0)
+SecondLevel
+1 2 40 852 (s:0, 0)
+
+SecondLevel
+1 0 40 -575 (s:0, 0)
 

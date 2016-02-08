@@ -116,6 +116,19 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
+			if (Input.GetMouseButton(0))
+			{
+				Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				Debug.DrawLine(data.GetBody().transform.position, temp, Color.blue, 2f);
+				/*if (Utils.IsNotAccessible(data.GetBody().transform.position, temp))
+				{
+
+				}
+				else
+				{
+				}*/
+			}
+
 			bool usingTouches = false;
 
 #if UNITY_STANDALONE || UNITY_EDITOR

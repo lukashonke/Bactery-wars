@@ -10,12 +10,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public TurretCell()
 		{
-			MaxHp = 30;
+			MaxHp = 15;
 			MaxMp = 50;
 			MaxSpeed = 0;
 
 			IsAggressive = true;
-			AggressionRange = 20;
+			AggressionRange = 15;
 			RambleAround = false;
 			AlertsAllies = false;
 		}
@@ -27,16 +27,15 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			/*CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+			MissileProjectile sk = set.GetSkill(SkillId.MissileProjectile) as MissileProjectile;
 
-			sk.baseDamage = 20;
-			sk.pushForce = 1000;
-			sk.reuse = 1.5f;*/
+			sk.range = AggressionRange*2;
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
 			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
+			a.loseInterestWhenOuttaRange = true;
 		    return a;
 		}
 

@@ -119,6 +119,8 @@ namespace Assets.scripts
 				return v;
 			}
 
+			Debug.LogError("couldn¨t find a position that doesnt go into walls!");
+
 			return pos;
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
@@ -126,6 +127,65 @@ namespace Assets.scripts.Actor
 				AI = InitAI();
 
 			AI.StartAITask();
+
+			CheckWalls();
+		}
+
+		private void CheckWalls()
+		{
+			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
+			{
+				Debug.LogError("im in walls!, teleporting away");
+
+				int minRange = 2;
+				int maxRange = 4;
+				int limit = 6;
+				int mainLimit = 5;
+				Vector3 currentPos = GetData().GetBody().transform.position;
+				Vector3 newPos = currentPos;
+				bool set = false;
+
+				while (!set)
+				{
+					float randX = Random.Range(minRange, maxRange);
+					float randY = Random.Range(minRange, maxRange);
+
+					if (Random.Range(0, 2) == 0)
+						randX *= -1;
+
+					if (Random.Range(0, 2) == 0)
+						randY *= -1;
+
+					Vector3 v = new Vector3(currentPos.x + randX, currentPos.y + randY, 0);
+
+					if (Utils.IsNotAccessible(v))
+						continue;
+
+					newPos = v;
+					set = true;
+
+					limit--;
+					if (limit <= 0)
+					{
+						mainLimit--;
+
+						if (mainLimit <= 0)
+							break;
+
+						maxRange *= 2;
+					}
+				}
+
+				if (set)
+				{
+					Debug.DrawLine(currentPos, newPos, Color.blue, 10f);
+					GetData().GetBody().transform.position = newPos;
+				}
+				else
+				{
+					Debug.LogError("couldnt get character " + Name + " away from walls");
+				}
+			}
 		}
 
 		public AbstractData GetData()

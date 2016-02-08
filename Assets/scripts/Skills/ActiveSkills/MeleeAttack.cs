@@ -98,7 +98,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if(meleeHit != null)
 				DeleteParticleEffect(meleeHit, 1.0f);
 
-			if (initTarget != null)
+			if (initTarget != null && !Owner.Status.IsDead)
 			{
 				// TODO check angle!!! 
 				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range + meleeMaxRangeAdd)

@@ -2,7 +2,6 @@
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills

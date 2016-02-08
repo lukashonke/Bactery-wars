@@ -30,7 +30,10 @@ namespace Assets.scripts.Mono.MapGenerator
     /// Kazdy region obvykle obsahuje jednu mistnost (MapRoom), ktera reprezentuje oblast v regionu, po ktere muze hrac chodit
     /// </summary>
 	public class MapRegion
-	{
+    {
+		// the map this region belongs to
+	    public MapHolder map;
+
 		public int Status { get; set; }
 
         public MapRegion parentRegion;
@@ -54,8 +57,9 @@ namespace Assets.scripts.Mono.MapGenerator
         public string seed;
         public bool hadRandomSeed;
 
-		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
+		public MapRegion(MapHolder map, int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
+			this.map = map;
 			this.x = x;
 			this.y = y;
 			this.regionGen = regionGen;
@@ -590,7 +594,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			AddToSceneMap(tileMap, regX, regY);
 
-			MapRegion region = new MapRegion(regX, regY, tileMap, regionGenerator);
+			MapRegion region = new MapRegion(this, regX, regY, tileMap, regionGenerator);
 			region.AssignTilesToThisRegion();
 			region.isAccessibleFromStart = true;
 			region.isStartRegion = isStartRegion;
@@ -611,7 +615,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			AddToSceneMap(tileMap, regX, regY);
 
-			MapRegion region = new MapRegion(regX, regY, tileMap, null);
+			MapRegion region = new MapRegion(this, regX, regY, tileMap, null);
 		    region.SetEmpty();
 			region.AssignTilesToThisRegion();
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
@@ -622,13 +626,15 @@ namespace Assets.scripts.Mono.MapGenerator
             return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds, sizeX, sizeY);
 		}
 
+		public const bool devSeeds = false;
+
 		public MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
 			String seed = World.seed;
 
-		    if (allowedSeeds != null)
+			if (allowedSeeds != null && !devSeeds)
 		    {
 		        seed = allowedSeeds[Random.Range(0, allowedSeeds.Length)] + "";
 		    }
@@ -655,9 +661,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		            if (i == 0 && j == 0)
 		            {
-                        parentRegion = new MapRegion(x + i, y + j, subTileMap, regionGenerator);
+                        parentRegion = new MapRegion(this, x + i, y + j, subTileMap, regionGenerator);
 
-		                parentRegion.hadRandomSeed = allowedSeeds == null;
+		                parentRegion.hadRandomSeed = (allowedSeeds == null || devSeeds);
 		                parentRegion.seed = seed;
 		                parentRegion.fillPercent = randomFillPercent;
 
@@ -670,7 +676,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		            }
 		            else
 		            {
-                        MapRegion region = new MapRegion(x+i, y+j, subTileMap, regionGenerator);
+                        MapRegion region = new MapRegion(this, x+i, y+j, subTileMap, regionGenerator);
 		                region.parentRegion = parentRegion;
 
                         region.AssignTilesToThisRegion();
@@ -1394,6 +1400,22 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        return false;
 	    }
+
+		public List<MapRegion> GetRegionsInFamilyWith(MapRegion reg)
+		{
+			List<MapRegion> list = new List<MapRegion>();
+			list.Add(reg);
+
+			foreach (MapRegion r in regions.Values)
+			{
+				if (r.IsInFamily(reg))
+				{
+					list.Add(r);
+				}
+			}
+
+			return list;
+		}
 
         /*private class MonsterSpawnInfo
         {

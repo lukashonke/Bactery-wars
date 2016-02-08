@@ -13,6 +13,12 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 		public MapRegion start, room1, room2, miniboss, end;
 
+		private static int[] startSeeds = { -564, -803, -317, 820, 592, 712, 746, 665, -888, 660, -337 };
+		private static int[] room1Seeds = { 624, 675, 946, -213, 703, 840, -180, 166, 34, 688, -50, -247, -616, -692, 561, -580, 301 };
+		private static int[] room2Seeds = { -323, -378, -856, 432, 352, 54, -111, 214, 964, -48, 606, -232, 765 };
+		private static int[] minibossSeeds = { 998, -454, 940, 547, -372, 462, -771, -327, -878, 764, 852, -575 };
+
+
 		public SecondLevelData(MapHolder holder) : base(holder)
 		{
 			type = MapType.SecondLevel;
@@ -23,20 +29,18 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			switch (Random.Range(1, 3))
 			{
 				case 1:
-					start = map.GenerateDungeonRegion(0, 1, 40, true, false, false, null); // vlevo uprostred
-					room1 = map.GenerateDungeonRegion(1, 1, 45, false, true, false, null); // uprostred
-					miniboss = map.GenerateDungeonRegion(1, 0, 40, false, true, false, null); // dole uprostred
+					start = map.GenerateDungeonRegion(0, 1, 47, true, false, false, startSeeds); // vlevo uprostred
+					room1 = map.GenerateDungeonRegion(1, 1, 43, false, true, false, room1Seeds); // uprostred
+					miniboss = map.GenerateDungeonRegion(1, 0, 40, false, true, false, minibossSeeds, 2, 1); // dole uprostred
 
-					room2 = map.GenerateDungeonRegion(1, 2, 45, false, true, false, null); // nahore uprostred
-					end = map.GenerateDungeonRegion(2, 2, 40, false, true, true, null); // nahore vpravo
+					room2 = map.GenerateDungeonRegion(1, 2, 43, false, true, true, room2Seeds, 2, 1); // nahore uprostred
 					break;
 				case 2:
-					start = map.GenerateDungeonRegion(0, 1, 40, true, false, false, null); // vlevo uprostred
-					room1 = map.GenerateDungeonRegion(1, 1, 45, false, true, false, null); // uprostred
-					miniboss = map.GenerateDungeonRegion(1, 2, 40, false, true, false, null); // nahore uprostred
+					start = map.GenerateDungeonRegion(0, 1, 47, true, false, false, startSeeds); // vlevo uprostred
+					room1 = map.GenerateDungeonRegion(1, 1, 43, false, true, false, room1Seeds); // uprostred
+					miniboss = map.GenerateDungeonRegion(1, 2, 40, false, true, false, minibossSeeds, 2, 1); // nahore uprostred
 
-					room2 = map.GenerateDungeonRegion(1, 0, 45, false, true, false, null); // dole uprostred
-					end = map.GenerateDungeonRegion(2, 0, 40, false, true, true, null); // dole vpravo
+					room2 = map.GenerateDungeonRegion(1, 0, 43, false, true, true, room2Seeds, 2, 1); // dole uprostred
 					break;
 			}
 		}
@@ -48,55 +52,46 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_CENTER, 4);
-
-			        foreach (Tile t in rooms)
-			        {
-				        if (t == null)
-					        break;
-
-				        SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
-			        }
+			        SpawnMonstersToRoom(room, MonsterId.FloatingHelperCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 1, 1);
+					SpawnMonstersToRoom(room, MonsterId.PassiveHelperCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 2, 1);
 		        }
 		        else if (room.region.GetParentOrSelf().Equals(room1))
 		        {
-			        Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
-
-					foreach (Tile t in rooms)
-					{
-						if (t == null)
-							break;
-
-						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
-					}
+			        SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER, 6, 1);
 		        }
 				else if (room.region.GetParentOrSelf().Equals(room2))
 				{
-					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
+					SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.TINY, MapRoom.DIRECTION_LEFT, 5, 1, 1, 100, false);
 
-					foreach (Tile t in rooms)
+					SpawnMonstersToRoom(room, MonsterId.TurretCell, MapRoom.RoomType.VERYLARGE, MapRoom.DIRECTION_CENTER, 1, 1);
+					SpawnMonstersToRoom(room, MonsterId.FourDiagShooterCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_LEFT, 2, 1);
+
+					Tile t = room.GetTileWithSpaceAround(5, MapRoom.DIRECTION_RIGHT);
+					MonsterSpawnInfo patrol = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, t);
+					//MonsterSpawnInfo patrol = SpawnMonstersToRoom(room, MonsterId.Neutrophyle_Patrol, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 1, 1);
+					if (patrol != null)
 					{
-						if (t == null)
-							break;
-						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
+						try
+						{
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+						}
+						catch (Exception)
+						{
+						}
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(miniboss))
 				{
-					Tile largestRoom = room.GetLargestSubRoom(true);
+					Tile largestRoom = room.GetLargestSubRoom();
 
-					SpawnMonsterToRoom(MonsterId.TankSpreadshooter, largestRoom, room, 1);
-				}
-				else if (room.region.GetParentOrSelf().Equals(end))
-				{
-					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
-
-					foreach (Tile t in rooms)
-					{
-						if (t == null)
-							break;
-						SpawnMonsterToRoom(MonsterId.FourDiagShooterCell, t, room);
-					}
+					SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, largestRoom, 1);
 				}
 		    }
 

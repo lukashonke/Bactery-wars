@@ -22,6 +22,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			baseDamage = 15;
 
+			range = 10;
+
 			//TODO add min range parameter and permit casting unless range is met
 
 			requireConfirm = true;

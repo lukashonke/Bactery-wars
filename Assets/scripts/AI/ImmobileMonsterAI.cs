@@ -14,6 +14,8 @@ namespace Assets.scripts.AI
 {
 	public class ImmobileMonsterAI : MonsterAI
 	{
+		public bool loseInterestWhenOuttaRange = false;
+
 		public ImmobileMonsterAI(Character o) : base(o)
 		{
 		}
@@ -31,6 +33,12 @@ namespace Assets.scripts.AI
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
+
+			if (loseInterestWhenOuttaRange && dist > AggressionRange*AggressionRange)
+			{
+				RemoveAggro(target);
+				return;
+			}
 
 			// already doing something
 			if (isCasting)

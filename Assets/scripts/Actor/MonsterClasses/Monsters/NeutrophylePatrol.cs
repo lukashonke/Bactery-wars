@@ -13,7 +13,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxMp = 50;
 			MaxSpeed = 10;
 
-			IsAggressive = false;
+			IsAggressive = true;
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
@@ -22,7 +22,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		protected override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CreateCoverMob));
+			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CreateCoverMob));
 		}
 
 		public override MonsterAI CreateAI(Character ch)

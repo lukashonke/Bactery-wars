@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 
@@ -113,13 +114,10 @@ namespace Assets.scripts.Mono.MapGenerator
 			return otherRoom.roomSize.CompareTo(roomSize);
 		}
 
-	    public static int DIRECTION_UP = 1;
-	    public static int DIRECTION_DOWN = 2;
-        public static int DIRECTION_RIGHT = 3;
-        public static int DIRECTION_LEFT = 4;
-		public static int DIRECTION_CENTER = 5;
-		public static int DIRECTION_CENTER_LEFT = 6;
-		public static int DIRECTION_CENTER_RIGHT = 7;
+		public Tile GetTileWithSpaceAround(int minFreeRadius, int preferredDirection)
+		{
+			return GetTilesWithSpaceAround(minFreeRadius, preferredDirection, 1)[0];
+		}
 
         public Tile[] GetTilesWithSpaceAround(int minFreeRadius, int preferredDirection, int count)
         {
@@ -131,38 +129,68 @@ namespace Assets.scripts.Mono.MapGenerator
 
             switch (preferredDirection)
             {
-                case 1:
+                case DIRECTION_UP:
                     sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
                     break;
-                case 2:
+                case DIRECTION_DOWN:
                     sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
                     break;
-                case 3:
+                case DIRECTION_RIGHT:
                     sortedTiles = sortedTiles.OrderByDescending(o => o.tileX).ToList();
                     break;
-                case 4:
-                    sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+                case DIRECTION_LEFT:
+                    sortedTiles = sortedTiles.OrderBy(o => o.tileX).ToList();
                     break;
-				case 5:
-					sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
-		            int center = sortedTiles.Count/2;
+				case DIRECTION_CENTER:
+					List<MapRegion> roomRegions = region.map.GetRegionsInFamilyWith(region);
+
+			        int smallestX = 100000000;
+			        int smallestY = 100000000;
+			        int largestX = -100000000;
+			        int largestY = -100000000;
+			        int centerX;
+			        int centerY;
+
+			        foreach (MapRegion r in roomRegions)
+			        {
+				        for (int i = 0; i < r.tileMap.GetLength(0); i++)
+				        {
+					        for (int j = 0; j < r.tileMap.GetLength(1); j++)
+					        {
+						        Tile t = r.tileMap[i, j];
+						        if (t == null)
+							        continue;
+
+						        if (t.tileX < smallestX)
+							        smallestX = t.tileX;
+								else if (t.tileX > largestX)
+									largestX = t.tileX;
+
+						        if (t.tileY < smallestY)
+							        smallestY = t.tileY;
+								else if (t.tileY > largestY)
+									largestY = t.tileY;
+					        }
+				        }
+			        }
+
+			        centerX = (smallestX + largestX) / 2;
+					centerY = (smallestY + largestY) / 2;
 
 					sortedTiles.Sort(
 					delegate(Tile t1, Tile t2)
 					{
-						int diffX1 = Math.Abs(t1.tileX - center);
-						int diffY1 = Math.Abs(t1.tileY - center);
-						int diff1 = diffX1 + diffY1;
+						int dx1 = (int)Math.Pow(t1.tileX - centerX, 2);
+						int dy1 = (int)Math.Pow(t1.tileY - centerY, 2);
 
-						int diffX2 = Math.Abs(t2.tileX - center);
-						int diffY2 = Math.Abs(t2.tileY - center);
-						int diff2 = diffX2 + diffY2;
+						int dx2 = (int)Math.Pow(t2.tileX - centerX, 2);
+						int dy2 = (int)Math.Pow(t2.tileY - centerY, 2);
 
-						return diff1.CompareTo(diff2);
+						return (dx1 + dy1).CompareTo(dx2 + dy2);
 					}
 					);
 
-		            break;
+					break;
             }
 
             int index = 0;
@@ -257,6 +285,14 @@ namespace Assets.scripts.Mono.MapGenerator
 	        return null;
 	    }
 
+		public const int DIRECTION_UP = 1;
+		public const int DIRECTION_DOWN = 2;
+		public const int DIRECTION_RIGHT = 3;
+		public const int DIRECTION_LEFT = 4;
+		public const int DIRECTION_CENTER = 5;
+		public const int DIRECTION_CENTER_LEFT = 6;
+		public const int DIRECTION_CENTER_RIGHT = 7;
+
 	    public Tile[] GetSubRooms(int minTiles, int maxRadius, int preferredDirection, int count, bool exclude=false)
 	    {
 	        Tile[] toReturn = new Tile[count];
@@ -267,18 +303,72 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        switch (preferredDirection)
 	        {
-	            case 1:
+				case DIRECTION_UP:
 	                sortedTiles = sortedTiles.OrderByDescending(o => o.tileY).ToList();
 	                break;
-	            case 2:
+				case DIRECTION_DOWN:
 	                sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
 	                break;
-	            case 3:
+	            case DIRECTION_RIGHT:
 	                sortedTiles = sortedTiles.OrderByDescending(o => o.tileX).ToList();
 	                break;
-	            case 4:
-	                sortedTiles = sortedTiles.OrderBy(o => o.tileY).ToList();
+	            case DIRECTION_LEFT:
+	                sortedTiles = sortedTiles.OrderBy(o => o.tileX).ToList();
 	                break;
+				case DIRECTION_CENTER:
+
+			        List<MapRegion> roomRegions = region.map.GetRegionsInFamilyWith(region);
+					//List<Tile> allRoomTiles = new List<Tile>();
+
+			        int smallestX = 100000000;
+			        int smallestY = 100000000;
+			        int largestX = -100000000;
+			        int largestY = -100000000;
+			        int centerX;
+			        int centerY;
+
+			        foreach (MapRegion r in roomRegions)
+			        {
+				        for (int i = 0; i < r.tileMap.GetLength(0); i++)
+				        {
+					        for (int j = 0; j < r.tileMap.GetLength(1); j++)
+					        {
+						        Tile t = r.tileMap[i, j];
+						        if (t == null)
+							        continue;
+
+						        //allRoomTiles.Add(t);
+
+						        if (t.tileX < smallestX)
+							        smallestX = t.tileX;
+								else if (t.tileX > largestX)
+									largestX = t.tileX;
+
+						        if (t.tileY < smallestY)
+							        smallestY = t.tileY;
+								else if (t.tileY > largestY)
+									largestY = t.tileY;
+					        }
+				        }
+			        }
+
+			        centerX = (smallestX + largestX) / 2;
+					centerY = (smallestY + largestY) / 2;
+
+					sortedTiles.Sort(
+					delegate(Tile t1, Tile t2)
+					{
+						int dx1 = (int)Math.Pow(t1.tileX - centerX, 2);
+						int dy1 = (int)Math.Pow(t1.tileY - centerY, 2);
+
+						int dx2 = (int)Math.Pow(t2.tileX - centerX, 2);
+						int dy2 = (int)Math.Pow(t2.tileY - centerY, 2);
+
+						return (dx1 + dy1).CompareTo(dx2 + dy2);
+					}
+					);
+
+					break;
 	        }
 
 	        int index = 0;
@@ -388,11 +478,6 @@ namespace Assets.scripts.Mono.MapGenerator
 	        }
 
 	        return false;
-	    }
-
-	    public Tile GetTileWithSpaceAround(int minFreeRadius, int preferredDirection)
-	    {
-	        return GetTilesWithSpaceAround(minFreeRadius, preferredDirection, 1)[0];
 	    }
 	}
 }

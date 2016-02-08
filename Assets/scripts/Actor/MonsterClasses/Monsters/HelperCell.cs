@@ -11,13 +11,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public HelperCell()
         {
-            MaxHp = 10;
+            MaxHp = 5;
             MaxMp = 50;
-            MaxSpeed = 10;
+            MaxSpeed = 5;
 
             IsAggressive = true;
-            AggressionRange = 10;
-            RambleAround = true;
+            AggressionRange = 20;
+            RambleAround = false;
         }
 
         protected override void AddSkillsToTemplate()
@@ -25,10 +25,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
         }
 
-        public override MonsterAI CreateAI(Character ch)
+	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+	    {
+			SkillTestProjectile skill = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+		    skill.range = 8;
+		    skill.castTime = 1f;
+	    }
+
+	    public override MonsterAI CreateAI(Character ch)
         {
             MonsterAI ai = new RangedMonsterAI(ch);
-            //ai.IsAggressive = false;
             return ai;
         }
 
@@ -147,7 +153,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxSpeed = 10;
 
 			IsAggressive = true;
-			AggressionRange = 30;
+			AggressionRange = 15;
 			RambleAround = true;
 		}
 

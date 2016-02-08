@@ -99,6 +99,8 @@ namespace Assets.scripts.AI
 
 					break;
 			}
+
+			//TODO once in 10 seconds add wall check
 		}
 
 		public Character GetMaster()
@@ -371,8 +373,16 @@ namespace Assets.scripts.AI
 
 					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
 					{
-						Vector3 rnd = Utils.GenerateFixedPositionAroundObject(master.GetData().gameObject, distToFollow-1, -90);
-						rnd.z = 0;
+						Vector3 rnd = Owner.Data.GetBody().transform.position;
+
+						try
+						{
+							rnd = Utils.GenerateFixedPositionAroundObject(master.GetData().gameObject, distToFollow - 1, -90);
+							rnd.z = 0;
+						}
+						catch (Exception)
+						{
+						}
 
 						SetIsWalking(false);
 						MoveTo(rnd);

@@ -21,7 +21,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
             start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, new[] { 118, -909, -167, 569, 949, -43, -696, 281, 434, -156, 987 }); // 0 0
 			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, new [] {-524, 862, 161, 460, -726, -167, -559, -528, -279, 743, -656}); // 0, 2
-            end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, new [] {645, 262, 900, -496, -739, -798, 892, -804, 765, 768, 690, -552, -437, 782}, 1, 2); // 0, 2
+            //end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, new [] {645, 262, 900, -496, -739, -798, 892, -804, 765, 768, 690, -552, -437, 782}, 1, 2); // 0, 2
+			end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, new[] { 768 }, 1, 2); // 0, 2
 		}
 
 		public override void SpawnMonsters()
@@ -35,36 +36,28 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
 			        shield.master = mob;*/
 
-			        SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
-			        //SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
-			        //SpawnMonsterToRoom(MonsterId.DementCell, room.GetLargestSubRoom(), room);
+			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
                     Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 2, 6);
 
+	                int count = 0;
 	                foreach (Tile t in rooms)
 	                {
 		                if (t == null)
 			                break;
 
-		                try
-		                {
-							MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, map.GetTileWorldPosition(t));
-							info.SetRegion(room.region.GetParentOrSelf());
+						if(count < 3)
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, 1);
 
-							map.AddMonsterToMap(info);
-		                }
-		                catch (Exception)
-		                {
-			                Debug.LogError("null world pos for tile " + t.tileX + ", " + t.tileY + " " + t.tileType);
-		                }
-						
+			            count ++;
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, 1);
 	                }
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
-					Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.VERYLARGE, 2, 1);
+	                Tile[] rooms = room.GetSubRooms(MapRoom.RoomType.VERYLARGE, MapRoom.DIRECTION_DOWN, 1);
 
 					foreach (Tile t in rooms)
 					{
@@ -73,28 +66,22 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Neutrophyle_Patrol, leaderPos);
-						info.SetRegion(room.region.GetParentOrSelf());
-						map.AddMonsterToMap(info);
+						MonsterSpawnInfo info = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, leaderPos, 1);
 
 						for (int i = 0; i < 2; i++)
 						{
-							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_melee, pos);
-							info.SetRegion(room.region.GetParentOrSelf());
-							map.AddMonsterToMap(info);
+							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, 1);
 						}
 
 						for (int i = 0; i < 2; i++)
 						{
-							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, pos);
-							info.SetRegion(room.region.GetParentOrSelf());
-							map.AddMonsterToMap(info);
+							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, pos, 1);
 						}
 					}
 
-					rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, 1, 2);
+	                rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 2);
 
 					foreach (Tile t in rooms)
 					{
@@ -102,13 +89,16 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 							break;
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
+						//SpawnMonsterToRoom(MonsterId.FloatingHelperCell, leaderPos, room, 1);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Neutrophyle_Patrol, leaderPos);
-						info.SetRegion(room.region.GetParentOrSelf());
-						map.AddMonsterToMap(info);
+						for (int i = 0; i < 2; i++)
+						{
+							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, 1);
+						}
 					}
 
-					rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 6, true);
+	                rooms = room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 6);
 
 					foreach (Tile t in rooms)
 					{

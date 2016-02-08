@@ -847,7 +847,7 @@ namespace Assets.scripts.Mono
 
 		public void SetRotation(Quaternion newRot, bool updateHeading)
 		{
-			if (USE_VELOCITY_MOVEMENT) // TODO looks like this workso only for players
+			if (USE_VELOCITY_MOVEMENT)
 				rb.transform.rotation = newRot;
 			else
 				body.transform.rotation = newRot;
@@ -1037,8 +1037,14 @@ namespace Assets.scripts.Mono
 				o.SetActive(false);
 			}
 
-			body.GetComponent<SpriteRenderer>().enabled = false;
-			body.GetComponent<Collider2D>().enabled = false;
+			try
+			{
+				body.GetComponent<SpriteRenderer>().enabled = false;
+				body.GetComponent<Collider2D>().enabled = false;
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		public void BreakCasting()

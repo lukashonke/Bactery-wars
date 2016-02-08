@@ -147,6 +147,9 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 
 				SetActiveLevel(newC.x, newC.y, onlyReload);
+
+				GameObject player = GameObject.Find("Player");
+				player.transform.position = WorldHolder.instance.GetStartPosition();
 			}
 
 			if (Input.GetKeyDown(KeyCode.P))
@@ -155,6 +158,9 @@ namespace Assets.scripts.Mono.MapGenerator
 				Cords newC = new Cords(c.x - 1, c.y);
 
 				SetActiveLevel(newC.x, newC.y);
+
+				GameObject player = GameObject.Find("Player");
+				player.transform.position = WorldHolder.instance.GetStartPosition();
 			}
 
             if (Input.GetKeyDown(KeyCode.S))
@@ -259,10 +265,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public string GetRandomSeed()
 		{
-			if (completelyRandomSeed)
-				return Random.Range(-1000, 1000) + "";
-
-			return allowedSeeds[Random.Range(0, allowedSeeds.Length)];
+			return Random.Range(-1000, 1000) + "";
 		}
 
 		public Vector3 GetStartPosition()
