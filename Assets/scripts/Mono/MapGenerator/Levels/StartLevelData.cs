@@ -36,7 +36,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
 			        shield.master = mob;*/
 
-			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1);
+			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).mustDieToProceed = false;
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
