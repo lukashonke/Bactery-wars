@@ -22,10 +22,10 @@ TagManager:
   - Projectiles
   - Obstacles
   - Uncollidable
-  - 
-  - 
-  - 
-  - 
+  - Summon
+  - NoLight
+  - UncollidableWithObjects
+  - CollidesOnlyWithPlayer
   - 
   - 
   - 

@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -40,6 +41,10 @@ namespace Assets.scripts.Skills
 		public float reuse;
 		public int range;
 		public int baseDamage;
+		public bool canBeCastSimultaneously;
+		public bool resetMoveTarget;
+		public bool movementAbortsSkill;
+		public bool triggersOwnerCollision;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -54,7 +59,7 @@ namespace Assets.scripts.Skills
 		public bool MovementBreaksConfirmation { get; protected set; }
 
 		/// the time when the skill was last used
-		protected int LastUsed { get; private set; }
+		public float LastUsed { get; private set; }
 
 		/// represents the vector that usually points from the player_object to the mouse direction
 		protected Vector3 mouseDirection;
@@ -67,8 +72,7 @@ namespace Assets.scripts.Skills
 
 		protected Dictionary<GameObject, Vector3> RangeChecks;
 
-		public ActiveSkill(string name, int id)
-			: base(name, id)
+		public ActiveSkill()
 		{
 			active = false;
 			state = 0;
@@ -76,10 +80,15 @@ namespace Assets.scripts.Skills
 			coolDown = 5;
 			reuse = 5;
 			updateFrequency = 0.1f;
-			rangeCheckFrequency = 0.2f;
+			rangeCheckFrequency = 0.1f;
+			canBeCastSimultaneously = false;
 			requireConfirm = false;
 			MovementBreaksConfirmation = true;
 			breaksMouseMovement = true;
+			resetMoveTarget = true;
+			triggersOwnerCollision = false;
+
+			LastUsed = -1000f;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}
@@ -112,10 +121,39 @@ namespace Assets.scripts.Skills
 		public virtual void OnBeingConfirmed()
 		{
 			if (confirmObject == null)
-				confirmObject = GetPlayerData().CreateSkillResource("Skill Template", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+			{
+				confirmObject = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+				UpdateDirectionArrowScale(range > 0 ? range : 5, confirmObject);
+			}
 
+			//UpdateParticleSystemRange(range, confirmObject.GetComponent<ParticleSystem>());
 			UpdateMouseDirection(confirmObject.transform);
-			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			RotateArrowToMouseDirection(confirmObject, 0);
+		}
+
+		protected void RotateArrowToMouseDirection(GameObject o, int plusAngle)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(-mouseDirection, Vector3.forward);
+			newRotation.z = newRotation.z + plusAngle;
+			newRotation.x = 0;
+			newRotation.y = 0;
+			confirmObject.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
+		}
+
+		protected void UpdateDirectionArrowScale(int range, GameObject o)
+		{
+			if (range > 10)
+				range = 10;
+
+			o.transform.localScale = new Vector3(0.24f, 0.145f*range, 0);
+		}
+
+		protected void UpdateParticleSystemRange(int range, ParticleSystem ps)
+		{
+			// 5 dist = 1
+			ps.startLifetime = 1;
+			ps.startSpeed = (range);
+			Debug.DrawRay(GetOwnerData().shootingPosition.transform.position, new Vector3(5, 0, 0), Color.red, 10f);
 		}
 
 		public virtual void CancelConfirmation()
@@ -138,6 +176,7 @@ namespace Assets.scripts.Skills
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 		public virtual void OnAfterEnd() { }
+		public virtual void OnAterReuse() { }
 
 		protected override void InitDynamicTraits()
 		{
@@ -156,8 +195,23 @@ namespace Assets.scripts.Skills
 			if (range < 5)
 				AddTrait(SkillTraits.ShortRange);
 
-			if (range > 10)
+			if (range >= 5)
 				AddTrait(SkillTraits.LongRange);
+		}
+
+		public void OnCollision(bool triggerOnly, Collision2D collision, Collider2D collider)
+		{
+			if (triggersOwnerCollision)
+			{
+				if (!triggerOnly)
+				{
+					MonoCollisionEnter(GetOwnerData().GetBody(), collision);
+				}
+				else
+				{
+					MonoTriggerEnter(GetOwnerData().GetBody(), collider);
+				}
+			}
 		}
 
 		/// called when the skill is added to the player (useful mostly for passive skills to active effects)
@@ -170,22 +224,22 @@ namespace Assets.scripts.Skills
 		{
 			if (Owner == null)
 			{
-				Debug.LogError("Error: skill ID " + Id + " nema nastavenyho majitele skillu - nelze ho castit");
+				Debug.LogError("Error: skill ID " + Enum.GetName(typeof(SkillId), GetSkillId()) + " nema nastavenyho majitele skillu - nelze ho castit");
 				return false;
 			}
 
 			if (active)
 			{
-				Debug.Log("skill already in use");
+				//Debug.Log("skill already in use");
 				return false;
 			}
 
 			if (reuse > 0)
 			{
-				int time = Environment.TickCount;
+				float time = Time.time;
 
 				// the reuse time has passed
-				if (LastUsed + (reuse * 1000) < time)
+				if (LastUsed + (GetReuse()) < time)
 				{
 					return true;
 				}
@@ -193,7 +247,7 @@ namespace Assets.scripts.Skills
 			else
 				return true;
 
-			Debug.Log("the skill is still being reused");
+			//Debug.Log("the skill is still being reused");
 			// not yet
 			return false;
 		}
@@ -227,7 +281,8 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override void SetReuseTimer()
 		{
-			LastUsed = Environment.TickCount;
+			LastUsed = Time.time;
+			GetOwnerData().SetSkillReuseTimer(this);
 		}
 
 		public void Start(Vector3 inputPosition)
@@ -240,6 +295,27 @@ namespace Assets.scripts.Skills
 		{
 			initTarget = target;
 			Start();
+		}
+
+		// only player can call this method!
+		public bool DoAutoattack()
+		{
+			if (GetPlayerData().autoAttackTargetting && state == SkillState.SKILL_IDLE)
+			{
+				// the player has another skill waiting to be confirmed -> set this skil back to idle
+				if (GetPlayerData().ActiveConfirmationSkill != null &&
+				    GetPlayerData().ActiveConfirmationSkill.state == SkillState.SKILL_CONFIRMING)
+				{
+					GetPlayerData().ActiveConfirmationSkill.AbortCast();
+				}
+
+				GetPlayerData().ActiveConfirmationSkill = this;
+				state = SkillState.SKILL_CONFIRMING;
+				return false;
+			}
+
+			Owner.CastSkill(this);
+			return true;
 		}
 
 		public override void Start()
@@ -289,6 +365,11 @@ namespace Assets.scripts.Skills
 			if (Owner.Status.IsStunned())
 				return;
 
+			if (resetMoveTarget && GetPlayerData() != null && GetPlayerData().castingBreaksMovement)
+			{
+				GetOwnerData().HasTargetToMoveTo = false;
+			}
+
 			// start the reuse timer
 			SetReuseTimer();
 
@@ -309,6 +390,8 @@ namespace Assets.scripts.Skills
 		{
 			active = false;
 
+			initTarget = null;
+
 			Owner.Status.ActiveSkills.Remove(this);
 
 			Owner.NotifyCastingModeChange();
@@ -316,22 +399,43 @@ namespace Assets.scripts.Skills
 			UpdateTask = null;
 			Task = null;
 
+			state = SkillState.SKILL_IDLE;
+
 			OnAfterEnd();
+
+			if (GetReuse() > 0)
+				Owner.StartTask(NotifyReuseEnd());
+		}
+
+		private IEnumerator NotifyReuseEnd()
+		{
+			yield return new WaitForSeconds(GetReuse());
+			OnAterReuse();
 		}
 
 		public override void AbortCast()
 		{
-			if (state == SkillState.SKILL_CONFIRMING)
+			if (IsActive())
 			{
-				GetPlayerData().ActiveConfirmationSkill = null;
-				CancelConfirmation();
-				state = SkillState.SKILL_IDLE;
-				return;
+				OnFinish();
 			}
 
-			Owner.StopTask(Task);
+			//if (IsBeingCasted())
+			{
+				DeleteCastingEffect();
 
-			End();
+				if (state == SkillState.SKILL_CONFIRMING)
+				{
+					GetPlayerData().ActiveConfirmationSkill = null;
+					CancelConfirmation();
+					state = SkillState.SKILL_IDLE;
+					return;
+				}
+
+				Owner.StopTask(Task);
+
+				End();
+			}
 		}
 
 		protected virtual IEnumerator SkillTask()
@@ -344,12 +448,10 @@ namespace Assets.scripts.Skills
 			if (!OnCastStart())
 			{
 				OnAbort();
-				yield break; //TODO test!
+				yield break;
 			}
 
-			float castTime = this.castTime;
-
-			// TODO apply debuffs, etc here
+			float castTime = GetCastTime();
 
 			if (castTime > 0)
 			{
@@ -360,6 +462,8 @@ namespace Assets.scripts.Skills
 			state = SkillState.SKILL_ACTIVE;
 
 			OnLaunch();
+
+            //TODO if player dies he finishes casting anyway
 
 			float coolDown = this.coolDown;
 
@@ -382,13 +486,20 @@ namespace Assets.scripts.Skills
 
 		protected virtual IEnumerator StartUpdateTask()
 		{
-			while (active)
+			while (active || ReceiveUpdateMethod())
 			{
 				yield return new WaitForSeconds(updateFrequency);
-				UpdateLaunched();
+
+				if (GetOwnerData() != null && GetOwnerData().GetBody() != null)
+					UpdateLaunched();
 			}
 
 			yield return null;
+		}
+
+		protected virtual bool ReceiveUpdateMethod()
+		{
+			return false;
 		}
 
 		protected IEnumerator RangeTaskCheck()
@@ -411,7 +522,7 @@ namespace Assets.scripts.Skills
 
 			if (us == null)
 			{
-				Debug.LogError("a projectile doesnt have UpdateSender " + Name + "; adding it automatically");
+				Debug.LogError("a projectile doesnt have UpdateSender " + GetName() + "; adding it automatically");
 				obj.AddComponent<UpdateSender>().target = this;
 			}
 			else
@@ -421,9 +532,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Loads a prefab template from resources folder (does not instantiate it)
 		/// </summary>
-		protected GameObject LoadSkillResource(string particleObjectName)
+		protected GameObject LoadSkillResource(string objectName)
 		{
-			GameObject o = GetOwnerData().LoadResource("skill", Name, particleObjectName);
+			GameObject o = GetOwnerData().LoadResource("skill", GetName(), objectName);
 
 			return o;
 		}
@@ -431,9 +542,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Instantiates GameObject and optionally makes it a child (moves with the player)
 		/// </summary>
-		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver)
+		protected GameObject CreateSkillObject(string objectName, bool makeChild, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetBody().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), objectName, makeChild, GetOwnerData().GetBody().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -444,9 +555,9 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Instantiates GameObject into defined position and optionally makes it a child (moves with the player)
 		/// </summary>
-		protected GameObject CreateSkillObject(string particleObjectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
+		protected GameObject CreateSkillObject(string objectName, bool makeChild, bool addMonoReceiver, Vector3 spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), objectName, makeChild, spawnPosition);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -459,7 +570,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -483,7 +594,7 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, projectileObjectName, false, spawnPosition.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -514,13 +625,13 @@ namespace Assets.scripts.Skills
 		/// <param name="makeChild">The particle effect position will move with player</param>
 		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
 		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(Name, particleObjectName, makeChild, spawnPosition);
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
 			return o;
 		}
 
@@ -585,7 +696,7 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("couldnt play particle effect " + Name);
+				Debug.LogError("couldnt play particle effect " + GetName());
 			}
 		}
 
@@ -603,7 +714,7 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("couldnt pause particle effect" + Name);
+				Debug.LogError("couldnt pause particle effect" + GetName());
 			}
 		}
 
@@ -681,6 +792,9 @@ namespace Assets.scripts.Skills
 
 		protected void DestroyProjectile(GameObject proj)
 		{
+			if (proj == null)
+				return;
+
 			ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
 			if(pd != null)
 				pd.collapse();
@@ -754,5 +868,35 @@ namespace Assets.scripts.Skills
 
 			return totalDamageOutput;
 		}
+
+		public virtual void OnMove()
+		{
+			
+		}
+
+		public float GetReuse()
+		{
+			float reuse = this.reuse;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillReuse(this, ref reuse);
+			}
+			return reuse;
+		}
+
+		public float GetCastTime()
+		{
+			float casttime = this.castTime;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillCasttime(this, ref casttime);
+			}
+
+			return casttime;
+		}
+
+		//TODO finish this for other params too
 	}
 }

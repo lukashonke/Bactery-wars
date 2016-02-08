@@ -1,11 +1,12 @@
-﻿using Assets.scripts.Skills.SkillEffects;
+﻿using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SkillTestProjectileTriple : SkillTestProjectile
 	{
-		public SkillTestProjectileTriple(string name, int id) : base(name, id)
+		public SkillTestProjectileTriple()
 		{
 			castTime = 0;
 			reuse = 0.5f;
@@ -15,31 +16,44 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillTestProjectileTriple;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Triple Projectile";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectileTriple(Name, Id);
+			return new SkillTestProjectileTriple();
 		}
 
 		public override void OnBeingConfirmed()
 		{
 			if (confirmObject == null)
 			{
-				confirmObject = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-
+				confirmObject = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
 				UpdateMouseDirection(confirmObject.transform);
-				confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+				UpdateDirectionArrowScale(range, confirmObject);
+				RotateArrowToMouseDirection(confirmObject, 0);
 
-				GameObject arrow2 = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-				arrow2.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, -15));
-				arrow2.transform.parent = confirmObject.transform;
+				/*GameObject arrow2 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				RotateArrowToMouseDirection(arrow2, -15);
+				arrow2.transform.parent = GetOwnerData().GetBody().transform;
+				UpdateDirectionArrowScale(range, arrow2);
 
-				GameObject arrow3 = GetPlayerData().CreateSkillResource("Test Projectile", "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
-				arrow3.transform.rotation = Utils.GetRotationToDirectionVector(Utils.RotateDirectionVector(mouseDirection, 15));
-				arrow3.transform.parent = confirmObject.transform;
+				GameObject arrow3 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
+				RotateArrowToMouseDirection(arrow3, 15);
+				arrow3.transform.parent = GetOwnerData().GetBody().transform;
+				UpdateDirectionArrowScale(range, arrow3);*/
 			}
 
 			UpdateMouseDirection(confirmObject.transform);
-			confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			//confirmObject.transform.rotation = Utils.GetRotationToDirectionVector(mouseDirection);
+			RotateArrowToMouseDirection(confirmObject, 0);
 		}
 
 		public override void OnLaunch()
@@ -54,7 +68,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			int angle = -15;
 			for (int i = 0; i < 3; i++)
 			{
-				activeProjectile = CreateSkillProjectile("Test Projectile", "projectile_blacktest_i00", true);
+				activeProjectile = CreateSkillProjectile(GetName(), "projectile_blacktest_i00", true);
 
 				if (activeProjectile != null)
 				{

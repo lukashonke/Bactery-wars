@@ -12,6 +12,7 @@ namespace Assets.scripts
 	{
 		public GameObject prefabToSpawn;
 
+        public bool fogOfWar;
 		public const bool DEV_BUILD = true;
 		public bool isAndroid;
 
@@ -33,6 +34,18 @@ namespace Assets.scripts
 				}
 			}
 
+			try
+			{
+				if(isAndroid == false)
+					GameObject.Find("SettingsMenu").GetComponent<Canvas>().enabled = true;
+				if(isAndroid)
+					GameObject.Find("SettingsMenu_Mobile").GetComponent<Canvas>().enabled = true;
+			}
+			catch (Exception)
+			{
+				
+			}
+
 			Input.simulateMouseWithTouches = false;
 
 			GameSystem.Instance.Start(this);
@@ -48,7 +61,7 @@ namespace Assets.scripts
 
 		public void SpawnTestMob()
 		{
-			GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
+			//GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
 		}
 	}
 }

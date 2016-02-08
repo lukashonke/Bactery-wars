@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
@@ -53,17 +55,12 @@ namespace Assets.scripts
 
 		private int lastPlayerId = 0;
 
-
 		// starts the game, loads data, etc
 		public void Start(GameController gc)
 		{
 			Controller = gc;
-
-            Debug.Log("gamesystem initnut");
 		}
 
-		// Handles real-time updates
-		// called every frame
 		public void Update()
 		{
 			
@@ -91,7 +88,6 @@ namespace Assets.scripts
 			ap.Scan();
 		}
 
-		// Methods
 		public Player RegisterNewPlayer(PlayerData data, String name)
 		{
 			ClassId cId = (ClassId) Enum.Parse(typeof (ClassId), GameSession.className);
@@ -118,7 +114,7 @@ namespace Assets.scripts
 				player.Team = 4;
 			}
 
-			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.ClassId);
+			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.GetClassId());
 
 			player.InitTemplate();
 
@@ -129,25 +125,48 @@ namespace Assets.scripts
 			return player;
 		}
 
-		public Monster RegisterNewMonster(EnemyData data, String name, int id)
+		public Monster RegisterNewMonster(EnemyData data, String name, int id, int level, Dictionary<string, string> parameters)
 		{
-			Monster monster = null;
+			Monster monster;
 
 			MonsterId mId = (MonsterId) Enum.Parse(typeof (MonsterId), ""+id);
-			monster = new Monster(name, data, MonsterTemplateTable.Instance.GetType(mId));
+			MonsterTemplate mt = MonsterTemplateTable.Instance.GetType(mId);
+
+			if (mt is BossTemplate)
+			{
+				monster = new Boss(name, data, (BossTemplate) mt);
+			}
+			else
+			{
+				monster = new Monster(name, data, mt);
+			}
+			
+			data.SetOwner(monster);
+			monster.SetLevel(level);
 
 			monster.Init();
-
 			monster.InitTemplate();
 
 			return monster;
 		}
 
-		public Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion)
+		//TODO make use of parameters dictionary to pass level, etc
+		private Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion, int level, Dictionary<string, string> parameters=null)
 		{
-			Monster monster = null;
-			monster = new Monster(id.ToString(), data, MonsterTemplateTable.Instance.GetType(id));
+			Monster monster;
+			MonsterTemplate mt = MonsterTemplateTable.Instance.GetType(id);
+
+			if (mt is BossTemplate)
+			{
+				monster = new Boss(id.ToString(), data, (BossTemplate) mt);
+			}
+			else
+			{
+				monster = new Monster(id.ToString(), data, mt);	
+			}
+			
 			data.SetOwner(monster);
+			monster.SetLevel(level);
 			monster.Init();
 
 			monster.isMinion = isMinion;
@@ -171,9 +190,7 @@ namespace Assets.scripts
 
 		public Npc SpawnNpc(MonsterId id, Vector3 position)
 		{
-			Debug.Log("spawning, is minion is ");
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
-
 			if (go == null)
 				throw new NullReferenceException("Prefabs/entity/" + id.ToString() + "/" + id);
 
@@ -183,25 +200,41 @@ namespace Assets.scripts
 			return RegisterNewNpc(data, id);
 		}
 
-		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion, int team)
+		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion, int level, int team=0)
 		{
-			Monster m = SpawnMonster(id, position, isMinion);
-			m.Team = team;
-			return m;
-		}
-
-		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion)
-		{
-			Debug.Log("spawning, is minion is " + isMinion);
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
-
 			if (go == null)
 				throw new NullReferenceException("Prefabs/entity/" + id.ToString() + "/" + id);
 
 			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
 			EnemyData data = result.GetComponent<EnemyData>();
 
-			return RegisterNewMonster(data, id, isMinion);
+			Monster m = RegisterNewMonster(data, id, isMinion, level);
+			if (team > 0)
+				m.Team = team;
+
+			return m;
+		}
+
+		public Boss SpawnBoss(MonsterId id, Vector3 position, int level)
+		{
+			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
+			if (go == null)
+				throw new NullReferenceException("Prefabs/entity/" + id.ToString() + "/" + id);
+
+			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
+			EnemyData data = result.GetComponent<EnemyData>();
+
+			Monster m = RegisterNewMonster(data, id, false, level);
+			if (m is Boss)
+			{
+				return (Boss) m;
+			}
+			else
+			{
+				Debug.LogError("tried to spawn boss - but it was a monster ! fix it in data");
+				throw new NullReferenceException();
+			}
 		}
 	}
 }

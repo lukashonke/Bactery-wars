@@ -17,8 +17,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private readonly float radiusForChainedTargets = 20;
 		private readonly int speed = 15;
 
-		public ChainedProjectile(string name, int id)
-			: base(name, id)
+		public ChainedProjectile()
 		{
 			castTime = 1f;
 			reuse = 0;
@@ -29,9 +28,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.ChainedProjectile;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Chained Projectile";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new ChainedProjectile(Name, Id);
+			return new ChainedProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()

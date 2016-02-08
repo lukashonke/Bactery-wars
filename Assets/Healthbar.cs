@@ -1,21 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.scripts;
+using Assets.scripts.Mono;
+using Assets.scripts.Skills;
 
 public class Healthbar : MonoBehaviour
 {
+	private AbstractData ownerData;
+
 	public GameObject dmg;
 	public int hp;
 	public int maxHp;
 
 	public int percent;
 	public int currentPercent;
+	public int currentPercentCooldown;
 
 	public float distance = 1.5f;
 
 	private GameObject center;
 
+	private GameObject cooldownBar;
+	private GameObject cooldownMarker;
+
 	void Start()
 	{
+		ownerData = transform.parent.gameObject.GetData();
+
 		foreach (Transform child in transform.parent.transform)
 		{
 			if (child.gameObject.name.Equals("Healthbar Center"))
@@ -24,7 +35,28 @@ public class Healthbar : MonoBehaviour
 				break;
 			}
 		}
+
+		foreach (Transform child in transform)
+		{
+			if (child.gameObject.name.Equals("AutoattackCooldown"))
+			{
+				cooldownBar = child.gameObject;
+
+				foreach (Transform t in cooldownBar.transform)
+				{
+					if (t.gameObject.name.Equals("cooldown"))
+					{
+						cooldownMarker = t.gameObject;
+						mat = cooldownMarker.GetComponent<SpriteRenderer>().material;
+						break;
+					}
+				}
+				break;
+			}
+		}
 	}
+
+	private Material mat;
 
 	// Update is called once per frame
 	void Update ()
@@ -47,6 +79,39 @@ public class Healthbar : MonoBehaviour
 		{
 			dmg.transform.localScale = new Vector3(0.0341f*percent, 0.68f, 0);
 			currentPercent = percent;
+		}
+
+		if (cooldownBar != null)
+		{
+			ActiveSkill sk = ownerData.GetOwner().MeleeSkill;
+
+			float lastUse = sk.LastUsed;
+			float reuse = sk.GetReuse();
+
+			float passed = Time.time - lastUse;
+			float ratio = passed / reuse;
+
+			//Debug.Log(ratio);
+
+			percent = (int)(ratio * 100);
+
+			if (percent > 100)
+				percent = 100;
+
+			if (currentPercentCooldown != percent)
+			{
+				if (percent == 100)
+				{
+					mat.SetColor("_Color", new Color(227 / 255f, 176 / 255f, 57 / 255f, 187 / 255f));
+				}
+				else if(currentPercentCooldown == 100)
+				{
+					mat.SetColor("_Color", new Color(176 / 255f, 145 / 255f, 73 / 255f, 187 / 255f));
+				}
+
+				cooldownMarker.transform.localScale = new Vector3(0.0341f * percent, 0.68f, 0);
+				currentPercentCooldown = percent;
+			}
 		}
 	}
 }

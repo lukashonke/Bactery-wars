@@ -22,23 +22,37 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void ApplyEffect(Character source, GameObject target)
 		{
-			AbstractData data = target.GetComponentInParent<AbstractData>();
+			Character targetCh = Utils.GetCharacter(target);
 
-			if (data == null)
-				return;
-
-			Character targetCh = data.GetOwner();
-
-			if (targetCh == null)
-				return;
-
-			if (source.CanAttack(targetCh))
+			if (targetCh == null) // target may be a Destroyable object
 			{
-				if (RandomOffset > 0)
-					targetCh.ReceiveDamage(source, Dmg + Random.Range(-RandomOffset, RandomOffset));
-				else
-					targetCh.ReceiveDamage(source, Dmg);
+				Destroyable d = target.GetComponent<Destroyable>();
+
+				if (d != null && source.CanAttack(d))
+				{
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), null, true);
+					d.ReceiveDamage(source, damage);
+				}
 			}
+			else // target may be a character
+			{
+				if (source.CanAttack(targetCh))
+				{
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
+
+					source.OnAttack(targetCh);
+
+					targetCh.ReceiveDamage(source, damage);
+				}
+			}
+		}
+
+		public override void Update()
+		{
+		}
+
+		public override void OnRemove()
+		{
 		}
 	}
 }

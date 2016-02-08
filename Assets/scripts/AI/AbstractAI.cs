@@ -20,13 +20,17 @@ namespace Assets.scripts.AI
 		public float ThinkInterval { get; set; }
 		private bool active;
 		private Coroutine mainTask;
+
 		protected Coroutine currentAction;
+	    protected bool currentActionCancelable;
 
 		private Character MainTarget { get; set; }
 		protected List<Character> Targets { get; private set; }
 
 		public bool IsGroupLeader { get; set; }
 		public AIGroup Group { get; set; }
+
+		protected Vector3 homeLocation;
 
 		protected AbstractAI(Character o)
 		{
@@ -61,13 +65,27 @@ namespace Assets.scripts.AI
 
 		private void Init()
 		{
-			AnalyzeSkills();
+			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
-		protected void StartAction(IEnumerator task, float timeLimit)
+		protected bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
 		{
-			currentAction = Owner.StartTask(task);
-			Owner.StartTask(ActionTimeLimit(timeLimit));
+		    if (currentAction == null || currentActionCancelable || forceReplace)
+		    {
+                //TODO cancel the previous action?
+		        if (currentAction != null)
+		        {
+					Debug.Log("breaking");
+		            BreakCurrentAction();
+		        }
+
+                currentAction = Owner.StartTask(task);
+                currentActionCancelable = canBeCancelled;
+                Owner.StartTask(ActionTimeLimit(timeLimit));
+		        return true;
+            }
+
+		    return false;
 		}
 
 		private IEnumerator ActionTimeLimit(float timeLimit)
@@ -81,16 +99,15 @@ namespace Assets.scripts.AI
 			if (currentAction != null)
 			{
 				Owner.StopTask(currentAction);
+
 				currentAction = null;
+			    currentActionCancelable = true;
 			}
 		}
 
-		private void AnalyzeSkills()
+		public virtual void AnalyzeSkills()
 		{
-			/*foreach (Skill sk in Owner.Skills.Skills)
-			{
-				
-			}*/
+
 		}
 
 		public virtual void SetAIState(AIState st)
@@ -118,6 +135,8 @@ namespace Assets.scripts.AI
 		protected abstract void OnSwitchAttacking();
 		public abstract void AddAggro(Character ch, int points);
 		public abstract void RemoveAggro(Character ch, int points);
+		public abstract int GetAggro(Character ch);
+		public abstract void CopyAggroFrom(AbstractAI sourceAi);
 
 		private IEnumerator AITask()
 		{
@@ -245,6 +264,11 @@ namespace Assets.scripts.AI
 			return skills;
 		}
 
+		public bool HasMeleeSkill()
+		{
+			return Owner.MeleeSkill != null;
+		}
+
 		public List<Skill> GetAllSkillsWithTrait(params SkillTraits[] traits)
 		{
 			bool containsAll;
@@ -274,14 +298,24 @@ namespace Assets.scripts.AI
 			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);
 		}
 
+		protected void RotateToTarget(Vector3 target)
+		{
+			Owner.GetData().SetRotation(target, true);
+		}
+
 		protected void MoveTo(Character target)
 		{
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected void MoveTo(Vector3 target)
+		protected bool MoveTo(Vector3 target, bool fixedRotation=false, int fixedSpeed=-1)
 		{
-			Owner.GetData().MoveTo(target);
+			return Owner.GetData().MoveTo(target, fixedRotation, fixedSpeed);
+		}
+
+		public virtual void SetMaster(Character master)
+		{
+			
 		}
 	}
 }

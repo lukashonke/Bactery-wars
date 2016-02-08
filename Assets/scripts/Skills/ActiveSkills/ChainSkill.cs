@@ -14,7 +14,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private int lastDmg = 0;
 
-		public ChainSkill(string name, int id) : base(name, id)
+		public ChainSkill()
 		{
 			castTime = 0f;
 			coolDown = 3f;
@@ -26,9 +26,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 		}
 
+		public override SkillId GetSkillId()
+		{
+			return SkillId.ChainSkill;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Chain Skill";
+		}
+
 		public override Skill Instantiate()
 		{
-			return new ChainSkill(Name, Id);
+			return new ChainSkill();
 		}
 
 		public override SkillEffect[] CreateEffects()

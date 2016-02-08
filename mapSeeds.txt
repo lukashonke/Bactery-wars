@@ -1,0 +1,36 @@
+SecondLevel
+1 0 40 998 (s:0, 0)
+
+SecondLevel
+1 2 40 -454 (s:0, 0)
+
+SecondLevel
+1 0 40 940 (s:0, 0)
+
+SecondLevel
+1 2 40 547 (s:0, 0)
+
+SecondLevel
+1 2 40 -372 (s:0, 0)
+
+SecondLevel
+1 2 40 462 (s:0, 0)
+
+SecondLevel
+1 0 40 -771 (s:0, 0)
+
+SecondLevel
+1 0 40 -327 (s:0, 0)
+
+SecondLevel
+1 0 40 878 (s:0, 0)
+
+SecondLevel
+1 2 40 764 (s:0, 0)
+
+SecondLevel
+1 2 40 852 (s:0, 0)
+
+SecondLevel
+1 0 40 -575 (s:0, 0)
+

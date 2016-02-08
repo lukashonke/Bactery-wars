@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
@@ -16,10 +17,21 @@ namespace Assets.scripts.Mono.ObjectData
 		/// <summary>Datova trida hrace</summary>
 		public Player player;
 
+		[HideInInspector]
+		public PlayerUI ui;
+
 		/// <summary>skill ktery prave vyzaduje potvrzeni pred spustenim</summary>
 		public ActiveSkill ActiveConfirmationSkill { get; set; }
 
 		public bool TargettingActive { get; set; }
+
+		public bool MoveButtonDown { get; set; }
+
+
+		// test parameters
+		public bool autoAttackTargetting = false;
+		public bool castingBreaksMovement = true;
+		public bool moveOnlyWhenMousePressed = false;
 
 		public new void Start()
 		{
@@ -36,16 +48,25 @@ namespace Assets.scripts.Mono.ObjectData
 					case "monster":
 						player.ChangeAI(new DefaultMonsterAI(player));
 						break;
-					case "meleeMonster":
+					case "melee":
 						player.ChangeAI(new MeleeMonsterAI(player));
 						break;
-					case "rangedMonster":
+					case "ranged":
 						player.ChangeAI(new RangedMonsterAI(player));
 						break;
 				}
 			}
 
+			ui = GetComponent<PlayerUI>();
+
+		    IsVisibleToPlayer = true;
+
             Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public new void Awake()
+		{
+			base.Awake();
 		}
 
 		public override void Update()
@@ -82,7 +103,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerEnter2D(Collider2D obj)
 		{
-
+			base.OnTriggerEnter2D(obj);
 		}
 
 		public override void OnTriggerExit2D(Collider2D obj)
@@ -93,6 +114,11 @@ namespace Assets.scripts.Mono.ObjectData
 		public override void OnTriggerStay2D(Collider2D obj)
 		{
 
+		}
+
+		public override void SetSkillReuseTimer(ActiveSkill activeSkill)
+		{
+			ui.SetReuseTimer(activeSkill);
 		}
 
 		/// <summary>
@@ -127,7 +153,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void ConfirmSkillLaunch()
 		{
-			ActiveConfirmationSkill.Start();
+			if(ActiveConfirmationSkill.CanUse() && GetOwner().CanCastSkill(ActiveConfirmationSkill))
+				ActiveConfirmationSkill.Start(Target);
 		}
 
 		public void ConfirmSkillLaunch(Vector3 mousePosition)
@@ -150,19 +177,39 @@ namespace Assets.scripts.Mono.ObjectData
 			SetMovementTarget(newTarget);
 		}
 
-		public void SetPlayersMoveToTarget(Vector3 newTarget)
+		private void CheckSkillsToAbort()
+		{
+			foreach (Skill sk in GetOwner().Skills.Skills)
+			{
+				if (sk is ActiveSkill)
+				{
+					ActiveSkill s = (ActiveSkill) sk;
+
+					if (s.IsActive() && s.movementAbortsSkill)
+					{
+						s.AbortCast();
+					}
+				}
+			}
+		}
+
+		public bool SetPlayersMoveToTarget(Vector3 newTarget)
 		{
 			AbortMeleeAttacking();
+			CheckSkillsToAbort();
 
 			if (!allowMovePointChange)
-				return;
+				return false;
+
+			if (Utils.IsNotAccessible(GetBody().transform.position, newTarget))
+				return false;
 
 			if (ActiveConfirmationSkill != null && ActiveConfirmationSkill.MovementBreaksConfirmation)
 			{
 				ActiveConfirmationSkill.AbortCast();
 			}
 
-			SetMovementTarget(newTarget);
+			return SetMovementTarget(newTarget);
 		}
 
 		public void HighlightTarget(GameObject target, bool enable)
@@ -189,6 +236,22 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				//sr.material.SetColor("_Emission", Color.black);
 				sr.material.color = Color.white;
+			}
+		}
+
+		public void StartMeleeTargeting(bool rightClick)
+		{
+			if (ActiveConfirmationSkill != null && !ActiveConfirmationSkill.Equals(GetOwner().MeleeSkill))
+			{
+				BreakCasting();
+
+				if (rightClick)
+					return;
+			}
+
+			if (GetOwner().MeleeSkill != null && GetOwner().CanCastSkill(GetOwner().MeleeSkill) && GetOwner().MeleeSkill.CanUse())
+			{
+				GetOwner().MeleeSkill.DoAutoattack();
 			}
 		}
 

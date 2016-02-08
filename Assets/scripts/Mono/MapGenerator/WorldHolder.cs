@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -24,7 +25,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		// inspector configuration for generated maps
 		public int width;
-		public int height;
+        public int height;
 		public string seed;
 		public bool useRandomSeed;
 
@@ -35,10 +36,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public bool doDebug = true;
 		public int SQUARE_SIZE = 1;
-		private int MAX_REGIONS = 3;
 
 		public const int WALL = 1;
 		public const int GROUND = 0;
+
+		public GameObject darkPlaneTemplate;
 
 		void Start()
 		{
@@ -47,13 +49,15 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			maps = new Dictionary<Cords, MapHolder>();
 
+			darkPlaneTemplate = GameObject.Find("Total Background");
+
 			// create the first map
 			GenerateFirstLevel();
 		}
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.StartClassic);
+			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.StartClassic, width, height);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -67,7 +71,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			Debug.Log("generating.. " + newCords.ToString());
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.DungeonAllOpen);
+			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.SecondLevel, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
@@ -99,15 +103,35 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			activeMap = map;
 			activeMap.LoadMap(reloading);
+
+			// update seeds info for admin
+			StringBuilder sb = new StringBuilder();
+
+			foreach (MapRegion region in activeMap.regions.Values)
+				if(region.HasParentRegion() == false && !region.empty)
+				sb.Append(region.x + ";" + region.y + " " + region.seed + " ");
+
+			try
+			{
+				GameObject.Find("AdminSeeds").GetComponent<Text>().text = sb.ToString();
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		public void RegenMap()
+		{
+			activeMap.DeleteMap();
+			activeMap.CreateMap();
+			activeMap.LoadMap(false);
 		}
 
 		void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
-				activeMap.DeleteMap();
-				activeMap.CreateMap();
-				activeMap.LoadMap(false);
+				RegenMap();
 			}
 
 			if (Input.GetKeyDown(KeyCode.N))
@@ -123,6 +147,9 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 
 				SetActiveLevel(newC.x, newC.y, onlyReload);
+
+				GameObject player = GameObject.Find("Player");
+				player.transform.position = WorldHolder.instance.GetStartPosition();
 			}
 
 			if (Input.GetKeyDown(KeyCode.P))
@@ -131,7 +158,15 @@ namespace Assets.scripts.Mono.MapGenerator
 				Cords newC = new Cords(c.x - 1, c.y);
 
 				SetActiveLevel(newC.x, newC.y);
+
+				GameObject player = GameObject.Find("Player");
+				player.transform.position = WorldHolder.instance.GetStartPosition();
 			}
+
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                SaveCurrentMap();
+            }
 		}
 
 		// temp from mobile
@@ -230,10 +265,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public string GetRandomSeed()
 		{
-			if (completelyRandomSeed)
-				return Random.Range(-1000, 1000) + "";
-
-			return allowedSeeds[Random.Range(0, allowedSeeds.Length)];
+			return Random.Range(-1000, 1000) + "";
 		}
 
 		public Vector3 GetStartPosition()
@@ -245,5 +277,32 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return new Vector3();
 		}
+
+	    public void SaveCurrentMap()
+	    {
+	        String prev = System.IO.File.ReadAllText("mapSeeds.txt");
+
+	        StringBuilder sb = new StringBuilder();
+
+	        sb.Append(prev);
+
+	        sb.AppendLine(Enum.GetName(typeof (MapType), activeMap.MapType));
+	        foreach (MapRegion region in activeMap.regions.Values)
+	        {
+	            if (!region.HasParentRegion())
+	            {
+	                if (region.hadRandomSeed)
+	                {
+	                    sb.Append(region.x + " " + region.y + " " + region.fillPercent + " " + region.seed + " (s:" + region.sizeX + ", " + region.sizeY + ")");
+	                    sb.AppendLine();
+	                }
+	            }
+	        }
+
+            sb.AppendLine();
+
+            System.IO.File.WriteAllText("mapSeeds.txt", sb.ToString());
+            Debug.Log("Saved!");
+	    }
 	}
 }

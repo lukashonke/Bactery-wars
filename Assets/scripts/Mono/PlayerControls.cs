@@ -26,8 +26,6 @@ namespace Assets.scripts.Mono
 		// animators
 		private Animator anim;
 
-
-
 		public int currentTouchAction;
 		public const int TOUCH_MOVEMENT = 1;
 		public const int TOUCH_CONFIRMINGSKILL = 2;
@@ -44,8 +42,22 @@ namespace Assets.scripts.Mono
 			ui = GetComponent<PlayerUI>();
 		}
 
+		public void FixedUpdate()
+		{
+		}
+
 		private void HandleSkillControls()
 		{
+			if (Input.GetKeyDown(KeyCode.Q))
+			{
+				data.StartMeleeTargeting(false);
+			}
+
+			if (Input.GetMouseButtonDown(1))
+			{
+				data.StartMeleeTargeting(true);
+			}
+
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
 				data.LaunchSkill(1);
@@ -104,6 +116,19 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
+			if (Input.GetMouseButton(0))
+			{
+				Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				Debug.DrawLine(data.GetBody().transform.position, temp, Color.blue, 2f);
+				/*if (Utils.IsNotAccessible(data.GetBody().transform.position, temp))
+				{
+
+				}
+				else
+				{
+				}*/
+			}
+
 			bool usingTouches = false;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
@@ -127,6 +152,22 @@ namespace Assets.scripts.Mono
 #if UNITY_ANDROID
 			usingTouches = true;
 #endif
+
+		    if (ui.adminMode)
+		    {
+		        if (!ui.MouseOverUI && Input.GetMouseButtonDown(0))
+		        {
+                    ui.AdminClick(Camera.main.ScreenToWorldPoint(Input.mousePosition), 0);
+		        }
+
+                if (!ui.MouseOverUI && Input.GetMouseButtonDown(1))
+		        {
+		            ui.AdminClick(Camera.main.ScreenToWorldPoint(Input.mousePosition), 1);
+		        }
+
+		        return;
+		    }
+
 
 			Vector3 inputPosition;
 			bool touched = false;
@@ -159,7 +200,6 @@ namespace Assets.scripts.Mono
 					currentTouchAction = 0;
 				}
 			}
-
 
 			if (usingTouches)
 			{
@@ -349,7 +389,7 @@ namespace Assets.scripts.Mono
 							data.ConfirmSkillLaunch();
 						}
 
-						if (Input.GetMouseButtonDown(1))
+						if (Input.GetMouseButtonDown(1) && !data.ActiveConfirmationSkill.Equals(data.GetOwner().MeleeSkill)) //TODO temp solution for right click melee not cancelling
 						{
 							data.ActiveConfirmationSkill.AbortCast();
 						}
@@ -369,6 +409,8 @@ namespace Assets.scripts.Mono
 								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
+
+								Debug.Log("melee interract");
 
 								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
@@ -393,8 +435,16 @@ namespace Assets.scripts.Mono
 								if (currMouseClicker != null)
 									Destroy(currMouseClicker);
 
+								data.MoveButtonDown = true;
+
 								currMouseClicker = Instantiate(mouseClicker, data.GetMovementTarget(), Quaternion.identity) as GameObject;
 								//}
+							}
+							else
+							{
+								data.MoveButtonDown = false;
+								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo)
+									data.HasTargetToMoveTo = false;
 							}
 						}
 					}

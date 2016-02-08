@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Skills;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Actor.Status
@@ -14,15 +15,20 @@ namespace Assets.scripts.Actor.Status
 	public abstract class CharStatus
 	{
 		public bool IsDead { get; private set; }
+
 		public int Hp { get; private set; }
 		public int Mp { get; private set; }
 		public int MaxHp { get; set; }
 		public int MaxMp { get; set; }
 		public int MoveSpeed { get; set; }
 
+		public float Shield { get; set; }
+		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
+		public float CriticalDamageMul { get; set; } // if critical strike, damage is multiplied by this value
+
 		public List<Skill> ActiveSkills { get; private set; }
 
-		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, int moveSpeed)
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, int moveSpeed, float shield, int criticalRate, float criticalDamageMul)
 		{
 			IsDead = isDead;
 			Hp = hp;
@@ -31,11 +37,18 @@ namespace Assets.scripts.Actor.Status
 			MaxMp = maxMp;
 			MoveSpeed = moveSpeed;
 
+			Shield = shield;
+			CriticalRate = CriticalRate;
+			CriticalDamageMul = criticalDamageMul;
+
 			ActiveSkills = new List<Skill>();
-		}
+        }
 
 		public void ReceiveDamage(int dmg)
 		{
+			int shieldReduction = (int) (dmg*Shield - dmg);
+			dmg -= shieldReduction;
+
 			Hp -= dmg;
 
 			if (Hp < 0)
@@ -98,7 +111,7 @@ namespace Assets.scripts.Actor.Status
 			return ActiveSkills.Count > 0;
 		}
 
-		public bool IsStunned()
+		public bool IsStunned() // TODO stun finish
 		{
 			return false;
 		}

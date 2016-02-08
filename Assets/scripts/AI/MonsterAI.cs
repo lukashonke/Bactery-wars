@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -20,17 +21,61 @@ namespace Assets.scripts.AI
 		public bool IsAggressive { get; set; }
 		public int AggressionRange { get; set; }
 
+		private readonly int rambleInterval = 2;
+		private float lastRambleTime;
+		private bool isWalking;
+
+		private Dictionary<string, float> timers;
+
+		private bool useTimers;
+
 		protected MonsterAI(Character o) : base(o)
 		{
 			aggro = new Dictionary<Character, int>();
 
-			IsAggressive = ((EnemyData) Owner.GetData()).isAggressive;
-			AggressionRange = ((EnemyData)Owner.GetData()).aggressionRange;
+			useTimers = false;
+
+			IsAggressive = GetTemplate().IsAggressive;
+			AggressionRange = GetTemplate().AggressionRange;
+		}
+
+		protected void UseTimers()
+		{
+			useTimers = true;
+			timers = new Dictionary<string, float>();
+		}
+
+		public void SetTimer(string name)
+		{
+			if (!useTimers)
+				return;
+
+			if (timers.ContainsKey(name))
+			{
+				timers[name] = Time.time;
+			}
+			else
+			{
+				timers.Add(name, Time.time);
+			}
+		}
+
+		public bool GetTimer(string name, float minTimeToPass)
+		{
+			if (!useTimers)
+				return false;
+
+			float time;
+			bool found = timers.TryGetValue(name, out time);
+
+			if (!found)
+				return true;
+			return time + minTimeToPass <= Time.time;
 		}
 
 		public override void Think()
 		{
-			if (Owner == null)
+			if (Owner == null || Owner.GetData() == null)
 				return;
 
 			if (GetStatus().IsDead)
@@ -54,12 +99,37 @@ namespace Assets.scripts.AI
 
 					break;
 			}
+
+			//TODO once in 10 seconds add wall check
+		}
+
+		public Character GetMaster()
+		{
+			return ((Monster) Owner).GetMaster();
+		}
+
+		public bool HasMaster()
+		{
+			return ((Monster) Owner).HasMaster();
 		}
 
 		private void ThinkIdle()
 		{
 			if (GetStatus().IsDead)
 				return;
+
+			// pokud ma mastera, musi byt vzdy v aktivnim stavu (pro sledovani pohybu mastera, atd.)
+			if (HasMaster())
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
+
+			if (aggro.Any())
+			{
+				SetAIState(AIState.ATTACKING);
+				return;
+			}
 
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
@@ -77,64 +147,170 @@ namespace Assets.scripts.AI
 				}
 			}
 
-			if (GetGroupLeader() != null && !IsGroupLeader)
+			/*if (State == AIState.IDLE && !isWalking)
 			{
-				Character leader = GetGroupLeader();
-				Vector3 leaderPos = leader.Data.GetBody().transform.position;
+				SetIsWalking(true);
+			}*/
 
-				int distToFollow = ((EnemyData) Owner.GetData()).distanceToFollowLeader;
+			if (ReturnHomeIfNeeded())
+				return;
 
-				if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
-				{
-					Vector3 rnd = Random.insideUnitCircle;
-					rnd.z = 0;
-
-					MoveTo(leaderPos + rnd);
-
-					Debug.Log("moving to.... dist was " + Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos));
-				}
-			}
+			TryRambleAround();
 		}
 
-		private void ThinkActive()
+		protected virtual void ThinkActive()
 		{
 			bool stillActive = false;
+
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
-				foreach (GameObject o in Owner.Knownlist.KnownObjects)
+				// muze si sam vybirat cile pouze pokud nema mastera
+				if (!HasMaster())
 				{
-					if (o == null) continue;
-
-					Character ch = Utils.GetCharacter(o);
-
-					if (IsAggressive && ch != null && Owner.CanAutoAttack(ch))
+					foreach (GameObject o in Owner.Knownlist.KnownObjects)
 					{
+						if (o == null) continue;
+
+						Character ch = Utils.GetCharacter(o);
+						if (ch == null)
+							continue;
+
 						stillActive = true;
 
-						// find target that can be attacked
-						if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
+						if (IsAggressive && Owner.CanAutoAttack(ch))
 						{
-							AddAggro(ch, 1);
+							// find target that can be attacked
+							if (Vector3.Distance(Owner.GetData().GetBody().transform.position, ch.GetData().GetBody().transform.position) < AggressionRange)
+							{
+								AddAggro(ch, 1);
+								//NotifyNearbyAggroAdded(ch);
+							}
+
+							break;
 						}
-
-
-						break;
 					}
 				}
 
+				// pokud master utoci, summon zacne utocit take (v attack metode se vybere cil mastera)
+				if (HasMaster())
+				{
+					if (CheckIfTooFarFromMaster())
+					{
+						TryFollowLeader();
+						return;
+					}
+
+					if (GetMaster().AI.State == AIState.ATTACKING)
+					{
+						AddAggro(GetMaster().AI.GetMainTarget(), 1);
+					}					
+				}
+
 				if (aggro.Any())
+				{
 					SetAIState(AIState.ATTACKING);
+					return;
+				}
 			}
+
+			// vzdy aktivni pokud ma mastera
+			if (!stillActive && GetMaster() != null)
+				stillActive = true;
 
 			if (!stillActive)
 			{
 				SetAIState(AIState.IDLE);
+				return;
+			}
+
+			if (State == AIState.ACTIVE)
+			{
+				if (TryFollowLeader())
+					return;
+
+				if (ReturnHomeIfNeeded())
+					return;
+
+				if (TryRambleAround())
+					return;
 			}
 		}
 
-		private void ThinkAttack()
+		private float lastNotify;
+		public float notifyInterval = 1;
+
+		private void NotifyNearbyAggroAdded(Character target)
 		{
+			if (!GetTemplate().AlertsAllies)
+				return;
+
+			if (lastNotify + notifyInterval < Time.time)
+			{
+				lastNotify = Time.time;
+				Collider2D[] colliders = Physics2D.OverlapCircleAll(Owner.GetData().GetBody().transform.position, AggressionRange);
+
+				foreach (Collider2D c in colliders)
+				{
+					if (c.gameObject == null)
+						continue;
+
+					AbstractData d = c.gameObject.GetData();
+
+					if (d == null)
+						continue;
+
+					if (d.GetOwner() is Monster)
+					{
+						Monster monster = (Monster)d.GetOwner();
+
+						if (monster.AI.State != AIState.ATTACKING)
+						{
+							Debug.Log("notified " + monster.Name);
+							monster.AI.AddAggro(target, 1);
+							continue;
+						}
+					}
+				}
+			}
+		}
+
+		private void NotifySummonsAboutAttack(Character target)
+		{
+			/*if (Owner.HasSummons())
+			{
+				foreach (Monster summon in Owner.summons)
+				{
+					MonsterAI ai = summon.AI as MonsterAI;
+				}
+			}*/
+		}
+
+		private bool CheckIfTooFarFromMaster()
+		{
+			if (HasMaster())
+			{
+				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
+				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+				if (dist > distToFollow*distToFollow + 30*30)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		protected virtual void ThinkAttack()
+		{
+			SetIsWalking(false);
+
 			Character possibleTarget = SelectMostAggroTarget();
+
+			if (CheckIfTooFarFromMaster())
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
 
 			// no target this monster hates - go back to active
 			if (possibleTarget == null)
@@ -149,6 +325,10 @@ namespace Assets.scripts.AI
 				return;
 			}
 
+			//TODO make sure ma tohle byt volano jen jednou ?
+			NotifyNearbyAggroAdded(possibleTarget);
+			NotifySummonsAboutAttack(possibleTarget);
+
 			// target is too far (> attackdistance*2) - abandone attacking
 			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
 			{
@@ -158,8 +338,192 @@ namespace Assets.scripts.AI
 			AttackTarget(possibleTarget);
 		}
 
+		protected bool TryFollowLeader()
+		{
+			if (Owner.GetData().HasTargetToMoveTo)
+			{
+				if (HasMaster())
+				{
+					bool retargetMove = false;
+
+					Vector3 leaderPos = GetMaster().Data.GetBody().transform.position;
+					Vector3 moveDestination = Owner.GetData().GetMovementTarget();
+
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(moveDestination, leaderPos) > (distToFollow*distToFollow))
+					{
+						retargetMove = true;
+					}
+
+					if (!retargetMove)
+						return false;
+				}
+			}
+
+			// ma mastera - charakter ktery tento objekt vlastni
+			if (HasMaster())
+			{
+				Character master = GetMaster();
+
+				if (master.Data.GetBody() != null)
+				{
+					Vector3 leaderPos = master.Data.GetBody().transform.position;
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
+					{
+						Vector3 rnd = Owner.Data.GetBody().transform.position;
+
+						try
+						{
+							rnd = Utils.GenerateFixedPositionAroundObject(master.GetData().gameObject, distToFollow - 1, -90);
+							rnd.z = 0;
+						}
+						catch (Exception)
+						{
+						}
+
+						SetIsWalking(false);
+						MoveTo(rnd);
+
+						//Debug.DrawRay(Owner.GetData().GetBody().transform.position, leaderPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+
+						return true;
+					}
+				}
+			} // ma skupinu - nasleduje vudce ale udrzuje si jinak samostatnost
+			else if (GetGroupLeader() != null && !IsGroupLeader)
+			{
+				Character leader = GetGroupLeader();
+
+				if (leader.Data.GetBody() != null)
+				{
+					Vector3 leaderPos = leader.Data.GetBody().transform.position;
+
+					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
+
+					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					{
+						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow - 1);
+						rnd.z = 0;
+
+						SetIsWalking(false);
+						MoveTo(rnd);
+
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		protected bool ReturnHomeIfNeeded()
+		{
+			if (HasMaster())
+				return false;
+
+			if (!Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
+			{
+				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
+				{
+					SetIsWalking(false);
+					MoveTo(homeLocation);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected bool TryRambleAround()
+		{
+			if (HasMaster())
+				return false;
+
+			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo)
+			{
+				if (lastRambleTime + rambleInterval < Time.time)
+				{
+					//if (Random.Range(1, 4) < 3)
+					{
+						lastRambleTime = Time.time;
+						DoRambleAround();
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		protected void SetIsWalking(bool b)
+		{
+			if (isWalking && !b)
+			{
+				Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
+				isWalking = false;
+			}
+			else if (!isWalking && b)
+			{
+				if (GetTemplate().MaxSpeed > 3)
+					Owner.GetData().SetMoveSpeed(3);
+
+				isWalking = true;
+			}
+		}
+
+		private void DoRambleAround()
+		{
+			bool found = false;
+
+			int limit = 5;
+			while (!found)
+			{
+				int dist = GetTemplate().RambleAroundMaxDist;
+				Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist);
+
+				//TODO region check
+				//TODO add object collision check on target around, to check if he can fit
+
+				bool collides = false;
+				foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))
+				{
+					if (r2d.collider == null)
+						continue;
+
+					if (r2d.collider.gameObject.Equals(Owner.GetData().GetBody()))
+						continue;
+
+					collides = true;
+				}
+
+				if (collides)
+				{
+					Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+				}
+				else
+				{
+					found = true;
+
+					SetIsWalking(true);
+
+					MoveTo(randomPos);
+					Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.green, 5);
+				}
+
+				limit--;
+				if (limit <= 0)
+					break;
+			}
+		}
+
 		public override void AddAggro(Character ch, int points)
 		{
+			if(ch == null)
+				return;
+
 			if (!aggro.ContainsKey(ch))
 			{
 				aggro.Add(ch, points);
@@ -170,6 +534,29 @@ namespace Assets.scripts.AI
 				aggro.TryGetValue(ch, out newP);
 				newP += points;
 				aggro[ch] = newP;
+			}
+		}
+
+		public void ClearAggro()
+		{
+			aggro.Clear();
+		}
+
+		public override int GetAggro(Character ch)
+		{
+			int val = 0;
+			aggro.TryGetValue(ch, out val);
+			return val;
+		}
+
+		public override void CopyAggroFrom(AbstractAI sourceAi)
+		{
+			if (sourceAi is MonsterAI)
+			{
+				foreach (KeyValuePair<Character, int> e in ((MonsterAI)sourceAi).aggro)
+				{
+					AddAggro(e.Key, e.Value);
+				}
 			}
 		}
 
@@ -226,6 +613,8 @@ namespace Assets.scripts.AI
 			int randomDir = Random.Range(-randomAngleAdd, randomAngleAdd);
 			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, randomDir)) * dirVector;
 
+			//TODO add wall checking ! 
+
 			/*RaycastHit2D hit = Physics2D.Linecast(Owner.GetData().GetBody().transform.position, nv);
 
 			if (hit != null && hit.transform != null)
@@ -246,9 +635,52 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, int fixedSpeed=-1)
+        {
+            MoveTo(target, fixedRotation, fixedSpeed);
+
+            yield return null;
+
+            while (Owner.GetData().HasTargetToMoveTo)
+            {
+                yield return null;
+            }
+
+            currentAction = null;
+        }
+
+		protected virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
 			if (!noRangeCheck && sk.range != 0)
+			{
+				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				{
+					dist = Vector3.Distance(target, Owner.GetData().transform.position);
+
+					if (moveTowardsIfRequired)
+					{
+						MoveTo(target);
+						yield return null;
+					}
+					else // too far, cant move closer - break the action
+					{
+						currentAction = null;
+						yield break;
+					}
+				}
+			}
+
+			Owner.GetData().BreakMovement(true);
+
+			RotateToTarget(target);
+
+			Owner.CastSkill(sk);
+			currentAction = null;
+		}
+
+		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		{
+			if (target != null && !noRangeCheck && sk.range != 0)
 			{
 				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
 				{
@@ -268,7 +700,10 @@ namespace Assets.scripts.AI
 			}
 
 			Owner.GetData().BreakMovement(true);
-			RotateToTarget(target);
+
+			if (target != null)
+				RotateToTarget(target);
+
 			Owner.CastSkill(sk);
 			currentAction = null;
 		}
@@ -280,12 +715,17 @@ namespace Assets.scripts.AI
 
 		protected override void OnSwitchActive()
 		{
-			ThinkInterval = 0.5f;
+			ThinkInterval = 0.25f;
 		}
 
 		protected override void OnSwitchAttacking()
 		{
 			ThinkInterval = 0.2f;
+		}
+
+		public MonsterTemplate GetTemplate()
+		{
+			return ((Monster)Owner).Template;
 		}
 	}
 }

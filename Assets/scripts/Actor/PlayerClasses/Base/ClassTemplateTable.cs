@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.PlayerClasses.Base
 {
@@ -29,13 +31,21 @@ namespace Assets.scripts.Actor.PlayerClasses.Base
 		// Initialize all possible classes here
 		private void Init()
 		{
-			AddType(new DefaultPlayerClass());
-			AddType(new FluPlayerClass());
+			ClassTemplate t;
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Actor.PlayerClasses", true, typeof(ClassTemplate));
+
+			foreach (Type type in types)
+			{
+				t = Activator.CreateInstance(type) as ClassTemplate;
+				AddType(t);
+			}
+
+			Debug.Log("Loaded " + this.types.Count + " player classes.");
 		}
 
 		public void AddType(ClassTemplate t)
 		{
-			types.Add(t.ClassId, t);
+			types.Add(t.GetClassId(), t);
 		}
 
 		public ClassTemplate GetType(ClassId type)

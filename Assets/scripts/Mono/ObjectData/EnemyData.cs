@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.ObjectData
@@ -11,8 +12,6 @@ namespace Assets.scripts.Mono.ObjectData
 		public int monsterId;
 
 		public int distanceToFollowLeader = 8;
-		public bool isAggressive = false;
-		public int aggressionRange = 5;
 
 		// Use this for initialization
 		public new void Start()
@@ -21,6 +20,11 @@ namespace Assets.scripts.Mono.ObjectData
 
 			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
 			//Debug.Log("Registering new data for monster ");
+		}
+
+		public new void Awake()
+		{
+			base.Awake();
 		}
 
 		public override Character GetOwner()
@@ -37,24 +41,38 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			if (isDead)
 			{
-				ParticleSystem ps = GetComponentInChildren<ParticleSystem>();
-				ps.Play();
+				GameObject ch = GetChildByName("Die Effect");
 
-				body.GetComponent<SpriteRenderer>().enabled = false;
-				body.GetComponent<Collider2D>().enabled = false;
+				if (ch != null)
+				{
+					ParticleSystem ps = ch.GetComponent<ParticleSystem>();
+					if (ps != null)
+						ps.Play();
+				}
 
-				if (healthBar != null)
-					healthBar.gameObject.SetActive(false);
+				DisableObjectData();
+
+				DisableChildObjects();
 
 				Destroy(gameObject, 1f);
 
-				GameObject blood = LoadResource("misc", "Blood", "Blood_red");
+				DropBlood(50);
+			}
+		}
 
-				ps = blood.GetComponent<ParticleSystem>();
-				ps.maxParticles = Random.Range(10, 50);
+		public void DropBlood(int ammount)
+		{
+			ParticleSystem ps;
+            GameObject blood = LoadResource("misc", "Blood", "Blood_red");
 
-				GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
-				Destroy(bloodObject, 10f);
+			GameObject bloodObject = Instantiate(blood, body.transform.position, Quaternion.identity) as GameObject;
+
+			if (bloodObject != null)
+			{
+				ps = bloodObject.GetComponent<ParticleSystem>();
+				ps.maxParticles = Random.Range(10, ammount);
+
+				Destroy(bloodObject, 20f);
 			}
 		}
 
@@ -66,15 +84,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerEnter2D(Collider2D obj)
 		{
-			/*// kolize s objectem ktery implementuje IDamagable poskodi tohoto hrace
-			GameObject incoming = obj.gameObject;
-			IDamagable id;
-		
-			foreach (IDamagable dmg in incoming.GetComponents<IDamagable>())
-			{
-				id = dmg;
-				owner.ReceiveDamage(id.GetDamage());
-			}*/
+			base.OnTriggerEnter2D(obj);
 		}
 
 		public override void OnTriggerExit2D(Collider2D obj)

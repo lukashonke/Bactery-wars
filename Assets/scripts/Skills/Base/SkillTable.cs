@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Assets.scripts.Skills.ActiveSkills;
 using UnityEngine;
 
@@ -23,24 +24,24 @@ namespace Assets.scripts.Skills.Base
 		}
 
 		// seznam skillu ve hre podle ID
-		private Dictionary<int, Skill> skills;
+		private Dictionary<SkillId, Skill> skills;
 		
 		public SkillTable()
 		{
-			skills = new Dictionary<int, Skill>();
+			skills = new Dictionary<SkillId, Skill>();
 			Load();
 		}
 
-		public Skill GetSkill(int id)
+		public Skill GetSkill(SkillId id)
 		{
 			Skill sk;
 			if (!skills.TryGetValue(id, out sk))
-				Debug.LogWarning("Could not find skill ID " + id);
+				Debug.LogWarning("Could not find skill ID " + Enum.GetName(typeof(SkillId), id));
 
 			return sk;
 		}
 
-		public Skill CreateSkill(int id)
+		public Skill CreateSkill(SkillId id)
 		{
 			Skill sk = GetSkill(id);
 
@@ -54,12 +55,12 @@ namespace Assets.scripts.Skills.Base
 
 		private void AddSkill(Skill sk)
 		{
-			skills.Add(sk.Id, sk);
+			skills.Add(sk.GetSkillId(), sk);
 		}
 
 		private void RemoveSkill(Skill sk)
 		{
-			skills.Remove(sk.Id);
+			skills.Remove(sk.GetSkillId());
 		}
 
 		// Load all skills ingame
@@ -68,7 +69,25 @@ namespace Assets.scripts.Skills.Base
 		{
 			Skill skill;
 
-			skill = new SkillTemplate("Skill Template", 1);
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Skills.ActiveSkills", true, typeof(ActiveSkill));
+			foreach (Type type in types)
+			{
+				skill = Activator.CreateInstance(type) as Skill;
+				AddSkill(skill);
+			}
+
+			Debug.Log("Loaded " + types.Count + " active skills");
+
+			types = Utils.GetTypesInNamespace("Assets.scripts.Skills.PassiveSkills", true, typeof(PassiveSkill));
+			foreach (Type type in types)
+			{
+				skill = Activator.CreateInstance(type) as Skill;
+				AddSkill(skill);
+			}
+
+			Debug.Log("Loaded " + types.Count + " passive skills");
+
+			/*skill = new SkillTemplate("Skill Template", 1);
 			AddSkill(skill);
 
 			skill = new SkillTestProjectile("Test Projectile", 2);
@@ -96,7 +115,7 @@ namespace Assets.scripts.Skills.Base
 			AddSkill(skill);
 
 			skill = new MeleeAttack("Melee Attack", 10);
-			AddSkill(skill);
+			AddSkill(skill);*/
 		}
 	}
 }

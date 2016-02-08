@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Base;
+﻿using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
@@ -10,7 +11,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject activeProjectile;
 
-		public SkillTestProjectile(string name, int id) : base(name, id)
+		public SkillTestProjectile()
 		{
 			castTime = 0f;
 			reuse = 1;
@@ -18,12 +19,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 			baseDamage = 10;
 
-			range = 4;
+			range = 5;
+		}
+
+		public override SkillId GetSkillId()
+		{
+			return SkillId.SkillTestProjectile;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Test Projectile";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectile(Name, Id);
+			return new SkillTestProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()
@@ -40,7 +51,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			RotatePlayerTowardsMouse();
 
-			CreateCastingEffect(true, "Test Projectile");
+			CreateCastingEffect(true, GetName());
 
 			return true;
 		}
@@ -83,6 +94,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
 			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
+			Character ch = other.gameObject.GetChar();
+			if (ch == null)
+			{
+				Destroyable d = other.gameObject.GetComponent<Destroyable>();
+				if (d != null && !Owner.CanAttack(d))
+					return;
+			}
+			else if (!Owner.CanAttack(ch))
 				return;
 
 			// the only possible collisions are the projectile with target

@@ -14,12 +14,14 @@ namespace Assets.scripts.Skills
 	*/
 	public abstract class Skill
 	{
-		public int Id { get; private set; }
-		public string Name { get; private set; }
+		private string name;
 
 		public Character Owner { get; private set; }
 
 		public List<SkillTraits> Traits { get; private set; }
+
+		protected List<SkillEffect> additionalEffects;
+		protected bool originalEffectsDisabled = false;
 
 		private int level;
 		public int Level
@@ -38,11 +40,17 @@ namespace Assets.scripts.Skills
 
 		public int MaxLevel { get; set; }
 
-		public Skill(string name, int id)
-		{
-			Id = id;
-			Name = name;
+		public abstract SkillId GetSkillId();
 
+		public string GetName()
+		{
+			return name;
+		}
+
+		public abstract string GetVisibleName();
+
+		public Skill()
+		{
 			// nastavit defaultni parametry
 			MaxLevel = 1;
 
@@ -51,6 +59,8 @@ namespace Assets.scripts.Skills
 
 		public void Init()
 		{
+			name = Enum.GetName(typeof (SkillId), GetSkillId());
+
 			InitTraits();
 			InitDynamicTraits();
 		}
@@ -63,11 +73,16 @@ namespace Assets.scripts.Skills
 			return this;
 		}
 
+		public bool HasTrait(SkillTraits t)
+		{
+			return Traits.Contains(t);
+		}
+
 		public void SetOwner(Character ch)
 		{
 			if (Owner != null)
 			{
-				Debug.LogError("Error : Skill ID " + Id + " uz majitele ma - " + Owner.Name);
+				Debug.LogError("Error : Skill ID " + GetName() + " uz majitele ma - " + Owner.Name);
 				return;
 			}
 
@@ -82,17 +97,58 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target)
+		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false)
 		{
 			SkillEffect[] efs = CreateEffects();
 
-			if (efs != null)
+			if (efs != null && !originalEffectsDisabled)
 			{
 				foreach (SkillEffect ef in efs)
 				{
+					ef.Source = source;
+
+					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					{
+						Character targetCh = target.GetChar();
+
+						if (targetCh != null && targetCh.HasEffectAlready(ef))
+							continue;
+					}
+
 					ef.ApplyEffect(source, target);
 				}
 			}
+
+			if (additionalEffects != null)
+			{
+				foreach (SkillEffect ef in additionalEffects)
+				{
+					ef.Source = source;
+
+					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					{
+						Character targetCh = target.GetChar();
+
+						if (targetCh != null && targetCh.HasEffectAlready(ef))
+							continue;
+					}
+
+					ef.ApplyEffect(source, target);
+				}
+			}
+		}
+
+		public void DisableOriginalEffects()
+		{
+			originalEffectsDisabled = true;
+		}
+
+		public void AddAdditionalEffect(SkillEffect e)
+		{
+			if (additionalEffects == null)
+				additionalEffects = new List<SkillEffect>();
+
+			additionalEffects.Add(e);
 		}
 
 		public AbstractData GetOwnerData()

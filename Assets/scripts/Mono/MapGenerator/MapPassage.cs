@@ -9,19 +9,28 @@ namespace Assets.scripts.Mono.MapGenerator
 {
 	public class MapPassage
 	{
+	    public bool enabled;
+
 		public List<Tile> tiles;
 		public Tile centerTile, starTile, endTile;
 
 		public bool isDoor;
 		public GameObject gameObject;
 
-		public MapPassage(List<Tile> tiles, Tile center, Tile start, Tile end)
+	    public MapRoom roomA, roomB;
+
+		public MapPassage(List<Tile> tiles, Tile center, Tile start, Tile end, MapRoom roomA, MapRoom roomB)
 		{
 			this.tiles = tiles;
 			centerTile = center;
 
 			starTile = start;
 			endTile = end;
+
+		    this.roomA = roomA;
+		    this.roomB = roomB;
+
+		    enabled = true;
 		}
 
 		/*private void Init()
@@ -108,5 +117,19 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			Object.Destroy(gameObject);
 		}
+
+	    public void SetEnabled(bool b)
+	    {
+	        enabled = b;
+
+		    if (gameObject != null)
+		    {
+		        gameObject.SetActive(b);
+		    }
+		    else
+		    {
+			    Debug.LogWarning("mappassage gameobject is null for regions " + roomA.region.x + ", " + roomA.region.y + " and " + roomB.region.x + ", " + roomB.region.y);
+		    }
+	    }
 	}
 }

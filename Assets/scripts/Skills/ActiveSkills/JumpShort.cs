@@ -11,18 +11,33 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class JumpShort : ActiveSkill
 	{
-		public JumpShort(string name, int id) : base(name, id)
+		public int jumpSpeed = 100;
+
+		public JumpShort()
 		{
 			castTime = 0f;
 			reuse = 1.0f;
 			coolDown = 0f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
+			resetMoveTarget = false;
+
+			range = 10;
+		}
+
+		public override SkillId GetSkillId()
+		{
+			return SkillId.JumpShort;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Jump Short";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new JumpShort(Name, Id);
+			return new JumpShort();
 		}
 
 		public override SkillEffect[] CreateEffects()
@@ -37,16 +52,29 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
+			if (castTime > 0)
+				CreateCastingEffect(true, "SkillTemplate");
+
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
+			DeleteCastingEffect();
+
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, 8, 100);
+				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), 8, 100);
+				if (initTarget != null)
+				{
+					Vector3 pos = Utils.GetDirectionVector(Owner.GetData().GetBody().transform.position, initTarget.transform.position)*-1;
+					GetOwnerData().JumpForward(pos, range, jumpSpeed);
+				}
+				else
+				{
+					GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
+				}
 			}
 		}
 

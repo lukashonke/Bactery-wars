@@ -7,7 +7,7 @@ namespace Assets.scripts.Skills
 {
 	public abstract class PassiveSkill : Skill
 	{
-		public PassiveSkill(string name, int id) : base(name, id)
+		public PassiveSkill()
 		{
 
 		}

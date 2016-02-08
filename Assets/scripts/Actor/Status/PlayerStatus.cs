@@ -13,7 +13,7 @@ namespace Assets.scripts.Actor.Status
 	{
 		private ClassTemplate template;
 
-		public PlayerStatus(bool isDead, int hp, int mp, ClassTemplate template) : base(isDead, hp, mp, template.MaxHp, template.MaxMp, template.MaxSpeed)
+		public PlayerStatus(bool isDead, int hp, int mp, ClassTemplate template) : base(isDead, hp, mp, template.MaxHp, template.MaxMp, template.MaxSpeed, template.Shield, template.CriticalRate, template.CriticalDamageMul)
 		{
 			this.template = template;
 		}

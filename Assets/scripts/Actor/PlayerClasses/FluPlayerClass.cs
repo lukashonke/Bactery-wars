@@ -7,25 +7,38 @@ namespace Assets.scripts.Actor.PlayerClasses
 {
 	public class FluPlayerClass : ClassTemplate
 	{
-		public FluPlayerClass() : base(ClassId.Flu)
+		public FluPlayerClass()
 		{
-			MaxHp = 50;
+			MaxHp = 100;
 			MaxMp = 50;
 			MaxSpeed = 10;
+			Shield = 1.0f;
+			CriticalRate = 0;
+			CriticalDamageMul = 2f;
 		}
 
-		protected override void AddSkills()
+		public override void InitSkillsOnPlayer(SkillSet set, ActiveSkill meleeSkill)
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(2)); // the projectile test skill
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(3)); // the projectile test skill triple
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(4)); // aura
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(5)); // jump
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(6)); // chain skill
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(7)); // bomb skill
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(8)); // missile projectile
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(9)); // chained projectile
+			meleeSkill.castTime = 0f;
+		}
 
-			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(10));
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileTriple)); // the projectile test skill triple
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround)); // aura
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort)); // jump
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ChainSkill)); // chain skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillAreaExplode)); // bomb skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile)); // missile projectile
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ChainedProjectile)); // chained projectile
+
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+		}
+
+		public override ClassId GetClassId()
+		{
+			return ClassId.Flu;
 		}
 	}
 }

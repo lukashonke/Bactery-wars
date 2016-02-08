@@ -34,7 +34,7 @@ namespace Assets.scripts.AI
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 
 			// already doing something
-			if (isCasting || currentAction != null)
+			if (isCasting)
 			{
 				return;
 			}
@@ -55,8 +55,8 @@ namespace Assets.scripts.AI
 
 			if (IsLowHp(hpPercentage) && !isMeleeAttacking && dist < 5 * 5)
 			{
-				StartAction(RunAway(target, 5f, 20), 5f);
-				return;
+				if(StartAction(RunAway(target, 5f, 20), 5f))
+				    return;
 			}
 
 			if (dist > 5 * 5 && UnityEngine.Random.Range(0, 100) < 20)
@@ -64,8 +64,8 @@ namespace Assets.scripts.AI
 				ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
 				if (jump != null && jump.CanUse())
 				{
-					StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 1f);
-					return;
+					if(StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 1f))
+					    return;
 				}
 			}
 

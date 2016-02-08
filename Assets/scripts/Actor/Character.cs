@@ -2,14 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
+using Assets.scripts.Actor.MonsterClasses;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Actor
 {
@@ -28,18 +34,45 @@ namespace Assets.scripts.Actor
 		public Knownlist Knownlist { get; private set; }
 		public AbstractAI AI { get; private set; }
 
+		public List<Monster> summons; 
+
+		public List<SkillEffect> ActiveEffects { get; private set; }
+		private Coroutine effectUpdateTask;
+
 		public AbstractData Data { get; set; }
 
+		public int Level = 1;
 		public int Team { get; set; }
+
+		public void SetLevel(int level)
+		{
+			Level = level;
+			Data.SetVisibleLevel(level);
+		}
 
 		protected Character(string name) : base(name)
 		{
-        }
+			Level = 1;
+		}
 
 		protected Character(string name, AbstractAI ai) : base(name)
 		{
+			Level = 1;
 			AI = ai;
 		}
+
+	    public void DoDie()
+	    {
+		    if (this is Monster)
+		    {
+			    MonsterTemplate mt = ((Monster) this).Template;
+				mt.OnDie((Monster) this);
+		    }
+
+	        GetData().SetIsDead(true);
+            WorldHolder.instance.activeMap.NotifyCharacterDied(this);
+            DeleteMe();
+	    }
 
 		public void DeleteMe()
 		{
@@ -48,6 +81,33 @@ namespace Assets.scripts.Actor
 
 			if(Knownlist != null)
 			Knownlist.Active = false;
+
+			try
+			{
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill)
+					{
+						if (((ActiveSkill)sk).IsActive() || ((ActiveSkill)sk).IsBeingCasted())
+						{
+							((ActiveSkill)sk).AbortCast();
+						}
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+
+			if (this is Monster)
+			{
+				if (((Monster) this).GetMaster() != null)
+				{
+					((Monster) this).GetMaster().RemoveSummon((Monster) this);
+				}
+			}
+
+			RemoveAllSummons();
 		}
 
 		/// <summary>
@@ -56,8 +116,10 @@ namespace Assets.scripts.Actor
 		public void Init()
 		{
 			Knownlist = new Knownlist(this);
+			ActiveEffects = new List<SkillEffect>();
 			Status = InitStatus();
 			Skills = InitSkillSet();
+			summons = new List<Monster>();
 
 			Knownlist.StartUpdating();
 
@@ -65,6 +127,65 @@ namespace Assets.scripts.Actor
 				AI = InitAI();
 
 			AI.StartAITask();
+
+			CheckWalls();
+		}
+
+		private void CheckWalls()
+		{
+			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
+			{
+				Debug.LogError("im in walls!, teleporting away");
+
+				int minRange = 2;
+				int maxRange = 4;
+				int limit = 6;
+				int mainLimit = 5;
+				Vector3 currentPos = GetData().GetBody().transform.position;
+				Vector3 newPos = currentPos;
+				bool set = false;
+
+				while (!set)
+				{
+					float randX = Random.Range(minRange, maxRange);
+					float randY = Random.Range(minRange, maxRange);
+
+					if (Random.Range(0, 2) == 0)
+						randX *= -1;
+
+					if (Random.Range(0, 2) == 0)
+						randY *= -1;
+
+					Vector3 v = new Vector3(currentPos.x + randX, currentPos.y + randY, 0);
+
+					if (Utils.IsNotAccessible(v))
+						continue;
+
+					newPos = v;
+					set = true;
+
+					limit--;
+					if (limit <= 0)
+					{
+						mainLimit--;
+
+						if (mainLimit <= 0)
+							break;
+
+						maxRange *= 2;
+					}
+				}
+
+				if (set)
+				{
+					Debug.DrawLine(currentPos, newPos, Color.blue, 10f);
+					GetData().GetBody().transform.position = newPos;
+				}
+				else
+				{
+					Debug.LogError("couldnt get character " + Name + " away from walls");
+				}
+			}
 		}
 
 		public AbstractData GetData()
@@ -81,13 +202,141 @@ namespace Assets.scripts.Actor
 			
 		}
 
+		public void AddEffect(SkillEffect ef, float duration)
+		{
+			if(ActiveEffects.Count > 5)
+				return;
+
+			ActiveEffects.Add(ef);
+
+			if(duration > 0)
+				StartTask(CancelEffect(ef, duration)); // cancel this effect in 'duration'
+
+			StartEffectUpdate();
+		}
+
+		public bool HasEffectAlready(SkillEffect ef)
+		{
+			if (ef.Source == null)
+				return false;
+
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (ef.GetType().Name.Equals(e.GetType().Name) && ef.Source.Equals(e.Source))
+					return true;
+			}
+
+			return false;
+		}
+
+		public void RemoveEffect(SkillEffect ef)
+		{
+			ef.OnRemove();
+			ActiveEffects.Remove(ef);
+
+			if (ActiveEffects.Count == 0)
+			{
+				StopEffectUpdate();
+			}
+		}
+
+		private void StartEffectUpdate()
+		{
+			if (effectUpdateTask == null)
+			{
+				effectUpdateTask = StartTask(UpdateEffects());
+			}
+		}
+
+		private void StopEffectUpdate()
+		{
+			if (effectUpdateTask != null)
+			{
+				StopTask(effectUpdateTask);
+				effectUpdateTask = null;
+			}
+		}
+
+		private IEnumerator UpdateEffects()
+		{
+			while (ActiveEffects.Count > 0)
+			{
+				float currentTime = Time.time;
+
+				for(int i = 0; i < ActiveEffects.Count; i++)
+				{
+					SkillEffect ef = ActiveEffects[i];
+
+					if (ef == null || ef.period <= 0)
+						continue;
+
+					if (ef.lastUpdateTime + ef.period <= currentTime)
+					{
+						// effekt ma urcity pocet opakovani, pote se zrusi
+						if (ef.count != -1)
+						{
+							if (ef.count > 0)
+							{
+								ef.count --;
+								ef.Update();
+								ef.lastUpdateTime = currentTime;
+							}
+							else
+							{
+								RemoveEffect(ef);
+								break;
+							}
+						}
+						else // opakuje se dokud nevyprsi duration
+						{
+							ef.Update();
+							ef.lastUpdateTime = currentTime;
+						}
+					}
+				}
+
+				yield return new WaitForSeconds(0.5f);
+			}
+		}
+
+		private IEnumerator CancelEffect(SkillEffect ef, float duration)
+		{
+			yield return new WaitForSeconds(duration);
+			if(ef != null)
+				RemoveEffect(ef);
+		}
+
+		public bool CanCastSkill(Skill skill)
+		{
+			if (Status.IsDead || Status.IsStunned()) 
+				return false;
+
+			if (skill is ActiveSkill)
+			{
+				ActiveSkill s = (ActiveSkill)skill;
+
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill && ((ActiveSkill)sk).IsActive()) //TODO check for can be casted simultaneously
+					{
+						if (!s.canBeCastSimultaneously)
+						{
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Spusti kouzleni skillu
 		/// </summary>
 		/// <param name="skill"></param>
 		public void CastSkill(Skill skill)
 		{
-			if (Status.IsDead)
+			if (!CanCastSkill(skill))
 				return;
 
 			// skill is passive - cant cast it
@@ -101,7 +350,10 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			skill.Start();
+			if(skill is ActiveSkill)
+				((ActiveSkill)skill).Start(GetData().Target);
+			else
+				skill.Start();
 		}
 
 		public void NotifyCastingModeChange()
@@ -130,11 +382,29 @@ namespace Assets.scripts.Actor
 			{
 				sk = Status.ActiveSkills[i];
 
-				if (sk.IsBeingCasted())
+				if (sk.IsBeingCasted() || sk.IsActive())
 					sk.AbortCast();
 			}
 
 			Debug.Log("break done");
+		}
+
+		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
+		{
+			bool crit = canCrit && Random.Range(1, 1000) <= Status.CriticalRate;
+
+			if (crit)
+			{
+				baseDamage = (int) (baseDamage*Status.CriticalDamageMul);
+			}
+
+			return baseDamage;
+		}
+
+		public void SetMoveSpeed(int speed)
+		{
+			Status.MoveSpeed = speed;
+			GetData().SetMoveSpeed(speed);
 		}
 
 		public void ReceiveDamage(Character source, int damage)
@@ -146,7 +416,7 @@ namespace Assets.scripts.Actor
 
 			if (Status.IsDead)
 			{
-				GetData().SetIsDead(true);
+				DoDie();
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
@@ -183,6 +453,20 @@ namespace Assets.scripts.Actor
 			GameSystem.Instance.StopTask(t);
 		}
 
+		public bool CanAttack(Destroyable destr)
+		{
+			GameObject owner = destr.owner;
+
+			if (owner == null)
+				return true;
+
+			Character ch = owner.GetChar();
+			if (ch == null)
+				return true;
+
+			return CanAttack(ch);
+		}
+
 		public bool CanAttack(Character targetCh)
 		{
 			if (targetCh.IsInteractable())
@@ -194,6 +478,50 @@ namespace Assets.scripts.Actor
 		public bool CanAutoAttack(Character ch)
 		{
 			return CanAttack(ch);
+		}
+
+		public void OnAttack(Character target)
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterAttacked(target);
+				}
+			}	
+
+			target.OnAttacked(this);		
+		}
+
+		public void OnAttacked(Character attacker)
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterIsAttacked(attacker);
+				}
+			}
+		}
+
+		public void ForceStopAttack()
+		{
+			if (HasSummons())
+			{
+				foreach (Monster summon in summons)
+				{
+					if (summon.Status.IsDead)
+						continue;
+
+					summon.MasterForcedStopAttack();
+				}
+			}
 		}
 
 		public void ChangeAI(AbstractAI ai)
@@ -210,6 +538,35 @@ namespace Assets.scripts.Actor
 		public virtual bool IsInteractable()
 		{
 			return true;
+		}
+
+		private void RemoveAllSummons()
+		{
+			for (int i = 0; i < summons.Count; i++)
+			{
+				Monster m = summons[i];
+
+				if (m != null)
+				{
+					m.DoDie();
+				}
+			}
+		}
+
+		public void AddSummon(Monster m)
+		{
+			summons.Add(m);
+			m.SetMaster(this);
+		}
+
+		public void RemoveSummon(Monster m)
+		{
+			summons.Remove(m);
+		}
+
+		public bool HasSummons()
+		{
+			return summons.Count > 0;
 		}
 	}
 }

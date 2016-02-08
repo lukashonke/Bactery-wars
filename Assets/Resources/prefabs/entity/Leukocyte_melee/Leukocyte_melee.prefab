@@ -11,8 +11,6 @@ GameObject:
   - 212: {fileID: 21245990}
   - 95: {fileID: 9524294}
   - 61: {fileID: 6102540}
-  - 114: {fileID: 11464990}
-  - 114: {fileID: 11418444}
   - 198: {fileID: 19895124}
   - 199: {fileID: 19989050}
   - 50: {fileID: 5073276}
@@ -190,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118368}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.900768, y: -4.6842065, z: 0}
+  m_LocalPosition: {x: -4.4836264, y: -14.836373, z: 0}
   m_LocalScale: {x: 0.31466964, y: 0.31466964, z: 1}
   m_Children:
   - {fileID: 438704}
@@ -321,17 +319,6 @@ MonoBehaviour:
     tagsChange: -1
     tagsSet: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
---- !u!114 &11418444
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 118368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbf72cd12e7affa42b7d284249d4f908, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11419596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -367,8 +354,6 @@ MonoBehaviour:
   lastClickPositionWorld: {x: 0, y: 0, z: 0}
   monsterId: 1
   distanceToFollowLeader: 8
-  isAggressive: 1
-  aggressionRange: 5
 --- !u!114 &11451716
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -407,19 +392,6 @@ MonoBehaviour:
   bezierTangentLength: 0.4
   offset: 0.2
   factor: 0.1
---- !u!114 &11464990
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 118368}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8ae6f9c6b3e9ce439ce98d4863c2823, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationOffset: 90
-  rotationSpeed: 5
 --- !u!198 &19804196
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -3511,7 +3483,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 118368}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_Materials:

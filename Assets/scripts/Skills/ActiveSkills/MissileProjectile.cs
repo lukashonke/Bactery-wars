@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -14,19 +15,33 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject targettedPlayer;
 		private GameObject activeProjectile;
 
-		public MissileProjectile(string name, int id) : base(name, id)
+		public MissileProjectile()
 		{
 			castTime = 1f;
 			reuse = 0;
 			coolDown = 0;
 			baseDamage = 15;
 
+			range = 10;
+
+			//TODO add min range parameter and permit casting unless range is met
+
 			requireConfirm = true;
+		}
+
+		public override SkillId GetSkillId()
+		{
+			return SkillId.MissileProjectile;
+		}
+
+		public override string GetVisibleName()
+		{
+			return "Missile Projectile";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new MissileProjectile(Name, Id);
+			return new MissileProjectile();
 		}
 
 		public override SkillEffect[] CreateEffects()
@@ -48,6 +63,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override bool OnCastStart()
 		{
 			GameObject target = GetTarget();
+
+			if (target == null)
+				target = initTarget;
+
+			Debug.Log(target);
+
 			if (target == null)
 			{
 				AbortCast();
@@ -108,7 +129,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject)
 		{
-			if (activeProjectile == null)
+			if (activeProjectile == null || targettedPlayer == null)
 				return;
 
 			// updates: 2/sec
@@ -123,6 +144,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
 		{
 			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
+			Character ch = other.gameObject.GetChar();
+			if (ch != null && !Owner.CanAttack(ch))
 				return;
 
 			ApplyEffects(Owner, other.gameObject);

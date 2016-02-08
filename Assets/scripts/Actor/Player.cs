@@ -51,7 +51,7 @@ namespace Assets.scripts.Actor
 			foreach(Skill templateSkill in Template.TemplateSkills)
 			{
 				// vytvorit novy objekt skillu
-				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.Id);
+				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
 				Skills.AddSkill(newSkill);
@@ -62,11 +62,13 @@ namespace Assets.scripts.Actor
 
 			if (Template.MeleeSkill != null)
 			{
-				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.Id);
+				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
 				MeleeSkill = (ActiveSkill) newSkill;
 			}
+
+			Template.InitSkillsOnPlayer(Skills, MeleeSkill);
 		}
 
 		/// <summary>
@@ -122,6 +124,11 @@ namespace Assets.scripts.Actor
 		public override void StopTask(IEnumerator t)
 		{
 			GetData().StopCoroutine(t);
+		}
+
+		public override bool IsInteractable()
+		{
+			return false;
 		}
 	}
 }

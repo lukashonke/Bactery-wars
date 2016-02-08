@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.GameCenter;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -13,20 +17,33 @@ namespace Assets.scripts.Mono.MapGenerator
 	public enum MapType
 	{
 		Test,
-		OpenCave,
 		DungeonAllOpen,
 		DungeonCentralClosed,
 		Hardcoded,
 
-
 		StartClassic,
+		SecondLevel,
 	}
 
+    /// <summary>
+    /// Obsahuje jeden region (oblast o rozloze 50x50 nebo podle nastaveni), vcetne vsech zdi, podlah apod.
+    /// Kazdy region obvykle obsahuje jednu mistnost (MapRoom), ktera reprezentuje oblast v regionu, po ktere muze hrac chodit
+    /// </summary>
 	public class MapRegion
-	{
-		private bool active;
+    {
+		// the map this region belongs to
+	    public MapHolder map;
 
+		public int Status { get; set; }
+
+        public MapRegion parentRegion;
+
+        public static readonly int STATUS_HOSTILE = 1;
+        public static readonly int STATUS_CONQUERED = 2;
+
+        public bool empty;
 		public int x, y;
+        public int sizeX, sizeY;
 		public Tile[,] tileMap;
 		public RegionGenerator regionGen; //TODO remove, not neccessary
 
@@ -36,15 +53,45 @@ namespace Assets.scripts.Mono.MapGenerator
 		public bool onlyOnePassage = false;
 		public bool hasOutTeleporter = false;
 
-		public MapRegion(int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
+        public int fillPercent;
+        public string seed;
+        public bool hadRandomSeed;
+
+		public MapRegion(MapHolder map, int x, int y, Tile[,] tileMap, RegionGenerator regionGen)
 		{
+			this.map = map;
 			this.x = x;
 			this.y = y;
 			this.regionGen = regionGen;
 			this.tileMap = tileMap;
 
-			active = true;
+		    Status = STATUS_HOSTILE;
 		}
+
+        public bool HasParentRegion()
+        {
+            return parentRegion != null;
+        }
+
+	    public MapRegion GetParentOrSelf()
+	    {
+		    if (parentRegion != null)
+			    return parentRegion;
+		    return this;
+	    }
+
+	    public bool IsInFamily(MapRegion reg)
+	    {
+			// jeden z nich je rodic
+		    if (this.Equals(reg.parentRegion) || reg.Equals(parentRegion))
+			    return true;
+
+			// maji spolecneho rodice
+		    if (reg.parentRegion != null && reg.parentRegion.Equals(parentRegion))
+			    return true;
+
+		    return false;
+	    }
 
 		public void AssignTilesToThisRegion()
 		{
@@ -52,7 +99,14 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				for (int j = 0; j < tileMap.GetLength(1); j++)
 				{
-					tileMap[i, j].AssignRegion(this);
+				    try
+				    {
+                        tileMap[i, j].AssignRegion(this);
+				    }
+				    catch (Exception)
+				    {
+				        Debug.LogError("error for ij " + i + ", " + j);
+				    }
 				}
 			}
 		}
@@ -70,6 +124,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
+        public MapRoom GetMapRoom()
+        {
+            return WorldHolder.instance.activeMap.GetRoom(this);
+        }
+
 		/*public void Disable()
 		{
 			if (mesh == null)
@@ -85,6 +144,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			mesh.gameObject.SetActive(true);
 			active = true;
 		}*/
+
+        public void SetEmpty()
+        {
+            empty = true;
+        }
 	}
 
 	/// <summary>
@@ -100,6 +164,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		private WorldHolder.Cords position;
 		private MapType mapType;
 
+	    private MapProcessor mapProcessor;
+		public AbstractLevelData levelData;
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
@@ -110,35 +176,100 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private List<Monster> activeMonsters;
 		private List<Npc> activeNpcs;
-		private List<MonsterSpawnInfo> spawnedMonsters;
-		private List<MonsterSpawnInfo> spawnedNpcs; 
+		private List<MonsterSpawnInfo> spawnableMonsters;
+		private List<MonsterSpawnInfo> spawnableNpcs; 
 
-		private int MAX_REGIONS = 3;
-		private int regionSize;
+		private int maxRegionsX = 3;
+        private int maxRegionsY = 3;
+		private int regionSizeX;
+        private int regionSizeY;
+
+	    private int regionWidth;
+        private int regionHeight;
 
 		public WorldHolder.Cords Position
 		{
 			get { return position; }
 		}
 
-		public MapType MapType1
+		public MapType MapType
 		{
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight)
 		{
 			this.World = world;
 
 			this.name = name;
 			this.position = position;
 			this.mapType = mapType;
+		    this.regionWidth = regionWidth;
+		    this.regionHeight = regionHeight;
+
+			levelData = null;
+
+			switch (mapType)
+			{
+				case MapType.StartClassic:
+					levelData = new StartLevelData(this);
+					break;
+				case MapType.Test:
+					levelData = new TestLevelData(this);
+					break;
+				case MapType.SecondLevel:
+					levelData = new SecondLevelData(this);
+					break;
+			}
+
+			if(levelData.GetRegionWidth() > 0)
+				this.regionWidth = levelData.GetRegionWidth();
+
+			if (levelData.GetRegionHeight() > 0)
+				this.regionHeight = levelData.GetRegionHeight();
+
+			if (levelData.GetMaxRegionsX() > 0)
+				maxRegionsX = levelData.GetMaxRegionsX();
+
+            if (levelData.GetMaxRegionsY() > 0)
+                maxRegionsY = levelData.GetMaxRegionsY();
 		}
 
 		public void AddPassage(MapPassage p)
 		{
+			//Debug.Log("adding passage for " + p.roomA.region.x + ", " + p.roomA.region.y + " AND " + p.roomB.region.x + ", " + p.roomB.region.y);
 			passages.Add(p);
 		}
+
+        public MapPassage GetPassage(MapRegion regionA, MapRegion regionB)
+        {
+	        if (regionA.HasParentRegion())
+		        regionA = regionA.parentRegion;
+
+			if (regionB.HasParentRegion())
+				regionB = regionB.parentRegion;
+
+			foreach (MapPassage passage in passages)
+	        {
+	            if (regionA.Equals(passage.roomA.region) && regionB.Equals(passage.roomB.region))
+	            {
+	                return passage;
+	            }
+
+                if (regionB.Equals(passage.roomA.region) && regionA.Equals(passage.roomB.region))
+                {
+                    return passage;
+                }
+	        }
+
+            return null;
+	    }
+
+	    public void OpenPassage(MapPassage p)
+	    {
+			if(p.enabled)
+				p.SetEnabled(false);	        
+	    }
 
 		public void InitPassage(MapPassage p)
 		{
@@ -168,8 +299,71 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public Vector3 GetTileWorldPosition(Tile t)
 		{
-			return new Vector3((-World.width/2) + t.tileX, (-World.height/2) + t.tileY, 0);
+			return new Vector3((-regionWidth/2) + t.tileX, (-regionHeight/2) + t.tileY, 0);
 		}
+
+		public Tile GetClosestGroundTile(Vector3 pos)
+		{
+			Tile cTile = GetTileFromWorldPosition(pos);
+
+			// check direct neighbours
+			Tile t = GetTile(cTile.tileX - 1, cTile.tileY);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX - 1, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY - 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX - 1, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			t = GetTile(cTile.tileX + 1, cTile.tileY + 1);
+			if (t != null && t.tileType == WorldHolder.GROUND)
+				return t;
+
+			Debug.LogError("couldnt find!");
+			return cTile;
+		}
+
+	    public Tile GetTileFromWorldPosition(Vector3 pos)
+	    {
+	        int x = Mathf.RoundToInt(pos.x + regionWidth/2);
+	        int y = Mathf.RoundToInt(pos.y + regionHeight/2);
+
+	        return SceneMap[x, y];
+	    }
+
+        public MapRegion GetRegionFromWorldPosition(Vector3 pos)
+        {
+            Tile t = GetTileFromWorldPosition(pos);
+            if (t != null)
+                return t.region;
+
+            return null;
+        }
+
+		private int[,] generatedRegionsMap;
+
+		private List<GameObject> darknessPlane; 
+
 
 		public void CreateMap()
 		{
@@ -178,106 +372,213 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			activeMonsters = new List<Monster>();
 			activeNpcs = new List<Npc>();
-			spawnedMonsters = new List<MonsterSpawnInfo>();
-			spawnedNpcs = new List<MonsterSpawnInfo>();
+			spawnableMonsters = new List<MonsterSpawnInfo>();
+			spawnableNpcs = new List<MonsterSpawnInfo>();
 
-			regionSize = World.width + 2;
+			darknessPlane = new List<GameObject>();
+
+			regionSizeX = regionWidth + 2;
+            regionSizeY = regionHeight + 2;
 			
-			SceneMap = new Tile[regionSize * MAX_REGIONS, regionSize * MAX_REGIONS];
+			SceneMap = new Tile[regionSizeX * maxRegionsX, regionSizeY * maxRegionsY];
 
-			switch (mapType)
+            generatedRegionsMap = new int[maxRegionsX, maxRegionsY];
+
+			if (levelData != null)
 			{
+				levelData.Generate();
+			}
+			else
+			{
+				switch (mapType)
+				{
 					case MapType.StartClassic:
 
-					GenerateDungeonRegion(0, 0, 35, true);
-					GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(0, 2);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true);
-					GenerateEmptyRegion(1, 1);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
+						GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }, 2, 1); //0-1; 0
+						GenerateDungeonRegion(2, 0, World.randomFillPercent, false, true, true, new[] { 290 });
 
-					break;
+						GenerateEmptyRegion(0, 1);
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(2, 1);
+
+						GenerateEmptyRegion(0, 2);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 2);
+
+						/*GenerateDungeonRegion(0, 0, 35, true, new []{344});
+						GenerateEmptyRegion(0, 1);
+						GenerateEmptyRegion(0, 2);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false, true, true, new []{290});
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);*/
+
+						break;
 					case MapType.Test:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateEmptyRegion(1, 0);
-					GenerateEmptyRegion(1, 1);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+						/*GenerateDungeonRegion(0, 0, 35, true, new []{344}); // 0 0
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false, true, false, new []{290}, 2, 1); // 0 1; 1 1
 
-					break;
+						GenerateDungeonRegion(2, 1, 35, false, new[] { 344 }); // 2 1
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 2 0
+						GenerateDungeonRegion(0, 2, 35, false, new[] { 344 }); // 2 1
+
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 2);
+						GenerateEmptyRegion(2, 2);*/
+
+						/*GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(0, 1, 35, false, true, false, new[] { 344 }, 1, 2); // 0, 2
+
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 2); // 0 1; 1 1
+
+						GenerateDungeonRegion(1, 0, 35, false, true, false, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 0 0*/
+
+						GenerateDungeonRegion(0, 0, 35, true, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(0, 1, 35, false, true, false, new[] { 344 }, 1, 2); // 0, 2
+
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 1); // 0 1; 1 1
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false, true, true, new[] { 290 }, 2, 1); // 0 1; 1 1
+
+						GenerateDungeonRegion(1, 0, 35, false, true, false, new[] { 344 }); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }); // 0 0
+
+						/*GenerateDungeonRegion(0, 0, 35, true, false, false, new[] { 344 }, 1, 3); // 0 0
+						GenerateDungeonRegion(1, 2, 35, false, true, false, new[] { 344 }, 2, 1); // 0 0
+						GenerateDungeonRegion(2, 0, 35, false, true, true, new[] { 344 }, 1, 2); // 0 0
+
+						GenerateEmptyRegion(1, 1);
+						GenerateEmptyRegion(1, 0);*/
+
+						/*GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateEmptyRegion(1, 0);
+						GenerateEmptyRegion(1, 1);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);*/
+
+						break;
 					case MapType.Hardcoded:
 
-					GenerateHardcodedMap(0, 0, "Town", true);
+						GenerateHardcodedMap(0, 0, "Town", true);
 
-					break;
-
-					case MapType.OpenCave:
-
-					GenerateDungeonRegion(0, 0, 43, true);
-					GenerateEmptyRegion(0, 1);
-					GenerateEmptyRegion(0, 2);
-
-					GenerateEmptyRegion(1, 0);
-					GenerateEmptyRegion(1, 1);
-					GenerateEmptyRegion(1, 2);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
-
-					break;
+						break;
 
 					case MapType.DungeonAllOpen:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
+						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 1, World.randomFillPercent, false, true, false);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 0, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(2, 2, World.randomFillPercent, false, false, true);
 
-					break;
+						break;
 					case MapType.DungeonCentralClosed:
 
-					GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
-					GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
-					GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
-					GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
-					GenerateEmptyRegion(1, 1);
-					GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
-					GenerateEmptyRegion(2, 0);
-					GenerateEmptyRegion(2, 1);
-					GenerateEmptyRegion(2, 2);
-					//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
-					//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
-					//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
+						GenerateDungeonRegion(0, 0, World.randomFillPercent, true);
+						GenerateDungeonRegion(0, 1, World.randomFillPercent, false);
+						GenerateDungeonRegion(0, 2, World.randomFillPercent, false);
+						GenerateDungeonRegion(1, 0, World.randomFillPercent, false);
+						GenerateEmptyRegion(1, 1);
+						GenerateDungeonRegion(1, 2, World.randomFillPercent, false, false, true);
+						GenerateEmptyRegion(2, 0);
+						GenerateEmptyRegion(2, 1);
+						GenerateEmptyRegion(2, 2);
+						//GenerateDungeonRoom(world.seed, 2, 0, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 1, world.randomFillPercent, true, false);
+						//GenerateDungeonRoom(world.seed, 2, 2, world.randomFillPercent, true, false);
 
-					break;
-
+						break;
+				}
 			}
+
+			GenerateMissingEmptyRegions();
 
 			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
 			Utils.Timer.EndTimer("mapprocess");
 		}
 
+		private void CreateDarkPlanes() //TODO scale the objects to adjust lightning here
+		{
+			darknessPlane = new List<GameObject>();
+
+			Vector3 bottomLeft = GetTileWorldPosition(SceneMap[0, 0]);
+			Vector3 buttomRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0)-1, 0]);
+			Vector3 topLeft = GetTileWorldPosition(SceneMap[0, SceneMap.GetLength(1) - 1]);
+			Vector3 topRight = GetTileWorldPosition(SceneMap[SceneMap.GetLength(0) - 1, SceneMap.GetLength(1) - 1]);
+			Vector3 center = Vector3.Lerp(bottomLeft, topRight, 0.5f);
+
+			GameObject templ = WorldHolder.instance.darkPlaneTemplate;
+
+			float height = Vector3.Distance(bottomLeft, topLeft);
+			float width = Vector3.Distance(bottomLeft, buttomRight);
+			float size = 50;
+
+			/*GameObject background = GameObject.Find("Background");
+			background.transform.position = center + new Vector3(0, 0, 1);
+			background.transform.localScale = new Vector3(width, height);*/
+
+			GameObject totalBackground = Object.Instantiate(templ, center + new Vector3(0, 0, 11.5f), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
+
+			// scales up by size
+			totalBackground.transform.localScale = new Vector3(width+size, height+size);
+			totalBackground.transform.position += new Vector3(size/2, size/2);
+
+			// now move a bit down to create borders
+			totalBackground.transform.position -= new Vector3(size/4, size/4);
+		}
+
+		private void DeleteDarkPlanes()
+		{
+			foreach (GameObject o in darknessPlane)
+			{
+				if(o != null)
+					Object.Destroy(o);
+			}
+		}
+
+		private void GenerateMissingEmptyRegions()
+		{
+			int count = 0;
+			for (int i = 0; i < generatedRegionsMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < generatedRegionsMap.GetLength(1); j++)
+				{
+					if (generatedRegionsMap[i, j] == 0)
+					{
+						count ++;
+						GenerateEmptyRegion(i, j);
+					}
+				}
+			}
+
+			Debug.Log("generated mising " +count + " empty regions");
+		}
+
 		public void ProcessSceneMap()
 		{
-			MapProcessor processor = new MapProcessor(this, SceneMap, mapType);
+			mapProcessor = new MapProcessor(this, SceneMap, mapType);
 
-			processor.Process();
+			mapProcessor.Process();
 
-			SceneMap = processor.Tiles;
+		    //Debug.Log(GetTileWorldPosition(SceneMap[0,0]));
+            //Debug.Log(GetTileWorldPosition(SceneMap[50, 50]));
+
+            //GetTile(0, 0).SetColor(Tile.BLUE);
+            //GetTile(50, 50).SetColor(Tile.BLUE);
+
+			SceneMap = mapProcessor.Tiles;
 		}
 
 		public void GenerateHardcodedMap(int regX, int regY, string name, bool isStartRegion)
@@ -287,22 +588,22 @@ namespace Assets.scripts.Mono.MapGenerator
 				World.seed = World.GetRandomSeed();
 			}
 
-			HardcodedRegionGenerator regionGenerator = new HardcodedRegionGenerator(World.width, World.height, World.seed, World.doDebug, name);
+			HardcodedRegionGenerator regionGenerator = new HardcodedRegionGenerator(regionWidth, regionHeight, World.seed, World.doDebug, name);
 
 			Tile[,] tileMap = regionGenerator.GenerateMap();
 
 			AddToSceneMap(tileMap, regX, regY);
 
-			MapRegion region = new MapRegion(regX, regY, tileMap, regionGenerator);
+			MapRegion region = new MapRegion(this, regX, regY, tileMap, regionGenerator);
 			region.AssignTilesToThisRegion();
 			region.isAccessibleFromStart = true;
 			region.isStartRegion = isStartRegion;
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-		protected void GenerateEmptyRegion(int regX, int regY)
+		public void GenerateEmptyRegion(int regX, int regY)
 		{
-			Tile[,] tileMap = new Tile[World.width+2,World.height+2];
+			Tile[,] tileMap = new Tile[regionWidth+2,regionHeight+2];
 
 			for (int x = 0; x < tileMap.GetLength(0); x++)
 			{
@@ -314,58 +615,114 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			AddToSceneMap(tileMap, regX, regY);
 
-			MapRegion region = new MapRegion(regX, regY, tileMap, null);
+			MapRegion region = new MapRegion(this, regX, regY, tileMap, null);
+		    region.SetEmpty();
 			region.AssignTilesToThisRegion();
 			regions.Add(new WorldHolder.Cords(regX, regY), region);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion)
+        public MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
-			return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false);
+            return GenerateDungeonRegion(x, y, randomFillPercent, isStartRegion, false, false, allowedSeeds, sizeX, sizeY);
 		}
 
-		protected MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter)
+		public const bool devSeeds = false;
+
+		public MapRegion GenerateDungeonRegion(int x, int y, int randomFillPercent, bool isStartRegion, bool isLockedRegion, bool hasOutTeleporter, int[] allowedSeeds=null, int sizeX=1, int sizeY=1)
 		{
 			//Debug.Log("generating and enabling NEW region .. " + x + ", " + y);
 
 			String seed = World.seed;
 
-			if (World.useRandomSeed)
+			if (allowedSeeds != null && !devSeeds)
+		    {
+		        seed = allowedSeeds[Random.Range(0, allowedSeeds.Length)] + "";
+		    }
+			else if (World.useRandomSeed)
 			{
 				seed = World.GetRandomSeed();
-				Debug.Log(x + " " + y + " is using " + seed);
+                Debug.Log(x + " " + y + " is using " + seed);
 			}
 
 			//float xSize = (world.width) * world.SQUARE_SIZE;
 			//float ySize = (world.height) * world.SQUARE_SIZE;
 			//Vector3 shiftVector = new Vector3(x * xSize, y * ySize);
 
-			RegionGenerator regionGenerator = new DungeonRegionGenerator(World.width, World.height, seed, randomFillPercent, World.doDebug);
+		    MapRegion parentRegion = null;
 
-			Tile[,] tileMap = regionGenerator.GenerateMap();
+            RegionGenerator regionGenerator = new DungeonRegionGenerator(regionWidth*sizeX, regionHeight*sizeY, seed, randomFillPercent, World.doDebug);
+            Tile[,] tileMap = regionGenerator.GenerateMap();
 
-			AddToSceneMap(tileMap, x, y);
+		    for (int i = 0; i < sizeX; i++)
+		    {
+		        for (int j = 0; j < sizeY; j++)
+		        {
+		            Tile[,] subTileMap = GetSubTileMap(tileMap, i, j);
 
-			if (!GameController.DEV_BUILD)
-				regionGenerator = null;
+		            if (i == 0 && j == 0)
+		            {
+                        parentRegion = new MapRegion(this, x + i, y + j, subTileMap, regionGenerator);
 
-			MapRegion region = new MapRegion(x, y, tileMap, regionGenerator);
+		                parentRegion.hadRandomSeed = (allowedSeeds == null || devSeeds);
+		                parentRegion.seed = seed;
+		                parentRegion.fillPercent = randomFillPercent;
 
-			// test
-			/*if (x == 1 && y == 1)
-			{
-				region.onlyOnePassage = true;
-			}*/
+                        parentRegion.AssignTilesToThisRegion();
+                        parentRegion.isAccessibleFromStart = true;
+                        parentRegion.isStartRegion = isStartRegion;
+                        parentRegion.isLockedRegion = isLockedRegion;
+                        parentRegion.hasOutTeleporter = hasOutTeleporter;
+                        regions.Add(new WorldHolder.Cords(x+i, y+j), parentRegion);
+		            }
+		            else
+		            {
+                        MapRegion region = new MapRegion(this, x+i, y+j, subTileMap, regionGenerator);
+		                region.parentRegion = parentRegion;
 
-			region.AssignTilesToThisRegion();
-			region.isAccessibleFromStart = true;
-			region.isStartRegion = isStartRegion;
-			region.isLockedRegion = isLockedRegion;
-			region.hasOutTeleporter = hasOutTeleporter;
-			regions.Add(new WorldHolder.Cords(x, y), region);
+                        region.AssignTilesToThisRegion();
+                        region.isAccessibleFromStart = true;
+                        region.isStartRegion = isStartRegion;
+                        region.isLockedRegion = isLockedRegion;
+                        region.hasOutTeleporter = hasOutTeleporter;
+                        regions.Add(new WorldHolder.Cords(x+i, y+j), region);
+		            }
 
-			return region;
+                    AddToSceneMap(subTileMap, x + i, y + j);
+		        }
+		    }
+
+			return parentRegion;
 		}
+
+	    private Tile[,] GetSubTileMap(Tile[,] tileMap, int i, int j)
+	    {
+            Tile[,] newMap = new Tile[regionSizeX,regionSizeY];
+
+            for (int x = 0; x < newMap.GetLength(0); x++)
+	        {
+                for (int y = 0; y < newMap.GetLength(1); y++)
+                {
+                    Tile t = null;
+
+                    try
+                    {
+                        t = tileMap[x + (i*regionSizeX), y + (j*regionSizeY)];
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    if (t == null)
+                    {
+                        t = new Tile(x + (i*regionSizeX), y + (j*regionSizeY), WorldHolder.WALL);
+                    }
+
+                    newMap[x, y] = t;
+	            }
+	        }
+
+	        return newMap;
+	    }
 
 		public void DeleteMap()
 		{
@@ -391,23 +748,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			activeMonsters.Clear();
 			activeNpcs.Clear();
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
 
 			regions.Clear();
 			SetActive(false);
-		}
-
-		public class MonsterSpawnInfo
-		{
-			public MonsterId monster;
-			public Vector3 position;
-
-			public MonsterSpawnInfo(MonsterId m, Vector3 pos)
-			{
-				monster = m;
-				position = pos;
-			}
 		}
 
 		public void LoadMap(bool reloading)
@@ -416,34 +761,50 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			foreach (MapPassage p in passages)
 			{
-				InitPassage(p);
+                if(p.enabled)
+				    InitPassage(p);
 			}
 
 			activeMonsters.Clear();
 			activeNpcs.Clear();
 
+			CreateDarkPlanes();
+
 			try
 			{
-				foreach (MonsterSpawnInfo info in spawnedMonsters)
+				foreach (MonsterSpawnInfo info in spawnableMonsters)
 				{
-					SpawnMonsterToWorld(info.monster, info.position);
+				    AddMonsterToMap(info, true);
 				}
 
-				foreach (MonsterSpawnInfo info in spawnedNpcs)
+				foreach (MonsterSpawnInfo info in spawnableNpcs)
 				{
-					SpawnNpcToWorld(info.monster, info.position);
+				    AddNpcToMap(info.MonsterId, info.SpawnPos, true);
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				Debug.LogError("error");
 			}
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			ConfigureMonstersAfterSpawn();
 
-			GameSystem.Instance.UpdatePathfinding();
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
+
+			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
 			SetActive(true);
+
+			UpdateRegions();
+		}
+
+		private void UpdateRegions()
+		{
+			foreach (MapRegion r in regions.Values)
+			{
+				if(!r.HasParentRegion())
+					UpdateRegionStatus(r);
+			}
 		}
 
 		public void DeloadMap()
@@ -457,14 +818,16 @@ namespace Assets.scripts.Mono.MapGenerator
 				p.Delete();
 			}
 
-			spawnedMonsters.Clear();
-			spawnedNpcs.Clear();
+			DeleteDarkPlanes();
+
+			spawnableMonsters.Clear();
+			spawnableNpcs.Clear();
 
 			foreach (Monster m in activeMonsters)
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedMonsters.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
+					spawnableMonsters.Add(m.SpawnInfo);
 					m.Data.DeleteMe();
 				}
 			}
@@ -473,7 +836,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnedNpcs.Add(new MonsterSpawnInfo(m.Template.MonsterId, m.GetData().GetBody().transform.position));
+					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -527,7 +890,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						Gizmos.color = new Color(128, 0, 0);
 
 					//Vector3 pos = new Vector3((xSize - 1) / 2 - (world.width / 2), (ySize - 1) / 2 - (world.height / 2));
-					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + World.width+2, ((-ySize / 2) + y + .5f) + World.height+2, 0);
+					Vector3 pos = new Vector3(((-xSize / 2) + x + .5f) + regionWidth+2, ((-ySize / 2) + y + .5f) + regionHeight+2, 0);
 					Gizmos.DrawCube(pos, Vector3.one);
 				}
 			}
@@ -586,7 +949,14 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				for (int y = 0; y < SceneMap.GetLength(1); y++)
 				{
-					intMap[x, y] = SceneMap[x, y].tileType;
+				    try
+				    {
+                        intMap[x, y] = SceneMap[x, y].tileType;
+				    }
+				    catch (Exception)
+				    {
+				        Debug.Log("NPE for " + x + ", " + y);
+				    }
 				}
 			}
 
@@ -596,7 +966,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			float xSize = (intMap.GetLength(0) - 1) * World.SQUARE_SIZE;
 			float ySize = (intMap.GetLength(1) - 1) * World.SQUARE_SIZE;
 
-			Vector3 shiftVector = new Vector3((xSize-1) / 2 - (World.width / 2), (ySize-1) / 2 - (World.height / 2));
+			Vector3 shiftVector = new Vector3((xSize-1) / 2 - (regionWidth / 2), (ySize-1) / 2 - (regionHeight / 2));
 			MeshFilter mesh = generator.GenerateMesh("Map mesh", intMap, World.SQUARE_SIZE, shiftVector);
 
 			mesh.transform.position = shiftVector;
@@ -656,12 +1026,14 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		protected void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
 		{
+			generatedRegionsMap[regionX, regionY] = 1;
+
 			for (int x = 0; x < tiles.GetLength(0); x++)
 			{
 				for (int y = 0; y < tiles.GetLength(1); y++)
 				{
-					int newX = (regionX*regionSize) + x;
-					int newY = (regionY*regionSize) + y;
+					int newX = (regionX*regionSizeX) + x;
+					int newY = (regionY*regionSizeY) + y;
 
 					Tile t = tiles[x, y];
 
@@ -674,8 +1046,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public MapRegion GetRegion(Vector2 pos)
 		{
-			float xSize = (World.width + 1) * World.SQUARE_SIZE;
-			float ySize = (World.height + 1) * World.SQUARE_SIZE;
+			float xSize = (regionWidth + 1) * World.SQUARE_SIZE;
+			float ySize = (regionHeight + 1) * World.SQUARE_SIZE;
 
 			float regionX = (pos.x + xSize / 2) / xSize;
 			float regionY = (pos.y + ySize / 2) / ySize;
@@ -687,28 +1059,39 @@ namespace Assets.scripts.Mono.MapGenerator
 			return reg;
 		}
 
-		public MapRegion[] GetNeighbourRegions(MapRegion reg)
+        //TODO can there be more than one room? if so, return it as array
+        public MapRoom GetRoom(MapRegion region)
+	    {
+            foreach (MapRoom room in mapProcessor.rooms)
+            {
+                if (room.region.Equals(region))
+                    return room;
+            }
+            return null;
+	    }
+
+		public List<MapRegion> GetNeighbourRegions(MapRegion reg)
 		{
-			MapRegion[] neighbours = new MapRegion[4];
+            List<MapRegion> neighbours = new List<MapRegion>();
 
 			WorldHolder.Cords c;
 			int i = 0;
 
 			c = new WorldHolder.Cords(reg.x + 1, reg.y);
-			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+		    if (regions.ContainsKey(c))
+		        neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x, reg.y +1);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x - 1, reg.y);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			c = new WorldHolder.Cords(reg.x, reg.y -1);
 			if (regions.ContainsKey(c))
-				neighbours[i++] = regions[c];
+                neighbours.Add(regions[c]);
 
 			return neighbours;
 		}
@@ -725,54 +1108,248 @@ namespace Assets.scripts.Mono.MapGenerator
 			return false;
 		}
 
-		private Npc SpawnNpcToWorld(MonsterId monsterId, Vector3 position)
+        /////////////////////
+
+		/*private Npc SpawnNpcToWorld(MonsterId monsterId, Vector3 position)
 		{
 			Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
 
-			activeNpcs.Add(npc);
+			RegisterNpcToMap(npc);
 
 			return npc;
-		}
+		}*/
 
-		private Monster SpawnMonsterToWorld(MonsterId monsterId, Vector3 position)
+		/*private Monster SpawnMonsterToWorld(MonsterId monsterId, Vector3 position)
 		{
 			Monster npc = GameSystem.Instance.SpawnMonster(monsterId, position, false);
 
-			activeMonsters.Add(npc);
+			RegisterMonsterToMap(npc);
 
 			return npc;
-		}
+		}*/
 
-		public Npc SpawnNpc(MonsterId monsterId, Vector3 position)
+		public Monster FindMonsterBySpawnInfo(MonsterSpawnInfo info)
 		{
-			return SpawnNpc(monsterId, position, false);
-		}
-
-		public Npc SpawnNpc(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
-		{
-			if (isActive || forceSpawnNow)
+			foreach (Monster m in activeMonsters)
 			{
-				return SpawnNpcToWorld(monsterId, position);
+				if (m != null && m.SpawnInfo.Equals(info))
+					return m;
 			}
-
-			spawnedNpcs.Add(new MonsterSpawnInfo(monsterId, position));
 			return null;
 		}
 
-		public Monster SpawnMonster(MonsterId monsterId, Vector3 position)
+		public void ConfigureMonstersAfterSpawn()
 		{
-			return SpawnMonster(monsterId, position, false);
+			MonsterSpawnInfo spawnInfo;
+			foreach (Monster m in activeMonsters)
+			{
+				if (m == null)
+					continue;
+
+				spawnInfo = m.SpawnInfo;
+
+				if (spawnInfo.master != null)
+				{
+					Monster master = FindMonsterBySpawnInfo(spawnInfo.master);
+					m.SetMaster(master);
+				}
+			}
 		}
 
-		public Monster SpawnMonster(MonsterId monsterId, Vector3 position, bool forceSpawnNow)
+		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
 		{
 			if (isActive || forceSpawnNow)
 			{
-				return SpawnMonsterToWorld(monsterId, position);
+                Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
+
+                RegisterNpcToMap(npc);
+
+			    return npc;
 			}
 
-			spawnedMonsters.Add(new MonsterSpawnInfo(monsterId, position));
+			// ulozit NPC do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
+			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterId, position));
 			return null;
+		}
+
+	    public Monster AddMonsterToMap(MonsterSpawnInfo info, bool forceSpawnNow=false)
+	    {
+	        if (isActive || forceSpawnNow)
+	        {
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false, info.level);
+                m.SetSpawnInfo(info);
+
+                RegisterMonsterToMap(m, info);
+	            return m;
+	        }
+
+			// ulozit monster do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
+		    spawnableMonsters.Add(info);
+		    return null;
+	    }
+
+	    public void RegisterMonsterToMap(Monster m, MonsterSpawnInfo info=null)
+	    {
+            //auto create monsterspawninfo
+            if (info == null)
+            {
+                Vector3 pos = m.GetData().GetBody().transform.position;
+                info = new MonsterSpawnInfo(this, m.Template.GetMonsterId(), pos);
+
+                MapRegion reg = GetRegionFromWorldPosition(pos);
+
+                if (reg == null)
+                {
+                    Debug.LogError("Cant assign region for monster " + m.Name + " on pos " + pos + ", monster now registered!");
+                    return;
+                }
+
+	            if (reg.HasParentRegion())
+		            reg = reg.parentRegion;
+			
+                info.SetRegion(reg);
+	            m.SetSpawnInfo(info);
+            }
+
+			//Debug.Log("monster " + m.Name + " has now region " + m.SpawnInfo.Region.x + ", " + m.SpawnInfo.Region.y + " assigned!");
+
+			activeMonsters.Add(m);
+	    }
+
+	    public void RegisterNpcToMap(Npc m)
+	    {
+	        activeNpcs.Add(m);
+	    }
+
+	    public void NotifyCharacterDied(Character ch)
+	    {
+	        if (ch is Player)
+	        {
+	            //do nothing
+	        }
+            else if (ch is Npc)
+            {
+                // shouldnt happen
+            }
+			else if (ch is Boss)
+			{
+				NotifyBossDied((Boss)ch);
+			}
+            else if (ch is Monster)
+            {
+                // this monster was added from editor and is not registered to the map - ignore its dead here
+                if (((Monster) ch).SpawnInfo == null)
+                    return;
+
+                for(int i = 0; i < activeMonsters.Count; i++)
+                {
+                    Monster temp = activeMonsters[i];
+
+                    if (temp.Equals(ch))
+                    {
+                        activeMonsters.Remove(temp);
+                        UpdateRegionStatus(temp.SpawnInfo.Region);
+                        break;
+                    }
+                }
+            }
+	    }
+
+		private void NotifyBossDied(Boss boss)
+		{
+			
+		}
+
+	    public void UpdateRegionStatus(MapRegion region)
+	    {
+			// only parent regions can use this method to open doors, etc
+		    if (region.HasParentRegion())
+			    return;
+
+	        int countInRegion = 0;
+
+	        foreach (Monster m in activeMonsters)
+	        {
+	            if (m.SpawnInfo.Region.Equals(region) && m.SpawnInfo.mustDieToProceed)
+	            {
+	                countInRegion++;
+	            }
+	        }
+
+            //Debug.Log("there are " + countInRegion + " monsters in " + region.x + ", " + region.y);
+
+	        if (countInRegion > 0)
+	            return;
+
+		    if (region.x == 1 && region.y == 1)
+		    {
+			    
+		    }
+
+	        region.Status = MapRegion.STATUS_CONQUERED;
+
+			Queue<MapRegion> neighbours = new Queue<MapRegion>();
+			foreach (MapRegion reg in GetNeighbourRegions(region))
+				neighbours.Enqueue(reg);
+
+			List<MapRegion> checks = new List<MapRegion>();
+
+			// vzit vsechny sousedy startovni mistnosti
+			while (neighbours.Count > 0)
+			{
+				MapRegion neighbour = neighbours.Dequeue();
+
+				checks.Add(neighbour);
+
+				if (neighbour == null)
+					continue;
+
+				if (neighbour.IsInFamily(region)) // soused patri do rodiny - toho nemusime odemykat
+				{
+					foreach (MapRegion r in GetNeighbourRegions(neighbour))
+					{
+						if (r != null && !neighbours.Contains(r) && !checks.Contains(r))
+							neighbours.Enqueue(r);
+					}
+
+					continue;
+				}
+				else if (neighbour.isLockedRegion && neighbour.empty == false) // soused je zamceny a nepatri do rodiny - odemkneme ho
+				{
+					MapPassage pas = GetPassage(region, neighbour);
+
+					if (pas != null)
+					{
+						//Debug.Log("opened! " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y);
+						OpenPassage(pas);
+					}
+					else
+					{
+						//Debug.LogWarning("cant find passage for " + region.x + ", " + region.y + " AND " + neighbour.x + ", " + neighbour.y); //TODO finish
+					}
+				}
+			}
+	    }
+
+		public int GetMonstersLeft(MapRegion reg)
+		{
+			int c = 0;
+			if (reg == null)
+			{
+				return activeMonsters.Count;
+			}
+			else
+			{
+				foreach (Monster m in activeMonsters)
+				{
+					if (m.SpawnInfo.Region.GetParentOrSelf().Equals(reg))
+					{
+						c ++;
+					}
+				}
+			}
+
+			return c;
 		}
 
 		public Vector3 GetStartPosition()
@@ -802,5 +1379,54 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			return new Vector3();
 		}
+
+		public List<MapRoom> GetMapRooms()
+		{
+			return mapProcessor.rooms;
+		} 
+
+	    public bool CanTeleportToNext()
+	    {
+	        foreach (MapRegion reg in regions.Values)
+	        {
+	            if (reg.hasOutTeleporter)
+	            {
+	                UpdateRegionStatus(reg);
+
+                    if(reg.Status == MapRegion.STATUS_CONQUERED)
+                        return true;
+	            }
+	        }
+
+	        return false;
+	    }
+
+		public List<MapRegion> GetRegionsInFamilyWith(MapRegion reg)
+		{
+			List<MapRegion> list = new List<MapRegion>();
+			list.Add(reg);
+
+			foreach (MapRegion r in regions.Values)
+			{
+				if (r.IsInFamily(reg))
+				{
+					list.Add(r);
+				}
+			}
+
+			return list;
+		}
+
+        /*private class MonsterSpawnInfo
+        {
+            public MonsterId monster;
+            public Vector3 position;
+
+            public MonsterSpawnInfo(MonsterId m, Vector3 pos)
+            {
+                monster = m;
+                position = pos;
+            }
+        }*/
 	}
 }

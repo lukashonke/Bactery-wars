@@ -12,6 +12,11 @@ namespace Assets.scripts.Skills.Base
 		Escape,
 		Jump,
 		Missile,
+		BuffDamage,
+		BuffDefense,
+		SpawnMinion,
+
+		Melee,
 
 		ShortRange,
 		LongRange,
