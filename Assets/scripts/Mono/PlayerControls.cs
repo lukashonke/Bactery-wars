@@ -68,7 +68,18 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.E))
 			{
+				AbstractUpgrade u = new TemplateUpgrade(2);
+				data.GetOwner().AddUpgrade(u);
+				data.GetOwner().EquipUpgrade(u);
+			}
+
+			if (Input.GetKeyDown(KeyCode.R))
+			{
 				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
+				data.GetOwner().UnequipUpgrade(u);
+				data.GetOwner().RemoveUpgrade(u);
+
+				u = data.GetOwner().Inventory.GetUpgrade(typeof(TemplateUpgrade));
 				data.GetOwner().UnequipUpgrade(u);
 				data.GetOwner().RemoveUpgrade(u);
 			}

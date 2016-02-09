@@ -20,8 +20,16 @@ namespace Assets.scripts.Upgrade
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			originalRange = melee.range;
-			melee.range = originalRange * 2;
+			if (Level == 1)
+			{
+				originalRange = melee.range;
+				melee.range = originalRange * 10;
+			}
+			else if(Level == 2)
+			{
+				originalRange = melee.range;
+				melee.range = (int) (originalRange * 1.5f);
+			}
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -31,23 +39,23 @@ namespace Assets.scripts.Upgrade
 
 		public override void ModifySkillEffects(Skill sk, SkillEffect[] effects)
 		{
-			foreach (SkillEffect ef in effects)
+			/*foreach (SkillEffect ef in effects)
 			{
 				if (ef is EffectDamage)
 				{
 					((EffectDamage) ef).Dmg = 1;
 				}
-			}
+			}*/
 		}
 
 		public override void ModifyMaxHp(ref int maxHp)
 		{
-			maxHp *= 2;
+			//maxHp *= 2;
 		}
 
 		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
 		{
-			if (sk is CommonColdAutoattack)
+			/*if (sk is CommonColdAutoattack)
 			{
 				CommonColdAutoattack aa = (CommonColdAutoattack) sk;
 
@@ -55,7 +63,7 @@ namespace Assets.scripts.Upgrade
 				{
 					new EffectPushaway(100)
 				};
-			}
+			}*/
 
 			return null;
 		}

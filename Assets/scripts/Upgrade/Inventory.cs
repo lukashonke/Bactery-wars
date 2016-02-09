@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Assets.scripts.Upgrade
@@ -72,6 +74,11 @@ namespace Assets.scripts.Upgrade
 
 		public void RemoveUpgrade(AbstractUpgrade u)
 		{
+			if (IsEquipped(u))
+			{
+				UnequipUpgrade(u);
+			}
+
 			upgrades.Remove(u);
 		}
 
@@ -96,11 +103,33 @@ namespace Assets.scripts.Upgrade
 				return;
 
 			activeUpgrades.Add(u);
+
+			u.Apply();
+		}
+
+		public bool IsEquipped(AbstractUpgrade u)
+		{
+			return activeUpgrades.Contains(u);
 		}
 
 		public void UnequipUpgrade(AbstractUpgrade u)
 		{
+			// sundat vsechny upgrady od konce
+			for (int i = activeUpgrades.Count - 1; i >= 0; i--)
+			{
+				AbstractUpgrade upgr = activeUpgrades[i];
+				upgr.Remove();
+			}
+
+			// smazat z listu ten ktery chceme unequipnout
 			activeUpgrades.Remove(u);
+
+			// znovu aplikovat vsechny upgrady
+			for (int i = 0; i < activeUpgrades.Count; i++)
+			{
+				AbstractUpgrade upgr = activeUpgrades[i];
+				upgr.Apply();
+			}
 		}
 
 		public AbstractUpgrade GetUpgrade(int order)

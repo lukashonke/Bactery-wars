@@ -214,7 +214,6 @@ namespace Assets.scripts.Actor
 		public void EquipUpgrade(AbstractUpgrade u)
 		{
 			Inventory.EquipUpgrade(u);
-			u.Apply();
 			UpdateStats();
 
 			Debug.Log("Equiped " + u.Name);
@@ -223,7 +222,6 @@ namespace Assets.scripts.Actor
 		public void UnequipUpgrade(AbstractUpgrade u)
 		{
 			Inventory.UnequipUpgrade(u);
-			u.Remove();
 			UpdateStats();
 
 			Debug.Log("Unequiped " + u.Name);
