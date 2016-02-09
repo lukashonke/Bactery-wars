@@ -48,6 +48,11 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		}
 
+		public virtual void ModifySkillCooldown(ActiveSkill sk, ref float cooldown)
+		{
+			
+		}
+
 		protected bool IsOffensive()
 		{
 			return isOffensive;

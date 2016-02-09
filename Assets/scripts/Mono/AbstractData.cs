@@ -1311,9 +1311,11 @@ namespace Assets.scripts.Mono
 
 					int damage = (int) (velocity/100f*3);
 
-					Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
-
-					GetOwner().ReceiveDamage(null, damage);
+					if (damage > 0)
+					{
+						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
+						GetOwner().ReceiveDamage(null, damage);
+					}
 				}
 			}
 

@@ -9,6 +9,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -465,7 +466,7 @@ namespace Assets.scripts.Skills
 
             //TODO if player dies he finishes casting anyway
 
-			float coolDown = this.coolDown;
+			float coolDown = GetCooldownTime();
 
 			// TODO apply cooldown modifying stuff here
 
@@ -878,6 +879,11 @@ namespace Assets.scripts.Skills
 		{
 			float reuse = this.reuse;
 
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillReuse(this, ref reuse);
+			}
+
 			foreach (SkillEffect ef in Owner.ActiveEffects)
 			{
 				ef.ModifySkillReuse(this, ref reuse);
@@ -885,9 +891,31 @@ namespace Assets.scripts.Skills
 			return reuse;
 		}
 
+		public float GetCooldownTime()
+		{
+			float coolDown = this.coolDown;
+
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillCooldown(this, ref coolDown);
+			}
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillCooldown(this, ref coolDown);
+			}
+
+			return coolDown;
+		}
+
 		public float GetCastTime()
 		{
 			float casttime = this.castTime;
+
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillCasttime(this, ref casttime);
+			}
 
 			foreach (SkillEffect ef in Owner.ActiveEffects)
 			{

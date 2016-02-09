@@ -14,6 +14,7 @@ using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,6 +34,8 @@ namespace Assets.scripts.Actor
 		public ActiveSkill MeleeSkill { get; set; }
 		public Knownlist Knownlist { get; private set; }
 		public AbstractAI AI { get; private set; }
+
+		public Inventory Inventory { get; private set; }
 
 		public List<Monster> summons; 
 
@@ -120,6 +123,7 @@ namespace Assets.scripts.Actor
 			Status = InitStatus();
 			Skills = InitSkillSet();
 			summons = new List<Monster>();
+			Inventory = new Inventory(10, 3);
 
 			Knownlist.StartUpdating();
 
@@ -191,6 +195,42 @@ namespace Assets.scripts.Actor
 		public AbstractData GetData()
 		{
 			return Data;
+		}
+
+		public void AddUpgrade(AbstractUpgrade u)
+		{
+			u.SetOwner(this);
+			Inventory.AddUpgrade(u);
+			Debug.Log("Added " + u.Name);
+		}
+
+		public void RemoveUpgrade(AbstractUpgrade u)
+		{
+			u.SetOwner(null);
+			Inventory.RemoveUpgrade(u);
+			Debug.Log("Removed " + u.Name);
+		}
+
+		public void EquipUpgrade(AbstractUpgrade u)
+		{
+			Inventory.EquipUpgrade(u);
+			u.Apply();
+			UpdateStats();
+
+			Debug.Log("Equiped " + u.Name);
+		}
+
+		public void UnequipUpgrade(AbstractUpgrade u)
+		{
+			Inventory.UnequipUpgrade(u);
+			u.Remove();
+			UpdateStats();
+
+			Debug.Log("Unequiped " + u.Name);
+		}
+
+		public virtual void UpdateStats()
+		{
 		}
 
 		protected abstract AbstractAI InitAI();
@@ -409,7 +449,7 @@ namespace Assets.scripts.Actor
 
 		public void ReceiveDamage(Character source, int damage)
 		{
-			if (Status.IsDead)
+			if (Status.IsDead || damage <= 0)
 				return;
 
 			Status.ReceiveDamage(damage);
@@ -422,6 +462,35 @@ namespace Assets.scripts.Actor
 			GetData().SetVisibleHp(Status.Hp);
 
 			AI.AddAggro(source, damage);
+		}
+
+		public void UpdateHp(int newHp)
+		{
+			Status.SetHp(newHp);
+			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public void UpdateMp(int newMp)
+		{
+			Status.SetMp(newMp);
+		}
+
+		public void UpdateLevel(int newLevel)
+		{
+			Level = newLevel;
+			GetData().SetVisibleLevel(Level);
+		}
+
+		public void UpdateMaxHp(int newMaxHp)
+		{
+			Status.MaxHp = newMaxHp;
+			GetData().SetVisibleMaxHp(Status.MaxHp);
+		}
+
+		public void UpdateMaxMp(int newMaxMp)
+		{
+			Status.MaxMp = newMaxMp;
+			//TODO client side? 
 		}
 
 		public ActiveSkill GetMeleeAttackSkill()

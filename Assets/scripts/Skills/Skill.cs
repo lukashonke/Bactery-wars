@@ -5,6 +5,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 
 namespace Assets.scripts.Skills
@@ -101,6 +102,11 @@ namespace Assets.scripts.Skills
 		{
 			SkillEffect[] efs = CreateEffects();
 
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillEffects(this, efs);
+			}
+
 			if (efs != null && !originalEffectsDisabled)
 			{
 				foreach (SkillEffect ef in efs)
@@ -119,6 +125,30 @@ namespace Assets.scripts.Skills
 				}
 			}
 
+			// add new effects from ugprades
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				SkillEffect[] newEffects = u.CreateAdditionalSkillEffects(this, efs);
+
+				if (newEffects != null)
+				{
+					foreach (SkillEffect ef in newEffects)
+					{
+						ef.Source = source;
+
+						if (!allowStackingSameEffect && !(ef is EffectDamage))
+						{
+							Character targetCh = target.GetChar();
+							if (targetCh != null && targetCh.HasEffectAlready(ef))
+								continue;
+						}
+
+						ef.ApplyEffect(source, target);
+					}
+				}
+			}
+
+			// add new effect from templates
 			if (additionalEffects != null)
 			{
 				foreach (SkillEffect ef in additionalEffects)

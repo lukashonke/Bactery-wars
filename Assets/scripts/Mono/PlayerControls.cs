@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -56,6 +57,20 @@ namespace Assets.scripts.Mono
 			if (Input.GetMouseButtonDown(1))
 			{
 				data.StartMeleeTargeting(true);
+			}
+
+			if (Input.GetKeyDown(KeyCode.W))
+			{
+				AbstractUpgrade u = new TemplateUpgrade(1);
+				data.GetOwner().AddUpgrade(u);
+				data.GetOwner().EquipUpgrade(u);
+			}
+
+			if (Input.GetKeyDown(KeyCode.E))
+			{
+				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
+				data.GetOwner().UnequipUpgrade(u);
+				data.GetOwner().RemoveUpgrade(u);
 			}
 
 			if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -116,19 +131,6 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
-			if (Input.GetMouseButton(0))
-			{
-				Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				Debug.DrawLine(data.GetBody().transform.position, temp, Color.blue, 2f);
-				/*if (Utils.IsNotAccessible(data.GetBody().transform.position, temp))
-				{
-
-				}
-				else
-				{
-				}*/
-			}
-
 			bool usingTouches = false;
 
 #if UNITY_STANDALONE || UNITY_EDITOR

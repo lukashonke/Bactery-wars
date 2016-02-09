@@ -7,6 +7,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 
 namespace Assets.scripts.Actor
@@ -69,6 +70,42 @@ namespace Assets.scripts.Actor
 			}
 
 			Template.InitSkillsOnPlayer(Skills, MeleeSkill);
+
+			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
+			Inventory.Capacity = Template.InventoryCapacity;
+
+			Inventory.LoadUpgrades();
+			UpdateStats();
+		}
+
+		public override void UpdateStats()
+		{
+			int tmpMaxHp = Template.MaxHp;
+			int tmpMaxMp = Template.MaxMp;
+			int tmpCritRate = Template.CriticalRate;
+			float tmpCritDmg = Template.CriticalDamageMul;
+			int tmpRunSpeed = Template.MaxSpeed;
+
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.ModifyMaxHp(ref tmpMaxHp);
+				u.ModifyMaxMp(ref tmpMaxMp);
+				u.ModifyCriticalRate(ref tmpCritRate);
+				u.ModifyCriticalDmg(ref tmpCritDmg);
+				u.ModifyRunSpeed(ref tmpRunSpeed);
+			}
+
+			UpdateMaxHp(tmpMaxHp);
+			if (Status.Hp > Status.MaxHp)
+				UpdateHp(Status.MaxHp);
+
+			UpdateMaxMp(tmpMaxMp);
+			if (Status.Mp > Status.MaxMp)
+				UpdateMp(Status.MaxMp);
+
+			Status.CriticalRate = tmpCritRate;
+			Status.CriticalDamageMul = tmpCritDmg;
+			SetMoveSpeed(tmpRunSpeed);
 		}
 
 		/// <summary>
