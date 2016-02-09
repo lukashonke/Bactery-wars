@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade
 {
@@ -18,6 +21,7 @@ namespace Assets.scripts.Upgrade
 	public abstract class AbstractUpgrade
 	{
 		public string Name { get; protected set; }
+		public string VisibleName { get; protected set; }
 		public int Level { get; set; }
 		private Character owner;
 		public Character Owner
@@ -25,14 +29,41 @@ namespace Assets.scripts.Upgrade
 			get { return owner; }
 		}
 
+		protected Sprite mainSprite;
+
 		public AbstractUpgrade(int level)
 		{
 			Level = level;
 		}
 
+		public void Init()
+		{
+			mainSprite = LoadSprite("lvl" + Level + ".png");
+		}
+
 		public void SetOwner(Character ch)
 		{
 			owner = ch;
+		}
+
+		public GameObject SpawnGameObject(Vector3 pos)
+		{
+			GameObject o = new GameObject(VisibleName + " " + Level);
+			SpriteRenderer r = o.AddComponent<SpriteRenderer>();
+			r.sprite = mainSprite;
+			o.AddComponent<BoxCollider2D>().isTrigger = true;
+			o.AddComponent<UpgradeScript>().upgrade = this;
+			o.transform.position = pos;
+			return o;
+		}
+
+		protected Sprite LoadSprite(string fileName)
+		{
+			Sprite o = Resources.Load<Sprite>("Sprite/Upgrades/" + Name + "/" + fileName);
+			if(o == null)
+				throw new NullReferenceException(fileName + " not found ");
+
+			return o;
 		}
 
 		public void Apply()

@@ -15,7 +15,8 @@ namespace Assets.scripts.Upgrade
 
 		public TemplateUpgrade(int level) : base(level)
 		{
-			Name = "Template upgrade";
+			Name = "template_upgrade";
+			VisibleName = "Template upgrade";
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)

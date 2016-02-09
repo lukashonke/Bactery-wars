@@ -197,18 +197,39 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
-		public void AddUpgrade(AbstractUpgrade u)
+		public void HitUpgrade(UpgradeScript upg)
 		{
-			u.SetOwner(this);
-			Inventory.AddUpgrade(u);
-			Debug.Log("Added " + u.Name);
+			if (upg.upgrade == null)
+			{
+				Debug.LogError("null upgrade for " + upg.gameObject.name);
+				return;
+			}
+
+			if (AddUpgrade(upg.upgrade))
+			{
+				upg.DeleteMe(true);
+				EquipUpgrade(upg.upgrade);
+			}
+		}
+
+		public bool AddUpgrade(AbstractUpgrade u)
+		{
+			if (Inventory.CanAdd(u))
+			{
+				u.SetOwner(this);
+				Inventory.AddUpgrade(u);
+				Debug.Log("Added " + u.VisibleName);
+				return true;
+			}
+
+			return false;
 		}
 
 		public void RemoveUpgrade(AbstractUpgrade u)
 		{
 			u.SetOwner(null);
 			Inventory.RemoveUpgrade(u);
-			Debug.Log("Removed " + u.Name);
+			Debug.Log("Removed " + u.VisibleName);
 		}
 
 		public void EquipUpgrade(AbstractUpgrade u)
@@ -216,7 +237,7 @@ namespace Assets.scripts.Actor
 			Inventory.EquipUpgrade(u);
 			UpdateStats();
 
-			Debug.Log("Equiped " + u.Name);
+			Debug.Log("Equiped " + u.VisibleName);
 		}
 
 		public void UnequipUpgrade(AbstractUpgrade u)
@@ -224,11 +245,12 @@ namespace Assets.scripts.Actor
 			Inventory.UnequipUpgrade(u);
 			UpdateStats();
 
-			Debug.Log("Unequiped " + u.Name);
+			Debug.Log("Unequiped " + u.VisibleName);
 		}
 
 		public virtual void UpdateStats()
 		{
+			//TODO add support for this to monsters
 		}
 
 		protected abstract AbstractAI InitAI();

@@ -61,9 +61,12 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.W))
 			{
-				AbstractUpgrade u = new TemplateUpgrade(1);
-				data.GetOwner().AddUpgrade(u);
-				data.GetOwner().EquipUpgrade(u);
+				AbstractUpgrade u = new HpUpgrade(1);
+				u.Init();
+
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+				//data.GetOwner().AddUpgrade(u);
+				//data.GetOwner().EquipUpgrade(u);
 			}
 
 			if (Input.GetKeyDown(KeyCode.E))
