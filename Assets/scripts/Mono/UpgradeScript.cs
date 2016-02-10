@@ -5,6 +5,8 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Upgrade;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono
 {
@@ -12,14 +14,41 @@ namespace Assets.scripts.Mono
 	{
 		public AbstractUpgrade upgrade;
 
+		public float rotationOffset;
+		public int rotationSpeed;
+
+		private int state;
+		private int targetAngle;
+
+		private float currentSize;
+		private float add;
+
+		private float startLife;
+		private const int LIFE_TIME = 60;
+
 		public void Start()
 		{
-			
+			currentSize = 1;
+			add = 0.015f;
+
+			startLife = Time.time;
 		}
 
 		public void Update()
 		{
-			
+			if (startLife + LIFE_TIME < Time.time)
+			{
+				Destroy(gameObject);
+				return;
+			}
+
+			currentSize += add;
+			if (currentSize >= 1.25f || currentSize <= 0.7f)
+			{
+				add *= -1;
+			}
+
+			transform.localScale = new Vector3(currentSize, currentSize);
 		}
 
 		public void OnTriggerEnter2D(Collider2D obj)
