@@ -7,7 +7,10 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -19,7 +22,7 @@ namespace Assets.scripts.Mono
 		private bool mouseOverUi = false;
 		public bool MouseOverUI
 		{
-			get { return mouseOverUi; }
+			get { return mouseOverUi || draggingIcon; }
 		}
 
 		public GameObject[] skillButtons;
@@ -33,6 +36,23 @@ namespace Assets.scripts.Mono
 		public GameObject gameMenu = null;
 		public GameObject menuPanel = null;
 		public GameObject settingsPanel = null;
+		public GameObject inventoryPanel = null;
+
+		public bool inventoryOpened = false;
+		public const int INVENTORY_SIZE = 20;
+		public const int ACTIVE_UPGRADES_SIZE = 5;
+		public GameObject[] inventorySlots;
+		public GameObject[] activeSlots;
+		public GameObject trashBin;
+		public Sprite iconEmptySprite;
+		public Sprite lockedIconSprite;
+
+		public bool draggingIcon = false;
+		private GameObject draggedObject;
+		private AbstractUpgrade draggedUpgrade;
+		private bool draggedUgradeActive;
+
+		public Text[] statsTexts;
 
 	    private List<SpawnData> adminSpawnedData;
         private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter,  };
@@ -85,21 +105,156 @@ namespace Assets.scripts.Mono
 			if(menuPanel != null)
 				menuPanel.SetActive(false);
 
-            // admin setting
-		    adminPanel = GameObject.Find("AdminPanel");
-		    adminSpawnPanel = GameObject.Find("AdminMode").GetComponent<Dropdown>();
+			inventoryPanel = GameObject.Find("Inventory");
 
-            List<String> temp = new List<string>();
-		    foreach (MonsterId id in adminSpawnableList)
-		        temp.Add(Enum.GetName(typeof (MonsterId), id));
-	        adminSpawnPanel.AddOptions(temp);
+			if (inventoryPanel != null)
+			{
+				inventorySlots = new GameObject[INVENTORY_SIZE];
+				activeSlots = new GameObject[ACTIVE_UPGRADES_SIZE];
 
-            UpdateAdminControls();
+				trashBin = GameObject.Find("Trashbin");
+				ShowTrashBin(false);
+
+				GameObject iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
+				GameObject inventoryContentPanel = GameObject.Find("InventoryContent");
+				GameObject activeStatsPanel = GameObject.Find("ActiveStatsPanel");
+
+				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
+				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
+
+				for (int i = 0; i < INVENTORY_SIZE; i++)
+				{
+					GameObject newIcon = Instantiate(iconTemplate);
+					newIcon.name = "Slot_" + (i + 1);
+					newIcon.transform.parent = inventoryContentPanel.transform;
+					newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+					GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+					EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+					EventTrigger.Entry entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerDown;
+					entry.callback.AddListener(delegate { OnUpgradeClick(false, newIcon); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerEnter;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, false); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerExit;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, false); });
+					trigger.triggers.Add(entry);
+
+					inventorySlots[i] = newIcon;
+				}
+
+				GameObject activeContentPanel = GameObject.Find("ActiveUpgradesContent");
+
+				iconTemplate = Resources.Load("Sprite/inventory/ActiveSlot") as GameObject;
+
+				for (int i = 0; i < ACTIVE_UPGRADES_SIZE; i++)
+				{
+					GameObject newIcon = Instantiate(iconTemplate);
+					newIcon.name = "ActiveSlot_" + (i + 1);
+					newIcon.transform.parent = activeContentPanel.transform;
+					newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+					GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+					EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+					EventTrigger.Entry entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerDown;
+					entry.callback.AddListener(delegate { OnUpgradeClick(true, newIcon); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerEnter;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, true); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerExit;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, true); });
+					trigger.triggers.Add(entry);
+
+					activeSlots[i] = newIcon;
+				}
+
+				if (activeStatsPanel != null)
+				{
+					int count = 0;
+					foreach (Transform t in activeStatsPanel.gameObject.transform)
+					{
+						if (t.GetComponent<Text>() != null)
+							count ++;
+					}
+
+					statsTexts = new Text[count];
+					int i = 0;
+
+					foreach (Transform t in activeStatsPanel.gameObject.transform)
+					{
+						if (t.GetComponent<Text>() != null)
+						{
+							statsTexts[i++] = t.GetComponent<Text>();
+						}
+					}
+				}
+
+				UpdateStatsInfo();
+				UpdateInventory(data.GetOwner().Inventory);
+
+				inventoryOpened = false;
+				inventoryPanel.GetComponent<Canvas>().enabled = false;
+			}
+
+			try
+			{
+				// admin setting
+				adminPanel = GameObject.Find("AdminPanel");
+				adminSpawnPanel = GameObject.Find("AdminMode").GetComponent<Dropdown>();
+
+				List<String> temp = new List<string>();
+				foreach (MonsterId id in adminSpawnableList)
+					temp.Add(Enum.GetName(typeof(MonsterId), id));
+				adminSpawnPanel.AddOptions(temp);
+
+				UpdateAdminControls();
+			}
+			catch (Exception)
+			{
+				Debug.LogError("error initializing admin panel");
+			}
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
+			if (draggingIcon && draggedObject != null)
+			{
+				Vector3 mousePos = (Input.mousePosition);
+
+				if (Input.GetMouseButton(0))
+				{
+					SetMouseOverUi();
+					mousePos.z = 0;
+					draggedObject.GetComponent<RectTransform>().position = mousePos;
+				}
+				else
+				{
+					StoppedDragging(mousePos);
+					draggingIcon = false;
+					draggedUpgrade = null;
+					draggedUgradeActive = false;
+					SetMouseNotOverUi();
+					Destroy(draggedObject);
+				}
+			}
+
 			for (int i = 0; i < timers.GetLength(0); i++)
 			{
 				if (timers[i,0] > 0)
@@ -169,7 +324,7 @@ namespace Assets.scripts.Mono
 			if (!adminMode)
 				return;
 
-			if ((int) Time.time%1 == 0)
+			if ((int) Time.time % 1 == 0)
 			{
 				StringBuilder sb = new StringBuilder();
 
@@ -181,6 +336,289 @@ namespace Assets.scripts.Mono
 
 				GameObject.Find("AdminMapInfo").GetComponent<Text>().text = sb.ToString();
 			}
+		}
+
+		public int GetSlotNumberFromObject(GameObject slot)
+		{
+			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
+
+			return order;
+		}
+
+		public AbstractUpgrade GetUpgradeFromInventory(GameObject slot, bool isActiveUpgrade)
+		{
+			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
+
+			AbstractUpgrade u;
+
+			if (isActiveUpgrade)
+				u = data.GetOwner().Inventory.GetActiveUpgrade(order);
+			else
+				u = data.GetOwner().Inventory.GetUpgrade(order);
+
+			return u;
+		}
+
+		public GameObject highlightedSlot;
+
+		public void OnUpgradeHover(GameObject slot, bool exit, bool activeUpgr)
+		{
+			AbstractUpgrade u = GetUpgradeFromInventory(slot, activeUpgr);
+
+			highlightedSlot = slot;
+
+			if (exit)
+			{
+				//TODO display info about upgrade
+			}
+			else
+			{
+				
+			}
+		}
+
+		public void ShowTrashBin(bool state)
+		{
+			if (state)
+			{
+				trashBin.SetActive(true);
+			}
+			else
+			{
+				trashBin.SetActive(false);
+			}
+		}
+
+		public void StoppedDragging(Vector3 pos)
+		{
+			List<RaycastResult> hits = new List<RaycastResult>();
+			PointerEventData cursor = new PointerEventData(EventSystem.current);
+			cursor.position = Input.mousePosition;
+			EventSystem.current.RaycastAll(cursor, hits);
+
+			GameObject targetSlot = null;
+			bool activeUpgr = false;
+			bool trashBin = false;
+			foreach (RaycastResult r in hits)
+			{
+				if (r.gameObject.name.StartsWith("Slot"))
+				{
+					targetSlot = r.gameObject;
+					activeUpgr = false;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("ActiveSlot"))
+				{
+					targetSlot = r.gameObject;
+					activeUpgr = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("Trashbin"))
+				{
+					targetSlot = r.gameObject;
+					trashBin = true;
+					break;
+				}
+			}
+
+			ShowTrashBin(false);
+
+			if (trashBin)
+			{
+				if (draggedUgradeActive)
+					data.GetOwner().UnequipUpgrade(draggedUpgrade, true);
+
+				data.GetOwner().RemoveUpgrade(draggedUpgrade);
+				return;
+			}
+
+			if (activeUpgr && draggedUgradeActive)
+				return;
+
+			if (!activeUpgr && !draggedUgradeActive)
+				return;
+
+			if (targetSlot != null)
+			{
+				AbstractUpgrade u = GetUpgradeFromInventory(targetSlot, activeUpgr);
+				int number = GetSlotNumberFromObject(targetSlot);
+
+				// slot is not empty - swap
+				if (u != null)
+				{
+					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUgradeActive, activeUpgr);
+					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUgradeActive + " to active? " + activeUpgr);
+				}
+				else // slot is empty - simply move the upgrade there
+				{
+					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUgradeActive, activeUpgr);
+					Debug.Log("puttint into slot id " + number + " from active? " + draggedUgradeActive + " to active? " + activeUpgr);
+				}
+			}
+		}
+
+		private bool firstClickDone;
+		private float lastClick;
+		private const float doubleClickTimeMax = 0.5f;
+		private const float doubleClickTimeMin = 0.05f;
+
+		public void OnUpgradeClick(bool isActiveUpgrade, GameObject obj)
+		{
+			bool doubleClick = false;
+
+			if (!firstClickDone)
+			{
+				lastClick = Time.time;
+				firstClickDone = true;
+			}
+			else
+			{
+				float diff = Time.time - lastClick;
+				if (diff < doubleClickTimeMax && diff > doubleClickTimeMin)
+				{
+					doubleClick = true;
+					firstClickDone = false;
+				}
+				else
+				{
+					firstClickDone = true;
+					lastClick = Time.time;
+				}
+			}
+
+			draggedUpgrade = GetUpgradeFromInventory(obj, isActiveUpgrade);
+
+			if (draggedUpgrade == null)
+				return;
+
+			draggedUgradeActive = isActiveUpgrade;
+
+			if (doubleClick)
+			{
+				data.GetOwner().SwapUpgrade(draggedUpgrade, null, -1, draggedUgradeActive, !draggedUgradeActive);
+			}
+			else
+			{
+				draggingIcon = true;
+				SetMouseOverUi();
+
+				Vector3 mousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+				mousePos.z = 0;
+
+				GameObject preview = new GameObject("Dragged Icon");
+				Image ren = preview.AddComponent<Image>();
+				ren.sprite = obj.transform.GetChild(0).GetComponent<Image>().sprite;
+				preview.transform.parent = inventoryPanel.transform;
+				//preview.transform.position = mousePos;
+				preview.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
+
+				draggedObject = preview;
+				ShowTrashBin(true);
+			}
+		}
+
+		public void SwitchInventory()
+		{
+			if (inventoryPanel != null)
+			{
+				if (inventoryPanel.GetComponent<Canvas>().enabled)
+				{
+					inventoryOpened = false;
+					inventoryPanel.GetComponent<Canvas>().enabled = false;
+				}
+				else
+				{
+					inventoryOpened = true;
+					inventoryPanel.GetComponent<Canvas>().enabled = true;
+					UpdateStatsInfo();
+				}
+			}
+		}
+
+		public void UpdateStatsInfo()
+		{
+			if (inventoryOpened == false)
+				return;
+
+			foreach (Text t in statsTexts)
+			{
+				switch (t.gameObject.name)
+				{
+					case "Level":
+						t.text = "Level " + data.level;
+						break;
+					case "Class":
+						t.text = ((Player) data.GetOwner()).Template.GetClassId().ToString();
+						break;
+					case "HP":
+						t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;
+						break;
+					case "MoveSpeed":
+						t.text = "Move Speed " + data.moveSpeed;
+						break;
+					case "Critical Rate":
+						int rate = ((Player)data.GetOwner()).Status.CriticalRate;
+						t.text = "Critical rate: " + rate;
+						break;
+					case "Critical Damage":
+						float dmg = ((Player) data.GetOwner()).Status.CriticalDamageMul;
+						t.text = "Critical damage: " + dmg;
+						break;
+				}
+			}
+		}
+
+		public void UpdateInventory(Inventory inv)
+		{
+			int activeCapacity = inv.ActiveCapacity;
+			int capacity = inv.Capacity;
+
+			int i = 0;
+			foreach (AbstractUpgrade u in inv.Upgrades)
+			{
+				if (inv.IsEquipped(u))
+					continue;
+
+				GameObject o = inventorySlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < inventorySlots.Length; j++)
+			{
+				GameObject o = inventorySlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < capacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+
+			i = 0;
+			foreach (AbstractUpgrade u in inv.ActiveUpgrades)
+			{
+				GameObject o = activeSlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < activeSlots.Length; j++)
+			{
+				GameObject o = activeSlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < activeCapacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+
+			UpdateStatsInfo();
 		}
 
 		public void MenuClick()
@@ -195,13 +633,13 @@ namespace Assets.scripts.Mono
 		{
 			if (settingsPanel.activeSelf)
 			{
-				mouseOverUi = false;
+				SetMouseNotOverUi();
 				GameSystem.Instance.Paused = false;
 				settingsPanel.SetActive(false);
 			}
 			else
 			{
-				mouseOverUi = true;
+				SetMouseOverUi();
 				GameSystem.Instance.Paused = true;
 				settingsPanel.SetActive(true);
 			}
@@ -293,7 +731,7 @@ namespace Assets.scripts.Mono
 			//Debug.Log("mouse over UI");
 			mouseOverUi = true;
 		}
-
+		
 		public void SetMouseNotOverUi()
 		{
 			//Debug.Log("mouse not UI");

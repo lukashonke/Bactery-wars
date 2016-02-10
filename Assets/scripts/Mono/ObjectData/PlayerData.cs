@@ -4,6 +4,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -253,6 +254,17 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				GetOwner().MeleeSkill.DoAutoattack();
 			}
+		}
+
+		public override void UpdateInventory(Inventory inv)
+		{
+			ui.UpdateInventory(inv);
+		}
+
+		public override void UpdateStats() //TODO call this on level change, hp change etc
+		{
+			if(ui != null)
+				ui.UpdateStatsInfo();
 		}
 
 		public override Character GetOwner()

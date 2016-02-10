@@ -208,7 +208,7 @@ namespace Assets.scripts.Actor
 			if (AddUpgrade(upg.upgrade))
 			{
 				upg.DeleteMe(true);
-				EquipUpgrade(upg.upgrade);
+				//EquipUpgrade(upg.upgrade);
 			}
 		}
 
@@ -218,6 +218,7 @@ namespace Assets.scripts.Actor
 			{
 				u.SetOwner(this);
 				Inventory.AddUpgrade(u);
+				Data.UpdateInventory(Inventory);
 				Debug.Log("Added " + u.VisibleName);
 				return true;
 			}
@@ -229,6 +230,7 @@ namespace Assets.scripts.Actor
 		{
 			u.SetOwner(null);
 			Inventory.RemoveUpgrade(u);
+			Data.UpdateInventory(Inventory);
 			Debug.Log("Removed " + u.VisibleName);
 		}
 
@@ -237,15 +239,24 @@ namespace Assets.scripts.Actor
 			Inventory.EquipUpgrade(u);
 			UpdateStats();
 
+			Data.UpdateInventory(Inventory);
 			Debug.Log("Equiped " + u.VisibleName);
 		}
 
-		public void UnequipUpgrade(AbstractUpgrade u)
+		public void UnequipUpgrade(AbstractUpgrade u, bool force=false)
 		{
-			Inventory.UnequipUpgrade(u);
+			Inventory.UnequipUpgrade(u, force);
 			UpdateStats();
 
+			Data.UpdateInventory(Inventory);
 			Debug.Log("Unequiped " + u.VisibleName);
+		}
+
+		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, bool fromActive, bool toActive)
+		{
+			Inventory.MoveUpgrade(source, fromActive, toActive, slot, target);
+			UpdateStats();
+			Data.UpdateInventory(Inventory);
 		}
 
 		public virtual void UpdateStats()

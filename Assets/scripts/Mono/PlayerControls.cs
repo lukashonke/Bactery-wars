@@ -63,17 +63,22 @@ namespace Assets.scripts.Mono
 			{
 				AbstractUpgrade u = new HpUpgrade(1);
 				u.Init();
-
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 				//data.GetOwner().AddUpgrade(u);
 				//data.GetOwner().EquipUpgrade(u);
 			}
 
+			if (Input.GetKeyDown(KeyCode.I))
+			{
+				ui.SwitchInventory();
+			}
+
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				AbstractUpgrade u = new TemplateUpgrade(2);
+				AbstractUpgrade u = new HpUpgrade(1);
+				u.Init();
 				data.GetOwner().AddUpgrade(u);
-				data.GetOwner().EquipUpgrade(u);
+				//data.GetOwner().EquipUpgrade(u);
 			}
 
 			if (Input.GetKeyDown(KeyCode.R))

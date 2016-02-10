@@ -76,7 +76,7 @@ namespace Assets.scripts.Upgrade
 		{
 			if (IsEquipped(u))
 			{
-				UnequipUpgrade(u);
+				UnequipUpgrade(u, true);
 			}
 
 			upgrades.Remove(u);
@@ -94,17 +94,41 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public void EquipUpgrade(AbstractUpgrade u)
+		public void MoveUpgrade(AbstractUpgrade u, bool fromActive, bool toActive, int slot, AbstractUpgrade upgradeInSlot)
+		{
+			if (fromActive && !toActive)
+			{
+				UnequipUpgrade(u, (upgradeInSlot != null));
+
+				if (upgradeInSlot != null)
+				{
+					EquipUpgrade(upgradeInSlot);
+				}
+			}
+			else if (!fromActive && toActive)
+			{
+				if (upgradeInSlot != null)
+				{
+					UnequipUpgrade(upgradeInSlot, true);
+				}
+
+				EquipUpgrade(u);
+			}
+		}
+
+		public bool EquipUpgrade(AbstractUpgrade u)
 		{
 			if (!CanEquip(u))
-				return;
+				return false;
 
 			if (!HasInInventory(u))
-				return;
+				return false;
 
 			activeUpgrades.Add(u);
+			upgrades.Remove(u);
 
 			u.Apply();
+			return true;
 		}
 
 		public bool IsEquipped(AbstractUpgrade u)
@@ -112,8 +136,11 @@ namespace Assets.scripts.Upgrade
 			return activeUpgrades.Contains(u);
 		}
 
-		public void UnequipUpgrade(AbstractUpgrade u)
+		public bool UnequipUpgrade(AbstractUpgrade u, bool force=false)
 		{
+			if (upgrades.Count >= Capacity && !force)
+				return false;
+
 			// sundat vsechny upgrady od konce
 			for (int i = activeUpgrades.Count - 1; i >= 0; i--)
 			{
@@ -123,6 +150,7 @@ namespace Assets.scripts.Upgrade
 
 			// smazat z listu ten ktery chceme unequipnout
 			activeUpgrades.Remove(u);
+			upgrades.Add(u);
 
 			// znovu aplikovat vsechny upgrady
 			for (int i = 0; i < activeUpgrades.Count; i++)
@@ -130,13 +158,29 @@ namespace Assets.scripts.Upgrade
 				AbstractUpgrade upgr = activeUpgrades[i];
 				upgr.Apply();
 			}
+
+			return true;
+		}
+
+		public AbstractUpgrade GetActiveUpgrade(int order)
+		{
+			try
+			{
+				AbstractUpgrade u = activeUpgrades[order];
+				return u;
+			}
+			catch (Exception)
+			{
+			}
+
+			return null;
 		}
 
 		public AbstractUpgrade GetUpgrade(int order)
 		{
 			try
 			{
-				AbstractUpgrade u = activeUpgrades[order];
+				AbstractUpgrade u = upgrades[order];
 				return u;
 			}
 			catch (Exception)

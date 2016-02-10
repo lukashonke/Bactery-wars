@@ -106,6 +106,8 @@ namespace Assets.scripts.Actor
 			Status.CriticalRate = tmpCritRate;
 			Status.CriticalDamageMul = tmpCritDmg;
 			SetMoveSpeed(tmpRunSpeed);
+
+			Data.UpdateStats();
 		}
 
 		/// <summary>

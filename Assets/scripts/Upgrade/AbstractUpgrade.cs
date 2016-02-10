@@ -29,7 +29,7 @@ namespace Assets.scripts.Upgrade
 			get { return owner; }
 		}
 
-		protected Sprite mainSprite;
+		public Sprite MainSprite { get; private set; }
 
 		public AbstractUpgrade(int level)
 		{
@@ -38,7 +38,7 @@ namespace Assets.scripts.Upgrade
 
 		public void Init()
 		{
-			mainSprite = LoadSprite("lvl" + Level + ".png");
+			MainSprite = LoadSprite("lvl" + Level + ".png");
 		}
 
 		public void SetOwner(Character ch)
@@ -50,7 +50,7 @@ namespace Assets.scripts.Upgrade
 		{
 			GameObject o = new GameObject(VisibleName + " " + Level);
 			SpriteRenderer r = o.AddComponent<SpriteRenderer>();
-			r.sprite = mainSprite;
+			r.sprite = MainSprite;
 			o.AddComponent<BoxCollider2D>().isTrigger = true;
 			o.AddComponent<UpgradeScript>().upgrade = this;
 			o.transform.position = pos;

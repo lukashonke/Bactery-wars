@@ -9,6 +9,7 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -1293,6 +1294,14 @@ namespace Assets.scripts.Mono
 				else
 					keyboardMoving = false;
 			}
+		}
+
+		public virtual void UpdateInventory(Inventory inv)
+		{
+		}
+
+		public virtual void UpdateStats()
+		{
 		}
 
 		public abstract Character GetOwner();
