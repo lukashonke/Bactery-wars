@@ -28,7 +28,7 @@ namespace Assets.scripts.Mono
 
 		public void Start()
 		{
-			currentSize = 1;
+			currentSize = 1f;
 			add = 0.015f;
 
 			startLife = Time.time;
@@ -53,14 +53,17 @@ namespace Assets.scripts.Mono
 
 		public void OnTriggerEnter2D(Collider2D obj)
 		{
-			if (obj.gameObject != null)
+			if (startLife + 3 < Time.time)
 			{
-				Character ch = obj.gameObject.GetChar();
+				if (obj.gameObject != null)
+				{
+					Character ch = obj.gameObject.GetChar();
 
-				if (ch == null)
-					return;
+					if (ch == null)
+						return;
 
-				ch.HitUpgrade(this);
+					ch.HitUpgrade(this);
+				}
 			}
 		}
 

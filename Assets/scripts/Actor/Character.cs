@@ -64,7 +64,7 @@ namespace Assets.scripts.Actor
 			AI = ai;
 		}
 
-	    public void DoDie()
+	    public virtual void DoDie()
 	    {
 		    if (this is Monster)
 		    {

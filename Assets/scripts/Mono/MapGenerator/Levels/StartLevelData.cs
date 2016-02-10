@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator.Levels
@@ -36,7 +37,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
 			        shield.master = mob;*/
 
-			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).mustDieToProceed = false;
+			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {

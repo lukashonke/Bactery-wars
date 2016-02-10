@@ -90,6 +90,16 @@ namespace Assets.scripts.Actor
 			return hasMaster;
 		}
 
+		public override void DoDie()
+		{
+			base.DoDie();
+
+			if (SpawnInfo != null)
+			{
+				SpawnInfo.Drop.DoDrop(this);
+			}
+		}
+
 		public new EnemyData GetData()
 		{
 			return (EnemyData) Data;

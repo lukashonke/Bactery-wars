@@ -24,9 +24,9 @@ namespace Assets.scripts.Upgrade
 
 		public class UpgradeInfo
 		{
-			private Type upgrade;
-			private UpgradeType upgradeType;
-			private int rarity;
+			public Type upgrade;
+			public UpgradeType upgradeType;
+			public int rarity;
 
 			public UpgradeInfo(Type u, UpgradeType type, int rarity)
 			{
@@ -91,6 +91,18 @@ namespace Assets.scripts.Upgrade
 		{
 			AbstractUpgrade u = Activator.CreateInstance(type, level) as AbstractUpgrade;
 			return u;
+		}
+
+		public AbstractUpgrade GenerateUpgrade(UpgradeType type, int minRarity, int maxRarity, int level)
+		{
+			foreach (UpgradeInfo info in upgrades)
+			{
+				if (info.upgradeType == type && (info.rarity >= minRarity || info.rarity <= maxRarity))
+				{
+					return GenerateUpgrade(info.upgrade, level);
+				}
+			}
+			return null;
 		}
 
 		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)

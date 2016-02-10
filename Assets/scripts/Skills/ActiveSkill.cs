@@ -288,6 +288,7 @@ namespace Assets.scripts.Skills
 
 		public void Start(Vector3 inputPosition)
 		{
+			initTarget = null;
 			mouseDirection = inputPosition - GetOwnerData().GetBody().transform.position;
 			Start();
 		}

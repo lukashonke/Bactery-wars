@@ -61,6 +61,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 			else
 			{
+				target = null;
 				RotatePlayerTowardsMouse();
 			}
 
