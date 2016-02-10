@@ -119,6 +119,7 @@ namespace Assets.scripts
 			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.GetClassId());
 
 			player.InitTemplate();
+			player.SetLevel(1);
 
 			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
 

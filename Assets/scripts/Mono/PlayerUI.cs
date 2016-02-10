@@ -647,11 +647,11 @@ namespace Assets.scripts.Mono
 						break;
 					case "Critical Rate":
 						int rate = ((Player)data.GetOwner()).Status.CriticalRate;
-						t.text = "Critical rate: " + rate;
+						t.text = "Critical rate: " + rate/10 + "%";
 						break;
 					case "Critical Damage":
 						float dmg = ((Player) data.GetOwner()).Status.CriticalDamageMul;
-						t.text = "Critical damage: " + dmg;
+						t.text = "Critical damage: x" + dmg;
 						break;
 				}
 			}

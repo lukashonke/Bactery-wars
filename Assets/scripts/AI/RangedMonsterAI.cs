@@ -24,7 +24,7 @@ namespace Assets.scripts.AI
 		// float around target
 		public float floatChance = -1;
 		public float floatInterval = -1;
-		public int floatSpeed = 4;
+		public float floatSpeed = 4;
 		public int floatRange = 5;
 		public float lastFloatTime;
 

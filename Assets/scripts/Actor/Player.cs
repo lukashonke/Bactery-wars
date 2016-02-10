@@ -84,7 +84,7 @@ namespace Assets.scripts.Actor
 			int tmpMaxMp = Template.MaxMp;
 			int tmpCritRate = Template.CriticalRate;
 			float tmpCritDmg = Template.CriticalDamageMul;
-			int tmpRunSpeed = Template.MaxSpeed;
+			float tmpRunSpeed = Template.MaxSpeed;
 
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
 			{

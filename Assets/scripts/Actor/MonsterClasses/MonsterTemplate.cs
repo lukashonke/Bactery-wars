@@ -23,7 +23,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public int MaxHp { get; protected set; }
 		public int MaxMp { get; protected set; }
-		public int MaxSpeed { get; protected set; }
+		public float MaxSpeed { get; protected set; }
 		public float Shield { get; protected set; }
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value

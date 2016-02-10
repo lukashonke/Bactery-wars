@@ -475,7 +475,7 @@ namespace Assets.scripts.Actor
 			return baseDamage;
 		}
 
-		public void SetMoveSpeed(int speed)
+		public void SetMoveSpeed(float speed)
 		{
 			Status.MoveSpeed = speed;
 			GetData().SetMoveSpeed(speed);

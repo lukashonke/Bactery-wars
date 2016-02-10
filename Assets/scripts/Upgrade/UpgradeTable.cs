@@ -41,6 +41,21 @@ namespace Assets.scripts.Upgrade
 			Load();
 		}
 
+		public CombinedUpgrade CombineUpgrades(AbstractUpgrade first, AbstractUpgrade second)
+		{
+			CombinedUpgrade upg = new CombinedUpgrade(1, first, second);
+			return upg;
+		}
+
+		public AbstractUpgrade[] DismantleCombinedUpgrade(CombinedUpgrade upg)
+		{
+			AbstractUpgrade[] upgrades = new AbstractUpgrade[2];
+			upgrades[0] = upg.first;
+			upgrades[1] = upg.second;
+
+			return upgrades;
+		}
+
 		private void Load()
 		{
 			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(AbstractUpgrade));

@@ -70,7 +70,7 @@ namespace Assets.scripts.Upgrade.Rare
 			return null;
 		}
 
-		public override void ModifyRunSpeed(ref int runSpeed)
+		public override void ModifyRunSpeed(ref float runSpeed)
 		{
 			runSpeed *= 2;
 		}

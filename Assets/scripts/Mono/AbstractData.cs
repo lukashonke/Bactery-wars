@@ -82,7 +82,7 @@ namespace Assets.scripts.Mono
 		// zastupne promenne objektu
 		public int visibleMaxHp;
 		public int visibleHp;
-		public int moveSpeed;
+		public float moveSpeed;
 		public int rotateSpeed;
 		public int level;
 
@@ -113,7 +113,7 @@ namespace Assets.scripts.Mono
 		public GameObject QueueMeleeTarget { get; set; }
 
 		private bool fixedRotation;
-		private int fixedSpeed;
+		private float fixedSpeed;
 
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
@@ -491,7 +491,7 @@ namespace Assets.scripts.Mono
 					{
 						if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
 						
-						int speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
+						float speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
 
 						if (USE_VELOCITY_MOVEMENT)
 						{
@@ -946,22 +946,22 @@ namespace Assets.scripts.Mono
 			rotationEnabled = val;
 		}
 
-		public int GetMoveSpeed()
+		public float GetMoveSpeed()
 		{
 			return moveSpeed;
 		}
 
-		public void SetMoveSpeed(int speed)
+		public void SetMoveSpeed(float speed)
 		{
 			moveSpeed = speed;
 		}
 
-		public void SetFixedSpeed(int speed)
+		public void SetFixedSpeed(float speed)
 		{
 			fixedSpeed = speed;
 		}
 
-		public int GetFixedSpeed()
+		public float GetFixedSpeed()
 		{
 			return fixedSpeed;
 		}
@@ -1241,7 +1241,7 @@ namespace Assets.scripts.Mono
 			minRangeToTarget = range;
 		}
 
-		public void MoveTo(GameObject target, bool fixedRotation=false, int fixedSpeed=-1)
+		public void MoveTo(GameObject target, bool fixedRotation=false, float fixedSpeed=-1)
 		{
 			if (this is PlayerData)
 			{
@@ -1259,7 +1259,7 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public bool MoveTo(Vector3 target, bool fixedRotation = false, int fixedSpeed=-1)
+		public bool MoveTo(Vector3 target, bool fixedRotation = false, float fixedSpeed=-1)
 		{
 			if (this is PlayerData)
 			{

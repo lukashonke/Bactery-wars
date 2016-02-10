@@ -36,7 +36,7 @@ namespace Assets.scripts.Upgrade
 			get { return owner; }
 		}
 
-		public Sprite MainSprite { get; private set; }
+		public Sprite MainSprite { get; protected set; }
 
 		public AbstractUpgrade(int level, bool collectableByPlayer=true)
 		{
@@ -50,9 +50,23 @@ namespace Assets.scripts.Upgrade
 			Type = UpgradeType.CLASSIC;
 		}
 
-		public void Init()
+		public virtual void Init()
 		{
-			MainSprite = LoadSprite("lvl" + Level + ".png");
+			try
+			{
+				MainSprite = LoadSprite("lvl" + Level + ".png");
+			}
+			catch (Exception)
+			{
+				try
+				{
+					MainSprite = LoadSprite("lvl1.png");
+				}
+				catch (Exception)
+				{
+					MainSprite = Resources.Load<Sprite>("Sprite/Upgrades/default");
+				}
+			}
 		}
 
 		public void SetOwner(Character ch)
@@ -114,7 +128,7 @@ namespace Assets.scripts.Upgrade
 			ActiveSkill skill = (ActiveSkill) sk;
 		}
 
-		public virtual void ModifyRunSpeed(ref int runSpeed)
+		public virtual void ModifyRunSpeed(ref float runSpeed)
 		{
 			
 		}

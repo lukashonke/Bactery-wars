@@ -17,12 +17,30 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "hp_upgrade";
 			VisibleName = "HP Upgrade";
-			Description = "Increases maximum HP";
+			Description = "Increases maximum HP by " + 6*level + "%.";
 		}
 
 		public override void ModifyMaxHp(ref int maxHp)
 		{
-			maxHp *= Level + 1;
+			maxHp *= (int) (Level*1.06f);
+		}
+	}
+
+	public class HpUpgradeAdd : AbstractUpgrade
+	{
+		public static int rarity = 1;
+
+		public HpUpgradeAdd(int level)
+			: base(level)
+		{
+			Name = "hp_upgrade";
+			VisibleName = "HP Upgrade";
+			Description = "Increases maximum HP by " + 5 * level + ".";
+		}
+
+		public override void ModifyMaxHp(ref int maxHp)
+		{
+			maxHp += (Level*5);
 		}
 	}
 }
