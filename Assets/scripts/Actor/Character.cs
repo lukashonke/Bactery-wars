@@ -199,6 +199,9 @@ namespace Assets.scripts.Actor
 
 		public void HitUpgrade(UpgradeScript upg)
 		{
+			if (upg.upgrade.CollectableByPlayer && !(this is Player))
+				return;
+
 			if (upg.upgrade == null)
 			{
 				Debug.LogError("null upgrade for " + upg.gameObject.name);

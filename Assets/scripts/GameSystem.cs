@@ -10,6 +10,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -59,6 +60,7 @@ namespace Assets.scripts
 		public void Start(GameController gc)
 		{
 			Controller = gc;
+			UpgradeTable.Instance.ToString();
 		}
 
 		public void Update()

@@ -22,6 +22,13 @@ namespace Assets.scripts.Upgrade
 	{
 		public string Name { get; protected set; }
 		public string VisibleName { get; protected set; }
+		public string Description { get; protected set; }
+		public string Price { get; protected set; }
+		public string AdditionalInfo { get; protected set; }
+		public UpgradeType Type { get; protected set; }
+
+		public bool CollectableByPlayer { get; protected set; }
+
 		public int Level { get; set; }
 		private Character owner;
 		public Character Owner
@@ -31,9 +38,16 @@ namespace Assets.scripts.Upgrade
 
 		public Sprite MainSprite { get; private set; }
 
-		public AbstractUpgrade(int level)
+		public AbstractUpgrade(int level, bool collectableByPlayer=true)
 		{
+			CollectableByPlayer = collectableByPlayer;
 			Level = level;
+
+			VisibleName = Name;
+			Description = "No Description";
+			Price = "No value";
+			AdditionalInfo = "some info";
+			Type = UpgradeType.CLASSIC;
 		}
 
 		public void Init()

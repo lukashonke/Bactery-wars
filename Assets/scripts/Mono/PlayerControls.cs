@@ -1,6 +1,8 @@
 ﻿using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
+using Assets.scripts.Upgrade.Rare;
 using UnityEngine;
 using UnityEngine.Networking;
 

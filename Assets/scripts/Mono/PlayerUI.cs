@@ -38,6 +38,7 @@ namespace Assets.scripts.Mono
 		public GameObject settingsPanel = null;
 		public GameObject inventoryPanel = null;
 
+		public GameObject tooltipObject;
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
@@ -118,6 +119,8 @@ namespace Assets.scripts.Mono
 				GameObject iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
 				GameObject inventoryContentPanel = GameObject.Find("InventoryContent");
 				GameObject activeStatsPanel = GameObject.Find("ActiveStatsPanel");
+
+				tooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
@@ -243,6 +246,9 @@ namespace Assets.scripts.Mono
 					SetMouseOverUi();
 					mousePos.z = 0;
 					draggedObject.GetComponent<RectTransform>().position = mousePos;
+
+					if(currentTooltipObject)
+						Destroy(currentTooltipObject);
 				}
 				else
 				{
@@ -252,6 +258,31 @@ namespace Assets.scripts.Mono
 					draggedUgradeActive = false;
 					SetMouseNotOverUi();
 					Destroy(draggedObject);
+				}
+			}
+
+			if (currentTooltipObject != null)
+			{
+				List<RaycastResult> hits = new List<RaycastResult>();
+				PointerEventData cursor = new PointerEventData(EventSystem.current);
+				cursor.position = Input.mousePosition;
+				EventSystem.current.RaycastAll(cursor, hits);
+
+				bool stillAboveIcon = false;
+				foreach (RaycastResult r in hits)
+				{
+					if (r.gameObject.Equals(highlightedSlot))
+					{
+						stillAboveIcon = true;
+						break;
+					}
+				}
+
+				if (!stillAboveIcon)
+					Destroy(currentTooltipObject);
+				else
+				{
+					currentTooltipObject.transform.position = Input.mousePosition;
 				}
 			}
 
@@ -361,19 +392,77 @@ namespace Assets.scripts.Mono
 
 		public GameObject highlightedSlot;
 
+		public GameObject currentTooltipObject;
+
 		public void OnUpgradeHover(GameObject slot, bool exit, bool activeUpgr)
 		{
 			AbstractUpgrade u = GetUpgradeFromInventory(slot, activeUpgr);
 
-			highlightedSlot = slot;
+			if (u == null)
+				return;
 
-			if (exit)
+			if (!exit)
 			{
-				//TODO display info about upgrade
-			}
-			else
-			{
-				
+				if (draggingIcon)
+					return;
+
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+
+				highlightedSlot = slot;
+				currentTooltipObject = Instantiate(tooltipObject);
+				currentTooltipObject.transform.parent = inventoryPanel.transform;
+				currentTooltipObject.transform.position = Input.mousePosition;
+
+				string name = u.VisibleName;
+				string description = u.Description;
+				string price = u.Price;
+				string addInfo = u.AdditionalInfo;
+				UpgradeType type = u.Type;
+
+				Color titleColor = new Color();
+
+				switch (type)
+				{
+					case UpgradeType.CLASSIC:
+						titleColor = new Color(86/255f, 71/255f, 49/255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(253/255f, 253/255f, 224/225f);
+					break;
+					case UpgradeType.EPIC:
+						titleColor = new Color(109 / 255f, 58 / 255f, 65 / 255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+					break;
+					case UpgradeType.RARE:
+						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
+					break;
+				}
+
+				foreach (Transform child in currentTooltipObject.transform)
+				{
+					if (child.name.Equals("Title"))
+					{
+						child.GetComponent<Text>().text = name;
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("Description") && description != null)
+					{
+						child.GetComponent<Text>().text = description;
+						continue;
+					}
+					else if (child.name.Equals("Price") && price != null)
+					{
+						child.GetComponent<Text>().text = price;
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("AdditionalInfo") && addInfo != null)
+					{
+						child.GetComponent<Text>().text = addInfo;
+						continue;
+					}
+				}
 			}
 		}
 

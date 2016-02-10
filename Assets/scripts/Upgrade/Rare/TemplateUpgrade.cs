@@ -7,10 +7,11 @@ using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 
-namespace Assets.scripts.Upgrade
+namespace Assets.scripts.Upgrade.Rare
 {
 	public class TemplateUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
 		private int originalRange;
 
 		public TemplateUpgrade(int level) : base(level)

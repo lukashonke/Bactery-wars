@@ -1,0 +1,87 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
+namespace Assets.scripts.Upgrade
+{
+	public class UpgradeTable
+	{
+		private static UpgradeTable instance = null;
+		public static UpgradeTable Instance
+		{
+			get
+			{
+				if (instance == null)
+					instance = new UpgradeTable();
+
+				return instance;
+			}
+		}
+
+		private List<UpgradeInfo> upgrades = new List<UpgradeInfo>(); 
+
+		public class UpgradeInfo
+		{
+			private Type upgrade;
+			private UpgradeType upgradeType;
+			private int rarity;
+
+			public UpgradeInfo(Type u, UpgradeType type, int rarity)
+			{
+				this.upgrade = u;
+				this.upgradeType = type;
+				this.rarity = rarity;
+			}
+		}
+
+		public UpgradeTable()
+		{
+			Load();
+		}
+
+		private void Load()
+		{
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(AbstractUpgrade));
+			LoadTypes(types, UpgradeType.CLASSIC);
+
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(AbstractUpgrade));
+			LoadTypes(types, UpgradeType.RARE);
+
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(AbstractUpgrade));
+			LoadTypes(types, UpgradeType.EPIC);
+		}
+
+		private void LoadTypes(List<Type> types, UpgradeType type)
+		{
+			foreach (Type t in types)
+			{
+				int rarity = 1;
+				try
+				{
+					rarity = (int)t.GetField("rarity").GetValue(null);
+				}
+				catch (Exception)
+				{
+					Debug.LogError("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
+				}
+
+				UpgradeInfo info = new UpgradeInfo(t, type, rarity);
+				upgrades.Add(info);
+			}
+		}
+
+		public AbstractUpgrade GenerateUpgrade(Type type, int level)
+		{
+			AbstractUpgrade u = Activator.CreateInstance(type, level) as AbstractUpgrade;
+			return u;
+		}
+
+		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)
+		{
+			upgrade.Init();
+			upgrade.SpawnGameObject(Utils.GenerateRandomPositionAround(position, radius));
+		}
+	}
+}
