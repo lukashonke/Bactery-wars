@@ -258,7 +258,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void UpdateInventory(Inventory inv)
 		{
-			ui.UpdateInventory(inv);
+			if(ui != null)
+				ui.UpdateInventory(inv);
 		}
 
 		public override void UpdateStats() //TODO call this on level change, hp change etc

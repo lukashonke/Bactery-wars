@@ -42,8 +42,10 @@ namespace Assets.scripts.Mono
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
+		public const int BASESTAT_UPGRADES_SIZE = 4;
 		public GameObject[] inventorySlots;
 		public GameObject[] activeSlots;
+		public GameObject[] basestatSlots;
 		public GameObject trashBin;
 		public Sprite iconEmptySprite;
 		public Sprite lockedIconSprite;
@@ -51,7 +53,7 @@ namespace Assets.scripts.Mono
 		public bool draggingIcon = false;
 		private GameObject draggedObject;
 		private AbstractUpgrade draggedUpgrade;
-		private bool draggedUgradeActive;
+		private int draggedUpgradeSlot;
 
 		public Text[] statsTexts;
 
@@ -112,6 +114,7 @@ namespace Assets.scripts.Mono
 			{
 				inventorySlots = new GameObject[INVENTORY_SIZE];
 				activeSlots = new GameObject[ACTIVE_UPGRADES_SIZE];
+				basestatSlots = new GameObject[BASESTAT_UPGRADES_SIZE];
 
 				trashBin = GameObject.Find("Trashbin");
 				ShowTrashBin(false);
@@ -124,6 +127,37 @@ namespace Assets.scripts.Mono
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
+
+				GameObject basestatUpgradesContent = GameObject.Find("BasestatUpgradesContent");
+
+				for (int i = 0; i < BASESTAT_UPGRADES_SIZE; i++)
+				{
+					GameObject newIcon = Instantiate(iconTemplate);
+					newIcon.name = "BaseSlot_" + (i + 1);
+					newIcon.transform.parent = basestatUpgradesContent.transform;
+					newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+					GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+					EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+					EventTrigger.Entry entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerDown;
+					entry.callback.AddListener(delegate { OnUpgradeClick(2, newIcon); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerEnter;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 2); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerExit;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 2); });
+					trigger.triggers.Add(entry);
+
+					basestatSlots[i] = newIcon;
+				}
 
 				for (int i = 0; i < INVENTORY_SIZE; i++)
 				{
@@ -138,17 +172,17 @@ namespace Assets.scripts.Mono
 
 					EventTrigger.Entry entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerDown;
-					entry.callback.AddListener(delegate { OnUpgradeClick(false, newIcon); });
+					entry.callback.AddListener(delegate { OnUpgradeClick(0, newIcon); });
 					trigger.triggers.Add(entry);
 
 					entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerEnter;
-					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, false); });
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 0); });
 					trigger.triggers.Add(entry);
 
 					entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerExit;
-					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, false); });
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0); });
 					trigger.triggers.Add(entry);
 
 					inventorySlots[i] = newIcon;
@@ -171,17 +205,17 @@ namespace Assets.scripts.Mono
 
 					EventTrigger.Entry entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerDown;
-					entry.callback.AddListener(delegate { OnUpgradeClick(true, newIcon); });
+					entry.callback.AddListener(delegate { OnUpgradeClick(1, newIcon); });
 					trigger.triggers.Add(entry);
 
 					entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerEnter;
-					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, true); });
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 1); });
 					trigger.triggers.Add(entry);
 
 					entry = new EventTrigger.Entry();
 					entry.eventID = EventTriggerType.PointerExit;
-					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, true); });
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 1); });
 					trigger.triggers.Add(entry);
 
 					activeSlots[i] = newIcon;
@@ -255,7 +289,7 @@ namespace Assets.scripts.Mono
 					StoppedDragging(mousePos);
 					draggingIcon = false;
 					draggedUpgrade = null;
-					draggedUgradeActive = false;
+					draggedUpgradeSlot = -1;
 					SetMouseNotOverUi();
 					Destroy(draggedObject);
 				}
@@ -376,16 +410,18 @@ namespace Assets.scripts.Mono
 			return order;
 		}
 
-		public AbstractUpgrade GetUpgradeFromInventory(GameObject slot, bool isActiveUpgrade)
+		public AbstractUpgrade GetUpgradeFromInventory(GameObject slot, int slotType)
 		{
 			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
 
-			AbstractUpgrade u;
+			AbstractUpgrade u = null;
 
-			if (isActiveUpgrade)
+			if (slotType == 1)
 				u = data.GetOwner().Inventory.GetActiveUpgrade(order);
-			else
+			else if(slotType == 0)
 				u = data.GetOwner().Inventory.GetUpgrade(order);
+			else if (slotType == 2) // base stat
+				u = data.GetOwner().Inventory.GetBasestatUpgrade(order);
 
 			return u;
 		}
@@ -394,9 +430,9 @@ namespace Assets.scripts.Mono
 
 		public GameObject currentTooltipObject;
 
-		public void OnUpgradeHover(GameObject slot, bool exit, bool activeUpgr)
+		public void OnUpgradeHover(GameObject slot, bool exit, int slotType)
 		{
-			AbstractUpgrade u = GetUpgradeFromInventory(slot, activeUpgr);
+			AbstractUpgrade u = GetUpgradeFromInventory(slot, slotType);
 
 			if (u == null)
 				return;
@@ -418,6 +454,13 @@ namespace Assets.scripts.Mono
 				string description = u.Description;
 				string price = u.Price;
 				string addInfo = u.AdditionalInfo;
+
+				int currentUpgradeProgress = u.CurrentProgress;
+				int needForNext = u.NeedForNextLevel;
+
+				if (u.GoesIntoBasestatSlot)
+					addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
+
 				UpgradeType type = u.Type;
 
 				Color titleColor = new Color();
@@ -442,7 +485,7 @@ namespace Assets.scripts.Mono
 				{
 					if (child.name.Equals("Title"))
 					{
-						child.GetComponent<Text>().text = name;
+						child.GetComponent<Text>().text = name + " [Lv" + u.Level + "]";
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
@@ -486,20 +529,20 @@ namespace Assets.scripts.Mono
 			EventSystem.current.RaycastAll(cursor, hits);
 
 			GameObject targetSlot = null;
-			bool activeUpgr = false;
+			int targetSlotType = 0;
 			bool trashBin = false;
 			foreach (RaycastResult r in hits)
 			{
 				if (r.gameObject.name.StartsWith("Slot"))
 				{
 					targetSlot = r.gameObject;
-					activeUpgr = false;
+					targetSlotType = 0;
 					break;
 				}
 				else if (r.gameObject.name.StartsWith("ActiveSlot"))
 				{
 					targetSlot = r.gameObject;
-					activeUpgr = true;
+					targetSlotType = 1;
 					break;
 				}
 				else if (r.gameObject.name.StartsWith("Trashbin"))
@@ -514,34 +557,34 @@ namespace Assets.scripts.Mono
 
 			if (trashBin)
 			{
-				if (draggedUgradeActive)
+				if (draggedUpgradeSlot == 1) // is active, unequip first
 					data.GetOwner().UnequipUpgrade(draggedUpgrade, true);
 
 				data.GetOwner().RemoveUpgrade(draggedUpgrade);
 				return;
 			}
 
-			if (activeUpgr && draggedUgradeActive)
+			if (targetSlotType == 1 && draggedUpgradeSlot == 1)
 				return;
 
-			if (!activeUpgr && !draggedUgradeActive)
+			if (targetSlotType == 0 && draggedUpgradeSlot == 0)
 				return;
 
 			if (targetSlot != null)
 			{
-				AbstractUpgrade u = GetUpgradeFromInventory(targetSlot, activeUpgr);
+				AbstractUpgrade u = GetUpgradeFromInventory(targetSlot, targetSlotType);
 				int number = GetSlotNumberFromObject(targetSlot);
 
 				// slot is not empty - swap
 				if (u != null)
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUgradeActive, activeUpgr);
-					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUgradeActive + " to active? " + activeUpgr);
+					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
+					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType==1));
 				}
 				else // slot is empty - simply move the upgrade there
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUgradeActive, activeUpgr);
-					Debug.Log("puttint into slot id " + number + " from active? " + draggedUgradeActive + " to active? " + activeUpgr);
+					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
+					Debug.Log("puttint into slot id " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType==1));
 				}
 			}
 		}
@@ -551,8 +594,11 @@ namespace Assets.scripts.Mono
 		private const float doubleClickTimeMax = 0.5f;
 		private const float doubleClickTimeMin = 0.05f;
 
-		public void OnUpgradeClick(bool isActiveUpgrade, GameObject obj)
+		public void OnUpgradeClick(int slotType, GameObject obj)
 		{
+			if(slotType == 2)
+				return;
+
 			bool doubleClick = false;
 
 			if (!firstClickDone)
@@ -575,16 +621,18 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			draggedUpgrade = GetUpgradeFromInventory(obj, isActiveUpgrade);
+			draggedUpgrade = GetUpgradeFromInventory(obj, slotType);
 
 			if (draggedUpgrade == null)
 				return;
 
-			draggedUgradeActive = isActiveUpgrade;
+			draggedUpgradeSlot = slotType;
+
+			int targetSlot = draggedUpgradeSlot == 1 ? 0 : 1;
 
 			if (doubleClick)
 			{
-				data.GetOwner().SwapUpgrade(draggedUpgrade, null, -1, draggedUgradeActive, !draggedUgradeActive);
+				data.GetOwner().SwapUpgrade(draggedUpgrade, null, -1, draggedUpgradeSlot, targetSlot);
 			}
 			else
 			{
@@ -661,6 +709,7 @@ namespace Assets.scripts.Mono
 		{
 			int activeCapacity = inv.ActiveCapacity;
 			int capacity = inv.Capacity;
+			int basestatCapacity = inv.BasestatUpgrades.Count;
 
 			int i = 0;
 			foreach (AbstractUpgrade u in inv.Upgrades)
@@ -699,6 +748,27 @@ namespace Assets.scripts.Mono
 			for (int j = i; j < activeSlots.Length; j++)
 			{
 				GameObject o = activeSlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < activeCapacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+
+			i = 0;
+			foreach (AbstractUpgrade u in inv.BasestatUpgrades)
+			{
+				GameObject o = basestatSlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < basestatSlots.Length; j++)
+			{
+				GameObject o = basestatSlots[j].transform.GetChild(0).gameObject;
 				Image img = o.GetComponent<Image>();
 
 				if (j < activeCapacity)

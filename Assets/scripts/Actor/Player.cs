@@ -8,6 +8,7 @@ using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 
 namespace Assets.scripts.Actor
@@ -74,12 +75,20 @@ namespace Assets.scripts.Actor
 			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
 			Inventory.Capacity = Template.InventoryCapacity;
 
+			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new CriticalDamageUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(1).Init().SetOwner(this));
+
+			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
 			UpdateStats();
 		}
 
 		public override void UpdateStats()
 		{
+			Debug.Log("updating stats");
+
 			int tmpMaxHp = Template.MaxHp;
 			int tmpMaxMp = Template.MaxMp;
 			int tmpCritRate = Template.CriticalRate;
@@ -87,6 +96,15 @@ namespace Assets.scripts.Actor
 			float tmpRunSpeed = Template.MaxSpeed;
 
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.ModifyMaxHp(ref tmpMaxHp);
+				u.ModifyMaxMp(ref tmpMaxMp);
+				u.ModifyCriticalRate(ref tmpCritRate);
+				u.ModifyCriticalDmg(ref tmpCritDmg);
+				u.ModifyRunSpeed(ref tmpRunSpeed);
+			}
+
+			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
 			{
 				u.ModifyMaxHp(ref tmpMaxHp);
 				u.ModifyMaxMp(ref tmpMaxMp);

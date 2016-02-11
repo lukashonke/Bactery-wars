@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Upgrade
 {
@@ -95,18 +96,22 @@ namespace Assets.scripts.Upgrade
 
 		public AbstractUpgrade GenerateUpgrade(UpgradeType type, int minRarity, int maxRarity, int level)
 		{
+			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
 			{
 				if (info.upgradeType == type && (info.rarity >= minRarity || info.rarity <= maxRarity))
 				{
-					return GenerateUpgrade(info.upgrade, level);
+					possible.Add(info);
 				}
 			}
-			return null;
+
+			UpgradeInfo final = possible[Random.Range(0, possible.Count)];
+			return GenerateUpgrade(final.upgrade, level);
 		}
 
 		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)
 		{
+			Debug.Log("dropped" + upgrade.Name);
 			upgrade.Init();
 			upgrade.SpawnGameObject(Utils.GenerateRandomPositionAround(position, radius));
 		}

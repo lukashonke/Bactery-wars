@@ -16,14 +16,19 @@ namespace Assets.scripts.Upgrade.Classic
 		public CriticalRateUpgrade(int level)
 			: base(level)
 		{
-			Name = "critrate_upgrade";
-			VisibleName = "Critical Rate Upgrade";
-			Description = "Increases Critical rate by " + 3*Level + "%.";
+			GoesIntoBasestatSlot = true;
 		}
 
 		public override void ModifyCriticalRate(ref int critRate)
 		{
 			critRate += (30*Level);
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "critrate_upgrade";
+			VisibleName = "Critical Rate Upgrade";
+			Description = "Increases Critical rate by " + 3 * Level + "%.";
 		}
 	}
 
@@ -34,14 +39,19 @@ namespace Assets.scripts.Upgrade.Classic
 		public CriticalDamageUpgrade(int level)
 			: base(level)
 		{
-			Name = "critdmg_upgrade";
-			VisibleName = "Critical Damage Upgrade";
-			Description = "Increases Critical damage by " + Level*10 + "%.";
+			GoesIntoBasestatSlot = true;
 		}
 
 		public override void ModifyCriticalDmg(ref float critDmg)
 		{
 			critDmg += (0.1f*Level);
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "critdmg_upgrade";
+			VisibleName = "Critical Damage Upgrade";
+			Description = "Increases Critical damage by " + Level * 10 + "%.";
 		}
 	}
 }

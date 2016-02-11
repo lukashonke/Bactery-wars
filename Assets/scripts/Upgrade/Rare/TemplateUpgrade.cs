@@ -16,8 +16,6 @@ namespace Assets.scripts.Upgrade.Rare
 
 		public TemplateUpgrade(int level) : base(level)
 		{
-			Name = "template_upgrade";
-			VisibleName = "Template upgrade";
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -53,6 +51,12 @@ namespace Assets.scripts.Upgrade.Rare
 		public override void ModifyMaxHp(ref int maxHp)
 		{
 			//maxHp *= 2;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "template_upgrade";
+			VisibleName = "Template upgrade";
 		}
 
 		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)

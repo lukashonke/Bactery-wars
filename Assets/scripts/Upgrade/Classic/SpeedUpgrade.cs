@@ -16,14 +16,19 @@ namespace Assets.scripts.Upgrade.Classic
 		public SpeedUpgrade(int level)
 			: base(level)
 		{
-			Name = "speed_upgrade";
-			VisibleName = "Speed Upgrade";
-			Description = "Increases move speed by " + 0.5f*Level + ".";
+			GoesIntoBasestatSlot = true;
 		}
 
 		public override void ModifyRunSpeed(ref float runSpeed)
 		{
 			runSpeed += (0.5f*Level);
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "speed_upgrade";
+			VisibleName = "Speed Upgrade";
+			Description = "Increases move speed by " + 0.5f * Level + ".";
 		}
 	}
 }

@@ -208,7 +208,14 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			if (AddUpgrade(upg.upgrade))
+			if (upg.upgrade.GoesIntoBasestatSlot)
+			{
+				Inventory.AddBasestatUpgrade(upg.upgrade);
+				upg.DeleteMe(true);
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+			}
+			else if (AddUpgrade(upg.upgrade))
 			{
 				upg.DeleteMe(true);
 				//EquipUpgrade(upg.upgrade);
@@ -255,9 +262,9 @@ namespace Assets.scripts.Actor
 			Debug.Log("Unequiped " + u.VisibleName);
 		}
 
-		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, bool fromActive, bool toActive)
+		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, int fromSlot, int toSlot)
 		{
-			Inventory.MoveUpgrade(source, fromActive, toActive, slot, target);
+			Inventory.MoveUpgrade(source, fromSlot, toSlot, slot, target);
 			UpdateStats();
 			Data.UpdateInventory(Inventory);
 		}

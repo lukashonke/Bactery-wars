@@ -21,7 +21,7 @@ namespace Assets.scripts.Upgrade
 			Name = "";
 		}
 
-		public override void Init()
+		public override AbstractUpgrade Init()
 		{
 			try
 			{
@@ -31,6 +31,8 @@ namespace Assets.scripts.Upgrade
 			{
 				MainSprite = Resources.Load<Sprite>("Sprite/Upgrades/Combined/lvl1");
 			}
+
+			return this;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -114,6 +116,11 @@ namespace Assets.scripts.Upgrade
 		{
 			first.ModifySkillCasttime(sk, ref casttime);
 			second.ModifySkillCasttime(sk, ref casttime);
+		}
+
+		protected override void InitInfo()
+		{
+			//TODO
 		}
 	}
 }

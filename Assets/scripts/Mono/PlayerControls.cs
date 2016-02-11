@@ -63,7 +63,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.W))
 			{
-				AbstractUpgrade u = new HpUpgrade(1);
+				AbstractUpgrade u = new HpUpgradeAdd(1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 				//data.GetOwner().AddUpgrade(u);

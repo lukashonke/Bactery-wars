@@ -15,14 +15,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public HpUpgrade(int level) : base(level)
 		{
+		}
+
+		protected override void InitInfo()
+		{
 			Name = "hp_upgrade";
 			VisibleName = "HP Upgrade";
-			Description = "Increases maximum HP by " + 6*level + "%.";
+			Description = "Increases maximum HP by " + (6 * Level) + "%.";
 		}
 
 		public override void ModifyMaxHp(ref int maxHp)
 		{
-			maxHp *= (int) (Level*1.06f);
+			maxHp = (int) (maxHp*(Level*1.06f));
 		}
 	}
 
@@ -33,9 +37,14 @@ namespace Assets.scripts.Upgrade.Classic
 		public HpUpgradeAdd(int level)
 			: base(level)
 		{
+			GoesIntoBasestatSlot = true;
+		}
+
+		protected override void InitInfo()
+		{
 			Name = "hp_upgrade";
 			VisibleName = "HP Upgrade";
-			Description = "Increases maximum HP by " + 5 * level + ".";
+			Description = "Increases maximum HP by " + (5 * Level) + ".";
 		}
 
 		public override void ModifyMaxHp(ref int maxHp)

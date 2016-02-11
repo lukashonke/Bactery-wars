@@ -11,6 +11,14 @@ namespace Assets.scripts.Upgrade
 	{
 		public int Capacity { get; set; }
 		public int ActiveCapacity { get; set; }
+		public int BasestatCapacity { get; set; }
+
+		// these only affect base stats! not skills, etc
+		private List<AbstractUpgrade> basestatUpgrades;
+		public List<AbstractUpgrade> BasestatUpgrades
+		{
+			get { return basestatUpgrades; }
+		}
 
 		private List<AbstractUpgrade> upgrades;
 		public List<AbstractUpgrade> Upgrades
@@ -28,9 +36,11 @@ namespace Assets.scripts.Upgrade
 		{
 			this.Capacity = capacity;
 			this.ActiveCapacity = activeCapacity;
+			BasestatCapacity = 4;
 
 			upgrades = new List<AbstractUpgrade>();
 			activeUpgrades = new List<AbstractUpgrade>();
+			basestatUpgrades = new List<AbstractUpgrade>(3);
 		}
 
 		public void LoadUpgrades()
@@ -64,6 +74,25 @@ namespace Assets.scripts.Upgrade
 			return true;
 		}
 
+		public void AddBasestatUpgrade(AbstractUpgrade u)
+		{
+			bool contains = false;
+			foreach (AbstractUpgrade upg in BasestatUpgrades)
+			{
+				if (upg.GetType().Equals(u.GetType()))
+				{
+					upg.AddUpgradeProgress(u);
+					contains = true;
+					break;
+				}
+			}
+
+			if (!contains && BasestatUpgrades.Count < BasestatCapacity)
+			{
+				BasestatUpgrades.Add(u);
+			}
+		}
+
 		public void AddUpgrade(AbstractUpgrade u)
 		{
 			if (!CanAdd(u))
@@ -94,9 +123,9 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public void MoveUpgrade(AbstractUpgrade u, bool fromActive, bool toActive, int slot, AbstractUpgrade upgradeInSlot)
+		public void MoveUpgrade(AbstractUpgrade u, int fromSlot, int toSlot, int slot, AbstractUpgrade upgradeInSlot)
 		{
-			if (fromActive && !toActive)
+			if (fromSlot == 1 && toSlot == 0)
 			{
 				UnequipUpgrade(u, (upgradeInSlot != null));
 
@@ -105,7 +134,7 @@ namespace Assets.scripts.Upgrade
 					EquipUpgrade(upgradeInSlot);
 				}
 			}
-			else if (!fromActive && toActive)
+			else if (fromSlot == 0 && toSlot == 1)
 			{
 				if (upgradeInSlot != null)
 				{
@@ -181,6 +210,20 @@ namespace Assets.scripts.Upgrade
 			try
 			{
 				AbstractUpgrade u = upgrades[order];
+				return u;
+			}
+			catch (Exception)
+			{
+			}
+
+			return null;
+		}
+
+		public AbstractUpgrade GetBasestatUpgrade(int order)
+		{
+			try
+			{
+				AbstractUpgrade u = basestatUpgrades[order];
 				return u;
 			}
 			catch (Exception)

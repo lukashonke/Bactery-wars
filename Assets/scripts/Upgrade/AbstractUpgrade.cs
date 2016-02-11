@@ -27,6 +27,11 @@ namespace Assets.scripts.Upgrade
 		public string AdditionalInfo { get; protected set; }
 		public UpgradeType Type { get; protected set; }
 
+		public int CurrentProgress { get; set; }
+		public int NeedForNextLevel { get; set; }
+
+		public bool GoesIntoBasestatSlot { get; protected set; }
+
 		public bool CollectableByPlayer { get; protected set; }
 
 		public int Level { get; set; }
@@ -43,6 +48,11 @@ namespace Assets.scripts.Upgrade
 			CollectableByPlayer = collectableByPlayer;
 			Level = level;
 
+			GoesIntoBasestatSlot = false;
+
+			CurrentProgress = 0;
+			NeedForNextLevel = 1;
+
 			VisibleName = Name;
 			Description = "No Description";
 			Price = "No value";
@@ -50,28 +60,53 @@ namespace Assets.scripts.Upgrade
 			Type = UpgradeType.CLASSIC;
 		}
 
-		public virtual void Init()
+		public virtual AbstractUpgrade Init()
 		{
+			InitInfo();
 			try
 			{
 				MainSprite = LoadSprite("lvl" + Level + ".png");
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				//Debug.LogError(e.StackTrace);
 				try
 				{
 					MainSprite = LoadSprite("lvl1.png");
 				}
 				catch (Exception)
 				{
+					//Debug.LogError(e.StackTrace);
 					MainSprite = Resources.Load<Sprite>("Sprite/Upgrades/default");
 				}
 			}
+
+			return this;
 		}
 
-		public void SetOwner(Character ch)
+		public void AddUpgradeProgress(AbstractUpgrade u)
+		{
+			if (Level == 10)
+				return;
+
+			CurrentProgress++;
+			if (CurrentProgress >= NeedForNextLevel)
+			{
+				Level ++;
+				Init();
+				Remove();
+				Apply();
+
+				CurrentProgress = 0;
+
+				NeedForNextLevel = (int) Math.Pow(2, Level);
+			}
+		}
+
+		public AbstractUpgrade SetOwner(Character ch)
 		{
 			owner = ch;
+			return this;
 		}
 
 		public GameObject SpawnGameObject(Vector3 pos)
@@ -167,5 +202,7 @@ namespace Assets.scripts.Upgrade
 		{
 
 		}
+
+		protected abstract void InitInfo();
 	}
 }
