@@ -21,7 +21,7 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		private List<UpgradeInfo> upgrades = new List<UpgradeInfo>(); 
+		public List<UpgradeInfo> upgrades = new List<UpgradeInfo>(); 
 
 		public class UpgradeInfo
 		{

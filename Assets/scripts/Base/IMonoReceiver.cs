@@ -16,7 +16,7 @@ namespace Assets.scripts.Base
 		void MonoCollisionExit(GameObject gameObject, Collision2D coll);
 		void MonoCollisionStay(GameObject gameObject, Collision2D coll);
 
-		void MonoTriggerEnter(GameObject gameObject, Collider2D other);
+		void MonoTriggerEnter(GameObject gameObject, Collider2D coll);
 		void MonoTriggerExit(GameObject gameObject, Collider2D other);
 		void MonoTriggerStay(GameObject gameObject, Collider2D other);
 	}

@@ -14,7 +14,7 @@ namespace Assets.scripts.Skills.SkillEffects
 		public int Dmg { get; set; }
 		public int RandomOffset { get; set; }
 
-		public EffectDamage(int damage, int randomOffset)
+		public EffectDamage(int damage, int randomOffset=0)
 		{
 			Dmg = damage;
 			RandomOffset = randomOffset;

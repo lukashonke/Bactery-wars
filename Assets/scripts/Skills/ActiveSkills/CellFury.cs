@@ -12,6 +12,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private readonly float reuseVal = 0.5f;
 
+		public int duration = 5;
+
 		public CellFury()
 		{
 			castTime = 0f;
@@ -40,7 +42,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] {new EffectMeleeReuse(1, 0.3f, 5, SkillTraits.Melee), };
+			return new SkillEffect[] {new EffectMeleeReuse(1, 0.3f, duration, SkillTraits.Melee), };
 		}
 
 		public override void InitTraits()
@@ -50,21 +52,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			//CreateCastingEffect(true, "SkillTemplate");
-
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			//DeleteCastingEffect();
+			Debug.Log("on launch");
+			particleSystem = CreateParticleEffect("ActiveEffect", true);
+			StartParticleEffect(particleSystem);
 
 			ApplyEffects(Owner, Owner.GetData().gameObject);
+			DeleteParticleEffect(particleSystem, duration);
 		}
 
 		public override void OnFinish()
 		{
-
+			
 		}
 
 		public override void MonoUpdate(GameObject gameObject)
@@ -80,7 +83,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 		}
 

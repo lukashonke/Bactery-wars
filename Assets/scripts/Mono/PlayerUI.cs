@@ -26,6 +26,7 @@ namespace Assets.scripts.Mono
 		}
 
 		public GameObject[] skillButtons;
+		public Image[] skillProgresses;
 
         public bool adminMode;
 
@@ -98,6 +99,14 @@ namespace Assets.scripts.Mono
 						skillButtons[i - 1] = child.gameObject;
 					}
 				}
+			}
+
+			skillProgresses = new Image[9];
+			for (int i = 1; i <= 9; i++)
+			{
+				GameObject sko = skillButtons[i-1];
+				skillProgresses[i-1] = sko.transform.GetChild(0).GetComponent<Image>();
+				skillProgresses[i-1].sprite = sko.GetComponent<Image>().sprite;
 			}
 
 			timers = new float[9,9];
@@ -251,6 +260,24 @@ namespace Assets.scripts.Mono
 
 			try
 			{
+				upgradesAdminPanel = GameObject.Find("UpgradesAdminPanel");
+				upgradesDropdownPanel = upgradesAdminPanel.GetComponent<Dropdown>();
+
+				List<String> temp = new List<string>();
+
+				foreach (UpgradeTable.UpgradeInfo o in UpgradeTable.Instance.upgrades)
+				{
+					temp.Add(o.upgrade.Name);
+				}
+
+				upgradesDropdownPanel.AddOptions(temp);
+			}
+			catch (Exception)
+			{
+			}
+
+			try
+			{
 				// admin setting
 				adminPanel = GameObject.Find("AdminPanel");
 				adminSpawnPanel = GameObject.Find("AdminMode").GetComponent<Dropdown>();
@@ -265,6 +292,34 @@ namespace Assets.scripts.Mono
 			catch (Exception)
 			{
 				Debug.LogError("error initializing admin panel");
+			}
+		}
+
+		private GameObject upgradesAdminPanel;
+		private Dropdown upgradesDropdownPanel;
+
+		public void AdminUpgradeChosen()
+		{
+			if (upgradesDropdownPanel != null)
+			{
+				string type = upgradesDropdownPanel.captionText.text;
+
+				Type t = null;
+
+				foreach (UpgradeTable.UpgradeInfo o in UpgradeTable.Instance.upgrades)
+				{
+					if (o.upgrade.Name.Equals(type))
+					{
+						t = o.upgrade;
+						break;
+					}
+				}
+
+				if (t != null)
+				{
+					AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
+					UpgradeTable.Instance.DropItem(u, data.GetBody().transform.position);
+				}
 			}
 		}
 
@@ -336,8 +391,10 @@ namespace Assets.scripts.Mono
 
 					ratio = (ratio);
 
-					Image but = skillButtons[i-1].GetComponent<Image>();
-					but.color = new Color(ratio, ratio, ratio);
+					//Image but = skillButtons[i-1].GetComponent<Image>();
+					//but.color = new Color(ratio, ratio, ratio);
+
+					skillProgresses[i - 1].fillAmount = 1 - ratio;
 				}
 			}
 

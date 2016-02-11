@@ -139,15 +139,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = other.gameObject.GetChar();
+			Character ch = coll.gameObject.GetChar();
 			if (ch == null)
 			{
-				Destroyable d = other.gameObject.GetComponent<Destroyable>();
+				Destroyable d = coll.gameObject.GetComponent<Destroyable>();
 				if (d != null && !Owner.CanAttack(d))
 					return;
 			}
@@ -155,7 +155,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 
 			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
+			ApplyEffects(Owner, coll.gameObject);
 			DestroyProjectile(gameObject);
 		}
 

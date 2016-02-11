@@ -94,15 +94,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 			if (gameObject != null && gameObject.Equals(GetOwnerData().GetBody()))
 			{
-				if (other.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(other.gameObject.GetChar()))
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
 				{
 					if (CanUse())
 					{
-						Start(other.gameObject);
+						Start(coll.gameObject);
 					}
 				}
 			}

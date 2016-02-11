@@ -37,11 +37,6 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
 			        shield.master = mob;*/
 
-			        SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
-					SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
-					SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
-					SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
-					SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
 					//SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))

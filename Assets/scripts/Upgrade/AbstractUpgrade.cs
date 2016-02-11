@@ -92,9 +92,9 @@ namespace Assets.scripts.Upgrade
 			CurrentProgress++;
 			if (CurrentProgress >= NeedForNextLevel)
 			{
+				Remove();
 				Level ++;
 				Init();
-				Remove();
 				Apply();
 
 				CurrentProgress = 0;
@@ -127,6 +127,22 @@ namespace Assets.scripts.Upgrade
 				throw new NullReferenceException(fileName + " not found ");
 
 			return o;
+		}
+
+		public int MulValueByLevel(int baseDamage, float levelMultiplier)
+		{
+			int add = (int) (baseDamage*(Level - 1)*levelMultiplier - baseDamage);
+			if (add < 0)
+				add = 0;
+			return (int)(baseDamage + add);
+		}
+
+		public int AddValueByLevel(int baseDamage, float levelMultiplier)
+		{
+			int add = (int)((Level - 1) * levelMultiplier);
+			if (add < 0)
+				add = 0;
+			return (int)(baseDamage + add);
 		}
 
 		public void Apply()

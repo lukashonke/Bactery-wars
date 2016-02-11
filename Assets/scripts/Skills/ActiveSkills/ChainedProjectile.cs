@@ -97,23 +97,23 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = GetCharacterFromObject(other.gameObject);
+			Character ch = GetCharacterFromObject(coll.gameObject);
 
 			if (ch != null && Owner.CanAttack(ch))
 			{
 				// main projectile hit - create subprojectiles
 				if (activeProjectile != null && activeProjectile.Equals(gameObject))
 				{
-					ApplyEffects(Owner, other.gameObject);
+					ApplyEffects(Owner, coll.gameObject);
 
 					int projectilesLeft = numProjectiles;
 
-					foreach (Collider2D c in Physics2D.OverlapCircleAll(other.gameObject.transform.position, radiusForChainedTargets))
+					foreach (Collider2D c in Physics2D.OverlapCircleAll(coll.gameObject.transform.position, radiusForChainedTargets))
 					{
 						
 						if (projectilesLeft > 0)
@@ -138,9 +138,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 						GameObject target;
 						if (subProjectiles.TryGetValue(gameObject, out target))
 						{
-							if (other.gameObject.Equals(target))
+							if (coll.gameObject.Equals(target))
 							{
-								ApplyEffects(Owner, other.gameObject);
+								ApplyEffects(Owner, coll.gameObject);
 								DestroyProjectile(gameObject);
 								subProjectiles.Remove(gameObject);
 							}

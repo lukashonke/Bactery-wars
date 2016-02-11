@@ -139,7 +139,7 @@ namespace Assets.scripts.Actor
 		{
 			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
 			{
-				Debug.LogError("im in walls!, teleporting away");
+				//Debug.LogError("im in walls!, teleporting away");
 
 				int minRange = 2;
 				int maxRange = 4;

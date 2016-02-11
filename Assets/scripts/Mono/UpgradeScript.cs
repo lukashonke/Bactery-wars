@@ -53,7 +53,7 @@ namespace Assets.scripts.Mono
 
 		public void OnTriggerEnter2D(Collider2D obj)
 		{
-			if (startLife + 3 < Time.time)
+			if (startLife + 1 < Time.time)
 			{
 				if (obj.gameObject != null)
 				{

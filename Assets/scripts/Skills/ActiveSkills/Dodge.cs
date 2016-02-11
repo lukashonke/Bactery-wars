@@ -13,6 +13,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		public int jumpSpeed = 50;
 
+		public int hitEnemyDamage = 0;
+
+		public int firstEnemyHitDamage = 0;
+		private bool firstEnemyHit;
+
+		public bool penetrateThroughTargets = false;
+
 		public Dodge()
 		{
 			castTime = 0f;
@@ -43,7 +50,18 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectPushaway(500), };
+			int count = 1;
+
+			if (hitEnemyDamage > 0)
+				count ++;
+
+			SkillEffect[] effects = new SkillEffect[count];
+			effects[0] = new EffectPushaway(500);
+
+			if (hitEnemyDamage > 0)
+				effects[1] = new EffectDamage(hitEnemyDamage);
+
+			return effects;
 		}
 
 		public override void InitTraits()
@@ -58,6 +76,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			if (penetrateThroughTargets)
+			{
+				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = true;
+			}
+
+			firstEnemyHit = false;
+
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
 				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
 			else
@@ -76,14 +101,34 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnFinish()
 		{
+			if (penetrateThroughTargets)
+			{
+				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;
+			}
 		}
 
 		public override void MonoUpdate(GameObject gameObject)
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
+			if (!IsActive())
+				return;
+
+			if (coll != null && coll.gameObject != null && gameObject != null)
+			{
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
+				{
+					if (!firstEnemyHit)
+					{
+						ApplyEffect(Owner, coll.gameObject, new EffectDamage(firstEnemyHitDamage));
+						firstEnemyHit = true;
+					}
+
+					ApplyEffects(Owner, coll.gameObject);
+				}
+			}
 		}
 
 		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
@@ -95,6 +140,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
 				{
+					if (!firstEnemyHit)
+					{
+						ApplyEffect(Owner, coll.gameObject, new EffectDamage(firstEnemyHitDamage));
+						firstEnemyHit = true;
+					}
+
 					ApplyEffects(Owner, coll.gameObject);
 				}
 			}

@@ -93,6 +93,26 @@ namespace Assets.scripts.Skills
 			SkillAdded();
 		}
 
+		protected void ApplyEffect(Character source, GameObject target, SkillEffect ef, bool allowStackingSameEffect = false)
+		{
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillEffects(this, new SkillEffect[] { ef });
+			}
+
+			ef.Source = source;
+
+			if (!allowStackingSameEffect && !(ef is EffectDamage))
+			{
+				Character targetCh = target.GetChar();
+
+				if (targetCh != null && targetCh.HasEffectAlready(ef))
+					return;
+			}
+
+			ef.ApplyEffect(source, target);
+		}
+
 		/// <summary>
 		/// Applies all SkillEffects of this skill to the target
 		/// </summary>

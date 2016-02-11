@@ -173,7 +173,7 @@ namespace Assets.scripts.Skills
 		public virtual void MonoCollisionExit(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionStay(GameObject gameObject, Collision2D coll) { }
 
-		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D coll) { }
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 		public virtual void OnAfterEnd() { }
@@ -733,6 +733,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected void DeleteParticleEffect(GameObject obj, float delay)
 		{
+			if(obj != null)
 			Object.Destroy(obj, delay);
 		}
 
