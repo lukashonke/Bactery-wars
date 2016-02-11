@@ -23,7 +23,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.firstEnemyHitDamage += MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.firstEnemyHitDamage += (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -32,7 +32,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.firstEnemyHitDamage -= MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.firstEnemyHitDamage -= (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		protected override void InitInfo()
@@ -59,7 +59,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.hitEnemyDamage += MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.hitEnemyDamage += (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -68,7 +68,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.hitEnemyDamage -= MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.hitEnemyDamage -= (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		protected override void InitInfo()
@@ -96,7 +96,7 @@ namespace Assets.scripts.Upgrade.Classic
 				return;
 
 			skill.penetrateThroughTargets = true;
-			skill.hitEnemyDamage += MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.hitEnemyDamage += (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -106,7 +106,7 @@ namespace Assets.scripts.Upgrade.Classic
 				return;
 
 			skill.penetrateThroughTargets = false;
-			skill.hitEnemyDamage -= MulValueByLevel(DAMAGE, LEVEL_MUL);
+			skill.hitEnemyDamage -= (int) MulValueByLevel(DAMAGE, LEVEL_MUL);
 		}
 
 		protected override void InitInfo()
@@ -133,7 +133,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.range += AddValueByLevel(VALUE, LEVEL_ADD);
+			skill.range += (int) AddValueByLevel(VALUE, LEVEL_ADD);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -142,7 +142,7 @@ namespace Assets.scripts.Upgrade.Classic
 			if (skill == null)
 				return;
 
-			skill.range -= AddValueByLevel(VALUE, LEVEL_ADD);
+			skill.range -= (int) AddValueByLevel(VALUE, LEVEL_ADD);
 		}
 
 		protected override void InitInfo()
@@ -150,6 +150,41 @@ namespace Assets.scripts.Upgrade.Classic
 			Name = "dodge_upgrade";
 			VisibleName = "Dodge Range Upgrade";
 			Description = "Increases Dodge range by " + AddValueByLevel(VALUE, LEVEL_ADD) + " points (default is 10).";
+		}
+	}
+
+	public class DodgeCharges : AbstractUpgrade
+	{
+		public DodgeCharges(int level)
+			: base(level)
+		{
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges += 1;
+			skill.consecutiveTimelimit = AddValueByLevel(3, 0.5f);
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges -= 1;
+			skill.consecutiveTimelimit -= AddValueByLevel(3, 0.5f);
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "dodge_upgrade";
+			VisibleName = "Dodge Charges Upgrade";
+			Description = "Gives you two charges of Dodge skill. The second charge must be triggered within " + AddValueByLevel(3, 0.5f) + " seconds from launching the first charge.";
 		}
 	}
 }

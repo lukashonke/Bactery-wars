@@ -65,14 +65,14 @@ namespace Assets.scripts.Upgrade
 			InitInfo();
 			try
 			{
-				MainSprite = LoadSprite("lvl" + Level + ".png");
+				MainSprite = LoadSprite("lvl" + Level);
 			}
 			catch (Exception e)
 			{
 				//Debug.LogError(e.StackTrace);
 				try
 				{
-					MainSprite = LoadSprite("lvl1.png");
+					MainSprite = LoadSprite("lvl1");
 				}
 				catch (Exception)
 				{
@@ -129,20 +129,20 @@ namespace Assets.scripts.Upgrade
 			return o;
 		}
 
-		public int MulValueByLevel(int baseDamage, float levelMultiplier)
+		public float MulValueByLevel(int baseDamage, float levelMultiplier)
 		{
 			int add = (int) (baseDamage*(Level - 1)*levelMultiplier - baseDamage);
 			if (add < 0)
 				add = 0;
-			return (int)(baseDamage + add);
+			return baseDamage + add;
 		}
 
-		public int AddValueByLevel(int baseDamage, float levelMultiplier)
+		public float AddValueByLevel(int baseDamage, float levelMultiplier)
 		{
 			int add = (int)((Level - 1) * levelMultiplier);
 			if (add < 0)
 				add = 0;
-			return (int)(baseDamage + add);
+			return (baseDamage + add);
 		}
 
 		public void Apply()

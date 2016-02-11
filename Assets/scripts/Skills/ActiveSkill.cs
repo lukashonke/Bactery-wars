@@ -62,6 +62,15 @@ namespace Assets.scripts.Skills
 		/// the time when the skill was last used
 		public float LastUsed { get; private set; }
 
+
+		public int maxConsecutiveCharges;
+		public int currentConsecutiveCharges;
+		public float consecutiveTimelimit;
+
+		private float firstUsedCharge;
+		private bool isWaitingForConsecutiveCharges;
+		private Coroutine startReuseTask;
+
 		/// represents the vector that usually points from the player_object to the mouse direction
 		protected Vector3 mouseDirection;
 
@@ -88,7 +97,8 @@ namespace Assets.scripts.Skills
 			breaksMouseMovement = true;
 			resetMoveTarget = true;
 			triggersOwnerCollision = false;
-
+			maxConsecutiveCharges = 1;
+			consecutiveTimelimit = 3f;
 			LastUsed = -1000f;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
@@ -235,6 +245,16 @@ namespace Assets.scripts.Skills
 				return false;
 			}
 
+			if (isWaitingForConsecutiveCharges)
+			{
+				float time = Time.time;
+
+				if (firstUsedCharge + consecutiveTimelimit < time && currentConsecutiveCharges < maxConsecutiveCharges)
+				{
+					return true;
+				}
+			}
+
 			if (reuse > 0)
 			{
 				float time = Time.time;
@@ -282,6 +302,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override void SetReuseTimer()
 		{
+			isWaitingForConsecutiveCharges = false;
 			LastUsed = Time.time;
 			GetOwnerData().SetSkillReuseTimer(this);
 		}
@@ -373,7 +394,31 @@ namespace Assets.scripts.Skills
 			}
 
 			// start the reuse timer
-			SetReuseTimer();
+			if (maxConsecutiveCharges <= 1)
+				SetReuseTimer();
+			else
+			{
+				//TODO move this to when skill ends?
+				if (isWaitingForConsecutiveCharges) // after consecutive charge fired
+				{
+					currentConsecutiveCharges++;
+
+					if (currentConsecutiveCharges >= maxConsecutiveCharges)
+					{
+						if (startReuseTask != null)
+							Owner.StopTask(startReuseTask);
+
+						SetReuseTimer();
+					}
+				}
+				else // after first charge fired
+				{
+					firstUsedCharge = Time.time;
+					isWaitingForConsecutiveCharges = true;
+					currentConsecutiveCharges = 1;
+					startReuseTask = Owner.StartTask(ScheduleStartReuse());
+				}
+			}
 
 			active = true;
 
@@ -413,6 +458,12 @@ namespace Assets.scripts.Skills
 		{
 			yield return new WaitForSeconds(GetReuse());
 			OnAterReuse();
+		}
+
+		private IEnumerator ScheduleStartReuse()
+		{
+			yield return new WaitForSeconds(consecutiveTimelimit);
+			SetReuseTimer();
 		}
 
 		public override void AbortCast()

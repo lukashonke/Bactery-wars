@@ -14191,7 +14191,7 @@ GameObject:
   - 114: {fileID: 1079268680}
   - 114: {fileID: 1079268679}
   m_Layer: 5
-  m_Name: Scrollbar
+  m_Name: InvScrollbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14253,7 +14253,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 480864284}
   m_HandleRect: {fileID: 480864283}
   m_Direction: 2
-  m_Value: 0.58017796
+  m_Value: 0.5801781
   m_Size: 0.41830623
   m_NumberOfSteps: 0
   m_OnValueChanged:

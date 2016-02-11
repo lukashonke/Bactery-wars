@@ -132,6 +132,8 @@ namespace Assets.scripts.Mono
 				GameObject inventoryContentPanel = GameObject.Find("InventoryContent");
 				GameObject activeStatsPanel = GameObject.Find("ActiveStatsPanel");
 
+				GameObject.Find("InvScrollbar").GetComponent<Scrollbar>().value = 1f;
+
 				tooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
