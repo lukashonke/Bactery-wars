@@ -466,7 +466,7 @@ namespace Assets.scripts.Mono
 							else
 							{
 								data.MoveButtonDown = false;
-								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo)
+								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo && !data.forcedVelocity && data.allowMovePointChange)
 									data.HasTargetToMoveTo = false;
 							}
 						}

@@ -46,6 +46,7 @@ namespace Assets.scripts.Skills
 		public bool resetMoveTarget;
 		public bool movementAbortsSkill;
 		public bool triggersOwnerCollision;
+		public SkillId skillToBeRechargedOnThisUse;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -99,6 +100,7 @@ namespace Assets.scripts.Skills
 			triggersOwnerCollision = false;
 			maxConsecutiveCharges = 1;
 			consecutiveTimelimit = 3f;
+			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
@@ -530,6 +532,8 @@ namespace Assets.scripts.Skills
 			// nastavit stav - idle
 			state = SkillState.SKILL_IDLE;
 
+			RechargeNext();
+
 			OnFinish();
 
 			End();
@@ -564,6 +568,16 @@ namespace Assets.scripts.Skills
 			}
 
 			yield return null;
+		}
+
+		private void RechargeNext()
+		{
+			if (skillToBeRechargedOnThisUse != 0)
+			{
+				ActiveSkill sk = Owner.Skills.GetSkill(skillToBeRechargedOnThisUse) as ActiveSkill;
+				sk.LastUsed = 0;
+				GetOwnerData().SetSkillReuseTimer(sk, true);
+			}
 		}
 
 		/// <summary>

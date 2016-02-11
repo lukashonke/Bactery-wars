@@ -187,4 +187,37 @@ namespace Assets.scripts.Upgrade.Classic
 			Description = "Gives you two charges of Dodge skill. The second charge must be triggered within " + AddValueByLevel(3, 0.5f) + " seconds from launching the first charge.";
 		}
 	}
+
+	public class DodgeRechargeShotUpgrade : AbstractUpgrade
+	{
+		public DodgeRechargeShotUpgrade(int level)
+			: base(level)
+		{
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.skillToBeRechargedOnThisUse = SkillId.SneezeShot;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.skillToBeRechargedOnThisUse = 0;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "dodge_upgrade";
+			VisibleName = "Dodge Combo Upgrade";
+			Description = "After using Dodge skill, skill Sneeze Shot is instantly recharged and available for use.";
+		}
+	}
 }

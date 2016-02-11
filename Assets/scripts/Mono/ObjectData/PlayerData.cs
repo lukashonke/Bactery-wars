@@ -117,9 +117,12 @@ namespace Assets.scripts.Mono.ObjectData
 
 		}
 
-		public override void SetSkillReuseTimer(ActiveSkill activeSkill)
+		public override void SetSkillReuseTimer(ActiveSkill activeSkill, bool reset=false)
 		{
-			ui.SetReuseTimer(activeSkill);
+			if(reset)
+				ui.ResetReuseTimer(activeSkill);
+			else
+				ui.SetReuseTimer(activeSkill);
 		}
 
 		/// <summary>

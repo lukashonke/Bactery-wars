@@ -1369,7 +1369,7 @@ namespace Assets.scripts.Mono
 		public abstract void OnTriggerExit2D(Collider2D obj);
 		public abstract void OnTriggerStay2D(Collider2D obj);
 
-		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill)
+		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill, bool reset=false)
 		{
 		}
 	}

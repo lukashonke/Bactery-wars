@@ -24,7 +24,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			castTime = 0f;
 			reuse = 2f;
-			coolDown = 0.5f;
+			coolDown = 0.3f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
 			resetMoveTarget = false;

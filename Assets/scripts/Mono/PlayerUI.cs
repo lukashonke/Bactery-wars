@@ -423,6 +423,26 @@ namespace Assets.scripts.Mono
 			timers[id,1] = ((ActiveSkill)sk).GetReuse();
 		}
 
+		public void ResetReuseTimer(Skill sk)
+		{
+			int id = -1;
+
+			for (int i = 0; i < data.GetOwner().Skills.Skills.Count; i++)
+			{
+				if (sk.GetName().Equals(data.GetOwner().Skills.Skills[i].GetName()))
+				{
+					id = i + 1;
+					break;
+				}
+			}
+
+			if (id == -1)
+				return;
+
+			timers[id, 0] = Time.time - ((ActiveSkill)sk).GetReuse();
+			timers[id, 1] = ((ActiveSkill)sk).GetReuse();
+		}
+
 		public void NextLevel()
 		{
 			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadNextMap();
