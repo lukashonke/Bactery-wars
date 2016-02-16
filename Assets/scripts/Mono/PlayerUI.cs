@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -579,9 +580,23 @@ namespace Assets.scripts.Mono
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
-					else if (child.name.Equals("AdditionalInfo") && addInfo != null)
+					else if (child.name.Equals("AdditionalInfo") && (addInfo != null || u.RequiredClass > 0))
 					{
-						child.GetComponent<Text>().text = addInfo;
+						string className = null;
+						ClassId cId = u.RequiredClass;
+						if (cId > 0)
+						{
+							className = Enum.GetName(typeof (ClassId), cId);
+						}
+
+						string info = "";
+						if (addInfo != null)
+							info = addInfo;
+
+						if (className != null)
+							info = addInfo + " Required class: " + className;
+
+						child.GetComponent<Text>().text = info;
 						continue;
 					}
 				}
@@ -784,6 +799,10 @@ namespace Assets.scripts.Mono
 						float mul = ((Player)data.GetOwner()).Status.DamageOutputMul;
 						float add = ((Player)data.GetOwner()).Status.DamageOutputAdd;
 						t.text = "Damage: x" + mul + " +" + add + "";
+						break;
+					case "Shield":
+						float shield = ((Player)data.GetOwner()).Status.Shield;
+						t.text = "Shield " + ((shield-1)*100) + "%";
 						break;
 				}
 			}

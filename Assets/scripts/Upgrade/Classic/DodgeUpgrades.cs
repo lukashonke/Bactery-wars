@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
@@ -15,6 +16,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public DodgeFirstHitDamageUpgrade(int level) : base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -51,6 +53,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public DodgeHitDamageUpgrade(int level)
 			: base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -87,6 +90,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public DodgePenetrateThroughTargets(int level)
 			: base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -125,6 +129,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public DodgeRangeIncrease(int level)
 			: base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -158,6 +163,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public DodgeCharges(int level)
 			: base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -193,6 +199,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public DodgeRechargeShotUpgrade(int level)
 			: base(level)
 		{
+			RequiredClass = ClassId.CommonCold;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)

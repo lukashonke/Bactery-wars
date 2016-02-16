@@ -44,6 +44,7 @@ namespace Assets.scripts.Actor.Status
 			DamageOutputMul = damageMul;
 
 			Shield = shield;
+
 			CriticalRate = criticalRate;
 			CriticalDamageMul = criticalDamageMul;
 

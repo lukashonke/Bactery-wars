@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -26,6 +27,7 @@ namespace Assets.scripts.Upgrade
 		public string Price { get; protected set; }
 		public string AdditionalInfo { get; protected set; }
 		public UpgradeType Type { get; protected set; }
+		public ClassId RequiredClass { get; protected set; }
 
 		public int CurrentProgress { get; set; }
 		public int NeedForNextLevel { get; set; }
@@ -35,6 +37,7 @@ namespace Assets.scripts.Upgrade
 		public bool CollectableByPlayer { get; protected set; }
 
 		public int Level { get; set; }
+		public int MaxLevel { get; set; }
 		private Character owner;
 		public Character Owner
 		{
@@ -52,11 +55,13 @@ namespace Assets.scripts.Upgrade
 
 			CurrentProgress = 0;
 			NeedForNextLevel = 1;
+			MaxLevel = 10;
+			RequiredClass = 0; //TODO restrict drops only for the class that player currently has
 
 			VisibleName = Name;
 			Description = "No Description";
 			Price = "No value";
-			AdditionalInfo = "some info";
+			AdditionalInfo = null;
 			Type = UpgradeType.CLASSIC;
 		}
 
@@ -86,7 +91,7 @@ namespace Assets.scripts.Upgrade
 
 		public void AddUpgradeProgress(AbstractUpgrade u)
 		{
-			if (Level == 10)
+			if (Level == MaxLevel)
 				return;
 
 			CurrentProgress++;
