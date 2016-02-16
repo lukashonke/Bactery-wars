@@ -184,6 +184,16 @@ namespace Assets.scripts.Upgrade
 			
 		}
 
+		public virtual void ModifyDmgMul(ref float dmgMul)
+		{
+			
+		}
+
+		public virtual void ModifyDmgAdd(ref float dmgAdd)
+		{
+
+		}
+
 		public virtual void ModifyMaxHp(ref int maxHp)
 		{
 			

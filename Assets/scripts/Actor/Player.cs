@@ -94,6 +94,8 @@ namespace Assets.scripts.Actor
 			int tmpCritRate = Template.CriticalRate;
 			float tmpCritDmg = Template.CriticalDamageMul;
 			float tmpRunSpeed = Template.MaxSpeed;
+			float tmpDmgMul = Template.DamageMul;
+			float tmpDmgAdd = Template.DamageAdd;
 
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
 			{
@@ -102,6 +104,8 @@ namespace Assets.scripts.Actor
 				u.ModifyCriticalRate(ref tmpCritRate);
 				u.ModifyCriticalDmg(ref tmpCritDmg);
 				u.ModifyRunSpeed(ref tmpRunSpeed);
+				u.ModifyDmgMul(ref tmpDmgMul);
+				u.ModifyDmgAdd(ref tmpDmgAdd);
 			}
 
 			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
@@ -123,6 +127,8 @@ namespace Assets.scripts.Actor
 
 			Status.CriticalRate = tmpCritRate;
 			Status.CriticalDamageMul = tmpCritDmg;
+			Status.DamageOutputMul = tmpDmgMul;
+			Status.DamageOutputAdd = tmpDmgAdd;
 			SetMoveSpeed(tmpRunSpeed);
 
 			Data.UpdateStats();

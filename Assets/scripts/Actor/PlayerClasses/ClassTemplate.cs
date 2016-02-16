@@ -19,6 +19,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 		public float Shield { get; protected set; }
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
+		public float DamageMul { get; protected set; }
+		public float DamageAdd { get; protected set; }
 
 		public int InventoryCapacity { get; protected set; }
 		public int ActiveUpgradesCapacity { get; protected set; }
@@ -40,6 +42,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
+			DamageMul = 1f;
+			DamageAdd = 0;
 
 			InventoryCapacity = 10;
 			ActiveUpgradesCapacity = 3;

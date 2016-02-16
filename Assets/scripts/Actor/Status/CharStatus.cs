@@ -26,9 +26,12 @@ namespace Assets.scripts.Actor.Status
 		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; set; } // if critical strike, damage is multiplied by this value
 
+		public float DamageOutputMul { get; set; }
+		public float DamageOutputAdd { get; set; }
+
 		public List<Skill> ActiveSkills { get; private set; }
 
-		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul)
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
 		{
 			IsDead = isDead;
 			Hp = hp;
@@ -37,8 +40,11 @@ namespace Assets.scripts.Actor.Status
 			MaxMp = maxMp;
 			MoveSpeed = moveSpeed;
 
+			DamageOutputAdd = damageAdd;
+			DamageOutputMul = damageMul;
+
 			Shield = shield;
-			CriticalRate = CriticalRate;
+			CriticalRate = criticalRate;
 			CriticalDamageMul = criticalDamageMul;
 
 			ActiveSkills = new List<Skill>();

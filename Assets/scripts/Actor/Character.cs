@@ -472,6 +472,9 @@ namespace Assets.scripts.Actor
 
 		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
 		{
+			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
+			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
+
 			bool crit = canCrit && Random.Range(1, 1000) <= Status.CriticalRate;
 
 			if (crit)

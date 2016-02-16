@@ -780,6 +780,11 @@ namespace Assets.scripts.Mono
 						float dmg = ((Player) data.GetOwner()).Status.CriticalDamageMul;
 						t.text = "Critical damage: x" + dmg;
 						break;
+					case "Damage Output":
+						float mul = ((Player)data.GetOwner()).Status.DamageOutputMul;
+						float add = ((Player)data.GetOwner()).Status.DamageOutputAdd;
+						t.text = "Damage: x" + mul + " +" + add + "";
+						break;
 				}
 			}
 		}
