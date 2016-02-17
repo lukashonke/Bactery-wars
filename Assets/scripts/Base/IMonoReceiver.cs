@@ -9,7 +9,7 @@ namespace Assets.scripts.Base
 	public interface IMonoReceiver
 	{
 		void MonoStart(GameObject gameObject);
-		void MonoUpdate(GameObject gameObject);
+		void MonoUpdate(GameObject gameObject, bool fixedUpdate);
 		void MonoDestroy(GameObject gameObject);
 
 		void MonoCollisionEnter(GameObject gameObject, Collision2D coll);

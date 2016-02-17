@@ -15,7 +15,7 @@ GameObject:
   - 114: {fileID: 11462148}
   - 96: {fileID: 9647130}
   m_Layer: 11
-  m_Name: projectile_blacktest_i00
+  m_Name: projectile_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -294,7 +294,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			 AbortCast();
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 

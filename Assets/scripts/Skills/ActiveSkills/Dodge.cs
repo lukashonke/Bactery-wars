@@ -128,7 +128,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 

@@ -122,7 +122,7 @@ namespace Assets.scripts.Skills
 		public abstract void OnFinish();
 
 		/// sent from GameObjects created using this skill
-		public abstract void MonoUpdate(GameObject gameObject);
+		public abstract void MonoUpdate(GameObject gameObject, bool fixedUpdate);
 
 		/// can the player move while casting?
 		public abstract bool CanMove();
@@ -990,6 +990,13 @@ namespace Assets.scripts.Skills
 			}
 
 			return casttime;
+		}
+
+		protected int CalcAngleForProjectile(int index, int totalProjectiles, int angleAdd)
+		{
+			int temp = totalProjectiles * angleAdd - angleAdd;
+			temp = -temp / 2;
+			return temp + index * angleAdd;
 		}
 
 		//TODO finish this for other params too

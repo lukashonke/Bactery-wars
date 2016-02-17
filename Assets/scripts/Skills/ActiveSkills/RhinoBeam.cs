@@ -122,7 +122,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			DeleteParticleEffect(ray);
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
