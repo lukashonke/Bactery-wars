@@ -21,7 +21,9 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public List<UpgradeInfo> upgrades = new List<UpgradeInfo>(); 
+		public List<UpgradeInfo> upgrades = new List<UpgradeInfo>();
+
+		public Sprite dropBg;
 
 		public class UpgradeInfo
 		{
@@ -67,6 +69,8 @@ namespace Assets.scripts.Upgrade
 
 			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(AbstractUpgrade));
 			LoadTypes(types, UpgradeType.EPIC);
+
+			dropBg = Resources.Load<Sprite>("Sprite/inventory/drop_background");
 		}
 
 		private void LoadTypes(List<Type> types, UpgradeType type)

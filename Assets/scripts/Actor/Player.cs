@@ -77,8 +77,8 @@ namespace Assets.scripts.Actor
 
 			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(1).Init().SetOwner(this));
 			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new CriticalDamageUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new DamageUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(1).Init().SetOwner(this));
 
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
@@ -96,6 +96,7 @@ namespace Assets.scripts.Actor
 			float tmpRunSpeed = Template.MaxSpeed;
 			float tmpDmgMul = Template.DamageMul;
 			float tmpDmgAdd = Template.DamageAdd;
+			float tmpShield = Template.Shield;
 
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
 			{
@@ -106,6 +107,7 @@ namespace Assets.scripts.Actor
 				u.ModifyRunSpeed(ref tmpRunSpeed);
 				u.ModifyDmgMul(ref tmpDmgMul);
 				u.ModifyDmgAdd(ref tmpDmgAdd);
+				u.ModifyShield(ref tmpShield);
 			}
 
 			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
@@ -115,6 +117,9 @@ namespace Assets.scripts.Actor
 				u.ModifyCriticalRate(ref tmpCritRate);
 				u.ModifyCriticalDmg(ref tmpCritDmg);
 				u.ModifyRunSpeed(ref tmpRunSpeed);
+				u.ModifyDmgMul(ref tmpDmgMul);
+				u.ModifyDmgAdd(ref tmpDmgAdd);
+				u.ModifyShield(ref tmpShield);
 			}
 
 			UpdateMaxHp(tmpMaxHp);
@@ -129,6 +134,7 @@ namespace Assets.scripts.Actor
 			Status.CriticalDamageMul = tmpCritDmg;
 			Status.DamageOutputMul = tmpDmgMul;
 			Status.DamageOutputAdd = tmpDmgAdd;
+			Status.Shield = tmpShield;
 			SetMoveSpeed(tmpRunSpeed);
 
 			Data.UpdateStats();

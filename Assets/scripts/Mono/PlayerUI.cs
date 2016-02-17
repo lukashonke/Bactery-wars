@@ -802,7 +802,7 @@ namespace Assets.scripts.Mono
 						break;
 					case "Shield":
 						float shield = ((Player)data.GetOwner()).Status.Shield;
-						t.text = "Shield " + ((shield-1)*100) + "%";
+						t.text = "Shield " + (int)(shield*100-100) + "%";
 						break;
 				}
 			}

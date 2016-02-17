@@ -122,6 +122,14 @@ namespace Assets.scripts.Upgrade
 			o.AddComponent<BoxCollider2D>().isTrigger = true;
 			o.AddComponent<UpgradeScript>().upgrade = this;
 			o.transform.position = pos;
+
+			GameObject bg = new GameObject("Background");
+			r = bg.AddComponent<SpriteRenderer>();
+			r.sprite = UpgradeTable.Instance.dropBg;
+			r.sortingOrder = -1;
+			bg.transform.parent = o.transform;
+			bg.transform.localPosition = new Vector3(0, 0, 0);
+
 			return o;
 		}
 
@@ -238,6 +246,11 @@ namespace Assets.scripts.Upgrade
 		}
 
 		public virtual void ModifySkillCasttime(ActiveSkill sk, ref float casttime)
+		{
+
+		}
+
+		public virtual void ModifyShield(ref float shield)
 		{
 
 		}
