@@ -142,10 +142,18 @@ namespace Assets.scripts.Upgrade
 			return baseDamage + add;
 		}
 
-		public float AddValueByLevel(int baseDamage, float levelMultiplier)
+		/*public float AddValueByLevel(int baseDamage, float levelMultiplier, bool alsoNegative=false)
 		{
 			int add = (int)((Level - 1) * levelMultiplier);
-			if (add < 0)
+			if (add < 0 && !alsoNegative)
+				add = 0;
+			return (baseDamage + add);
+		}*/
+
+		public float AddValueByLevel(float baseDamage, float levelMultiplier, bool alsoNegative=false)
+		{
+			int add = (int)((Level - 1) * levelMultiplier);
+			if (add < 0 && !alsoNegative)
 				add = 0;
 			return (baseDamage + add);
 		}

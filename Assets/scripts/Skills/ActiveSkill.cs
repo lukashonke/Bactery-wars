@@ -35,7 +35,7 @@ namespace Assets.scripts.Skills
 		protected float updateFrequency;
 
 		/// pri kratkem range je vhodne snizit tuto frekvenci pro presnejsi vypocet, defaultne to je nastaveno na 0.2f (5x/s)
-		protected float rangeCheckFrequency;
+		public float rangeCheckFrequency;
 
 		public float castTime;
 		public float coolDown;

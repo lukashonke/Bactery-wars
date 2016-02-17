@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.AI;
+using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
@@ -17,6 +20,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public int firstEnemyHitDamage = 0;
 		private bool firstEnemyHit;
+		public bool spreadshotOnLand = false;
+		public int spreadshotDamage = 0;
 
 		public bool penetrateThroughTargets = false;
 
@@ -105,6 +110,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;
 			}
+
+			if (spreadshotOnLand)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+					if (activeProjectile != null)
+					{
+						activeProjectile.name = "DodgeProjectile";
+						Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+						rb.velocity = (GetOwnerData().GetForwardVector(i * 90) * 30);
+
+						Object.Destroy(activeProjectile, 5f);
+					}
+				}
+			}
 		}
 
 		public override void MonoUpdate(GameObject gameObject)
@@ -113,10 +134,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (!IsActive())
-				return;
-
-			if (coll != null && coll.gameObject != null && gameObject != null)
+			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
 			{
 				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
 				{
@@ -129,14 +147,30 @@ namespace Assets.scripts.Skills.ActiveSkills
 					ApplyEffects(Owner, coll.gameObject);
 				}
 			}
+
+			if (spreadshotOnLand && gameObject.name.Equals("DodgeProjectile"))
+			{
+				if (coll.gameObject.Equals(GetOwnerData().GetBody()))
+					return;
+
+				Character ch = coll.gameObject.GetChar();
+				if (ch == null)
+				{
+					Destroyable d = coll.gameObject.GetComponent<Destroyable>();
+					if (d != null && !Owner.CanAttack(d))
+						return;
+				}
+				else if (!Owner.CanAttack(ch))
+					return;
+
+				ApplyEffect(Owner, coll.gameObject, new EffectDamage(spreadshotDamage, 0));
+				DestroyProjectile(gameObject);
+			}
 		}
 
 		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
 		{
-			if (!IsActive())
-				return;
-
-			if (coll != null && coll.gameObject != null && gameObject != null)
+			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
 			{
 				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
 				{
@@ -148,6 +182,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 					ApplyEffects(Owner, coll.gameObject);
 				}
+			}
+
+			if (spreadshotOnLand && gameObject.name.Equals("DodgeProjectile"))
+			{
+				if (coll.gameObject.Equals(GetOwnerData().GetBody()))
+					return;
+
+				Character ch = coll.gameObject.GetChar();
+				if (ch == null)
+				{
+					Destroyable d = coll.gameObject.GetComponent<Destroyable>();
+					if (d != null && !Owner.CanAttack(d))
+						return;
+				}
+				else if (!Owner.CanAttack(ch))
+					return;
+
+				ApplyEffect(Owner, coll.gameObject, new EffectDamage(spreadshotDamage, 0));
+				DestroyProjectile(gameObject);
 			}
 		}
 

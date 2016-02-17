@@ -227,4 +227,44 @@ namespace Assets.scripts.Upgrade.Classic
 			Description = "After using Dodge skill, skill Sneeze Shot is instantly recharged and available for use.";
 		}
 	}
+
+	public class DodgeSpreadshotOnLand : AbstractUpgrade
+	{
+		public const int DAMAGE = 10;
+		public const float LEVEL_ADD = 1f;
+
+		public DodgeSpreadshotOnLand(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 10;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.spreadshotOnLand = true;
+			skill.spreadshotDamage = (int) AddValueByLevel(DAMAGE, LEVEL_ADD);
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.spreadshotOnLand = false;
+			skill.spreadshotDamage = 0;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "dodge_upgrade";
+			VisibleName = "Dodge Spreadshot Upgrade";
+			Description = "Shoots out 4 projectiles in all directions that deals " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " to enemies.";
+		}
+	}
 }

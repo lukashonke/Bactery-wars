@@ -106,8 +106,15 @@ namespace Assets.scripts.Skills
 			{
 				Character targetCh = target.GetChar();
 
-				if (targetCh != null && targetCh.HasEffectAlready(ef))
+				if (targetCh != null)
 					return;
+
+				if (targetCh.HasEffectAlready(ef))
+				{
+					//TODO prolonge duration
+					targetCh.ProlongeEffectDuration(ef);
+					return;
+				}
 			}
 
 			ef.ApplyEffect(source, target);
@@ -137,8 +144,15 @@ namespace Assets.scripts.Skills
 					{
 						Character targetCh = target.GetChar();
 
-						if (targetCh != null && targetCh.HasEffectAlready(ef))
+						if (targetCh != null)
 							continue;
+
+						if (targetCh.HasEffectAlready(ef))
+						{
+							//TODO prolonge duration
+							targetCh.ProlongeEffectDuration(ef);
+							return;
+						}
 					}
 
 					ef.ApplyEffect(source, target);

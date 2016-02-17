@@ -953,7 +953,11 @@ namespace Assets.scripts.Mono
 
 		public void SetMoveSpeed(float speed)
 		{
-			moveSpeed = speed;
+			if (moveSpeed != speed)
+			{
+				moveSpeed = speed;	
+
+			}
 		}
 
 		public void SetFixedSpeed(float speed)
@@ -1117,6 +1121,9 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public Vector3 GetForwardVector(int angle)
 		{
+			if (angle == 0)
+				return GetForwardVector();
+
 			// 1. moznost
 			//Vector3 nv = Quaternion.AngleAxis(angle, Vector3.forward) * heading.normalized;
 

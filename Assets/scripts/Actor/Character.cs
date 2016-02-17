@@ -296,6 +296,11 @@ namespace Assets.scripts.Actor
 			StartEffectUpdate();
 		}
 
+		public void ProlongeEffectDuration(SkillEffect ef)
+		{
+			
+		}
+
 		public bool HasEffectAlready(SkillEffect ef)
 		{
 			if (ef.Source == null)
