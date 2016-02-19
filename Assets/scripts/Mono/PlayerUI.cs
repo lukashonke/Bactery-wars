@@ -817,7 +817,7 @@ namespace Assets.scripts.Mono
 			int i = 0;
 			foreach (AbstractUpgrade u in inv.Upgrades)
 			{
-				if (inv.IsEquipped(u))
+				if (u == null  || inv.IsEquipped(u))
 					continue;
 
 				GameObject o = inventorySlots[i].transform.GetChild(0).gameObject;
@@ -926,6 +926,15 @@ namespace Assets.scripts.Mono
 
 			val = GameObject.Find("MoveOnlyWithMousePressed").GetComponent<Toggle>().isOn;
 			data.moveOnlyWhenMousePressed = val;
+		}
+
+		public void OnConsoleCommand(String s)
+		{
+			Debug.Log("ahoj");
+			if (s.ToLower().Equals("restart"))
+			{
+				RestartGame();
+			}
 		}
 
 		public void RestartGame()

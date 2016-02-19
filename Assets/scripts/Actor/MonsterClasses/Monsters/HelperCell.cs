@@ -164,6 +164,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			MonsterAI ai = new CoverMonsterAI(ch);
+			//MonsterAI ai = new IdleMonsterAI(ch);
 			return ai;
 		}
 

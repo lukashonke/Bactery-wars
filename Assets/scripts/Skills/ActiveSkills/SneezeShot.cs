@@ -19,7 +19,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SneezeShot()
 		{
 			castTime = 0f;
-			reuse = 5f;
+			reuse = 4f;
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 20;

@@ -31,6 +31,8 @@ namespace Assets.scripts.Actor.Status
 
 		public List<Skill> ActiveSkills { get; private set; }
 
+		public bool IsWalking = false;
+
 		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
 		{
 			IsDead = isDead;
@@ -118,9 +120,11 @@ namespace Assets.scripts.Actor.Status
 			return ActiveSkills.Count > 0;
 		}
 
+		public bool Stunned { get; set; }
+
 		public bool IsStunned() // TODO stun finish
 		{
-			return false;
+			return Stunned;
 		}
 
 		public bool IsImmobilized()

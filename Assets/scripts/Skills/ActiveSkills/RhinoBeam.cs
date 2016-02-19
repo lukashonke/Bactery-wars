@@ -14,14 +14,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 		protected GameObject ray;
 
 		private float lastDmg = 0;
-
 		private readonly float rotateSpeed = 20;
+		private Vector3 aimingDirection;
 
 		public RhinoBeam()
 		{
 			castTime = 0f;
 			coolDown = 4f;
-			reuse = 30f;
+			reuse = 20f;
 
 			// 20dmg/sec
 			baseDamage = 5;
@@ -52,7 +52,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(5, 2),  };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(0.9f, 2),  };
 		}
 
 		public override void InitTraits()
@@ -75,6 +75,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			StartParticleEffect(ray);
 
 			UpdateMouseDirection(ray.transform);
+			aimingDirection = mouseDirection;
 			ray.transform.rotation = Utils.GetRotationToMouse(ray.transform);
 		}
 
@@ -92,11 +93,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				UpdateMouseDirection(ray.transform);
 
-				ray.transform.rotation = Quaternion.Lerp(ray.transform.rotation, Utils.GetRotationToDirectionVector(mouseDirection), rotateSpeed*0.001f);
+				aimingDirection = Vector3.Lerp(aimingDirection, mouseDirection, rotateSpeed*0.001f);
+
+				ray.transform.rotation = Utils.GetRotationToDirectionVector(aimingDirection);
 
 				if (lastDmg + baseDamageFrequency < Time.time)
 				{
-					RaycastHit2D[] hits = Physics2D.RaycastAll(ray.transform.position, mouseDirection, range);
+					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, 1);
 
 					foreach (RaycastHit2D hit in hits)
 					{

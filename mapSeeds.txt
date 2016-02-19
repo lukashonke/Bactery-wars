@@ -34,3 +34,19 @@ SecondLevel
 SecondLevel
 1 0 40 -575 (s:0, 0)
 
+StartClassic
+
+StartClassic
+
+StartClassic
+
+StartClassic
+
+StartClassic
+
+StartClassic
+
+StartClassic
+
+StartClassic
+

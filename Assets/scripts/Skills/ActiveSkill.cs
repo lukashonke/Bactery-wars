@@ -146,11 +146,18 @@ namespace Assets.scripts.Skills
 
 		protected void RotateArrowToMouseDirection(GameObject o, int plusAngle)
 		{
-			Quaternion newRotation = Quaternion.LookRotation(-mouseDirection, Vector3.forward);
-			newRotation.z = newRotation.z + plusAngle;
+			Vector3 dir = mouseDirection;
+			if (plusAngle > 0)
+			{
+				dir = Quaternion.Euler(new Vector3(0, 0, plusAngle)) * dir;
+			}
+
+			Quaternion newRotation = Quaternion.LookRotation(-dir, Vector3.forward);
+			newRotation.z = newRotation.z;
 			newRotation.x = 0;
 			newRotation.y = 0;
-			confirmObject.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
+
+			o.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
 		}
 
 		protected void UpdateDirectionArrowScale(int range, GameObject o)

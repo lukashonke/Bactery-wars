@@ -490,6 +490,11 @@ namespace Assets.scripts.Actor
 			return baseDamage;
 		}
 
+		public void SetIsWalking(bool walking)
+		{
+			Status.IsWalking = walking;
+		}
+
 		public void SetMoveSpeed(float speed)
 		{
 			Status.MoveSpeed = speed;

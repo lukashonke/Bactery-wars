@@ -462,13 +462,15 @@ namespace Assets.scripts.AI
 		{
 			if (isWalking && !b)
 			{
-				Owner.GetData().SetMoveSpeed(GetTemplate().MaxSpeed);
+				Owner.SetIsWalking(false);
+				//Owner.SetMoveSpeed(GetTemplate().MaxSpeed);
 				isWalking = false;
 			}
 			else if (!isWalking && b)
 			{
-				if (GetTemplate().MaxSpeed > 3)
-					Owner.GetData().SetMoveSpeed(3);
+				Owner.SetIsWalking(true);
+				//if (GetTemplate().MaxSpeed > 3)
+				//	Owner.SetMoveSpeed(3);
 
 				isWalking = true;
 			}

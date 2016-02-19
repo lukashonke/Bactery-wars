@@ -379,6 +379,11 @@ namespace Assets.scripts.Mono
 
 		public virtual void Update()
 		{
+			if (GetOwner().Status.Stunned)
+			{
+				Debug.Log("stunned!!");
+			}
+
 			if (currentlyVisible && !IsVisibleToPlayer)
 			{
 				SetVisibility(false);
@@ -492,6 +497,9 @@ namespace Assets.scripts.Mono
 						if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
 						
 						float speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
+
+						if (fixedSpeed < 0 && GetOwner().Status.IsWalking)
+							speed = 3;
 
 						if (USE_VELOCITY_MOVEMENT)
 						{
@@ -953,11 +961,7 @@ namespace Assets.scripts.Mono
 
 		public void SetMoveSpeed(float speed)
 		{
-			if (moveSpeed != speed)
-			{
-				moveSpeed = speed;	
-
-			}
+			moveSpeed = speed;	
 		}
 
 		public void SetFixedSpeed(float speed)
