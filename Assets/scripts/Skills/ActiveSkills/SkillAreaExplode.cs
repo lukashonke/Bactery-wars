@@ -75,8 +75,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
 				rb.velocity = (GetOwnerData().GetForwardVector(0) * 5);
 
-				Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
 				Object.Destroy(activeProjectile, 5f);
 			}
 

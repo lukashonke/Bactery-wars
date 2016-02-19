@@ -199,6 +199,11 @@ namespace Assets.scripts.Skills
 			originalEffectsDisabled = true;
 		}
 
+		public void EnableOriginalEffects()
+		{
+			originalEffectsDisabled = false;
+		}
+
 		public void AddAdditionalEffect(SkillEffect e)
 		{
 			if (additionalEffects == null)

@@ -12,7 +12,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		public int projectilesCount = 2;
 		public bool projectilesAim = false;
+		public bool penetrateTargets = false;
+		public int randomAngle = 0;
+		public bool navigateToTarget = false;
 		public int aimArea = 0;
+
+		public bool explodeEffect = false;
 
 		private List<ProjectileData> projectiles = new List<ProjectileData>();
 
@@ -79,19 +84,38 @@ namespace Assets.scripts.Skills.ActiveSkills
 				{
 					Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
 
-					rb.velocity = (GetOwnerData().GetForwardVector(CalcAngleForProjectile(i, projectilesCount, 10)) * 15);
+					rb.velocity = (GetOwnerData().GetForwardVector((Random.Range(-randomAngle, randomAngle) + CalcAngleForProjectile(i, projectilesCount, 10))) * 15);
 
 					Object.Destroy(activeProjectile, 5f);
 
-					if (projectilesAim)
+					if (projectilesAim || navigateToTarget)
 					{
 						ProjectileData data = new ProjectileData();
 						data.proj = activeProjectile;
 						data.target = null;
 						data.interpolTimer = 0;
 						data.rb = rb;
-							
+
 						projectiles.Add(data);
+					}
+				}
+			}
+
+			if (navigateToTarget)
+			{
+				foreach (RaycastHit2D hit in Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range*2))
+				{
+					Character targetCh = hit.collider.gameObject.GetChar();
+					if (targetCh == null || !Owner.CanAttack(targetCh))
+						continue;
+
+					foreach (ProjectileData d in projectiles)
+					{
+						if (d.target == null) 
+						{
+							d.target = targetCh;
+							break;//bug - 
+						}
 					}
 				}
 			}
@@ -104,7 +128,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
-			if (projectilesAim && fixedUpdate)
+			if ((projectilesAim || navigateToTarget) && fixedUpdate)
 			{
 				// updates: 10/sec
 				if (System.Environment.TickCount % 10 == 0)
@@ -185,9 +209,29 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
+			ProjectileData d = GetData(gameObject);
+			if (d != null && d.target != null)
+			{
+				if (coll.gameObject.Equals(d.target.GetData().GetBody()))
+				{
+					d.target = null;
+				}
+			}
+
 			// the only possible collisions are the projectile with target
 			ApplyEffects(Owner, coll.gameObject);
-			DestroyProjectile(gameObject);
+
+			if (!penetrateTargets)
+			{
+				if (explodeEffect)
+				{
+					GameObject explosion = CreateParticleEffect("Explosion", false, gameObject.transform.position);
+					explosion.GetComponent<ParticleSystem>().Play();
+					Object.Destroy(explosion, 2f);
+				}
+
+				DestroyProjectile(gameObject);
+			}
 		}
 
 		public override void MonoTriggerExit(GameObject gameObject, Collider2D other)

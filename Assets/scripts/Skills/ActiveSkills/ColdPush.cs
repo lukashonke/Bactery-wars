@@ -18,7 +18,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public ColdPush()
 		{
 			castTime = 0f;
-			reuse = 5f;
+			reuse = 6f;
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 10;
@@ -43,7 +43,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects()
 		{
-			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(2f) };
+			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(1.5f) };
 		}
 
 		public override void InitTraits()
