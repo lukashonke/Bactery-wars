@@ -61,7 +61,7 @@ namespace Assets.scripts.Skills
 		public bool MovementBreaksConfirmation { get; protected set; }
 
 		/// the time when the skill was last used
-		public float LastUsed { get; private set; }
+		public float LastUsed { get; protected set; }
 
 
 		public int maxConsecutiveCharges;

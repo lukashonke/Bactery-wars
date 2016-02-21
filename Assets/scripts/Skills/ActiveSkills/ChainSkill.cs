@@ -41,7 +41,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new ChainSkill();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
 		}

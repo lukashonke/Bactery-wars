@@ -50,7 +50,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new RhinoBeam();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(0.9f, 2),  };
 		}

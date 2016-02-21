@@ -42,7 +42,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillAreaExplode();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}

@@ -44,7 +44,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new MucusWarrior();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return null;
 		}

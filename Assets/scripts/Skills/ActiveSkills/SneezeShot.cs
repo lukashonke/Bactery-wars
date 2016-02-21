@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
@@ -14,8 +15,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public bool projectilesAim = false;
 		public bool penetrateTargets = false;
 		public int randomAngle = 0;
-		public bool navigateToTarget = false;
+		public bool selectTargetOnLaunch = false;
 		public int aimArea = 0;
+		public int nullReuseChance = 0;
+
+		public int secondDamage = 0;
+		public int maxPenetratedTargets = 0;
+		public bool navigateAfterPenetration = false;
+		public float interpolAdd = 0.1f;
 
 		public bool explodeEffect = false;
 
@@ -47,9 +54,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SneezeShot();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 0)};
+			if(param == 1) // damage dealt to targets after first penetration
+				return new SkillEffect[] { new EffectDamage(secondDamage, 0) };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
 		}
 
 		public override void InitTraits()
@@ -68,7 +77,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
-			if (projectilesAim)
+			bool saveProjectiles = projectilesAim || selectTargetOnLaunch || maxPenetratedTargets > 0;
+
+			if (saveProjectiles)
 			{
 				projectiles.Clear();
 			}
@@ -88,33 +99,44 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 					Object.Destroy(activeProjectile, 5f);
 
-					if (projectilesAim || navigateToTarget)
+					if (saveProjectiles)
 					{
 						ProjectileData data = new ProjectileData();
 						data.proj = activeProjectile;
 						data.target = null;
 						data.interpolTimer = 0;
 						data.rb = rb;
+						data.penetratedTargets = 0;
 
 						projectiles.Add(data);
 					}
 				}
 			}
 
-			if (navigateToTarget)
+			// vybere target pri vypusteni
+			if (selectTargetOnLaunch)
 			{
-				foreach (RaycastHit2D hit in Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range*2))
+				List<RaycastHit2D> hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range*2).ToList();
+				List<Character> targets = new List<Character>();
+
+				for (int i = 0; i < hits.Count; i++)
 				{
+					RaycastHit2D hit = hits[i];
 					Character targetCh = hit.collider.gameObject.GetChar();
 					if (targetCh == null || !Owner.CanAttack(targetCh))
 						continue;
 
+					targets.Add(targetCh);
+				}
+
+				if (targets.Count > 0)
+				{
 					foreach (ProjectileData d in projectiles)
 					{
-						if (d.target == null) 
+						if (d.target == null)
 						{
-							d.target = targetCh;
-							break;//bug - 
+							int randomIndex = Random.Range(0, targets.Count);
+							d.target = targets[randomIndex];
 						}
 					}
 				}
@@ -123,12 +145,21 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnFinish()
 		{
-
+			if (nullReuseChance > 0)
+			{
+				if (Random.Range(0, 100) < nullReuseChance)
+				{
+					this.LastUsed = 0;
+					GetOwnerData().SetSkillReuseTimer(this, true);
+				}
+			}
 		}
 
 		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
-			if ((projectilesAim || navigateToTarget) && fixedUpdate)
+			bool saveProjectiles = projectilesAim || selectTargetOnLaunch || maxPenetratedTargets > 0;
+
+			if (saveProjectiles && fixedUpdate)
 			{
 				// updates: 10/sec
 				if (System.Environment.TickCount % 10 == 0)
@@ -137,7 +168,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 					if (d == null || d.proj == null)
 						return;
 
-					if (d.target == null)
+					if (d.target == null && projectilesAim)
 					{
 						float angle = d.proj.transform.rotation.eulerAngles.z;
 						foreach (RaycastHit2D hit in Physics2D.BoxCastAll(d.proj.transform.position, new Vector2(aimArea, aimArea), angle, d.rb.velocity, aimArea))
@@ -150,6 +181,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 								continue;
 
 							d.target = targetCh;
+							break;
 						}
 					}
 
@@ -162,12 +194,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private void AdjustToTarget(ProjectileData data)
 		{
 			if (data.target.Status.IsDead)
+			{
+				data.target = null;
 				return;
+			}
 
 			Vector3 currentVelocity = data.rb.velocity.normalized;
 			Vector3 targetDir = Utils.GetDirectionVector(data.target.GetData().GetBody().transform.position, data.proj.transform.position).normalized;
 
-			data.interpolTimer += 0.1f;
+			data.interpolTimer += interpolAdd;
 
 			if (data.interpolTimer > 1)
 				data.interpolTimer = 1f;
@@ -183,6 +218,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			public Character target;
 			public Rigidbody2D rb;
 			public float interpolTimer;
+			public int penetratedTargets;
 		}
 
 		private ProjectileData GetData(GameObject obj)
@@ -218,10 +254,46 @@ namespace Assets.scripts.Skills.ActiveSkills
 				}
 			}
 
-			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, coll.gameObject);
+			if (d != null && maxPenetratedTargets > 0 && d.penetratedTargets > 0 && secondDamage > 0)
+				ApplyEffects(Owner, coll.gameObject, false, 1);
+			else
+				ApplyEffects(Owner, coll.gameObject);
 
-			if (!penetrateTargets)
+			bool destroy = false;
+
+			if (penetrateTargets)
+			{
+				if (d != null)
+				{
+					// check if penetrated too many
+					if (maxPenetratedTargets > 0)
+					{
+						d.penetratedTargets++;
+						if (d.penetratedTargets >= maxPenetratedTargets)
+							destroy = true;
+					}
+
+					if (!destroy && navigateAfterPenetration)
+					{
+						float angle = d.proj.transform.rotation.eulerAngles.z;
+						foreach (Collider2D hit in Physics2D.OverlapCircleAll(d.proj.transform.position, aimArea))
+						{
+							if (hit.gameObject.Equals(d.proj))
+								continue;
+
+							Character targetCh = hit.gameObject.GetChar();
+							if (targetCh == null || !Owner.CanAttack(targetCh) || hit.gameObject.Equals(coll.gameObject))
+								continue;
+
+							d.target = targetCh;
+							AdjustToTarget(d);
+							break;
+						}
+					}
+				}
+			}
+
+			if (!penetrateTargets || destroy)
 			{
 				if (explodeEffect)
 				{

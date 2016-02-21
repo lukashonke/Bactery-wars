@@ -26,7 +26,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillTemplate();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return null;
 		}

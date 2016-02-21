@@ -53,7 +53,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new Dodge();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			int count = 1;
 

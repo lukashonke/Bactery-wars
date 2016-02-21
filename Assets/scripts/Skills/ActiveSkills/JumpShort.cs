@@ -40,7 +40,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new JumpShort();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return null;
 		}

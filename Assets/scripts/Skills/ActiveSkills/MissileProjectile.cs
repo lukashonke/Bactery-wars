@@ -44,7 +44,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new MissileProjectile();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 2) };
 		}
@@ -66,8 +66,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			if (target == null)
 				target = initTarget;
-
-			Debug.Log(target);
 
 			if (target == null)
 			{

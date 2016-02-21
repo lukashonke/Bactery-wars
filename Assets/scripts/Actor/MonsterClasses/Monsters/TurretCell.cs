@@ -10,7 +10,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public TurretCell()
 		{
-			MaxHp = 15;
+			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 0;
 

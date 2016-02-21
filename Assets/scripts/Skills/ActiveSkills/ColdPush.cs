@@ -41,7 +41,7 @@ namespace Assets.scripts.Skills.ActiveSkills
             return new ColdPush();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(1.5f) };
 		}

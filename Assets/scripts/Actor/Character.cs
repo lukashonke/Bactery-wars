@@ -501,6 +501,11 @@ namespace Assets.scripts.Actor
 			GetData().SetMoveSpeed(speed);
 		}
 
+		public void SetShield(float shield)
+		{
+			Status.Shield = shield;
+		}
+
 		public void ReceiveDamage(Character source, int damage)
 		{
 			if (Status.IsDead || damage <= 0)

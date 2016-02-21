@@ -121,9 +121,9 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false)
+		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false, int param=0)
 		{
-			SkillEffect[] efs = CreateEffects();
+			SkillEffect[] efs = CreateEffects(param);
 
 			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
 			{
@@ -244,7 +244,7 @@ namespace Assets.scripts.Skills
 
 		// vytvori novou kopii sama sebe
 		public abstract Skill Instantiate();
-		public abstract SkillEffect[] CreateEffects();
+		public abstract SkillEffect[] CreateEffects(int param);
 		public abstract void InitTraits();
 		protected abstract void InitDynamicTraits();
 

@@ -40,7 +40,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CellFury();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectMeleeReuse(1, 0.3f, duration, SkillTraits.Melee), };
 		}

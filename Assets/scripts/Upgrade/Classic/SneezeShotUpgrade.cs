@@ -458,14 +458,16 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotTripleMissilesUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotMissilesUpgrade : AbstractUpgrade //TODO effect 
 	{
 		public const int COUNT = 6;
 		public const float COUNT_ADD = 0.5f;
 
+		public const int DAMAGE = 10;
+
 		private int temp, temp2;
 
-		public SneezeShotTripleMissilesUpgrade(int level)
+		public SneezeShotMissilesUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
@@ -483,8 +485,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 			skill.projectilesCount = (int) AddValueByLevel(COUNT, COUNT_ADD);
 			skill.randomAngle = 45;
-			skill.navigateToTarget = true;
-			skill.baseDamage = 10;
+			skill.selectTargetOnLaunch = true;
+			skill.baseDamage = DAMAGE;
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -496,14 +498,195 @@ namespace Assets.scripts.Upgrade.Classic
 			skill.projectilesCount = temp;
 			skill.baseDamage = temp2;
 			skill.randomAngle = 0;
-			skill.navigateToTarget = false;
+			skill.selectTargetOnLaunch = false;
 		}
 
 		protected override void InitInfo()
 		{
 			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Push Upgrade";
-			Description = "Sneeze Shot fires only one projectile which explodes on impact and deals area damage.";
+			VisibleName = "Sneeze Shot Missile Volley Upgrade";
+			Description = "Sneeze Shot fires " + AddValueByLevel(COUNT, COUNT_ADD) + " projectiles at random angle that guide themselves to targets. Damage is set to 10.";
+		}
+	}
+
+	public class SneezeShotPenetrateAimUpgrade : AbstractUpgrade //TODO effect 
+	{
+		public const int AFTER_DMG_AMOUNT = 50;
+		public const int AFTER_DMG_LEVEL_ADD = 5;
+
+		private int temp, temp2;
+		private float temp3;
+
+		public SneezeShotPenetrateAimUpgrade(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 10;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			temp = skill.secondDamage;
+			temp2 = skill.aimArea;
+			temp3 = skill.interpolAdd;
+
+			skill.penetrateTargets = true;
+			skill.maxPenetratedTargets += 2;
+			skill.aimArea = skill.range;
+			skill.interpolAdd = 1f;
+			skill.navigateAfterPenetration = true;
+			skill.secondDamage = (int) (skill.baseDamage*AddValueByLevel(AFTER_DMG_AMOUNT, AFTER_DMG_LEVEL_ADD)/100f);
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.aimArea = temp2;
+			skill.secondDamage = temp;
+			skill.interpolAdd = temp3;
+			skill.penetrateTargets = false;
+			skill.maxPenetratedTargets -= 2;
+			skill.navigateAfterPenetration = false;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "sneezeshot_upgrade";
+			VisibleName = "Sneeze Shot Penetrate Upgrade";
+			Description = "Sneeze Shot projectiles will penetrate the first target they hit and then choose another target and guide themselves to them. Second target hit will receive 50% of the skill damage.";
+		}
+	}
+
+	public class SneezeShotPenetrateMissilePenetratorUpgrade : AbstractUpgrade //TODO effect 
+	{
+		private int temp, temp2, temp4;
+		private float temp3;
+
+		public SneezeShotPenetrateMissilePenetratorUpgrade(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			temp = skill.range;
+			temp2 = skill.aimArea;
+			temp3 = skill.interpolAdd;
+			temp4 = skill.projectilesCount;
+
+			skill.penetrateTargets = true;
+			skill.range = skill.range*2;
+			skill.projectilesCount = 1;
+			skill.maxPenetratedTargets += 4;
+			skill.aimArea = skill.range;
+			skill.interpolAdd = 1f;
+			skill.navigateAfterPenetration = true;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.range = temp;
+			skill.aimArea = temp2;
+			skill.interpolAdd = temp3;
+			skill.projectilesCount = temp4;
+			skill.penetrateTargets = false;
+			skill.maxPenetratedTargets -= 4;
+			skill.navigateAfterPenetration = false;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "sneezeshot_upgrade";
+			VisibleName = "Sneeze Shot Penetrate Upgrade";
+			Description = "Sneeze Shot will fire only projectile that will penetrate through up to 4 targets. The projectile will guide itself to a new target after hitting something. Skill range is doubled.";
+		}
+	}
+
+	public class SneezeShotZeroReuseUpgrade : AbstractUpgrade //TODO effect 
+	{
+		public const int CHANCE = 25;
+		public const int CHANCE_LEVEL_ADD = 3;
+
+		public SneezeShotZeroReuseUpgrade(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 5;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.nullReuseChance = (int) AddValueByLevel(CHANCE, CHANCE_LEVEL_ADD);
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.nullReuseChance = 0;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "sneezeshot_upgrade";
+			VisibleName = "Sneeze Shot Reuse Upgrade";
+			Description = "Sneeze Shot will have a " + AddValueByLevel(CHANCE, CHANCE_LEVEL_ADD) + "% chance that the skill will be immediately available for use after casting (= chance for zero reuse).";
+		}
+	}
+
+	public class SneezeShotWeakenUpgrade : AbstractUpgrade //TODO effect 
+	{
+		public const float DURATION = 5;
+		public const float AMOUNT_LEVEL_ADD = 0.5f;
+
+		public SneezeShotWeakenUpgrade(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 5;
+		}
+
+		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
+		{
+			if (sk.GetSkillId() == SkillId.SneezeShot)
+			{
+				SkillEffect[] newEffects = new SkillEffect[1];
+				newEffects[0] = new EffectShield(-0.5f, AddValueByLevel(DURATION, AMOUNT_LEVEL_ADD));
+
+				return newEffects;
+			}
+
+			return null;
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "sneezeshot_upgrade";
+			VisibleName = "Sneeze Shot Reuse Upgrade";
+			Description = "Sneeze Shot will reduce the shield protection of hit enemies by 50% for " + AddValueByLevel(DURATION, AMOUNT_LEVEL_ADD) + " seconds.";
 		}
 	}
 }
