@@ -48,7 +48,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Range Upgrade";
 			Description = "Your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
 		}
@@ -85,7 +85,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Push Upgrade";
 			Description = "Your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
 		}
@@ -126,7 +126,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Reuse Upgrade";
 			Description = "The reuse of Cell Fury is decreased by " + AddValueByLevel(REUSE, LEVEL_ADD) + "%.";
 		}
@@ -167,7 +167,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Reuse Upgrade";
 			Description = "There is a " + AddValueByLevel(CHANCE, LEVEL_ADD) + "% chance that Cell Fury skill will have no reuse (it will be available immediatelly after you cast it).";
 		}
@@ -203,7 +203,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Shield Upgrade";
 			Description = "When Cell Fury is active, your shield will be " + AddValueByLevel(POWER, LEVEL_ADD) + "% stronger.";
 		}
@@ -237,7 +237,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Speed Upgrade";
 			Description = "When Cell Fury is active, your movement speed is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
@@ -269,7 +269,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
+			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Speed Upgrade";
 			Description = "When Cell Fury is active, your movement speed is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}

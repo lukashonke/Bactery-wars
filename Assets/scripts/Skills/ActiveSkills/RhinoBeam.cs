@@ -5,6 +5,7 @@ using System.Text;
 using Assets.scripts.AI;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
@@ -14,8 +15,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 		protected GameObject ray;
 
 		private float lastDmg = 0;
-		private readonly float rotateSpeed = 20;
+		public float rotateSpeed = 20;
 		private Vector3 aimingDirection;
+
+		public float width;
 
 		public RhinoBeam()
 		{
@@ -28,6 +31,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamageFrequency = 0.25f;
 
 			range = 15;
+			width = 1f;
 
 			movementAbortsSkill = true;
 
@@ -72,6 +76,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 
 			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
+			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
+
+			SerializedObject so = new SerializedObject(ps);
+			so.FindProperty("ShapeModule.radius").floatValue = width/2f;
+			so.ApplyModifiedProperties();
+
 			StartParticleEffect(ray);
 
 			UpdateMouseDirection(ray.transform);
@@ -99,7 +109,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				if (lastDmg + baseDamageFrequency < Time.time)
 				{
-					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, 1);
+					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, width);
 
 					foreach (RaycastHit2D hit in hits)
 					{

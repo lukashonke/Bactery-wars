@@ -32,7 +32,7 @@ namespace Assets.scripts.AI
 				closestAlly = protectingTarget;
 			}
 			
-			if (currentAction != null)
+			if (currentAction != null || Owner.Status.IsStunned())
 				return;
 
 			Vector3 targetPos;

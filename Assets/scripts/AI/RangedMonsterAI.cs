@@ -51,7 +51,7 @@ namespace Assets.scripts.AI
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
-			if (isCasting)
+			if (isCasting || Owner.Status.IsStunned())
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))

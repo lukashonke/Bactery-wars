@@ -143,7 +143,7 @@ namespace Assets.scripts.Actor
 			Status = InitStatus();
 			Skills = InitSkillSet();
 			summons = new List<Monster>();
-			Inventory = new Inventory(10, 3);
+			Inventory = new Inventory(this, 10, 3);
 
 			Knownlist.StartUpdating();
 
@@ -266,7 +266,9 @@ namespace Assets.scripts.Actor
 
 		public void EquipUpgrade(AbstractUpgrade u)
 		{
-			Inventory.EquipUpgrade(u);
+			if (!Inventory.EquipUpgrade(u))
+				return;
+
 			UpdateStats();
 
 			Data.UpdateInventory(Inventory);
@@ -760,6 +762,11 @@ namespace Assets.scripts.Actor
 		public bool HasSummons()
 		{
 			return summons.Count > 0;
+		}
+
+		public void Message(string s)
+		{
+			Debug.Log("Message: " + s);
 		}
 	}
 }

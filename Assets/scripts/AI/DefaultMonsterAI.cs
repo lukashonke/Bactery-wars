@@ -34,7 +34,7 @@ namespace Assets.scripts.AI
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 
 			// already doing something
-			if (isCasting)
+			if (isCasting || Owner.Status.IsStunned())
 			{
 				return;
 			}

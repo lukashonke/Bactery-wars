@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Assets.scripts.Actor;
 
 namespace Assets.scripts.Upgrade
 {
 	public class Inventory
 	{
+		public Character Owner { get; private set; }
 		public int Capacity { get; set; }
 		public int ActiveCapacity { get; set; }
 		public int BasestatCapacity { get; set; }
@@ -32,8 +34,9 @@ namespace Assets.scripts.Upgrade
 			get { return activeUpgrades; }
 		}
 
-		public Inventory(int capacity, int activeCapacity)
+		public Inventory(Character owner, int capacity, int activeCapacity)
 		{
+			this.Owner = owner;
 			this.Capacity = capacity;
 			this.ActiveCapacity = activeCapacity;
 			BasestatCapacity = 4;
@@ -147,6 +150,15 @@ namespace Assets.scripts.Upgrade
 
 		public bool EquipUpgrade(AbstractUpgrade u)
 		{
+			foreach (AbstractUpgrade upg in activeUpgrades)
+			{
+				if (u.GetType().Name.Equals(upg.GetType().Name))
+				{
+					Owner.Message("You cannot equip two upgrades of the same type.");
+					return false;
+				}
+			}
+
 			if (!CanEquip(u))
 				return false;
 
