@@ -110,6 +110,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			int range = GetUpgradableRange();
+
 			DeleteCastingEffect();
 
 			if(consecutiveDoubleattackCounter > 0)

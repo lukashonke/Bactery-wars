@@ -697,25 +697,25 @@ namespace Assets.scripts.Skills
 		/// <param name="folderName">the folder in Resources/prefabs/skill to look into</param>
 		/// <param name="particleObjectName">name of the .prefab object</param>
 		/// <param name="makeChild">The particle effect position will move with player</param>
-		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
+		public GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		public GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
+		public GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		public GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, spawnPosition);
 			return o;
@@ -885,6 +885,8 @@ namespace Assets.scripts.Skills
 
 		protected void CheckRanges()
 		{
+			int range = GetUpgradableRange();
+
 			List<GameObject> temp = new List<GameObject>(RangeChecks.Keys);
 			foreach (GameObject proj in temp)
 			{
@@ -997,6 +999,23 @@ namespace Assets.scripts.Skills
 			}
 
 			return casttime;
+		}
+
+		public int GetUpgradableRange()
+		{
+			int newRange = this.range;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillRange(this, ref newRange);
+			}
+
+			return newRange;
+		}
+
+		public void SetRange(int r)
+		{
+			this.range = r;
 		}
 
 		protected int CalcAngleForProjectile(int index, int totalProjectiles, int angleAdd)

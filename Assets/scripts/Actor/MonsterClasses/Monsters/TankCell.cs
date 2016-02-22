@@ -30,7 +30,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
 			sk.baseDamage = 20;
-			sk.pushForce = 1000;
+			sk.pushForce = 100;
 			sk.reuse = 1.5f;
 		}
 
@@ -76,7 +76,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
 			sk.baseDamage = 20;
-			sk.pushForce = 1000;
+			sk.pushForce = 100;
 			sk.reuse = 1.5f;
 
 			//SkillTestProjectile sk2 = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;

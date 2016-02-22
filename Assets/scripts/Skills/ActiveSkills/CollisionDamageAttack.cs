@@ -10,7 +10,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject target;
 
-		public int pushForce = 200;
+		public int pushForce = 100;
 
 		public CollisionDamageAttack()
 		{

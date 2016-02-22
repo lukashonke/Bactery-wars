@@ -11,9 +11,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class ColdPush : ActiveSkill
 	{
 		private GameObject activeProjectile;
-		public int pushbackForce = 300;
+		public int pushbackForce = 100;
 
 		public int angle = 60;
+		public float stunDuration;
 
 		public ColdPush()
 		{
@@ -22,6 +23,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 10;
+
+			stunDuration = 1.5f;
 
 			range = 10;
 		}
@@ -43,7 +46,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(1.5f) };
+			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(stunDuration) };
 		}
 
 		public override void InitTraits()
@@ -57,21 +60,27 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (confirmObjects == null)
 			{
-				confirmObjects = new GameObject[2];
+				confirmObjects = new GameObject[3];
 				GameObject first = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
 				GameObject second = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
+				GameObject third = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
 
 				confirmObjects[0] = first;
 				confirmObjects[1] = second;
+				confirmObjects[2] = third;
 
 				UpdateDirectionArrowScale(range > 0 ? range : 5, first);
 				UpdateDirectionArrowScale(range > 0 ? range : 5, second);
+				UpdateDirectionArrowScale(range > 0 ? range : 5, third);
 			}
 
 			UpdateMouseDirection(GetPlayerData().GetShootingPosition().transform);
 			for (int i = 0; i < confirmObjects.Length; i++)
 			{
-				RotateArrowToMouseDirection(confirmObjects[i], i == 0 ? 360+(angle / 2) : 360-(angle/2));				
+				if(i != 2)
+					RotateArrowToMouseDirection(confirmObjects[i], i == 0 ? 360+(angle / 2) : 360-(angle/2));
+				else
+					RotateArrowToMouseDirection(confirmObjects[i], 0);
 			}
 		}
 

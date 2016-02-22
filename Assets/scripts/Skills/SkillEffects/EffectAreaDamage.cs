@@ -36,7 +36,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 					if (targetCh == null)
 					{
-						Destroyable d = target.GetComponent<Destroyable>();
+						Destroyable d = col.gameObject.GetComponent<Destroyable>();
 
 						if (d != null && source.CanAttack(d))
 						{
@@ -52,7 +52,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 							source.OnAttack(targetCh);
 
-							targetCh.ReceiveDamage(source, damage);
+							targetCh.ReceiveDamage(source, damage, SourceSkill);
 						}
 					}
 				}

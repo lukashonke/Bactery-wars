@@ -75,6 +75,11 @@ namespace Assets.scripts.Mono
 				ui.SwitchInventory();
 			}
 
+			if (Input.GetKeyDown(KeyCode.U))
+			{
+				data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
+			}
+
 			if (Input.GetKeyDown(KeyCode.E))
 			{
 				AbstractUpgrade u = new HpUpgrade(1);

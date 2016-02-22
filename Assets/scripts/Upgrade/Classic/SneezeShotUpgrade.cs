@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
 	public class SneezeShotThreeProjectiles : AbstractUpgrade
 	{
-
 		public SneezeShotThreeProjectiles(int level)
 			: base(level)
 		{
@@ -257,7 +259,7 @@ namespace Assets.scripts.Upgrade.Classic
 				SneezeShot skill = sk as SneezeShot;
 
 				SkillEffect[] newEffects = new SkillEffect[2];
-				newEffects[0] = new EffectPushaway(200);
+				newEffects[0] = new EffectPushaway(50);
 				newEffects[1] = new EffectStun(1f);
 
 				return newEffects;
@@ -687,6 +689,46 @@ namespace Assets.scripts.Upgrade.Classic
 			Name = "sneezeshot_upgrade";
 			VisibleName = "Sneeze Shot Reuse Upgrade";
 			Description = "Sneeze Shot will reduce the shield protection of hit enemies by 50% for " + AddValueByLevel(DURATION, AMOUNT_LEVEL_ADD) + " seconds.";
+		}
+	}
+
+	public class SneezeShotDieExplodeUpgrade : AbstractUpgrade //TODO effect 
+	{
+		public const float DAMAGE = 30;
+		public const float AMOUNT_LEVEL_ADD = 5;
+
+		public const float RANGE = 5;
+
+		public SneezeShotDieExplodeUpgrade(int level)
+			: base(level)
+		{
+			RequiredClass = ClassId.CommonCold;
+			MaxLevel = 5;
+		}
+
+		public override void OnKill(Character target, SkillId skillId)
+		{
+			if (target != null && skillId == SkillId.SneezeShot)
+			{
+				SneezeShot ss = Owner.Skills.GetSkill(skillId) as SneezeShot;
+
+				GameObject explosion = ss.CreateParticleEffect("Explosion", false, target.GetData().GetBody().transform.position);
+				explosion.GetComponent<ParticleSystem>().Play();
+				Object.Destroy(explosion, 2f);
+
+				EffectAuraDamage ef = new EffectAuraDamage((int) AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD), 0, RANGE);
+				ef.Source = Owner;
+				ef.attackTeam = target.Team;
+
+				ef.ApplyEffect(target, null);
+			}
+		}
+
+		protected override void InitInfo()
+		{
+			Name = "sneezeshot_upgrade";
+			VisibleName = "Sneeze Shot Explosion Upgrade";
+			Description = "All enemies killed using Sneeze Shot will explode, dealing " + AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD) + " damage to all nearby enemies in range " + RANGE + ".";
 		}
 	}
 }

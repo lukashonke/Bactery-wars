@@ -42,7 +42,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 					source.OnAttack(targetCh);
 
-					targetCh.ReceiveDamage(source, damage);
+					targetCh.ReceiveDamage(source, damage, SourceSkill);
 				}
 			}
 		}

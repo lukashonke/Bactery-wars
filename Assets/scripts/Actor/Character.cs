@@ -64,8 +64,15 @@ namespace Assets.scripts.Actor
 			AI = ai;
 		}
 
-	    public virtual void DoDie()
+	    public virtual void DoDie(Character killer=null, SkillId skillId=0)
 	    {
+		    if (killer != null)
+		    {
+				killer.OnKill(this, skillId);
+		    }
+
+		    OnDead(killer, skillId);
+
 		    if (this is Monster)
 		    {
 			    MonsterTemplate mt = ((Monster) this).Template;
@@ -76,6 +83,19 @@ namespace Assets.scripts.Actor
             WorldHolder.instance.activeMap.NotifyCharacterDied(this);
             DeleteMe();
 	    }
+
+		public virtual void OnKill(Character target, SkillId skillId)
+		{
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.OnKill(target, skillId);
+			}
+		}
+
+		public virtual void OnDead(Character killer, SkillId skillId)
+		{
+			//TODO perhaps add onDead on upgrades
+		}
 
 		public void DeleteMe()
 		{
@@ -315,6 +335,28 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
+		public bool HasEffectOfSkill(SkillId sk)
+		{
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (e.SourceSkill == sk)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasEffectAlready(Type efType)
+		{
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (efType.Name.Equals(e.GetType().Name))
+					return true;
+			}
+
+			return false;
+		}
+
 		public void RemoveEffect(SkillEffect ef)
 		{
 			ef.OnRemove();
@@ -506,21 +548,44 @@ namespace Assets.scripts.Actor
 			Status.Shield = shield;
 		}
 
-		public void ReceiveDamage(Character source, int damage)
+		public void ReceiveHeal(Character source, int ammount, SkillId skillId = 0)
+		{
+			if (Status.IsDead)
+				return;
+
+			Status.ReceiveHeal(ammount);
+
+			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public void ReceiveDamage(Character source, int damage, SkillId skillId=0)
 		{
 			if (Status.IsDead || damage <= 0)
 				return;
 
 			Status.ReceiveDamage(damage);
 
+			if (source != null)
+			{
+				source.OnGiveDamage(this, damage, skillId);
+			}
+
 			if (Status.IsDead)
 			{
-				DoDie();
+				DoDie(source, skillId);
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
 
 			AI.AddAggro(source, damage);
+		}
+
+		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0)
+		{
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.OnGiveDamage(target, damage, skillId);
+			}
 		}
 
 		public void UpdateHp(int newHp)

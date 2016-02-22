@@ -61,7 +61,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				count ++;
 
 			SkillEffect[] effects = new SkillEffect[count];
-			effects[0] = new EffectPushaway(500);
+			effects[0] = new EffectPushaway(50);
 
 			if (hitEnemyDamage > 0)
 				effects[1] = new EffectDamage(hitEnemyDamage);

@@ -15,6 +15,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		protected int RandomOffset { get; set; }
 		protected float radius;
 
+		public int attackTeam = -1;
+
 		public EffectAuraDamage(int damage, int randomOffset, float radius)
 		{
 			this.radius = radius;
@@ -36,7 +38,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 					if (targetCh == null)
 					{
-						Destroyable d = target.GetComponent<Destroyable>();
+						Destroyable d = col.gameObject.GetComponent<Destroyable>();
 
 						if (d != null && source.CanAttack(d))
 						{
@@ -46,13 +48,16 @@ namespace Assets.scripts.Skills.SkillEffects
 					}
 					else
 					{
-						if (source.CanAttack(targetCh))
+						if (source.CanAttack(targetCh) || attackTeam == targetCh.Team)
 						{
+							if (attackTeam >= 0 && targetCh.Team != attackTeam)
+								continue;
+
 							int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
 
 							source.OnAttack(targetCh);
 
-							targetCh.ReceiveDamage(source, damage);
+							targetCh.ReceiveDamage(source, damage, SourceSkill);
 						}
 					}
 				}

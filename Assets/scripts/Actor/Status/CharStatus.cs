@@ -53,6 +53,11 @@ namespace Assets.scripts.Actor.Status
 			ActiveSkills = new List<Skill>();
         }
 
+		public void ReceiveHeal(int heal)
+		{
+			SetHp(Hp + heal);
+		}
+
 		public void ReceiveDamage(int dmg)
 		{
 			int shieldReduction = (int) (dmg*Shield - dmg);

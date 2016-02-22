@@ -90,9 +90,9 @@ namespace Assets.scripts.Actor
 			return hasMaster;
 		}
 
-		public override void DoDie()
+		public override void DoDie(Character killer=null, SkillId skillId=0)
 		{
-			base.DoDie();
+			base.DoDie(killer, skillId);
 
 			if (SpawnInfo != null)
 			{

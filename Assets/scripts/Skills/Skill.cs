@@ -101,6 +101,7 @@ namespace Assets.scripts.Skills
 			}
 
 			ef.Source = source;
+			ef.SourceSkill = GetSkillId();
 
 			if (!allowStackingSameEffect && !(ef is EffectDamage))
 			{
@@ -135,6 +136,7 @@ namespace Assets.scripts.Skills
 				foreach (SkillEffect ef in efs)
 				{
 					ef.Source = source;
+					ef.SourceSkill = GetSkillId();
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
@@ -161,6 +163,7 @@ namespace Assets.scripts.Skills
 					foreach (SkillEffect ef in newEffects)
 					{
 						ef.Source = source;
+						ef.SourceSkill = GetSkillId();
 
 						if (!allowStackingSameEffect && !(ef is EffectDamage))
 						{
@@ -180,6 +183,7 @@ namespace Assets.scripts.Skills
 				foreach (SkillEffect ef in additionalEffects)
 				{
 					ef.Source = source;
+					ef.SourceSkill = GetSkillId();
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{

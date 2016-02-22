@@ -278,9 +278,11 @@ namespace Assets.scripts.Mono
 		public void ResetPath()
 		{
 			if (currentPath != null)
+			{
 				currentPath.Release(this);
+				currentPath = null;
+			}
 
-			currentPath = null;
 			currentPathNode = 0;
 		}
 
@@ -356,15 +358,45 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private Vector2 explosionForce = Vector2.zero;
+
 		private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
 		public void AddPhysicsPush(Vector2 force, ForceMode2D mode)
 		{
-			physicsPushes.Add(new PhysicsPush(force, mode));
+			explosionForce += force/rb.mass;
 		}
 
 		public virtual void FixedUpdate()
 		{
-			if (physicsPushes.Count > 0)
+			rb.velocity += explosionForce;
+
+			float decrease = rb.mass;
+			float newX = explosionForce.x;
+			float newY = explosionForce.y;
+
+			if (Math.Abs(newX) < decrease)
+				newX = 0;
+			else
+			{
+				if (newX > 0)
+					newX -= decrease;
+				else if (newX < 0)
+					newX += decrease;
+			}
+
+			if (Math.Abs(newY) < decrease)
+				newY = 0;
+			else
+			{
+				if (newY > 0)
+					newY -= decrease;
+				else if (newY < 0)
+					newY += decrease;
+			}
+
+			explosionForce = new Vector2(newX, newY);
+
+			/*if (physicsPushes.Count > 0)
 			{
 				foreach (PhysicsPush p in physicsPushes)
 				{
@@ -372,18 +404,13 @@ namespace Assets.scripts.Mono
 				}
 
 				physicsPushes.Clear();
-			}
+			}*/
 
-			lastVelocity = rb.velocity;
+			//lastVelocity = forcedVelocity;
 		}
 
 		public virtual void Update()
 		{
-			if (GetOwner().Status.Stunned)
-			{
-				Debug.Log("stunned!!");
-			}
-
 			if (currentlyVisible && !IsVisibleToPlayer)
 			{
 				SetVisibility(false);
@@ -505,7 +532,6 @@ namespace Assets.scripts.Mono
 						{
 							Vector3 newVelocity = currentDestination - body.transform.position;
 							newVelocity.Normalize();
-
 
 							SetVelocity(newVelocity * speed);
 						}
@@ -1189,7 +1215,7 @@ namespace Assets.scripts.Mono
 			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
 				return;
 
-			int range = sk.range;
+			int range = sk.GetUpgradableRange();
 			if (!doAttack)
 				range = 4;
 
@@ -1323,18 +1349,18 @@ namespace Assets.scripts.Mono
 			// hit the wall
 			if (coll.gameObject != null && coll.gameObject.name.Equals("Cave Generator"))
 			{
-				float velocity = lastVelocity.sqrMagnitude;
+				float velocity = explosionForce.sqrMagnitude;
 
 				if (velocity > 100*100)
 				{
-					velocity = lastVelocity.magnitude;
+					velocity = explosionForce.sqrMagnitude;
 
 					int damage = (int) (velocity/100f*3);
 
 					if (damage > 0)
 					{
 						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
-						GetOwner().ReceiveDamage(null, damage);
+						GetOwner().ReceiveDamage(null, damage, 0);
 					}
 				}
 			}

@@ -36,7 +36,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			CollisionDamageAttack skill2 = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
-		    skill2.pushForce = 1000;
+		    skill2.pushForce = 100;
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)

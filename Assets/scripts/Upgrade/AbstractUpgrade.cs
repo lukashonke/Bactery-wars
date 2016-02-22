@@ -192,6 +192,16 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
+		public virtual void OnKill(Character target, SkillId skillId)
+		{
+			
+		}
+
+		public virtual void OnGiveDamage(Character target, int damage, SkillId skillId)
+		{
+			
+		}
+
 		public virtual void ModifySkillEffects(Skill sk, SkillEffect[] effects)
 		{
 			if (!(sk is ActiveSkill))
@@ -256,5 +266,6 @@ namespace Assets.scripts.Upgrade
 		}
 
 		protected abstract void InitInfo();
+
 	}
 }
