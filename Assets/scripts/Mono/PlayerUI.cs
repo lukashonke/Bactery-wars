@@ -9,10 +9,8 @@ using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -29,7 +27,7 @@ namespace Assets.scripts.Mono
 		public GameObject[] skillButtons;
 		public Image[] skillProgresses;
 
-        public bool adminMode;
+		public bool adminMode;
 
 		public Text hp;
 
@@ -59,10 +57,10 @@ namespace Assets.scripts.Mono
 
 		public Text[] statsTexts;
 
-	    private List<SpawnData> adminSpawnedData;
-        private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter,  };
-	    public GameObject adminPanel;
-	    public Dropdown adminSpawnPanel;
+		private List<SpawnData> adminSpawnedData;
+		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
+		public GameObject adminPanel;
+		public Dropdown adminSpawnPanel;
 
 		private GameObject upgradesAdminPanel;
 		private Dropdown upgradesDropdownPanel;
@@ -79,6 +77,8 @@ namespace Assets.scripts.Mono
 		private float[,] timers;
 
 		private List<Msg> messages = new List<Msg>(5);
+
+		private List<DamageMsg> damages = new List<DamageMsg>();
 
 		public GameObject chatPosition;
 
@@ -99,23 +99,48 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void ScreenMessage(string msg, int level=1)
+		public class DamageMsg
+		{
+			public Collider2D target;
+			public Vector3 shift;
+			public int dmg;
+			public float time;
+			public float opacity;
+			public Color color;
+		}
+
+		public void DamageMessage(GameObject target, int damage, Color color)
+		{
+			if (!showDamageMessages)
+				return;
+
+			DamageMsg msg = new DamageMsg();
+			msg.dmg = damage;
+			msg.target = target.GetComponent<Collider2D>();
+			msg.shift = new Vector3();
+			msg.time = Time.time;
+			msg.color = color;
+
+			damages.Add(msg);
+		}
+
+		public void ScreenMessage(string msg, int level = 1)
 		{
 			if (msg.Length > 45)
 			{
-				for (int i = 0; i <= (msg.Length/40); i++)
+				for (int i = 0; i <= (msg.Length / 40); i++)
 				{
 					Msg m = new Msg();
 
-					int start = i*40;
+					int start = i * 40;
 					int end = 40;
 					if (start + end >= msg.Length)
 						end = msg.Length - start;
 
-					if(level == 1)
-						m.msg = msg.Substring(start, end);
-					else if (level == 2)
-						m.msg = "<color=gray>" + msg.Substring(start, end) + "</color>";
+					//if(level == 1)
+					m.msg = msg.Substring(start, end);
+					//else if (level == 2)
+					//	m.msg = "<color=gray>" + msg.Substring(start, end) + "</color>";
 
 					m.level = level;
 					m.time = Time.time;
@@ -133,10 +158,10 @@ namespace Assets.scripts.Mono
 			{
 				Msg m = new Msg();
 
-				if (level == 1)
-					m.msg = msg;
-				else if (level == 2)
-					m.msg = "<color=gray>" + msg + "</color>";
+				//if (level == 1)
+				m.msg = msg;
+				//else if (level == 2)
+				//	m.msg = "<color=gray>" + msg + "</color>";
 
 				m.level = level;
 				m.time = Time.time;
@@ -153,27 +178,64 @@ namespace Assets.scripts.Mono
 
 		void OnGUI()
 		{
-			if (!messages.Any())
-				return;
-
-			int w = 500;
-			int h = 25;
-
-			float x = Screen.width - chatPosition.transform.position.x;
-			float y = Screen.height - chatPosition.transform.position.y;
-
-			int shift = 0;
-			int percent;
-			foreach (Msg m in messages)
+			if (messages.Any())
 			{
-				if (m.shown)
+				const int w = 500;
+				const int h = 25;
+
+				float x = Screen.width - chatPosition.transform.position.x;
+				float y = Screen.height - chatPosition.transform.position.y;
+
+				int shift = 0;
+				foreach (Msg m in messages)
 				{
-					GUI.Box(new Rect(x - w / 2f, y - (h / 2f) - (shift * h), w, h), m.msg, boxStyle);
-					//GUI.Label(new Rect(x-w/2f, y-(h/2f)-(shift*h), w, h), m.msg, msgStyle);
-					shift++;
+					if (m.shown)
+					{
+						GUI.Box(new Rect(x - w / 2f, y - (h / 2f) - (shift * h), w, h), m.msg, boxStyle);
+						shift++;
+					}
+				}
+			}
+
+			if (showDamageMessages && damages.Any())
+			{
+				const int w = 50;
+				const int h = 15;
+				float x;
+				float y;
+
+				foreach (DamageMsg m in damages)
+				{
+					if (m.target == null)
+						continue;
+
+					Vector3 pos = Camera.main.WorldToScreenPoint(m.target.bounds.center);
+					x = pos.x + m.shift.x;
+					y = Screen.height - pos.y + -10 + m.shift.y;
+
+					m.opacity = 1 - (Time.time - m.time) / 1.5f;
+
+					m.shift -= new Vector3(-3 * Time.deltaTime, 10 * Time.deltaTime);
+
+					Rect r = new Rect(x - w/2f + 1, y - (h/2f) + 1, w, h);
+
+					Color b = Color.black;
+					b.a = m.opacity;
+					GUI.color = b;
+					GUI.Label(r, m.dmg.ToString(), msgStyle);
+
+					Color c = m.color;
+					c.a = m.opacity;
+					GUI.color = c;
+
+					r.x -= 1;
+					r.y -= 1;
+					GUI.Label(r, m.dmg.ToString(), msgStyle);
 				}
 			}
 		}
+
+		public bool showDamageMessages = true;
 
 		// Use this for initialization
 		void Start()
@@ -189,11 +251,13 @@ namespace Assets.scripts.Mono
 			{
 				gameMenu = GameObject.Find("GameMenu_Mobile");
 				settingsPanel = GameObject.Find("SettingsMenu_Mobile");
+				showDamageMessages = false;
 			}
 			else
 			{
 				gameMenu = GameObject.Find("GameMenu");
 				settingsPanel = GameObject.Find("SettingsMenu");
+				showDamageMessages = true;
 			}
 
 			gameMenu.GetComponent<Canvas>().enabled = true;
@@ -222,12 +286,12 @@ namespace Assets.scripts.Mono
 			skillProgresses = new Image[9];
 			for (int i = 1; i <= 9; i++)
 			{
-				GameObject sko = skillButtons[i-1];
-				skillProgresses[i-1] = sko.transform.GetChild(0).GetComponent<Image>();
-				skillProgresses[i-1].sprite = sko.GetComponent<Image>().sprite;
+				GameObject sko = skillButtons[i - 1];
+				skillProgresses[i - 1] = sko.transform.GetChild(0).GetComponent<Image>();
+				skillProgresses[i - 1].sprite = sko.GetComponent<Image>().sprite;
 			}
 
-			timers = new float[9,9];
+			timers = new float[9, 9];
 			for (int i = 0; i < timers.GetLength(0); i++)
 			{
 				timers[i, 0] = 1;
@@ -237,7 +301,7 @@ namespace Assets.scripts.Mono
 			if (settingsPanel != null)
 				settingsPanel.SetActive(false);
 
-			if(menuPanel != null)
+			if (menuPanel != null)
 				menuPanel.SetActive(false);
 
 			inventoryPanel = GameObject.Find("Inventory");
@@ -361,7 +425,7 @@ namespace Assets.scripts.Mono
 					foreach (Transform t in activeStatsPanel.gameObject.transform)
 					{
 						if (t.GetComponent<Text>() != null)
-							count ++;
+							count++;
 					}
 
 					statsTexts = new Text[count];
@@ -451,7 +515,7 @@ namespace Assets.scripts.Mono
 		// Update is called once per frame
 		void Update()
 		{
-			if(messages.Count > 0 && lastMsgUpdate+msgUpdateInterval < Time.time)
+			if (messages.Count > 0 && lastMsgUpdate + msgUpdateInterval < Time.time)
 			{
 				foreach (Msg mess in messages.ToArray())
 				{
@@ -463,11 +527,22 @@ namespace Assets.scripts.Mono
 						}
 						else
 						{
-							mess.opacity = 1-(Time.time - mess.time)/6f;
+							mess.opacity = 1 - (Time.time - mess.time) / 6f;
 						}
 					}
 				}
 				lastMsgUpdate = Time.time;
+			}
+
+			if (damages.Count > 0)
+			{
+				foreach (DamageMsg m in damages.ToArray())
+				{
+					if (m.time + 1.5f < Time.time)
+					{
+						damages.Remove(m);
+					}
+				}
 			}
 
 			if (draggingIcon && draggedObject != null)
@@ -480,7 +555,7 @@ namespace Assets.scripts.Mono
 					mousePos.z = 0;
 					draggedObject.GetComponent<RectTransform>().position = mousePos;
 
-					if(currentTooltipObject)
+					if (currentTooltipObject)
 						Destroy(currentTooltipObject);
 				}
 				else
@@ -521,10 +596,10 @@ namespace Assets.scripts.Mono
 
 			for (int i = 0; i < timers.GetLength(0); i++)
 			{
-				if (timers[i,0] > 0)
+				if (timers[i, 0] > 0)
 				{
 					float max = timers[i, 1];
-					float passed = Time.time - timers[i,0];
+					float passed = Time.time - timers[i, 0];
 					float ratio = passed / max;
 
 					if (ratio >= 1)
@@ -541,7 +616,14 @@ namespace Assets.scripts.Mono
 					//Image but = skillButtons[i-1].GetComponent<Image>();
 					//but.color = new Color(ratio, ratio, ratio);
 
-					skillProgresses[i - 1].fillAmount = 1 - ratio;
+					try
+					{
+						skillProgresses[i - 1].fillAmount = 1 - ratio;
+					}
+					catch (Exception e)
+					{
+						//Debug.LogError(e.Message);
+					}
 				}
 			}
 
@@ -556,7 +638,7 @@ namespace Assets.scripts.Mono
 			{
 				if (sk.GetName().Equals(data.GetOwner().Skills.Skills[i].GetName()))
 				{
-					id = i+1;
+					id = i + 1;
 					break;
 				}
 			}
@@ -601,10 +683,10 @@ namespace Assets.scripts.Mono
 			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().LoadNextMap();
 		}
 
-	    public void SaveLevel()
-	    {
-            GameObject.Find("Cave Generator").GetComponent<WorldHolder>().SaveCurrentMap();
-	    }
+		public void SaveLevel()
+		{
+			GameObject.Find("Cave Generator").GetComponent<WorldHolder>().SaveCurrentMap();
+		}
 
 		public void PrevLevel()
 		{
@@ -613,7 +695,7 @@ namespace Assets.scripts.Mono
 
 		public void SetAdminMapSeedInfo(string s)
 		{
-			
+
 		}
 
 		public void UpdateAdminInfo()
@@ -621,11 +703,11 @@ namespace Assets.scripts.Mono
 			if (!adminMode)
 				return;
 
-			if ((int) Time.time % 1 == 0)
+			if ((int)Time.time % 1 == 0)
 			{
 				StringBuilder sb = new StringBuilder();
 
-				sb.AppendLine("Map Type " + Enum.GetName(typeof (MapType), WorldHolder.instance.activeMap.MapType));
+				sb.AppendLine("Map Type " + Enum.GetName(typeof(MapType), WorldHolder.instance.activeMap.MapType));
 				Vector3 pos = data.GetBody().transform.position;
 
 				int left = WorldHolder.instance.activeMap.GetMonstersLeft(WorldHolder.instance.activeMap.GetRegionFromWorldPosition(pos).GetParentOrSelf());
@@ -650,7 +732,7 @@ namespace Assets.scripts.Mono
 
 			if (slotType == 1)
 				u = data.GetOwner().Inventory.GetActiveUpgrade(order);
-			else if(slotType == 0)
+			else if (slotType == 0)
 				u = data.GetOwner().Inventory.GetUpgrade(order);
 			else if (slotType == 2) // base stat
 				u = data.GetOwner().Inventory.GetBasestatUpgrade(order);
@@ -696,17 +778,17 @@ namespace Assets.scripts.Mono
 				switch (type)
 				{
 					case UpgradeType.CLASSIC:
-						titleColor = new Color(86/255f, 71/255f, 49/255f);
-						currentTooltipObject.GetComponent<Image>().color = new Color(253/255f, 253/255f, 224/225f);
-					break;
+						titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+						break;
 					case UpgradeType.EPIC:
 						titleColor = new Color(109 / 255f, 58 / 255f, 65 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
-					break;
+						break;
 					case UpgradeType.RARE:
 						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
-					break;
+						break;
 				}
 
 				foreach (Transform child in currentTooltipObject.transform)
@@ -734,7 +816,7 @@ namespace Assets.scripts.Mono
 						ClassId cId = u.RequiredClass;
 						if (cId > 0)
 						{
-							className = Enum.GetName(typeof (ClassId), cId);
+							className = Enum.GetName(typeof(ClassId), cId);
 						}
 
 						string info = "";
@@ -821,19 +903,19 @@ namespace Assets.scripts.Mono
 				if (u != null)
 				{
 					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
-					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType==1));
+					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 				else // slot is empty - simply move the upgrade there
 				{
 					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
-					Debug.Log("puttint into slot id " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType==1));
+					Debug.Log("puttint into slot id " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 			}
 		}
 
 		public void OnUpgradeClick(int slotType, GameObject obj)
 		{
-			if(slotType == 2)
+			if (slotType == 2)
 				return;
 
 			bool doubleClick = false;
@@ -922,7 +1004,7 @@ namespace Assets.scripts.Mono
 						t.text = "Level " + data.level;
 						break;
 					case "Class":
-						t.text = ((Player) data.GetOwner()).Template.GetClassId().ToString();
+						t.text = ((Player)data.GetOwner()).Template.GetClassId().ToString();
 						break;
 					case "HP":
 						t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;
@@ -932,10 +1014,10 @@ namespace Assets.scripts.Mono
 						break;
 					case "Critical Rate":
 						int rate = ((Player)data.GetOwner()).Status.CriticalRate;
-						t.text = "Critical rate: " + rate/10 + "%";
+						t.text = "Critical rate: " + rate / 10 + "%";
 						break;
 					case "Critical Damage":
-						float dmg = ((Player) data.GetOwner()).Status.CriticalDamageMul;
+						float dmg = ((Player)data.GetOwner()).Status.CriticalDamageMul;
 						t.text = "Critical damage: x" + dmg;
 						break;
 					case "Damage Output":
@@ -945,7 +1027,7 @@ namespace Assets.scripts.Mono
 						break;
 					case "Shield":
 						float shield = ((Player)data.GetOwner()).Status.Shield;
-						t.text = "Shield " + (int)(shield*100-100) + "%";
+						t.text = "Shield " + (int)(shield * 100 - 100) + "%";
 						break;
 				}
 			}
@@ -960,7 +1042,7 @@ namespace Assets.scripts.Mono
 			int i = 0;
 			foreach (AbstractUpgrade u in inv.Upgrades)
 			{
-				if (u == null  || inv.IsEquipped(u))
+				if (u == null || inv.IsEquipped(u))
 					continue;
 
 				GameObject o = inventorySlots[i].transform.GetChild(0).gameObject;
@@ -1028,7 +1110,7 @@ namespace Assets.scripts.Mono
 
 		public void MenuClick()
 		{
-			if(menuPanel.activeSelf)
+			if (menuPanel.activeSelf)
 				menuPanel.SetActive(false);
 			else
 				menuPanel.SetActive(true);
@@ -1069,6 +1151,9 @@ namespace Assets.scripts.Mono
 
 			val = GameObject.Find("MoveOnlyWithMousePressed").GetComponent<Toggle>().isOn;
 			data.moveOnlyWhenMousePressed = val;
+
+			val = GameObject.Find("ShowDamageMessages").GetComponent<Toggle>().isOn;
+			showDamageMessages = val;
 		}
 
 		public void OnConsoleCommand(String s)
@@ -1088,7 +1173,7 @@ namespace Assets.scripts.Mono
 
 		public void TestSpawnMonsters()
 		{
-			MonsterId mId = MonsterId.TestMonster; 
+			MonsterId mId = MonsterId.TestMonster;
 
 			switch (Random.Range(1, 2))
 			{
@@ -1145,111 +1230,111 @@ namespace Assets.scripts.Mono
 			//Debug.Log("mouse over UI");
 			mouseOverUi = true;
 		}
-		
+
 		public void SetMouseNotOverUi()
 		{
 			//Debug.Log("mouse not UI");
 			mouseOverUi = false;
 		}
 
-        public void SwitchAdminMode()
-        {
-            adminMode = !adminMode;
-            UpdateAdminControls();
-        }
+		public void SwitchAdminMode()
+		{
+			adminMode = !adminMode;
+			UpdateAdminControls();
+		}
 
-        public void AdminClick(Vector3 position, int mouseButton)
-        {
-            position.z = 0;
+		public void AdminClick(Vector3 position, int mouseButton)
+		{
+			position.z = 0;
 
-            if (mouseButton == 0)
-            {
+			if (mouseButton == 0)
+			{
 				Monster m = GameSystem.Instance.SpawnMonster((MonsterId)Enum.Parse(typeof(MonsterId), adminSpawnPanel.captionText.text), position, false, 1);
-                WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
-            }
-            else if (mouseButton == 1)
-            {
-                Collider2D cd = Physics2D.OverlapPoint(position);
+				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
+			}
+			else if (mouseButton == 1)
+			{
+				Collider2D cd = Physics2D.OverlapPoint(position);
 
-                if (cd != null && cd.gameObject != null)
-                {
-                    if (cd.gameObject.GetData() != null)
-                    {
-                        cd.gameObject.GetChar().DoDie();
-                    }
-                }
-            }
-        }
+				if (cd != null && cd.gameObject != null)
+				{
+					if (cd.gameObject.GetData() != null)
+					{
+						cd.gameObject.GetChar().DoDie();
+					}
+				}
+			}
+		}
 
-	    struct SpawnData
-	    {
-	        public MonsterId id;
-            public Vector3 pos;
+		struct SpawnData
+		{
+			public MonsterId id;
+			public Vector3 pos;
 
-	        public SpawnData(MonsterId id, Vector3 pos)
-	        {
-	            this.id = id;
-	            this.pos = pos;
-	        }
-	    }
+			public SpawnData(MonsterId id, Vector3 pos)
+			{
+				this.id = id;
+				this.pos = pos;
+			}
+		}
 
-	    public void SavePositions()
-	    {
-            adminSpawnedData = new List<SpawnData>();
+		public void SavePositions()
+		{
+			adminSpawnedData = new List<SpawnData>();
 
-            foreach (GameObject o in GameObject.FindObjectsOfType<GameObject>())
-            {
-                if (o != null && o.activeSelf && o.activeInHierarchy)
-                {
-                    if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
-                    {
-                        SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterId(), o.GetData().GetBody().transform.position);
-                        adminSpawnedData.Add(data);
-                    }
-                }
-            }
-	    }
+			foreach (GameObject o in GameObject.FindObjectsOfType<GameObject>())
+			{
+				if (o != null && o.activeSelf && o.activeInHierarchy)
+				{
+					if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
+					{
+						SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterId(), o.GetData().GetBody().transform.position);
+						adminSpawnedData.Add(data);
+					}
+				}
+			}
+		}
 
-	    public void RespawnSaved()
-	    {
-	        foreach (SpawnData data in adminSpawnedData)
-	        {
+		public void RespawnSaved()
+		{
+			foreach (SpawnData data in adminSpawnedData)
+			{
 				Monster m = GameSystem.Instance.SpawnMonster(data.id, data.pos, false, 1);
-                WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
-	        }
-	    }
+				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
+			}
+		}
 
-	    public void RemoveAllMobs()
-	    {
-	        foreach(GameObject o in GameObject.FindObjectsOfType<GameObject>())
-	        {
-	            if (o != null && o.activeSelf && o.activeInHierarchy)
-	            {
-	                if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
-	                {
-	                    o.GetChar().DoDie();
-	                }
-	            }
-	        }
-	    }
+		public void RemoveAllMobs()
+		{
+			foreach (GameObject o in GameObject.FindObjectsOfType<GameObject>())
+			{
+				if (o != null && o.activeSelf && o.activeInHierarchy)
+				{
+					if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
+					{
+						o.GetChar().DoDie();
+					}
+				}
+			}
+		}
 
-	    public void RegenerateLevel()
-	    {
-	        WorldHolder.instance.RegenMap();
-	    }
+		public void RegenerateLevel()
+		{
+			WorldHolder.instance.RegenMap();
+		}
 
-        private void UpdateAdminControls()
-        {
-            if (adminMode)
-            {
-                adminPanel.SetActive(true);
-                //adminSpawnPanel.gameObject.SetActive(true);
-            }
-            else
-            {
-                adminPanel.SetActive(false);
-                //adminSpawnPanel.gameObject.SetActive(false);
-            }
-        }
+		private void UpdateAdminControls()
+		{
+			if (adminMode)
+			{
+				adminPanel.SetActive(true);
+				//adminSpawnPanel.gameObject.SetActive(true);
+			}
+			else
+			{
+				adminPanel.SetActive(false);
+				//adminSpawnPanel.gameObject.SetActive(false);
+			}
+		}
 	}
 }

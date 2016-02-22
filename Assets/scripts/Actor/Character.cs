@@ -565,6 +565,11 @@ namespace Assets.scripts.Actor
 			if (Status.IsDead || damage <= 0)
 				return;
 
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(GetData().GetBody(), damage, Color.red);
+			}
+
 			Status.ReceiveDamage(damage);
 
 			if (source != null)
@@ -584,6 +589,11 @@ namespace Assets.scripts.Actor
 
 		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0)
 		{
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
+			}
+
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
 			{
 				u.OnGiveDamage(target, damage, skillId);

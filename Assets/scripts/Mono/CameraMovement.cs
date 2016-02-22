@@ -38,7 +38,7 @@ namespace Assets.scripts.Mono
 		}
 
 		// Update is called once per frame
-		public void FixedUpdate()
+		public void Update()
 		{
 			if (freeView && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
 			{

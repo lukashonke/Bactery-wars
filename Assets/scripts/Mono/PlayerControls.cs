@@ -80,10 +80,13 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.U))
 			{
-				Player p = data.GetOwner() as Player;
-				p.UnlockSkill(temp++, true);
+				//Player p = data.GetOwner() as Player;
+				//p.UnlockSkill(temp++, true);
+
+				ui.DamageMessage(data.GetBody(), 10, Color.cyan);
+
 				//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
-				data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
+				//data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
 			}
 
 			if (Input.GetKeyDown(KeyCode.E))
