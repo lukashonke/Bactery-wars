@@ -17,6 +17,8 @@ namespace Assets.scripts.Skills
 	{
 		private string name;
 
+		public bool IsLocked { get; set; }
+
 		public Character Owner { get; private set; }
 
 		public List<SkillTraits> Traits { get; private set; }

@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Mono.ObjectData;
+﻿using Assets.scripts.Actor;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
@@ -49,6 +50,8 @@ namespace Assets.scripts.Mono
 		{
 		}
 
+		private int temp = 0;
+
 		private void HandleSkillControls()
 		{
 			if (Input.GetKeyDown(KeyCode.Q))
@@ -77,6 +80,9 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.U))
 			{
+				Player p = data.GetOwner() as Player;
+				p.UnlockSkill(temp++, true);
+				//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
 				data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
 			}
 

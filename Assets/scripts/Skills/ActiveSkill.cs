@@ -242,6 +242,9 @@ namespace Assets.scripts.Skills
 
 		public override bool CanUse()
 		{
+			if (IsLocked)
+				return false;
+
 			if (Owner == null)
 			{
 				Debug.LogError("Error: skill ID " + Enum.GetName(typeof(SkillId), GetSkillId()) + " nema nastavenyho majitele skillu - nelze ho castit");

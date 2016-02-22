@@ -55,6 +55,7 @@ namespace Assets.scripts.Actor
 				// vytvorit novy objekt skillu
 				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
+				newSkill.IsLocked = true;
 
 				Skills.AddSkill(newSkill);
 
@@ -83,6 +84,22 @@ namespace Assets.scripts.Actor
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
 			UpdateStats();
+		}
+
+		public void UnlockSkill(int order, bool msg)
+		{
+			int i = 0;
+			foreach (Skill sk in Skills.Skills)
+			{
+				if (i == order)
+				{
+					sk.IsLocked = false;
+					Data.SetSkillReuseTimer(sk as ActiveSkill, true);
+					if(msg)
+						Message("You have unlocked skill " + sk.GetVisibleName() + ".");
+				}
+				i++;
+			}
 		}
 
 		public override void UpdateStats()
@@ -198,6 +215,11 @@ namespace Assets.scripts.Actor
 		public override bool IsInteractable()
 		{
 			return false;
+		}
+
+		public override void Message(string s, int level=1)
+		{
+			GetData().ui.ScreenMessage(s, level);
 		}
 	}
 }

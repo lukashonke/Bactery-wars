@@ -50,3 +50,26 @@ StartClassic
 
 StartClassic
 
+LevelOne
+
+
+LevelOne
+0 0 40 -498 (s:0, 0)
+
+-498, 
+LevelOne
+0 0 40 -498 (s:0, 0)
+
+-498, -498, 
+LevelOne
+0 0 40 -498 (s:0, 0)
+
+-498, -498, -498, 
+LevelOne
+0 0 40 156 (s:0, 0)
+
+-498, -498, -498, 156, 
+LevelOne
+0 0 40 -492 (s:0, 0)
+
+-492, 

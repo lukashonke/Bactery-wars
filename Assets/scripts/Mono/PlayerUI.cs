@@ -64,7 +64,116 @@ namespace Assets.scripts.Mono
 	    public GameObject adminPanel;
 	    public Dropdown adminSpawnPanel;
 
+		private GameObject upgradesAdminPanel;
+		private Dropdown upgradesDropdownPanel;
+
+		public GameObject highlightedSlot;
+
+		public GameObject currentTooltipObject;
+
+		private bool firstClickDone;
+		private float lastClick;
+		private const float doubleClickTimeMax = 0.5f;
+		private const float doubleClickTimeMin = 0.05f;
+
 		private float[,] timers;
+
+		private List<Msg> messages = new List<Msg>(5);
+
+		public GameObject chatPosition;
+
+		public GUIStyle msgStyle;
+		public GUIStyle boxStyle;
+
+		public class Msg
+		{
+			public string msg;
+			public int level;
+			public float time;
+			public float opacity;
+			public bool shown;
+
+			public void Disable()
+			{
+				shown = false;
+			}
+		}
+
+		public void ScreenMessage(string msg, int level=1)
+		{
+			if (msg.Length > 45)
+			{
+				for (int i = 0; i <= (msg.Length/40); i++)
+				{
+					Msg m = new Msg();
+
+					int start = i*40;
+					int end = 40;
+					if (start + end >= msg.Length)
+						end = msg.Length - start;
+
+					if(level == 1)
+						m.msg = msg.Substring(start, end);
+					else if (level == 2)
+						m.msg = "<color=gray>" + msg.Substring(start, end) + "</color>";
+
+					m.level = level;
+					m.time = Time.time;
+					m.shown = true;
+
+					if (messages.Count >= 5)
+					{
+						messages.RemoveAt(messages.Count - 1);
+					}
+
+					messages.Insert(0, m);
+				}
+			}
+			else
+			{
+				Msg m = new Msg();
+
+				if (level == 1)
+					m.msg = msg;
+				else if (level == 2)
+					m.msg = "<color=gray>" + msg + "</color>";
+
+				m.level = level;
+				m.time = Time.time;
+				m.shown = true;
+
+				if (messages.Count >= 5)
+				{
+					messages.RemoveAt(messages.Count - 1);
+				}
+
+				messages.Insert(0, m);
+			}
+		}
+
+		void OnGUI()
+		{
+			if (!messages.Any())
+				return;
+
+			int w = 500;
+			int h = 25;
+
+			float x = Screen.width - chatPosition.transform.position.x;
+			float y = Screen.height - chatPosition.transform.position.y;
+
+			int shift = 0;
+			int percent;
+			foreach (Msg m in messages)
+			{
+				if (m.shown)
+				{
+					GUI.Box(new Rect(x - w / 2f, y - (h / 2f) - (shift * h), w, h), m.msg, boxStyle);
+					//GUI.Label(new Rect(x-w/2f, y-(h/2f)-(shift*h), w, h), m.msg, msgStyle);
+					shift++;
+				}
+			}
+		}
 
 		// Use this for initialization
 		void Start()
@@ -90,6 +199,14 @@ namespace Assets.scripts.Mono
 			gameMenu.GetComponent<Canvas>().enabled = true;
 			settingsPanel.GetComponent<Canvas>().enabled = true;
 
+			chatPosition = GameObject.Find("ChatPosition");
+
+			//msgStyle = new GUIStyle();
+			//msgStyle.fontSize = 20;
+			//msgStyle.alignment = TextAnchor.LowerCenter;
+
+			//boxStyle = new GUIStyle();
+
 			skillButtons = new GameObject[9];
 			for (int i = 1; i <= 9; i++)
 			{
@@ -111,6 +228,11 @@ namespace Assets.scripts.Mono
 			}
 
 			timers = new float[9,9];
+			for (int i = 0; i < timers.GetLength(0); i++)
+			{
+				timers[i, 0] = 1;
+				timers[i, 1] = -1;
+			}
 
 			if (settingsPanel != null)
 				settingsPanel.SetActive(false);
@@ -298,9 +420,6 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		private GameObject upgradesAdminPanel;
-		private Dropdown upgradesDropdownPanel;
-
 		public void AdminUpgradeChosen()
 		{
 			if (upgradesDropdownPanel != null)
@@ -326,9 +445,31 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private float lastMsgUpdate;
+		private const float msgUpdateInterval = 0.5f;
+
 		// Update is called once per frame
 		void Update()
 		{
+			if(messages.Count > 0 && lastMsgUpdate+msgUpdateInterval < Time.time)
+			{
+				foreach (Msg mess in messages.ToArray())
+				{
+					if (mess.shown)
+					{
+						if (mess.time + 6f < Time.time)
+						{
+							mess.Disable();
+						}
+						else
+						{
+							mess.opacity = 1-(Time.time - mess.time)/6f;
+						}
+					}
+				}
+				lastMsgUpdate = Time.time;
+			}
+
 			if (draggingIcon && draggedObject != null)
 			{
 				Vector3 mousePos = (Input.mousePosition);
@@ -394,6 +535,9 @@ namespace Assets.scripts.Mono
 
 					ratio = (ratio);
 
+					if (max < 0)
+						ratio = 0;
+
 					//Image but = skillButtons[i-1].GetComponent<Image>();
 					//but.color = new Color(ratio, ratio, ratio);
 
@@ -420,8 +564,16 @@ namespace Assets.scripts.Mono
 			if (id == -1)
 				return;
 
-			timers[id,0] = Time.time;
-			timers[id,1] = ((ActiveSkill)sk).GetReuse();
+			if (sk.IsLocked)
+			{
+				timers[id, 0] = 0;
+				timers[id, 1] = -1;
+			}
+			else
+			{
+				timers[id, 0] = Time.time;
+				timers[id, 1] = ((ActiveSkill)sk).GetReuse();
+			}
 		}
 
 		public void ResetReuseTimer(Skill sk)
@@ -505,10 +657,6 @@ namespace Assets.scripts.Mono
 
 			return u;
 		}
-
-		public GameObject highlightedSlot;
-
-		public GameObject currentTooltipObject;
 
 		public void OnUpgradeHover(GameObject slot, bool exit, int slotType)
 		{
@@ -682,11 +830,6 @@ namespace Assets.scripts.Mono
 				}
 			}
 		}
-
-		private bool firstClickDone;
-		private float lastClick;
-		private const float doubleClickTimeMax = 0.5f;
-		private const float doubleClickTimeMin = 0.05f;
 
 		public void OnUpgradeClick(int slotType, GameObject obj)
 		{

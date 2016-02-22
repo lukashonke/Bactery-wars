@@ -249,7 +249,7 @@ namespace Assets.scripts.Actor
 				u.SetOwner(this);
 				Inventory.AddUpgrade(u);
 				Data.UpdateInventory(Inventory);
-				Debug.Log("Added " + u.VisibleName);
+				Message("You have picked up: " + u.VisibleName + "");
 				return true;
 			}
 
@@ -261,7 +261,7 @@ namespace Assets.scripts.Actor
 			u.SetOwner(null);
 			Inventory.RemoveUpgrade(u);
 			Data.UpdateInventory(Inventory);
-			Debug.Log("Removed " + u.VisibleName);
+			Message("Deleted " + u.VisibleName);
 		}
 
 		public void EquipUpgrade(AbstractUpgrade u)
@@ -272,7 +272,7 @@ namespace Assets.scripts.Actor
 			UpdateStats();
 
 			Data.UpdateInventory(Inventory);
-			Debug.Log("Equiped " + u.VisibleName);
+			Message("Equiped " + u.VisibleName);
 		}
 
 		public void UnequipUpgrade(AbstractUpgrade u, bool force=false)
@@ -281,7 +281,7 @@ namespace Assets.scripts.Actor
 			UpdateStats();
 
 			Data.UpdateInventory(Inventory);
-			Debug.Log("Unequiped " + u.VisibleName);
+			Message("Unequiped " + u.VisibleName);
 		}
 
 		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, int fromSlot, int toSlot)
@@ -476,7 +476,7 @@ namespace Assets.scripts.Actor
 			// reuse check
 			if (!skill.CanUse())
 			{
-				Debug.Log("skill cannot be used again yet");
+				Message("Skill is not yet available for use.", 2);
 				return;
 			}
 
@@ -764,7 +764,7 @@ namespace Assets.scripts.Actor
 			return summons.Count > 0;
 		}
 
-		public void Message(string s)
+		public virtual void Message(string s, int level=1)
 		{
 			Debug.Log("Message: " + s);
 		}

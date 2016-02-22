@@ -150,6 +150,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
+				Camera.main.orthographicSize = 55;
 				RegenMap();
 			}
 
@@ -297,8 +298,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			return new Vector3();
 		}
 
+		private List<string> tempSeeds = new List<string>();
+
 	    public void SaveCurrentMap()
 	    {
+		    Camera.main.orthographicSize = 55;
+
 	        String prev = System.IO.File.ReadAllText("mapSeeds.txt");
 
 	        StringBuilder sb = new StringBuilder();
@@ -312,6 +317,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	            {
 	                if (region.hadRandomSeed)
 	                {
+						tempSeeds.Add(region.seed);
 	                    sb.Append(region.x + " " + region.y + " " + region.fillPercent + " " + region.seed + " (s:" + region.sizeX + ", " + region.sizeY + ")");
 	                    sb.AppendLine();
 	                }
@@ -319,6 +325,11 @@ namespace Assets.scripts.Mono.MapGenerator
 	        }
 
             sb.AppendLine();
+
+		    foreach (string s in tempSeeds)
+			    sb.Append(s + ", ");
+
+		    sb.AppendLine();
 
             System.IO.File.WriteAllText("mapSeeds.txt", sb.ToString());
             Debug.Log("Saved!");
