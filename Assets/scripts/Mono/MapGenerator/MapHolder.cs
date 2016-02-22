@@ -23,6 +23,12 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		StartClassic,
 		SecondLevel,
+
+		LevelOne,
+		LevelTwo,
+		LevelThree,
+		LevelFour,
+		LevelFive,
 	}
 
     /// <summary>
@@ -219,6 +225,21 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.SecondLevel:
 					levelData = new SecondLevelData(this);
+					break;
+				case MapType.LevelOne:
+					levelData = new LevelOneData(this);
+					break;
+				case MapType.LevelTwo:
+					levelData = new LevelTwoData(this);
+					break;
+				case MapType.LevelThree:
+					levelData = new LevelThreeData(this);
+					break;
+				case MapType.LevelFour:
+					levelData = new LevelFourData(this);
+					break;
+				case MapType.LevelFive:
+					levelData = new LevelFiveData(this);
 					break;
 			}
 

@@ -96,7 +96,7 @@ namespace Assets.scripts.Actor
 
 			if (SpawnInfo != null)
 			{
-				SpawnInfo.Drop.DoDrop(this);
+				SpawnInfo.Drop.DoDrop(this, killer);
 			}
 		}
 

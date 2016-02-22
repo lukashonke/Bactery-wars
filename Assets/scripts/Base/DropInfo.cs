@@ -50,13 +50,13 @@ namespace Assets.scripts.Base
 			
 		}
 
-		public void DoDrop(Monster m)
+		public void DoDrop(Monster m, Character killer)
 		{
 			foreach (Drop d in drops)
 			{
 				if (d.chance == 100 || Random.Range(0, 100) < d.chance)
 				{
-					DoDrop(d.type, d.level, m);
+					DoDrop(d.type, d.level, m, killer);
 				}
 			}
 
@@ -69,7 +69,7 @@ namespace Assets.scripts.Base
 			}
 		}
 
-		public void DoDrop(Type d, int level, Monster m)
+		public void DoDrop(Type d, int level, Monster m, Character killer)
 		{
 			UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d, level), m.GetData().GetBody().transform.position);
 		}
