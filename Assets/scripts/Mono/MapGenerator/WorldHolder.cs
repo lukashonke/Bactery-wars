@@ -57,7 +57,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.LevelOne, width, height);
+			MapHolder newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -69,7 +69,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			Cords old = activeMap.Position;
 			Cords newCords = new Cords(old.x + 1, old.y);
 
-			Debug.Log("generating.. " + newCords.ToString());
 			int level = old.x + 2;
 			MapType type = MapType.LevelOne;
 
@@ -90,7 +89,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			}
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, type, 100, 50);
+			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
@@ -122,6 +121,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			activeMap = map;
 			activeMap.LoadMap(reloading);
+
+			GameSystem.Instance.BroadcastMessage(activeMap.name);
 
 			// update seeds info for admin
 			StringBuilder sb = new StringBuilder();

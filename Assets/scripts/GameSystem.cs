@@ -34,6 +34,8 @@ namespace Assets.scripts
 			}
 		}
 
+		public Player CurrentPlayer { get; set; }
+
 		public GameController Controller { get; private set; }
 
 		private bool paused;
@@ -66,6 +68,12 @@ namespace Assets.scripts
 		public void Update()
 		{
 			
+		}
+
+		public void BroadcastMessage(string msg, int level = 1)
+		{
+			if(CurrentPlayer != null)
+				CurrentPlayer.Message(msg, level);
 		}
 
 		public Coroutine StartTask(IEnumerator task)
@@ -122,6 +130,8 @@ namespace Assets.scripts
 			player.SetLevel(1);
 
 			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
+
+			CurrentPlayer = player;
 
 			//TODO init, save, etc
 

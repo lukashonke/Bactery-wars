@@ -80,10 +80,10 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.U))
 			{
-				//Player p = data.GetOwner() as Player;
-				//p.UnlockSkill(temp++, true);
+				Player p = data.GetOwner() as Player;
+				p.UnlockSkill(temp++, true);
 
-				ui.DamageMessage(data.GetBody(), 10, Color.cyan);
+				//ui.DamageMessage(data.GetBody(), 10, Color.cyan);
 
 				//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
 				//data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
@@ -91,10 +91,9 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				AbstractUpgrade u = new HpUpgrade(1);
+				AbstractUpgrade u = new Heal(1);
 				u.Init();
-				data.GetOwner().AddUpgrade(u);
-				//data.GetOwner().EquipUpgrade(u);
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
 
 			if (Input.GetKeyDown(KeyCode.R))

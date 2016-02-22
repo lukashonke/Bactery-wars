@@ -192,6 +192,12 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
+
+		public virtual bool OnPickup(Character owner)
+		{
+			return false;
+		}
+
 		public virtual void OnKill(Character target, SkillId skillId)
 		{
 			

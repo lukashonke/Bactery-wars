@@ -94,7 +94,13 @@ namespace Assets.scripts.Actor
 				if (i == order)
 				{
 					sk.IsLocked = false;
-					Data.SetSkillReuseTimer(sk as ActiveSkill, true);
+
+					if (sk is ActiveSkill)
+					{
+						((ActiveSkill)sk).LastUsed = 0;
+						Data.SetSkillReuseTimer(sk as ActiveSkill, false);
+					}
+
 					if(msg)
 						Message("You have unlocked skill " + sk.GetVisibleName() + ".");
 				}

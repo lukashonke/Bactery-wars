@@ -228,6 +228,14 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
+			if (upg.upgrade.OnPickup(this))
+			{
+				upg.DeleteMe(true);
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+				return;
+			}
+
 			if (upg.upgrade.GoesIntoBasestatSlot)
 			{
 				Inventory.AddBasestatUpgrade(upg.upgrade);
