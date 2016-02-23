@@ -37,6 +37,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			    if (WorldHolder.instance.activeMap.CanTeleportToNext())
 			    {
+					WorldHolder.instance.activeMap.OnTeleportOut((Player) source);
+
                     WorldHolder.instance.LoadNextMap();
 
                     // teleport player to new start

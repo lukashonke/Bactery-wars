@@ -1314,6 +1314,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        region.Status = MapRegion.STATUS_CONQUERED;
 
+		    levelData.OnConquered();
+
 			Queue<MapRegion> neighbours = new Queue<MapRegion>();
 			foreach (MapRegion reg in GetNeighbourRegions(region))
 				neighbours.Enqueue(reg);
@@ -1356,6 +1358,11 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 	    }
+
+		public void OnTeleportOut(Player player)
+		{
+			levelData.OnPlayerTeleportOut(player);
+		}
 
 		public int GetMonstersLeft(MapRegion reg)
 		{

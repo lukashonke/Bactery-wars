@@ -625,6 +625,11 @@ namespace Assets.scripts.Actor
 			GetData().SetVisibleLevel(Level);
 		}
 
+		public void HealMe()
+		{
+			UpdateHp(Status.MaxHp);
+		}
+
 		public void UpdateMaxHp(int newMaxHp)
 		{
 			Status.MaxHp = newMaxHp;

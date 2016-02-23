@@ -49,6 +49,54 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         }
     }
 
+	public class NonaggressiveHelperCell : MonsterTemplate
+	{
+		public NonaggressiveHelperCell()
+		{
+			MaxHp = 5;
+			MaxMp = 50;
+			MaxSpeed = 5;
+
+			IsAggressive = false;
+			AggressionRange = 20;
+			RambleAround = true;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+		}
+
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			m.UpdateMaxHp(m.Status.MaxHp + 10 * (level-1));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			SkillTestProjectile skill = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+			skill.range = 12;
+			skill.castTime = 1f;
+			skill.reuse = 0.5f;
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new RangedMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.NonaggressiveHelperCell;
+		}
+	}
+
 	public class FloatingHelperCell : MonsterTemplate
 	{
 		public FloatingHelperCell()

@@ -153,6 +153,8 @@ namespace Assets.scripts.Actor
 
 			Template.InitMonsterStats(this, Level);
 
+			HealMe();
+
 			GroupTemplate gt = Template.GetGroupTemplate();
 			if (!isMinion && gt != null)
 			{

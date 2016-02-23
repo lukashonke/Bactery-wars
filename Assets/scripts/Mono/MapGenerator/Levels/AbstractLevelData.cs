@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 		public MapType type;
 		protected MapHolder map;
+
+		protected bool conquered = false;
 
 		public AbstractLevelData(MapHolder holder)
 		{
@@ -79,6 +82,16 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 			map.AddMonsterToMap(info);
 			return info;
+		}
+
+		public virtual void OnPlayerTeleportOut(Player player)
+		{
+			
+		}
+
+		public void OnConquered()
+		{
+			conquered = true;
 		}
 	}
 }

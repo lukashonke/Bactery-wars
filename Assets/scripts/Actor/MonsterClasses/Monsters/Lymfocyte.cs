@@ -45,25 +45,23 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
         public LymfocyteMelee()
 		{
-			MaxHp = 40;
+			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
 
-			IsAggressive = false;
-			AggressionRange = 10;
+			IsAggressive = true;
+			AggressionRange = 5;
 			RambleAround = true;
 		}
 
 		protected override void AddSkillsToTemplate()
 		{
-			// no skills, only melee
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
 			MonsterAI ai = new MeleeMonsterAI(ch);
-		    //ai.IsAggressive = false; //TODO use this instead of template.IsAggressive
 		    return ai;
 		}
 

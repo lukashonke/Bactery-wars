@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Upgrade;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator.Levels
 {
@@ -45,17 +47,56 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
             Utils.Timer.StartTimer("spawnmap");
 
-		    foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
+		    foreach (MapRoom room in map.GetMapRooms())
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-		        }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 1);
+					}
+				}
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
-                }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 2))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 2))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 2);
+					}
+				}
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
-                }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 2))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 4))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, Random.Range(1, 3));
+					}
+				}
 		    }
 
             Utils.Timer.EndTimer("spawnmap");
@@ -80,5 +121,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	    {
 	        return 2;
 	    }
+
+		public override void OnPlayerTeleportOut(Player player)
+		{
+			if (conquered)
+			{
+				player.UnlockSkill(1, true);
+				conquered = false;
+			}
+		}
 	}
 }
