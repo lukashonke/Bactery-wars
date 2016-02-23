@@ -102,6 +102,8 @@ namespace Assets.scripts
 			return v;
 		}
 
+		public bool detailedPathfinding = false;
+
 		public void UpdatePathfinding(Vector3 center, int tilesPerRegionX, int tilesPerRegionY, int mapWidth, int mapHeight)
 		{
 			Debug.Log(mapWidth + ", " + mapHeight);
@@ -114,10 +116,36 @@ namespace Assets.scripts
 				{
 					GridGraph gridGraph = g as GridGraph;
 
-					float tileSize = gridGraph.nodeSize;
+					if (detailedPathfinding)
+					{
+						gridGraph.erosionUseTags = true;
+						gridGraph.erosionFirstTag = 1;
+						gridGraph.erodeIterations = 2;
+						gridGraph.nodeSize = 0.5f;
+					}
+					else
+					{
+						gridGraph.erosionUseTags = true;
+						gridGraph.erosionFirstTag = 1;
+						gridGraph.erodeIterations = 1;
+						gridGraph.nodeSize = 0.75f;
+					}
 
-					int nodesX = (int)(10 + mapWidth * (tileSize * tilesPerRegionX)) * 2;
-					int nodesY = (int)(10 + mapHeight * (tileSize * tilesPerRegionY)) * 2;
+					float tileSize = gridGraph.nodeSize;
+					int nodesX;
+					int nodesY;
+
+					if (detailedPathfinding)
+					{
+						nodesX = (int)(10 + mapWidth * (1 - tileSize + 1 * tilesPerRegionX)) * 2;
+						nodesY = (int)(10 + mapHeight * (1 - tileSize + 1 * tilesPerRegionY)) * 2;
+					}
+					else
+					{
+						nodesX = (int)(10 + mapWidth * (tileSize * tilesPerRegionX)) * 2;
+						nodesY = (int)(10 + mapHeight * (tileSize * tilesPerRegionY)) * 2;
+					}
+					
 
 					gridGraph.Width = nodesX;
 					gridGraph.Depth = nodesY;

@@ -256,6 +256,11 @@ namespace Assets.scripts.Mono.MapGenerator
                 maxRegionsY = levelData.GetMaxRegionsY();
 		}
 
+		public void UpdatePathfinding()
+		{
+			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY);
+		}
+
 		public void AddPassage(MapPassage p)
 		{
 			//Debug.Log("adding passage for " + p.roomA.region.x + ", " + p.roomA.region.y + " AND " + p.roomB.region.x + ", " + p.roomB.region.y);

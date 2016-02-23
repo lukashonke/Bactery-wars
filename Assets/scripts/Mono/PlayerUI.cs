@@ -1154,6 +1154,13 @@ namespace Assets.scripts.Mono
 
 			val = GameObject.Find("ShowDamageMessages").GetComponent<Toggle>().isOn;
 			showDamageMessages = val;
+
+			val = GameObject.Find("DetailedPathfinding").GetComponent<Toggle>().isOn;
+			if (GameSystem.Instance.detailedPathfinding != val)
+			{
+				GameSystem.Instance.detailedPathfinding = val;
+				WorldHolder.instance.activeMap.UpdatePathfinding();
+			}
 		}
 
 		public void OnConsoleCommand(String s)

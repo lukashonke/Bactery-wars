@@ -183,6 +183,11 @@ namespace Assets.scripts.Mono
 			seeker = GetComponent<Seeker>();
 			if (usesPathfinding && seeker == null)
 				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
+
+			if (seeker != null)
+			{
+				seeker.tagPenalties[1] = 1000;
+			}
 		}
 
 		protected Path currentPath;
