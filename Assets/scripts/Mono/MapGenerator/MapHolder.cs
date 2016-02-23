@@ -813,7 +813,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			spawnableMonsters.Clear();
 			spawnableNpcs.Clear();
 
-			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
+			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY); // TODO set correct bounds
 			SetActive(true);
 
 			UpdateRegions();

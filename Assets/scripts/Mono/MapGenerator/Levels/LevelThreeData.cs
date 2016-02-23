@@ -13,6 +13,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 	    public MapRegion start, mid, end;
 
+		private int[] levelOneSeeds =
+		{
+			-138, 127, 759, 479, 394, -304, -283, 837, -596, 400, -757, 481, -191, -364, -637, 967, -893, 220, 993, -916, 610, 780, -76, -106, 236, 59, 949
+		};
+
+		private int[] levelTwoSeeds =
+		{
+			573, -653, -630, -976, -854, -520, -498, -124, 308, 572, -364, 471, -958, -524, 531, -13, 581, 196,  -109,
+		};
+
+		private int[] levelThreeSeeds =
+		{
+			-867, -475, 10, -755, 363, -754, 91, -902, -502, 224, -467, 702, 694, 318, 10, 775, 42, 4, -978, 243, -988, -685, -237, 282, 125,
+		};
+
 		public LevelThreeData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelThree;
@@ -20,9 +35,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
-            start = map.GenerateDungeonRegion(0, 1, 40, true, false, false, null, 2, 1); // 0 0
-			mid = map.GenerateDungeonRegion(2, 1, 48, false, true, false, null, 1, 1); // 0, 2
-			end = map.GenerateDungeonRegion(3, 0, 45, false, true, true, null, 2, 2); // 0, 2
+            start = map.GenerateDungeonRegion(0, 1, 43, true, false, false, levelOneSeeds, 2, 1); // 0 0
+			mid = map.GenerateDungeonRegion(2, 1, 48, false, true, false, levelTwoSeeds, 1, 1); // 0, 2
+			end = map.GenerateDungeonRegion(3, 0, 46, false, true, true, levelThreeSeeds, 2, 2); // 0, 2
 		}
 
 		public override void SpawnMonsters()
