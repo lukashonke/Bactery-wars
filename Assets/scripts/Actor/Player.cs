@@ -55,6 +55,7 @@ namespace Assets.scripts.Actor
 				// vytvorit novy objekt skillu
 				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
+
 				newSkill.IsLocked = true;
 
 				Skills.AddSkill(newSkill);

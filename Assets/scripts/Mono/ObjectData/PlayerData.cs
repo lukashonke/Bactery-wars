@@ -62,7 +62,14 @@ namespace Assets.scripts.Mono.ObjectData
 
 			IsVisibleToPlayer = true;
 
+			Invoke("PostInit", 0.2f);
+
             Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public void PostInit()
+		{
+			player.UnlockSkill(0, false);
 		}
 
 		public new void Awake()
