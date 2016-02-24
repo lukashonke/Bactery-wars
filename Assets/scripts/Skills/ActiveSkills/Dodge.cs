@@ -48,6 +48,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Cold Dodge";
 		}
 
+		public override string GetDescription()
+		{
+			return "Makes the player jump in the selected direction.";
+		}
+
 		public override Skill Instantiate()
 		{
 			return new Dodge();

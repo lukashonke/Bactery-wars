@@ -5,6 +5,7 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -128,6 +129,16 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			{
 				player.UnlockSkill(1, true);
 				conquered = false;
+
+				Skill sk = (ActiveSkill) player.Skills.GetSkill(1);
+				string skillName = sk.GetVisibleName();
+				string desc = sk.GetDescription().ToLower();
+
+				if (desc == null)
+					desc = " does something cool.";
+
+				if (desc != null)
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("first_skill_unlocked", skillName, desc), 0);
 			}
 		}
 	}

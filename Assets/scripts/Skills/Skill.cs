@@ -52,6 +52,11 @@ namespace Assets.scripts.Skills
 
 		public abstract string GetVisibleName();
 
+		public virtual string GetDescription()
+		{
+			return null;
+		}
+
 		public Skill()
 		{
 			// nastavit defaultni parametry

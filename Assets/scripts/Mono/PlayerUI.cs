@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses.Base;
+using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -143,6 +146,7 @@ namespace Assets.scripts.Mono
 
 		private Queue<HelpWindowQueue> helpWindowsQueue = new Queue<HelpWindowQueue>();
 		private HelpWindowQueue currentHelpWindow;
+		private bool queueAuthors = false;
 
 		private void ShowNextHelpWindow()
 		{
@@ -184,10 +188,63 @@ namespace Assets.scripts.Mono
 			helpCanvas.GetComponent<Canvas>().enabled = true;
 		}
 
-		public void ShowHelpWindow(string title, params string[] text)
+		public void ShowAuthors()//TODO finish
 		{
-			if (!showHelpWindows)
+			if (currentHelpWindow != null)
+			{
+				queueAuthors = true;
+			}
+			else
+			{
+				GameObject authors = GameObject.Find("HelpAuthors");
+				if (authors == null)
+					return;
+
+				authors.GetComponent<Image>().enabled = true;
+				authors.transform.GetChild(0).GetComponent<Button>().enabled = true;
+				authors.transform.GetChild(0).GetComponent<Image>().enabled = true;
+			}
+		}
+
+		public void CloseAuthors()
+		{
+			GameObject authors = GameObject.Find("HelpAuthors");
+			if (authors == null)
 				return;
+
+			Destroy(authors);
+
+			if (helpWindowsQueue.Any())
+			{
+				ShowNextHelpWindow();
+			}
+			else
+			{
+				GameSystem.Instance.Paused = false;
+			}
+		}
+
+		private IEnumerator ScheduleHelpWindow(string title, float time, params string[] text)
+		{
+			yield return new WaitForSeconds(time);
+			ShowHelpWindow(title, 0, text);
+		}
+
+		public void ShowHelpWindow(HelpMessageData data, float time)
+		{
+			ShowHelpWindow(data.title, time, data.text);
+		}
+
+		public void ShowHelpWindow(string title, float time, params string[] text)
+		{
+			if (!showHelpWindows || title == null)
+				return;
+
+			if (time > 0)
+			{
+				data.GetOwner().StartTask(ScheduleHelpWindow(title, time, text));
+				return;
+			}
 
 			HelpWindowQueue hw = new HelpWindowQueue();
 			hw.title = title;
@@ -210,6 +267,12 @@ namespace Assets.scripts.Mono
 		{
 			currentHelpWindow = null;
 			helpCanvas.GetComponent<Canvas>().enabled = false;
+
+			if (queueAuthors)
+			{
+				ShowAuthors();
+				return;
+			}
 
 			if (helpWindowsQueue.Any())
 			{

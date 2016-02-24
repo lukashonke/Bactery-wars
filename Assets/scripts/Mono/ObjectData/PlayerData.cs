@@ -71,7 +71,7 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			player.UnlockSkill(0, false);
 
-			ui.ShowHelpWindow("Welcome to Bactery Wars", "Blah blah blah", "Bla blah bla");
+			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 12), 0);
 
 			if (GameSystem.Instance.Controller.isAndroid)
 			{
@@ -79,7 +79,7 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 			else
 			{
-				ui.ShowHelpWindow("Controls", "Use ");
+				ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start_controls"), 0);
 			}
 		}
 

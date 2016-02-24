@@ -36,6 +36,7 @@ namespace Assets.scripts
 		}
 
 		public Player CurrentPlayer { get; set; }
+		public int Language { get; set; }
 
 		public GameController Controller { get; private set; }
 

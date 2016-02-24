@@ -49,6 +49,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Sneeze Shot";
 		}
 
+		public override string GetDescription()
+		{
+			return "Shoots bullet cells in the selected direction.";
+		}
+
 		public override Skill Instantiate()
 		{
 			return new SneezeShot();
