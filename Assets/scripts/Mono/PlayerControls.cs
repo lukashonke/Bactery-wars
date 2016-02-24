@@ -61,7 +61,7 @@ namespace Assets.scripts.Mono
 				data.StartMeleeTargeting(false);
 			}
 
-			if (Input.GetMouseButtonDown(1))
+			if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0))
 			{
 				data.StartMeleeTargeting(true);
 			}
@@ -442,7 +442,7 @@ namespace Assets.scripts.Mono
 					{
 						if (data.Target != null)
 						{
-							if (Input.GetMouseButtonDown(0))
+							if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
 							{
 								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 								temp.z = body.transform.position.z;
@@ -457,7 +457,7 @@ namespace Assets.scripts.Mono
 						else
 						{
 							// change target position according to mouse when clicked
-							if (Input.GetMouseButton(0))
+							if (Input.GetMouseButton(1))
 							{
 								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
 								newTarget.z = body.transform.position.z;
