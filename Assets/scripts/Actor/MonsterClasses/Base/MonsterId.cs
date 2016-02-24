@@ -41,6 +41,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		MorphCellSmall = 23,
 
 		NonaggressiveHelperCell = 24,
+		MissileTurretCell = 25,
+
+		DurableMeleeCell = 26,
 
 		// bosses
 		TestBoss = 200,

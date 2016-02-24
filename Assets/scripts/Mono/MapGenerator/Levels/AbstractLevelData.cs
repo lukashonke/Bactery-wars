@@ -35,7 +35,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			return roll < chance;
 		}
 
-		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, MonsterId id, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, int level = 1, int chance = 100, bool exclude=true)
+		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, MonsterId id, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -51,19 +51,23 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 				for (int i = 0; i < countMobsPerRoom; i++)
 				{
-					info = SpawnMonsterToRoom(room, id, t, level);
+					info = SpawnMonsterToRoom(room, id, t, randomOffset, level);
 				}
 			}
 
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Tile roomTile, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Tile roomTile, bool randomOffset=false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, map.GetTileWorldPosition(roomTile));
+			Vector3 pos = map.GetTileWorldPosition(roomTile);
+			if (randomOffset)
+				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
+
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 
@@ -71,10 +75,13 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Vector3 pos, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Vector3 pos, bool randomOffset = false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
+
+			if (randomOffset)
+				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
 
 			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
 			info.level = level;

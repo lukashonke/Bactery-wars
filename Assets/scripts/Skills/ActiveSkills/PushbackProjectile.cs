@@ -85,7 +85,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoStart(GameObject gameObject)
 		{
             Vector3 pushDir = GetOwnerData().GetForwardVector(0).normalized * -1;
-			GetOwnerData().AddPhysicsPush(pushDir * pushbackForce, ForceMode2D.Impulse);
+			GetOwnerData().AddPhysicsPush(pushDir * pushbackForce, ForceMode2D.Impulse, null);
 			//GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * pushbackForce, ForceMode2D.Impulse);
 		}
 

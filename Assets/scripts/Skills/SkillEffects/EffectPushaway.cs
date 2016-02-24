@@ -34,7 +34,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 				if (targetRb != null)
 				{
-					targetCh.GetData().AddPhysicsPush(new Vector2(direction.x, direction.y)*force, ForceMode2D.Impulse);
+					targetCh.GetData().AddPhysicsPush(new Vector2(direction.x, direction.y)*force, ForceMode2D.Impulse, source);
 				}
 			}
 		}

@@ -366,9 +366,15 @@ namespace Assets.scripts.Mono
 		private Vector2 explosionForce = Vector2.zero;
 
 		private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
-		public void AddPhysicsPush(Vector2 force, ForceMode2D mode)
+		public void AddPhysicsPush(Vector2 force, ForceMode2D mode, Character source)
 		{
 			explosionForce += force/rb.mass;
+
+			if (this is EnemyData && source != null)
+			{
+				Monster m = GetOwner() as Monster;
+				m.AI.AddAggro(source, 2);
+			}
 		}
 
 		public virtual void FixedUpdate()
@@ -401,6 +407,8 @@ namespace Assets.scripts.Mono
 
 			explosionForce = new Vector2(newX, newY);
 
+			lastVelocity = explosionForce;
+
 			/*if (physicsPushes.Count > 0)
 			{
 				foreach (PhysicsPush p in physicsPushes)
@@ -410,8 +418,6 @@ namespace Assets.scripts.Mono
 
 				physicsPushes.Clear();
 			}*/
-
-			//lastVelocity = forcedVelocity;
 		}
 
 		public virtual void Update()
@@ -1356,11 +1362,11 @@ namespace Assets.scripts.Mono
 			{
 				float velocity = explosionForce.sqrMagnitude;
 
-				if (velocity > 100*100)
+				if (velocity > 35*35)
 				{
-					velocity = explosionForce.sqrMagnitude;
+					velocity = explosionForce.magnitude;
 
-					int damage = (int) (velocity/100f*3);
+					int damage = (int) (velocity/8f*2);
 
 					if (damage > 0)
 					{
@@ -1368,6 +1374,8 @@ namespace Assets.scripts.Mono
 						GetOwner().ReceiveDamage(null, damage, 0);
 					}
 				}
+
+				explosionForce = new Vector2();
 			}
 
 			foreach (Skill sk in GetOwner().Skills.Skills)

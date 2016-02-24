@@ -75,4 +75,39 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			return MonsterId.Lymfocyte_melee;
 		}
 	}
+
+	public class DurableMeleeCell : MonsterTemplate
+	{
+		public DurableMeleeCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 10;
+
+			IsAggressive = true;
+			AggressionRange = 12;
+			RambleAround = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new MeleeMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.DurableMeleeCell;
+		}
+	}
 }

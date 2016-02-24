@@ -61,7 +61,7 @@ namespace Assets.scripts.Mono
 				data.StartMeleeTargeting(false);
 			}
 
-			if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0))
+			if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0) && !ui.MouseOverUI)
 			{
 				data.StartMeleeTargeting(true);
 			}

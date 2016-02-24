@@ -28,6 +28,10 @@ namespace Assets.scripts.Base
 						{
 							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "This skill {1}", "Press button 2 to use it." }, o);
 						}
+					case "first_skill_unlocked_commoncold":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "Use it to avoid enemies or to charge into them to push them away.", "Press button 2 to use it." }, o);
+						}
 				}
 			}
 			else if (lang == 1)

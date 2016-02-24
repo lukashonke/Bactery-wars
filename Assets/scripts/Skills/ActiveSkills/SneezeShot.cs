@@ -36,7 +36,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 			baseDamage = 20;
 
-			range = 13;
+			range = 12;
 		}
 
 		public override SkillId GetSkillId()

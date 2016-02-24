@@ -56,7 +56,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(mid))
@@ -65,14 +65,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 2))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, 2);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 2);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -81,21 +81,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, 1);
+						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, false, 1);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 2))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, 1);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, false, 1);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 4))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, Random.Range(1, 3));
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, Random.Range(1, 3));
 					}
 				}
 		    }
@@ -137,7 +137,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 				if (desc == null)
 					desc = " does something cool.";
 
-				if (desc != null)
+				if(GameSession.className.Equals("CommonCold"))
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("first_skill_unlocked_commoncold", skillName, desc), 0);
+				else
 					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("first_skill_unlocked", skillName, desc), 0);
 			}
 		}

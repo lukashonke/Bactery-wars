@@ -67,7 +67,7 @@ namespace Assets.scripts.Mono
 		public Text[] statsTexts;
 
 		private List<SpawnData> adminSpawnedData;
-		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
+		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
 		public GameObject adminPanel;
 		public Dropdown adminSpawnPanel;
 
@@ -92,6 +92,7 @@ namespace Assets.scripts.Mono
 
 		public GUIStyle msgStyle;
 		public GUIStyle boxStyle;
+		public GUIStyle skillHoverStyle;
 
 		public class ScreenMsg
 		{
@@ -368,6 +369,32 @@ namespace Assets.scripts.Mono
 
 		void OnGUI()
 		{
+			if (skillHover)
+			{
+				Vector3 mousePos = (Input.mousePosition);
+
+				float x = skillHoverObj.transform.position.x - 5;
+				float y = Screen.height - skillHoverObj.transform.position.y - 50;
+
+
+				Skill sk = data.GetOwner().Skills.GetSkill(skillHoverIndex - 1);
+
+				//float x = mousePos.x;
+				//float y = Screen.height - mousePos.y - 15;
+				Rect r = new Rect(x, y, 25, 14);
+
+				Color b = Color.black;
+				GUI.color = b;
+				GUI.Label(r, sk.GetVisibleName(), skillHoverStyle);
+
+				Color c = Color.white;
+				GUI.color = c;
+
+				r.x -= 1;
+				r.y -= 1;
+				GUI.Label(r, sk.GetVisibleName(), skillHoverStyle);
+			}
+
 			if (screenMessages.Any())
 			{
 				const int w = 500;
@@ -425,6 +452,22 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private bool skillHover;
+		private GameObject skillHoverObj;
+		private int skillHoverIndex;
+
+		public void OnSkillIconHoverEnter(int order)
+		{
+			skillHover = true;
+			skillHoverObj = skillButtons[order - 1];
+			skillHoverIndex = order;
+		}
+
+		public void OnSkillIconHoverExit(int order)
+		{
+			skillHover = false;
+		}
+
 		// Use this for initialization
 		void Start()
 		{
@@ -464,10 +507,12 @@ namespace Assets.scripts.Mono
 
 			helpCanvasPanel = helpCanvas.transform.FindChild("HelpCanvasPanel").gameObject;
 
+			GameObject skillPanel = gameMenu.transform.FindChild("SkillPanel").gameObject;
+
 			skillButtons = new GameObject[9];
 			for (int i = 1; i <= 9; i++)
 			{
-				foreach (Transform child in gameMenu.transform)
+				foreach (Transform child in skillPanel.transform)
 				{
 					if (child.name.Equals("Skill" + i))
 					{
