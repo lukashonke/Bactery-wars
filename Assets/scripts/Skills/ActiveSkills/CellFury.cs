@@ -44,6 +44,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CellFury();
 		}
 
+		public override string GetDescription()
+		{
+			return "Greatly decreases cooldown of autoattack.";
+		}
+
 		public override SkillEffect[] CreateEffects(int param)
 		{
 			int count = 1;
@@ -53,7 +58,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			SkillEffect[] effects = new SkillEffect[count];
 			int index = 0;
 
-			effects[index++] = new EffectMeleeReuse(1, 0.3f, duration, SkillTraits.Melee);
+			effects[index++] = new EffectMeleeReuse(1, 0.2f, duration, SkillTraits.Melee);
 			if(rangeBoost > 1 || rangeBoost < 1)
 				effects[index++] = new EffectSkillRange(rangeBoost, duration, SkillTraits.Melee);
 

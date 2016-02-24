@@ -63,5 +63,24 @@ namespace Assets.scripts
 		{
 			//GameSystem.Instance.SpawnMonster(MonsterId.TestMonster, new Vector3(Random.Range(-5, 5), Random.Range(-5, 5), 0), false);
 		}
+
+		public void PlayerDied()
+		{
+			Invoke("ShowGameOver", 3f);
+		}
+
+		private void ShowGameOver()
+		{
+			GameObject rrPanel = GameObject.Find("GameOver");
+			if (rrPanel != null)
+			{
+				rrPanel.GetComponent<Canvas>().enabled = true;
+			}
+		}
+
+		public void Restart()
+		{
+			Application.LoadLevel(Application.loadedLevel);
+		}
 	}
 }

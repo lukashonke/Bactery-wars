@@ -34,6 +34,13 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		public override void DoDie(Character killer = null, SkillId skillId = SkillId.SkillTemplate)
+		{
+			base.DoDie(killer, skillId);
+
+			GameSystem.Instance.Controller.PlayerDied();
+		}
+
 		public new PlayerData GetData()
 		{
 			return (PlayerData) Data;
@@ -98,7 +105,7 @@ namespace Assets.scripts.Actor
 
 					if (sk is ActiveSkill)
 					{
-						((ActiveSkill)sk).LastUsed = 0;
+						((ActiveSkill)sk).LastUsed = -1000f;
 						Data.SetSkillReuseTimer(sk as ActiveSkill, false);
 					}
 

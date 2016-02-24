@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
@@ -105,6 +106,9 @@ namespace Assets.scripts.Actor
 			if(Knownlist != null)
 			Knownlist.Active = false;
 
+			if(wallCheck != null)
+				StopTask(wallCheck);
+
 			try
 			{
 				foreach (Skill sk in Skills.Skills)
@@ -153,9 +157,35 @@ namespace Assets.scripts.Actor
 			AI.StartAITask();
 
 			CheckWalls();
+
+			wallCheck = StartTask(WallCheckTask());
 		}
 
-		private void CheckWalls()
+		private Coroutine wallCheck;
+
+		private IEnumerator WallCheckTask()
+		{
+			while (GetData().GetBody() != null)
+			{
+				if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
+				{
+					if(this is Monster)
+						DoDie();
+					else if (this is Player)
+					{
+						if (!CheckWalls())
+						{
+							Message("You have been teleported at the start because you got stuck in the walls!");
+							GetData().transform.position = WorldHolder.instance.GetStartPosition();
+						}
+					}
+				}
+
+				yield return new WaitForSeconds(5f);
+			}
+		}
+
+		public bool CheckWalls()
 		{
 			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
 			{
@@ -163,8 +193,8 @@ namespace Assets.scripts.Actor
 
 				int minRange = 2;
 				int maxRange = 4;
-				int limit = 6;
-				int mainLimit = 5;
+				int limit = 12;
+				int mainLimit = 7;
 				Vector3 currentPos = GetData().GetBody().transform.position;
 				Vector3 newPos = currentPos;
 				bool set = false;
@@ -183,33 +213,41 @@ namespace Assets.scripts.Actor
 					Vector3 v = new Vector3(currentPos.x + randX, currentPos.y + randY, 0);
 
 					if (Utils.IsNotAccessible(v))
+					{
+						limit--;
+						if (limit <= 0)
+						{
+							mainLimit--;
+
+							limit = 12;
+
+							if (mainLimit <= 0)
+								break;
+
+							maxRange = (int)(maxRange + maxRange);
+						}
+
 						continue;
+					}
 
 					newPos = v;
 					set = true;
-
-					limit--;
-					if (limit <= 0)
-					{
-						mainLimit--;
-
-						if (mainLimit <= 0)
-							break;
-
-						maxRange *= 2;
-					}
 				}
 
 				if (set)
 				{
 					Debug.DrawLine(currentPos, newPos, Color.blue, 10f);
 					GetData().GetBody().transform.position = newPos;
+					return true;
 				}
 				else
 				{
 					Debug.LogError("couldnt get character " + Name + " away from walls");
+					return false;
 				}
 			}
+
+			return true;
 		}
 
 		public AbstractData GetData()

@@ -54,7 +54,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1).AddHealDrop(50);
 						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1, 50);
 						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1, 50);
 					}
@@ -65,7 +65,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.ChargerCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.ChargerCell, t, false, 1).AddHealDrop(50);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_CENTER, 6))
@@ -88,7 +88,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1).AddHealDrop(50);
 					}
 				}
 		    }
@@ -123,14 +123,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 				player.UnlockSkill(2, true);
 				conquered = false;
 
-				Skill sk = (ActiveSkill)player.Skills.GetSkill(1);
+				Skill sk = (ActiveSkill)player.Skills.GetSkill(2);
 				string skillName = sk.GetVisibleName();
 				string desc = sk.GetDescription().ToLower();
 
 				if (GameSession.className.Equals("CommonCold"))
-					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("first_skill_unlocked_commoncold", skillName, desc), 0);
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("second_skill_unlocked_commoncold", skillName, desc), 0);
 				else
-					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("first_skill_unlocked", skillName, desc), 0);
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("second_skill_unlocked", skillName, desc), 0);
 			}
 		}
 	}

@@ -30,7 +30,27 @@ namespace Assets.scripts.Base
 						}
 					case "first_skill_unlocked_commoncold":
 						{
-							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "Use it to avoid enemies or to charge into them to push them away.", "Press button 2 to use it." }, o);
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "Use it to avoid enemies or to charge into them to push them away. But be careful, some enemies deal contact damage!", "Press button 2 to use it." }, o);
+						}
+					case "second_skill_unlocked":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "This skill {1}", "Press button 3 to use it." }, o);
+						}
+					case "second_skill_unlocked_commoncold":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "Use it to push enemies away from you, possibly smashing them into the walls.", "Press button 3 to use it." }, o);
+						}
+					case "third_skill_unlocked":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "This skill {1}", "Press button 4 to use it." }, o);
+						}
+					case "third_skill_unlocked_commoncold":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "When activated, you will fire super fast! Use it to deal lots of damage in short time.", "Press button 4 to activate." }, o);
+						}
+					case "fourth_level_bossinfo":
+						{
+							return CreateHelpMessageData("Boss!!", new string[] { "There is a small boss in this level! Here are some tips:", "To beat him, you need to find some cover.", "Take advantage of his size - he will get stuck in some narrow gaps."}, o);
 						}
 				}
 			}

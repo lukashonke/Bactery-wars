@@ -1364,6 +1364,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			levelData.OnPlayerTeleportOut(player);
 		}
 
+		public void OnTeleportIn(Player player)
+		{
+			levelData.OnPlayerTeleportIn(player);
+		}
+
 		public int GetMonstersLeft(MapRegion reg)
 		{
 			int c = 0;

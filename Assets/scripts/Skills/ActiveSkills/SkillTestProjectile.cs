@@ -11,6 +11,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject activeProjectile;
 
+		public int force;
+
 		public SkillTestProjectile()
 		{
 			castTime = 0f;
@@ -20,6 +22,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 
 			range = 5;
+
+			force = 15;
 		}
 
 		public override SkillId GetSkillId()
@@ -65,7 +69,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector(0) * 15);
+				rb.velocity = (GetOwnerData().GetForwardVector(0) * force);
 
 				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 

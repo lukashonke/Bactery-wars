@@ -7,6 +7,7 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
 
 namespace Assets.scripts.Upgrade.Classic
 {
@@ -42,6 +43,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public override bool OnPickup(Character owner)
 		{
 			owner.ReceiveHeal(owner, Level * 10);
+			GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(owner.GetData().GetBody(), "Heal " + Level*10, Color.green);
 			return true;
 		}
 

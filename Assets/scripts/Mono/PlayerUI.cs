@@ -67,7 +67,7 @@ namespace Assets.scripts.Mono
 		public Text[] statsTexts;
 
 		private List<SpawnData> adminSpawnedData;
-		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
+		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
 		public GameObject adminPanel;
 		public Dropdown adminSpawnPanel;
 
@@ -375,7 +375,6 @@ namespace Assets.scripts.Mono
 
 				float x = skillHoverObj.transform.position.x - 5;
 				float y = Screen.height - skillHoverObj.transform.position.y - 50;
-
 
 				Skill sk = data.GetOwner().Skills.GetSkill(skillHoverIndex - 1);
 
@@ -774,7 +773,7 @@ namespace Assets.scripts.Mono
 
 			if (objectMessages.Count > 0)
 			{
-				foreach (DamageMsg m in objectMessages.ToArray())
+				foreach (ObjectMsg m in objectMessages.ToArray())
 				{
 					if (m.time + 1.5f < Time.time)
 					{

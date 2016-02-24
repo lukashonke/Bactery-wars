@@ -51,6 +51,51 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		}
 	}
 
+	public class SmallTankCell : MonsterTemplate
+	{
+		public SmallTankCell()
+		{
+			MaxHp = 55;
+			MaxMp = 50;
+			MaxSpeed = 7;
+
+			IsAggressive = true;
+			AggressionRange = 20;
+			RambleAround = false;
+			AlertsAllies = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+
+			sk.baseDamage = 20;
+			sk.pushForce = 100;
+			sk.reuse = 1.5f;
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MeleeMonsterAI a = new MeleeMonsterAI(ch);
+			return a;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.SmallTankCell;
+		}
+	}
+
 	public class ArmoredCell : MonsterTemplate
 	{
 		public ArmoredCell()

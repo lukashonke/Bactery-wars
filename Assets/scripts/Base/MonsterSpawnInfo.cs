@@ -6,6 +6,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 
 namespace Assets.scripts.Base
@@ -34,14 +35,22 @@ namespace Assets.scripts.Base
 			Drop = new DropInfo();
         }
 
-	    public void AddDrop(int chance, Type upgradeType, int level)
+		public MonsterSpawnInfo AddHealDrop(int chance, int level=1)
+		{
+			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level));
+			return this;
+		}
+
+		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int level=1)
 	    {
 			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level));
+			return this;
 	    }
 
-	    public void AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int level=1)
+	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int level=1)
 	    {
 		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity));
+		    return this;
 	    }
 
         public void SetRegion(MapRegion region)

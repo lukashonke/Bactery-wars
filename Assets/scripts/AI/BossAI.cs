@@ -12,6 +12,93 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
+	public class TankSpreadshooterConfusedAI : MonsterAI
+	{
+		public float spreadshootInterval = 5f;
+		public float jumpInterval = 4f;
+
+		public float jumpAtPlayerMinInterval = 4f;
+		public float jumpAtPlayerMaxInterval = 5f;
+
+		private float nextJumpAtPlayerInterval;
+
+		protected ActiveSkill jump = null;
+		protected ActiveSkill shot = null;
+
+		public TankSpreadshooterConfusedAI(Character o) : base(o)
+		{
+			UseTimers();
+		}
+
+		public override void AnalyzeSkills()
+		{
+			jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
+			shot = (ActiveSkill)GetSkillWithTrait(SkillTraits.Damage);
+
+			nextJumpAtPlayerInterval = Random.Range(jumpAtPlayerMinInterval, jumpAtPlayerMinInterval);
+		}
+
+		protected override void AttackTarget(Character target)
+		{
+			SetMainTarget(target);
+
+			bool isCasting = Owner.GetData().IsCasting;
+			bool forcedVelocity = Owner.GetData().forcedVelocity;
+
+			// already doing something
+			if (isCasting || forcedVelocity)
+				return;
+
+			bool canSee = Utils.CanSee(Owner.GetData().GetBody(), GetMainTarget().GetData().GetBody());
+
+			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
+				Owner.GetData().Target = target.GetData().GetBody();
+
+			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
+			Vector3 targetPos = target.GetData().GetBody().transform.position;
+			float dist = Vector3.Distance(ownerPos, targetPos);
+
+			if (currentAction == null && canSee && jump != null && GetTimer("jump", jumpInterval))
+			{
+				Vector3 pos = targetPos;
+
+				SetTimer("jump_at_player");
+
+				float range = Vector3.Distance(ownerPos, pos);
+
+				jump.range = (int)range;
+
+				if (StartAction(CastSkill(pos, jump, dist, true, false, 0f, 0f), 0.5f))
+				{
+					SetTimer("jump");
+					return;
+				}
+			}
+
+			if (shot != null && GetTimer("shoot", spreadshootInterval))
+			{
+				if (StartAction(CastSkill(null, shot, dist, true, false, 0f, 0f), 0.5f))
+				{
+					SetTimer("shoot");
+					return;
+				}
+			}
+
+			if (canSee)
+			{
+				Vector3 nextTarget = Utils.GenerateRandomPositionAround(ownerPos, 5f);
+				StartAction(MoveAction(nextTarget, false, 3), 1f);
+				Debug.Log("can see");
+			}
+			else
+			{
+				Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
+				Debug.Log("CANNOT see");
+			}
+		}
+	}
+
+
 	public class TankSpreadshooterAI : MonsterAI
 	{
 		public float spreadshootInterval = 5f;
@@ -66,7 +153,7 @@ namespace Assets.scripts.AI
 
 					SetTimer("jump_at_player");
 
-					nextJumpAtPlayerInterval = Random.Range(jumpAtPlayerMinInterval, jumpAtPlayerMinInterval);
+					nextJumpAtPlayerInterval = Random.Range(jumpAtPlayerMinInterval, jumpAtPlayerMaxInterval);
 				}
 				else
 				{

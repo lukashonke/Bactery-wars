@@ -12,7 +12,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 	{
 		public TankSpreadshooter()
 		{
-			MaxHp = 200;
+			MaxHp = 150;
 			MaxMp = 50;
 			MaxSpeed = 10;
 
@@ -33,15 +33,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 		{
 			SkillTestProjectileAllAround sk = set.GetSkill(SkillId.SkillTestProjectileAllAround) as SkillTestProjectileAllAround;
 
-			sk.baseDamage = 1;
+			sk.baseDamage = 10;
 			sk.projectileCount = 12;
-			sk.range = 20;
+			sk.range = 30;
 			sk.castTime = 0;
 			sk.reuse = 0f;
+			sk.force = 30;
 
 			CollisionDamageAttack sk2 = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
-			sk2.baseDamage = 1;
+			sk2.baseDamage = 5;
 			sk2.pushForce = 100;
 			sk2.reuse = 1f;
 
@@ -54,7 +55,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			TankSpreadshooterAI a = new TankSpreadshooterAI(ch);
+			TankSpreadshooterConfusedAI a = new TankSpreadshooterConfusedAI(ch);
 
 			a.spreadshootInterval = 5f;
 			a.jumpInterval = 1f;

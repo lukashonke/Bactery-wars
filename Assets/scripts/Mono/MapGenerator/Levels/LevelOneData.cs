@@ -81,7 +81,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, false, 1).AddHealDrop(100);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 2))

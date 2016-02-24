@@ -98,6 +98,11 @@ namespace Assets.scripts.Mono
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
 
+			if (Input.GetKeyDown(KeyCode.T))
+			{
+				data.GetOwner().CheckWalls();
+			}
+
 			if (Input.GetKeyDown(KeyCode.R))
 			{
 				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
@@ -447,8 +452,6 @@ namespace Assets.scripts.Mono
 								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
-
-								Debug.Log("melee interract");
 
 								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();

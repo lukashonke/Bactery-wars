@@ -44,6 +44,11 @@ namespace Assets.scripts.Skills.ActiveSkills
             return new ColdPush();
 		}
 
+		public override string GetDescription()
+		{
+			return "Pushes enemies in front of you away";
+		}
+
 		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(stunDuration) };

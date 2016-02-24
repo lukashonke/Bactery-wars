@@ -34,7 +34,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			reuse = 4f;
 			coolDown = 0;
 			requireConfirm = true;
-			baseDamage = 20;
+			baseDamage = 10;
 
 			range = 12;
 		}

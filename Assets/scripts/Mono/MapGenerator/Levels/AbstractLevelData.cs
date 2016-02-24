@@ -96,6 +96,11 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			
 		}
 
+		public virtual void OnPlayerTeleportIn(Player player)
+		{
+
+		}
+
 		public void OnConquered()
 		{
 			conquered = true;

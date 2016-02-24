@@ -41,6 +41,13 @@ namespace Assets.scripts
 			return false;
 		}
 
+		public static bool CanSee(GameObject obj, GameObject target)
+		{
+			if (Physics2D.Linecast(obj.transform.position, target.transform.position, 1 << OBSTACLES_LAYER))
+				return false;
+			return true;
+		}
+
 		public static RaycastHit2D[] DoubleRaycast(Vector3 origin, Vector3 direction, int range, float width, bool includeCenter=false)
 		{
 			Vector3 shiftDir1 = new Vector3(-origin.y, origin.x, 0).normalized * width;
@@ -174,7 +181,7 @@ namespace Assets.scripts
 				return v;
 			}
 
-			Debug.LogError("couldn¨t find a position that doesnt go into walls!");
+			Debug.LogError("couldnt find a position that doesnt go into walls!");
 
 			return pos;
 		}

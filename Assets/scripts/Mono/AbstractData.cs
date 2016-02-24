@@ -381,33 +381,34 @@ namespace Assets.scripts.Mono
 		{
 			rb.velocity += explosionForce;
 
-			float decrease = rb.mass;
-			float newX = explosionForce.x;
-			float newY = explosionForce.y;
-
-			if (Math.Abs(newX) < decrease)
-				newX = 0;
-			else
+			if (explosionForce.x > 0 || explosionForce.y > 0)
 			{
-				if (newX > 0)
-					newX -= decrease;
-				else if (newX < 0)
-					newX += decrease;
+				float decrease = rb.mass;
+				float newX = explosionForce.x;
+				float newY = explosionForce.y;
+
+				if (Math.Abs(newX) < decrease)
+					newX = 0;
+				else
+				{
+					if (newX > 0)
+						newX -= decrease;
+					else if (newX < 0)
+						newX += decrease;
+				}
+
+				if (Math.Abs(newY) < decrease)
+					newY = 0;
+				else
+				{
+					if (newY > 0)
+						newY -= decrease;
+					else if (newY < 0)
+						newY += decrease;
+				}
+
+				explosionForce = new Vector2(newX, newY);
 			}
-
-			if (Math.Abs(newY) < decrease)
-				newY = 0;
-			else
-			{
-				if (newY > 0)
-					newY -= decrease;
-				else if (newY < 0)
-					newY += decrease;
-			}
-
-			explosionForce = new Vector2(newX, newY);
-
-			lastVelocity = explosionForce;
 
 			/*if (physicsPushes.Count > 0)
 			{
@@ -1211,6 +1212,7 @@ namespace Assets.scripts.Mono
 
 			if (data == null || data.Equals(this))
 				return;
+			Debug.Log(Utils.CanSee(GetBody(), target.gameObject));
 
 			bool doAttack = true;
 			if (data.GetOwner().IsInteractable())
@@ -1225,6 +1227,7 @@ namespace Assets.scripts.Mono
 			// no melee attack
 			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
 				return;
+
 
 			int range = sk.GetUpgradableRange();
 			if (!doAttack)
@@ -1362,7 +1365,7 @@ namespace Assets.scripts.Mono
 			{
 				float velocity = explosionForce.sqrMagnitude;
 
-				if (velocity > 35*35)
+				if (velocity > 25*25)
 				{
 					velocity = explosionForce.magnitude;
 
@@ -1373,6 +1376,8 @@ namespace Assets.scripts.Mono
 						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
 						GetOwner().ReceiveDamage(null, damage, 0);
 					}
+
+					ScheduleCheckWalls(0.5f);
 				}
 
 				explosionForce = new Vector2();
@@ -1400,6 +1405,16 @@ namespace Assets.scripts.Mono
 			{
 				BreakMovement(true);
 			}
+		}
+
+		public void ScheduleCheckWalls(float time)
+		{
+			Invoke("CheckWalls", time);
+		}
+
+		private void CheckWalls()
+		{
+			GetOwner().CheckWalls();
 		}
 
 		public abstract void OnCollisionExit2D(Collision2D coll);

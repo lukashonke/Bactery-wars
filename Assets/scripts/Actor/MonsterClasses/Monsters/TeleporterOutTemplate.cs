@@ -41,8 +41,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
                     WorldHolder.instance.LoadNextMap();
 
-                    // teleport player to new start
-                    data.transform.position = WorldHolder.instance.GetStartPosition();
+					// teleport player to new start
+					data.transform.position = WorldHolder.instance.GetStartPosition();
+
+					WorldHolder.instance.activeMap.OnTeleportIn((Player)source);
 			    }
 			}
 		}

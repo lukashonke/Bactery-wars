@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using UnityEngine;
 
@@ -49,13 +51,78 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-		        }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_LEFT, 4))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1, 66);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 2))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.ChargerCell, t, false, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_RIGHT, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.SmallTankCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.SmallTankCell, t, true, 1).AddHealDrop(100, 2);
+					}
+				}
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
-                }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_CENTER, 3))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1);
+					}
+				}
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
-                }
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_UP, 2))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 3))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, true, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_CENTER, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, false, 1);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.ChargerCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.DementCell, t, true, 1).AddHealDrop(100);
+					}
+
+					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_DOWN, 1))
+					{
+						if (t == null) break;
+
+						SpawnMonsterToRoom(room, MonsterId.TurretCell, t, false, 1).AddHealDrop(80);
+					}
+				}
 		    }
 
             Utils.Timer.EndTimer("spawnmap");
@@ -80,5 +147,23 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	    {
 	        return 2;
 	    }
+
+		public override void OnPlayerTeleportOut(Player player)
+		{
+			if (conquered)
+			{
+				player.UnlockSkill(3, true);
+				conquered = false;
+
+				Skill sk = (ActiveSkill)player.Skills.GetSkill(3);
+				string skillName = sk.GetVisibleName();
+				string desc = sk.GetDescription().ToLower();
+
+				if (GameSession.className.Equals("CommonCold"))
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("third_skill_unlocked_commoncold", skillName, desc), 0);
+				else
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("third_skill_unlocked", skillName, desc), 0);
+			}
+		}
 	}
 }
