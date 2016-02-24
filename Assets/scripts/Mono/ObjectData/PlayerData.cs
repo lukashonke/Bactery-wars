@@ -70,6 +70,17 @@ namespace Assets.scripts.Mono.ObjectData
 		public void PostInit()
 		{
 			player.UnlockSkill(0, false);
+
+			ui.ShowHelpWindow("Welcome to Bactery Wars", "Blah blah blah", "Bla blah bla");
+
+			if (GameSystem.Instance.Controller.isAndroid)
+			{
+				
+			}
+			else
+			{
+				ui.ShowHelpWindow("Controls", "Use ");
+			}
 		}
 
 		public new void Awake()

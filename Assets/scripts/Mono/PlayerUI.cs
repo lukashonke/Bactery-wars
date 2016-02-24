@@ -18,6 +18,9 @@ namespace Assets.scripts.Mono
 {
 	public sealed class PlayerUI : MonoBehaviour
 	{
+		public bool showObjectMessages = true;
+		public bool showHelpWindows = true;
+
 		private bool mouseOverUi = false;
 		public bool MouseOverUI
 		{
@@ -50,6 +53,9 @@ namespace Assets.scripts.Mono
 		public Sprite iconEmptySprite;
 		public Sprite lockedIconSprite;
 
+		public GameObject helpCanvas;
+		public GameObject helpCanvasPanel;
+
 		public bool draggingIcon = false;
 		private GameObject draggedObject;
 		private AbstractUpgrade draggedUpgrade;
@@ -76,16 +82,15 @@ namespace Assets.scripts.Mono
 
 		private float[,] timers;
 
-		private List<Msg> messages = new List<Msg>(5);
-
-		private List<DamageMsg> damages = new List<DamageMsg>();
+		private List<ScreenMsg> screenMessages = new List<ScreenMsg>(5);
+		private List<ObjectMsg> objectMessages = new List<ObjectMsg>();
 
 		public GameObject chatPosition;
 
 		public GUIStyle msgStyle;
 		public GUIStyle boxStyle;
 
-		public class Msg
+		public class ScreenMsg
 		{
 			public string msg;
 			public int level;
@@ -99,19 +104,141 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public class DamageMsg
+		public abstract class ObjectMsg
 		{
 			public Collider2D target;
 			public Vector3 shift;
-			public int dmg;
 			public float time;
 			public float opacity;
 			public Color color;
+
+			public abstract string GetMsg();
+		}
+
+		public class DamageMsg : ObjectMsg
+		{
+			public int dmg;
+
+			public override string GetMsg()
+			{
+				return dmg.ToString();
+			}
+		}
+
+		public class StringMsg : ObjectMsg
+		{
+			public string msg;
+
+			public override string GetMsg()
+			{
+				return msg;
+			}
+		}
+
+		private class HelpWindowQueue
+		{
+			public string title;
+			public string[] text;
+		}
+
+		private Queue<HelpWindowQueue> helpWindowsQueue = new Queue<HelpWindowQueue>();
+		private HelpWindowQueue currentHelpWindow;
+
+		private void ShowNextHelpWindow()
+		{
+			HelpWindowQueue hw = helpWindowsQueue.Dequeue();
+
+			string title = hw.title;
+			string[] text = hw.text;
+
+			currentHelpWindow = hw;
+			GameSystem.Instance.Paused = true;
+
+			if (helpCanvasPanel == null)
+			{
+				Debug.LogError("helpcanvaspanel is null, cant show help");
+				return;
+			}
+
+			Text titleText = helpCanvasPanel.transform.FindChild("HelpTitle").gameObject.GetComponent<Text>();
+			titleText.text = title;
+
+			GameObject helpContent = helpCanvasPanel.transform.FindChild("HelpContent").gameObject;
+			foreach (Transform t in helpContent.transform)
+			{
+				Destroy(t.gameObject);
+			}
+
+			for (int i = 0; i < text.Length; i++)
+			{
+				GameObject child = new GameObject("HelpContentText" + i);
+				child.transform.parent = helpContent.transform;
+
+				Text textObject = child.AddComponent<Text>();
+				textObject.text = text[i];
+				textObject.font = Font.CreateDynamicFontFromOSFont("Arial", 18); //TODO change to something better
+				textObject.color = Color.black;
+				textObject.fontSize = 18;
+			}
+
+			helpCanvas.GetComponent<Canvas>().enabled = true;
+		}
+
+		public void ShowHelpWindow(string title, params string[] text)
+		{
+			if (!showHelpWindows)
+				return;
+
+			HelpWindowQueue hw = new HelpWindowQueue();
+			hw.title = title;
+			hw.text = text;
+
+			helpWindowsQueue.Enqueue(hw);
+
+			if (currentHelpWindow == null)
+			{
+				ShowNextHelpWindow();
+			}
+		}
+
+		public void ConfirmHelp()
+		{
+			CloseHelp();
+		}
+
+		private void CloseHelp()
+		{
+			currentHelpWindow = null;
+			helpCanvas.GetComponent<Canvas>().enabled = false;
+
+			if (helpWindowsQueue.Any())
+			{
+				ShowNextHelpWindow();
+			}
+			else
+			{
+				GameSystem.Instance.Paused = false;
+			}
+		}
+
+		public void ObjectMessage(GameObject target, String text, Color color)
+		{
+			if (!showObjectMessages)
+				return;
+
+			StringMsg msg = new StringMsg();
+			msg.msg = text;
+			msg.target = target.GetComponent<Collider2D>();
+			msg.shift = new Vector3();
+			msg.time = Time.time;
+			msg.color = color;
+
+			objectMessages.Add(msg);
 		}
 
 		public void DamageMessage(GameObject target, int damage, Color color)
 		{
-			if (!showDamageMessages)
+			if (!showObjectMessages)
 				return;
 
 			DamageMsg msg = new DamageMsg();
@@ -121,7 +248,7 @@ namespace Assets.scripts.Mono
 			msg.time = Time.time;
 			msg.color = color;
 
-			damages.Add(msg);
+			objectMessages.Add(msg);
 		}
 
 		public void ScreenMessage(string msg, int level = 1)
@@ -130,7 +257,7 @@ namespace Assets.scripts.Mono
 			{
 				for (int i = 0; i <= (msg.Length / 40); i++)
 				{
-					Msg m = new Msg();
+					ScreenMsg m = new ScreenMsg();
 
 					int start = i * 40;
 					int end = 40;
@@ -146,17 +273,17 @@ namespace Assets.scripts.Mono
 					m.time = Time.time;
 					m.shown = true;
 
-					if (messages.Count >= 5)
+					if (screenMessages.Count >= 5)
 					{
-						messages.RemoveAt(messages.Count - 1);
+						screenMessages.RemoveAt(screenMessages.Count - 1);
 					}
 
-					messages.Insert(0, m);
+					screenMessages.Insert(0, m);
 				}
 			}
 			else
 			{
-				Msg m = new Msg();
+				ScreenMsg m = new ScreenMsg();
 
 				//if (level == 1)
 				m.msg = msg;
@@ -167,18 +294,18 @@ namespace Assets.scripts.Mono
 				m.time = Time.time;
 				m.shown = true;
 
-				if (messages.Count >= 5)
+				if (screenMessages.Count >= 5)
 				{
-					messages.RemoveAt(messages.Count - 1);
+					screenMessages.RemoveAt(screenMessages.Count - 1);
 				}
 
-				messages.Insert(0, m);
+				screenMessages.Insert(0, m);
 			}
 		}
 
 		void OnGUI()
 		{
-			if (messages.Any())
+			if (screenMessages.Any())
 			{
 				const int w = 500;
 				const int h = 25;
@@ -187,7 +314,7 @@ namespace Assets.scripts.Mono
 				float y = Screen.height - chatPosition.transform.position.y;
 
 				int shift = 0;
-				foreach (Msg m in messages)
+				foreach (ScreenMsg m in screenMessages)
 				{
 					if (m.shown)
 					{
@@ -197,14 +324,14 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			if (showDamageMessages && damages.Any())
+			if (showObjectMessages && objectMessages.Any())
 			{
 				const int w = 50;
 				const int h = 15;
 				float x;
 				float y;
 
-				foreach (DamageMsg m in damages)
+				foreach (ObjectMsg m in objectMessages)
 				{
 					if (m.target == null)
 						continue;
@@ -222,7 +349,7 @@ namespace Assets.scripts.Mono
 					Color b = Color.black;
 					b.a = m.opacity;
 					GUI.color = b;
-					GUI.Label(r, m.dmg.ToString(), msgStyle);
+					GUI.Label(r, m.GetMsg(), msgStyle);
 
 					Color c = m.color;
 					c.a = m.opacity;
@@ -230,12 +357,10 @@ namespace Assets.scripts.Mono
 
 					r.x -= 1;
 					r.y -= 1;
-					GUI.Label(r, m.dmg.ToString(), msgStyle);
+					GUI.Label(r, m.GetMsg(), msgStyle);
 				}
 			}
 		}
-
-		public bool showDamageMessages = true;
 
 		// Use this for initialization
 		void Start()
@@ -251,13 +376,13 @@ namespace Assets.scripts.Mono
 			{
 				gameMenu = GameObject.Find("GameMenu_Mobile");
 				settingsPanel = GameObject.Find("SettingsMenu_Mobile");
-				showDamageMessages = false;
+				showObjectMessages = false;
 			}
 			else
 			{
 				gameMenu = GameObject.Find("GameMenu");
 				settingsPanel = GameObject.Find("SettingsMenu");
-				showDamageMessages = true;
+				showObjectMessages = true;
 			}
 
 			gameMenu.GetComponent<Canvas>().enabled = true;
@@ -270,6 +395,11 @@ namespace Assets.scripts.Mono
 			//msgStyle.alignment = TextAnchor.LowerCenter;
 
 			//boxStyle = new GUIStyle();
+
+			helpCanvas = GameObject.Find("HelpCanvas");
+			helpCanvas.GetComponent<Canvas>().enabled = false;
+
+			helpCanvasPanel = helpCanvas.transform.FindChild("HelpCanvasPanel").gameObject;
 
 			skillButtons = new GameObject[9];
 			for (int i = 1; i <= 9; i++)
@@ -515,9 +645,9 @@ namespace Assets.scripts.Mono
 		// Update is called once per frame
 		void Update()
 		{
-			if (messages.Count > 0 && lastMsgUpdate + msgUpdateInterval < Time.time)
+			if (screenMessages.Count > 0 && lastMsgUpdate + msgUpdateInterval < Time.time)
 			{
-				foreach (Msg mess in messages.ToArray())
+				foreach (ScreenMsg mess in screenMessages.ToArray())
 				{
 					if (mess.shown)
 					{
@@ -534,13 +664,13 @@ namespace Assets.scripts.Mono
 				lastMsgUpdate = Time.time;
 			}
 
-			if (damages.Count > 0)
+			if (objectMessages.Count > 0)
 			{
-				foreach (DamageMsg m in damages.ToArray())
+				foreach (DamageMsg m in objectMessages.ToArray())
 				{
 					if (m.time + 1.5f < Time.time)
 					{
-						damages.Remove(m);
+						objectMessages.Remove(m);
 					}
 				}
 			}
@@ -1153,7 +1283,7 @@ namespace Assets.scripts.Mono
 			data.moveOnlyWhenMousePressed = val;
 
 			val = GameObject.Find("ShowDamageMessages").GetComponent<Toggle>().isOn;
-			showDamageMessages = val;
+			showObjectMessages = val;
 
 			val = GameObject.Find("DetailedPathfinding").GetComponent<Toggle>().isOn;
 			if (GameSystem.Instance.detailedPathfinding != val)
