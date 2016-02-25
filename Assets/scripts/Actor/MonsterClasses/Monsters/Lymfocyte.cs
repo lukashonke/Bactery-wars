@@ -9,12 +9,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
         public LymfocyteRanged()
         {
-            MaxHp = 30;
+            MaxHp = 20;
             MaxMp = 50;
             MaxSpeed = 10;
 
-            IsAggressive = false;
-            AggressionRange = 30;
+            IsAggressive = true;
+            AggressionRange = 10;
             RambleAround = true;
         }
 

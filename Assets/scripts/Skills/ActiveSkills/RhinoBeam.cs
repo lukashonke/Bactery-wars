@@ -5,7 +5,6 @@ using System.Text;
 using Assets.scripts.AI;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
@@ -54,6 +53,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new RhinoBeam();
 		}
 
+		public override string GetDescription()
+		{
+			return "Fires a beam that deals large damage and slows targets.";
+		}
+
 		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(0.9f, 2),  };
@@ -78,10 +82,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
 			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
 
-			SerializedObject so = new SerializedObject(ps);
+			/*SerializedObject so = new SerializedObject(ps);
 			so.FindProperty("ShapeModule.radius").floatValue = width/2f;
 			so.ApplyModifiedProperties();
-
+			*/
 			StartParticleEffect(ray);
 
 			UpdateMouseDirection(ray.transform);

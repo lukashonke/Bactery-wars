@@ -71,7 +71,7 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			player.UnlockSkill(0, false);
 
-			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 12), 0);
+			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 0.1), 0);
 
 			if (GameSystem.Instance.Controller.isAndroid)
 			{

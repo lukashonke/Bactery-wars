@@ -46,6 +46,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 					WorldHolder.instance.activeMap.OnTeleportIn((Player)source);
 			    }
+			    else
+			    {
+				    data.GetOwner().Message("Not all enemies are dead yet.");
+			    }
 			}
 		}
 

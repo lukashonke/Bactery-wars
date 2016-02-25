@@ -98,12 +98,14 @@ namespace Assets.scripts.Mono
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
 
-			if (Input.GetKeyDown(KeyCode.T))
+			if (Input.GetKeyDown(KeyCode.R))
 			{
-				data.GetOwner().CheckWalls();
+				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 0, 10, 1);
+				u.Init();
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
 
-			if (Input.GetKeyDown(KeyCode.R))
+			/*if (Input.GetKeyDown(KeyCode.R))
 			{
 				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
 				data.GetOwner().UnequipUpgrade(u);
@@ -112,7 +114,7 @@ namespace Assets.scripts.Mono
 				u = data.GetOwner().Inventory.GetUpgrade(typeof(TemplateUpgrade));
 				data.GetOwner().UnequipUpgrade(u);
 				data.GetOwner().RemoveUpgrade(u);
-			}
+			}*/
 
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{

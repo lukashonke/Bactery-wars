@@ -187,6 +187,7 @@ namespace Assets.scripts.Actor
 
 		public bool CheckWalls()
 		{
+			int iteration = 0;
 			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
 			{
 				//Debug.LogError("im in walls!, teleporting away");
@@ -201,6 +202,12 @@ namespace Assets.scripts.Actor
 
 				while (!set)
 				{
+					iteration++;
+					if (iteration > 1000)
+					{
+						return true;
+					}
+
 					float randX = Random.Range(minRange, maxRange);
 					float randY = Random.Range(minRange, maxRange);
 
@@ -276,6 +283,7 @@ namespace Assets.scripts.Actor
 
 			if (upg.upgrade.GoesIntoBasestatSlot)
 			{
+				Message("You have absorbed " + upg.upgrade.VisibleName + "");
 				Inventory.AddBasestatUpgrade(upg.upgrade);
 				upg.DeleteMe(true);
 				Data.UpdateInventory(Inventory);

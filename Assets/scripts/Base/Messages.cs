@@ -52,6 +52,18 @@ namespace Assets.scripts.Base
 						{
 							return CreateHelpMessageData("Boss!!", new string[] { "There is a small boss in this level! Here are some tips:", "To beat him, you need to find some cover.", "Take advantage of his size - he will get stuck in some narrow gaps."}, o);
 						}
+					case "fourth_skill_unlocked":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "This skill {1}", "Press button 5 to use it." }, o);
+						}
+					case "fourth_skill_unlocked_commoncold":
+						{
+							return CreateHelpMessageData("Unlocked a skill!", new string[] { "Skill {0} is now available!", "You will fire a strong beam that deals heavy damage and slows down targets by 90%.", "Press button 5 to activate." }, o);
+						}
+					case "fifth_level_info":
+						{
+							return CreateHelpMessageData("Last tutorial level!", new string[] { "This level contains multiple kinds of enemies.", "Combine your skills to deal with them." }, o);
+						}
 				}
 			}
 			else if (lang == 1)

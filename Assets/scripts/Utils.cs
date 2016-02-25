@@ -227,9 +227,15 @@ namespace Assets.scripts
 			dir.Normalize();
 
 			Vector3 point = from;
-
+			int iteration = 0;
 			while (point != v) // Try to reach the point starting from the far off point.  This will pass through faces to reach its objective.
 			{
+				iteration++;
+				if (iteration > 100)
+				{
+					Debug.LogError("stucked!!");
+					return true;
+				}
 				RaycastHit2D hit = Physics2D.Linecast(point, v, 1 << OBSTACLES_LAYER);
 
 				if (hit.collider != null && hit.collider.gameObject.name.Equals("Cave Generator")) // Progressively move the point forward, stopping everytime we see a new plane in the way.

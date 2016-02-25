@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿using System.Runtime.InteropServices;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -31,6 +32,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			sk.castTime = 0.5f;
 			sk.range = AggressionRange;
+		}
+
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			if(level == 2)
+				m.UpdateMaxHp(m.Status.MaxHp + 10);
+			else
+			{
+				m.UpdateMaxHp(m.Status.MaxHp + 10 * (level - 1));
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)

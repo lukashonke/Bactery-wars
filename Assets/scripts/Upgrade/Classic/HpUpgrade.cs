@@ -43,7 +43,7 @@ namespace Assets.scripts.Upgrade.Classic
 		public override bool OnPickup(Character owner)
 		{
 			owner.ReceiveHeal(owner, Level * 10);
-			GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(owner.GetData().GetBody(), "Heal " + Level*10, Color.green);
+			GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(owner.GetData().GetBody(), "Heal +" + Level*10, Color.green);
 			return true;
 		}
 

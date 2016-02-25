@@ -7,6 +7,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator.Levels
@@ -55,8 +56,10 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
 					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1).AddHealDrop(100, 3);
-				}
+	                SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1)
+		                .AddHealDrop(100, 10)
+		                .AddDrop(100, typeof (ShieldUpgrade));
+                }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {
                 }
@@ -94,17 +97,17 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			if (conquered)
 			{
-				player.UnlockSkill(3, true);
+				player.UnlockSkill(4, true);
 				conquered = false;
 
-				Skill sk = (ActiveSkill)player.Skills.GetSkill(1);
+				Skill sk = (ActiveSkill)player.Skills.GetSkill(4);
 				string skillName = sk.GetVisibleName();
 				string desc = sk.GetDescription().ToLower();
 
 				if (GameSession.className.Equals("CommonCold"))
-					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("third_skill_unlocked_commoncold", skillName, desc), 0);
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("fourth_skill_unlocked_commoncold", skillName, desc), 0);
 				else
-					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("third_skill_unlocked", skillName, desc), 0);
+					player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("fourth_skill_unlocked", skillName, desc), 0);
 			}
 		}
 	}
