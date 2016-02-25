@@ -1212,7 +1212,6 @@ namespace Assets.scripts.Mono
 
 			if (data == null || data.Equals(this))
 				return;
-			Debug.Log(Utils.CanSee(GetBody(), target.gameObject));
 
 			bool doAttack = true;
 			if (data.GetOwner().IsInteractable())

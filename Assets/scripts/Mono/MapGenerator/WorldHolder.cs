@@ -69,7 +69,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 			else
 			{
-				MapType type = GetNextLevelType(6);
+				MapType type = GetNextLevelType(1);
 				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height);
 			}
 			
@@ -87,7 +87,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			int level = old.x + 2;
 			if (skipTutorial)
 			{
-				level = 6;
+				level += 5;
 				Debug.Log("skipping tutorial..");
 			}
 
@@ -108,7 +108,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					type = MapType.LevelFive;
 					break;
 				default:
-					type = GetNextLevelType(level);
+					type = GetNextLevelType(level-5);
 					break;
 			}
 
@@ -121,6 +121,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private MapType GetNextLevelType(int level)
 		{
+			Debug.Log("next level " + level);
 			return MapType.Test;
 		}
 
