@@ -32,6 +32,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		[Range(0, 100)]
 		public int randomFillPercent;
 
+		public bool skipTutorial = false;
+
 		public bool completelyRandomSeed;
 
 		public bool doDebug = true;
@@ -49,6 +51,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			maps = new Dictionary<Cords, MapHolder>();
 
+			skipTutorial = GameSession.skipTutorial;
+
 			darkPlaneTemplate = GameObject.Find("Total Background");
 
 			// create the first map
@@ -57,7 +61,18 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height);
+			MapHolder newMap = null;
+
+			if (!skipTutorial)
+			{
+				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height);
+			}
+			else
+			{
+				MapType type = GetNextLevelType(6);
+				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height);
+			}
+			
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -70,23 +85,31 @@ namespace Assets.scripts.Mono.MapGenerator
 			Cords newCords = new Cords(old.x + 1, old.y);
 
 			int level = old.x + 2;
+			if (skipTutorial)
+			{
+				level = 6;
+				Debug.Log("skipping tutorial..");
+			}
+
 			MapType type = MapType.LevelOne;
 
 			switch (level)
 			{
-				case 2:
+				case 2: // tutorial
 					type = MapType.LevelTwo;
 					break;
-				case 3:
+				case 3: // tutorial
 					type = MapType.LevelThree;
 					break;
-				case 4:
+				case 4: // tutorial
 					type = MapType.LevelFour;
 					break;
-				case 5:
+				case 5: // tutorial
 					type = MapType.LevelFive;
 					break;
-
+				default:
+					type = GetNextLevelType(level);
+					break;
 			}
 
 			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50);
@@ -94,6 +117,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			maps.Add(newCords, newMap);
 			return newCords;
+		}
+
+		private MapType GetNextLevelType(int level)
+		{
+			return MapType.Test;
 		}
 
 		public void SetActiveLevel(int x, int y)

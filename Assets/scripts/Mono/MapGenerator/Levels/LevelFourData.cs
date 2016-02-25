@@ -35,6 +35,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public LevelFourData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelFour;
+			tutorialLevel = true;
 		}
 
 		public override void Generate()

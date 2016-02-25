@@ -13,13 +13,16 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	public abstract class AbstractLevelData
 	{
 		public MapType type;
-		protected MapHolder map;
 
+		protected MapHolder map;
 		protected bool conquered = false;
+
+		protected bool tutorialLevel;
 
 		public AbstractLevelData(MapHolder holder)
 		{
 			map = holder;
+			tutorialLevel = false;
 		}
 
 		public abstract void Generate();
@@ -100,8 +103,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 
 		}
-
-		public void OnConquered()
+		
+		public void OnConquered() 
 		{
 			conquered = true;
 		}

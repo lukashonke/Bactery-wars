@@ -573,7 +573,7 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
-		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
+		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit)
 		{
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
 			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
@@ -584,6 +584,8 @@ namespace Assets.scripts.Actor
 			{
 				baseDamage = (int) (baseDamage*Status.CriticalDamageMul);
 			}
+
+			wasCrit = crit;
 
 			return baseDamage;
 		}
@@ -614,7 +616,7 @@ namespace Assets.scripts.Actor
 			GetData().SetVisibleHp(Status.Hp);
 		}
 
-		public void ReceiveDamage(Character source, int damage, SkillId skillId=0)
+		public void ReceiveDamage(Character source, int damage, SkillId skillId=0, bool wasCrit=false)
 		{
 			if (Status.IsDead || damage <= 0)
 				return;
@@ -628,7 +630,7 @@ namespace Assets.scripts.Actor
 
 			if (source != null)
 			{
-				source.OnGiveDamage(this, damage, skillId);
+				source.OnGiveDamage(this, damage, skillId, wasCrit);
 			}
 
 			if (Status.IsDead)
@@ -641,11 +643,14 @@ namespace Assets.scripts.Actor
 			AI.AddAggro(source, damage);
 		}
 
-		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0)
+		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0, bool wasCrit=false)
 		{
 			if (this is Player)
 			{
-				((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
+				if (wasCrit)
+					((Player)this).GetData().ui.ObjectMessage(target.GetData().GetBody(), "*crit* " + damage, Color.green);
+				else
+					((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
 			}
 
 			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)

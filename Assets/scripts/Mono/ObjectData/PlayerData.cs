@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using UnityEngine;
@@ -70,6 +72,16 @@ namespace Assets.scripts.Mono.ObjectData
 		public void PostInit()
 		{
 			player.UnlockSkill(0, false);
+
+			bool noTutorial = WorldHolder.instance.skipTutorial;
+
+			if(noTutorial)
+			{
+				for (int i = 1; i < 5; i++)
+				{
+					player.UnlockSkill(i, false);
+				}
+			}
 
 			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 0.1), 0);
 

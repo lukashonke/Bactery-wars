@@ -308,7 +308,7 @@ namespace Assets.scripts.Mono
 			DamageMsg msg = new DamageMsg();
 			msg.dmg = damage;
 			msg.target = target.GetComponent<Collider2D>();
-			msg.shift = new Vector3();
+			msg.shift = new Vector3(Random.Range(-8, 8), Random.Range(-8, 8));
 			msg.time = Time.time;
 			msg.color = color;
 

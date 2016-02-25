@@ -86,6 +86,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			so.FindProperty("ShapeModule.radius").floatValue = width/2f;
 			so.ApplyModifiedProperties();
 			*/
+
 			StartParticleEffect(ray);
 
 			UpdateMouseDirection(ray.transform);

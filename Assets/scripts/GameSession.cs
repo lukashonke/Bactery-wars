@@ -11,5 +11,6 @@ namespace Assets.scripts
 		public static string difficulty = "Easy";
 		public static string gameType = "Normal";
 		public static string profileName = "Lukas";
+		public static bool skipTutorial = false;
 	}
 }
