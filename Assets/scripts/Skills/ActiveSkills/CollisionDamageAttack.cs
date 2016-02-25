@@ -10,7 +10,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject target;
 
-		public int pushForce = 200;
+		public int pushForce = 100;
 
 		public CollisionDamageAttack()
 		{
@@ -39,7 +39,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CollisionDamageAttack();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectPushaway(pushForce), };
 		}
@@ -81,7 +81,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -94,15 +94,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 			if (gameObject != null && gameObject.Equals(GetOwnerData().GetBody()))
 			{
-				if (other.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(other.gameObject.GetChar()))
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
 				{
 					if (CanUse())
 					{
-						Start(other.gameObject);
+						Start(coll.gameObject);
 					}
 				}
 			}

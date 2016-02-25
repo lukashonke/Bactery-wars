@@ -49,7 +49,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 				source.OnAttack(target);
 
-				target.ReceiveDamage(source, dmg);
+				target.ReceiveDamage(source, dmg, SourceSkill);
 			}
 		}
 

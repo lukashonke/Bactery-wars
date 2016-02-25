@@ -7,6 +7,8 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 
 namespace Assets.scripts.Actor
@@ -32,6 +34,13 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		public override void DoDie(Character killer = null, SkillId skillId = SkillId.SkillTemplate)
+		{
+			base.DoDie(killer, skillId);
+
+			GameSystem.Instance.Controller.PlayerDied();
+		}
+
 		public new PlayerData GetData()
 		{
 			return (PlayerData) Data;
@@ -54,6 +63,8 @@ namespace Assets.scripts.Actor
 				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
+				newSkill.IsLocked = true;
+
 				Skills.AddSkill(newSkill);
 
 				i++;
@@ -69,6 +80,95 @@ namespace Assets.scripts.Actor
 			}
 
 			Template.InitSkillsOnPlayer(Skills, MeleeSkill);
+
+			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
+			Inventory.Capacity = Template.InventoryCapacity;
+
+			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new DamageUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(1).Init().SetOwner(this));
+
+			Data.UpdateInventory(Inventory);
+			Inventory.LoadUpgrades();
+			UpdateStats();
+		}
+
+		public void UnlockSkill(int order, bool msg)
+		{
+			int i = 0;
+			foreach (Skill sk in Skills.Skills)
+			{
+				if (i == order)
+				{
+					sk.IsLocked = false;
+
+					if (sk is ActiveSkill)
+					{
+						((ActiveSkill)sk).LastUsed = -1000f;
+						Data.SetSkillReuseTimer(sk as ActiveSkill, false);
+					}
+
+					if(msg)
+						Message("You have unlocked skill " + sk.GetVisibleName() + ".");
+				}
+				i++;
+			}
+		}
+
+		public override void UpdateStats()
+		{
+			Debug.Log("updating stats");
+
+			int tmpMaxHp = Template.MaxHp;
+			int tmpMaxMp = Template.MaxMp;
+			int tmpCritRate = Template.CriticalRate;
+			float tmpCritDmg = Template.CriticalDamageMul;
+			float tmpRunSpeed = Template.MaxSpeed;
+			float tmpDmgMul = Template.DamageMul;
+			float tmpDmgAdd = Template.DamageAdd;
+			float tmpShield = Template.Shield;
+
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.ModifyMaxHp(ref tmpMaxHp);
+				u.ModifyMaxMp(ref tmpMaxMp);
+				u.ModifyCriticalRate(ref tmpCritRate);
+				u.ModifyCriticalDmg(ref tmpCritDmg);
+				u.ModifyRunSpeed(ref tmpRunSpeed);
+				u.ModifyDmgMul(ref tmpDmgMul);
+				u.ModifyDmgAdd(ref tmpDmgAdd);
+				u.ModifyShield(ref tmpShield);
+			}
+
+			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
+			{
+				u.ModifyMaxHp(ref tmpMaxHp);
+				u.ModifyMaxMp(ref tmpMaxMp);
+				u.ModifyCriticalRate(ref tmpCritRate);
+				u.ModifyCriticalDmg(ref tmpCritDmg);
+				u.ModifyRunSpeed(ref tmpRunSpeed);
+				u.ModifyDmgMul(ref tmpDmgMul);
+				u.ModifyDmgAdd(ref tmpDmgAdd);
+				u.ModifyShield(ref tmpShield);
+			}
+
+			UpdateMaxHp(tmpMaxHp);
+			if (Status.Hp > Status.MaxHp)
+				UpdateHp(Status.MaxHp);
+
+			UpdateMaxMp(tmpMaxMp);
+			if (Status.Mp > Status.MaxMp)
+				UpdateMp(Status.MaxMp);
+
+			Status.CriticalRate = tmpCritRate;
+			Status.CriticalDamageMul = tmpCritDmg;
+			Status.DamageOutputMul = tmpDmgMul;
+			Status.DamageOutputAdd = tmpDmgAdd;
+			Status.Shield = tmpShield;
+			SetMoveSpeed(tmpRunSpeed);
+
+			Data.UpdateStats();
 		}
 
 		/// <summary>
@@ -129,6 +229,11 @@ namespace Assets.scripts.Actor
 		public override bool IsInteractable()
 		{
 			return false;
+		}
+
+		public override void Message(string s, int level=1)
+		{
+			GetData().ui.ScreenMessage(s, level);
 		}
 	}
 }

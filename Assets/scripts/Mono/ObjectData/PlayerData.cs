@@ -4,6 +4,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -59,9 +60,27 @@ namespace Assets.scripts.Mono.ObjectData
 
 			ui = GetComponent<PlayerUI>();
 
-		    IsVisibleToPlayer = true;
+			IsVisibleToPlayer = true;
+
+			Invoke("PostInit", 0.2f);
 
             Debug.Log("Registering new data for player " + player.Name);
+		}
+
+		public void PostInit()
+		{
+			player.UnlockSkill(0, false);
+
+			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 0.1), 0);
+
+			if (GameSystem.Instance.Controller.isAndroid)
+			{
+				
+			}
+			else
+			{
+				ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start_controls"), 0);
+			}
 		}
 
 		public new void Awake()
@@ -116,9 +135,12 @@ namespace Assets.scripts.Mono.ObjectData
 
 		}
 
-		public override void SetSkillReuseTimer(ActiveSkill activeSkill)
+		public override void SetSkillReuseTimer(ActiveSkill activeSkill, bool reset=false)
 		{
-			ui.SetReuseTimer(activeSkill);
+			if(reset)
+				ui.ResetReuseTimer(activeSkill);
+			else
+				ui.SetReuseTimer(activeSkill);
 		}
 
 		/// <summary>
@@ -253,6 +275,18 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				GetOwner().MeleeSkill.DoAutoattack();
 			}
+		}
+
+		public override void UpdateInventory(Inventory inv)
+		{
+			if(ui != null)
+				ui.UpdateInventory(inv);
+		}
+
+		public override void UpdateStats() //TODO call this on level change, hp change etc
+		{
+			if(ui != null)
+				ui.UpdateStatsInfo();
 		}
 
 		public override Character GetOwner()

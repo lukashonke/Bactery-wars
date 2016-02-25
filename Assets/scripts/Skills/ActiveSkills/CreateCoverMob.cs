@@ -46,7 +46,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CreateCovermOB();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return null;
 		}
@@ -114,7 +114,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -127,7 +127,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 		}
 

@@ -44,7 +44,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new MucusWarrior();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return null;
 		}
@@ -106,7 +106,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 			Character ch = gameObject.GetChar();
 
@@ -131,7 +131,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 		}
 

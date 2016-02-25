@@ -9,6 +9,7 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -81,7 +82,7 @@ namespace Assets.scripts.Mono
 		// zastupne promenne objektu
 		public int visibleMaxHp;
 		public int visibleHp;
-		public int moveSpeed;
+		public float moveSpeed;
 		public int rotateSpeed;
 		public int level;
 
@@ -112,7 +113,7 @@ namespace Assets.scripts.Mono
 		public GameObject QueueMeleeTarget { get; set; }
 
 		private bool fixedRotation;
-		private int fixedSpeed;
+		private float fixedSpeed;
 
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
@@ -182,6 +183,11 @@ namespace Assets.scripts.Mono
 			seeker = GetComponent<Seeker>();
 			if (usesPathfinding && seeker == null)
 				Debug.LogError("object " + gameObject.name + " does not have a Seeker component yet it uses pathfinding");
+
+			if (seeker != null)
+			{
+				seeker.tagPenalties[1] = 1000;
+			}
 		}
 
 		protected Path currentPath;
@@ -277,9 +283,11 @@ namespace Assets.scripts.Mono
 		public void ResetPath()
 		{
 			if (currentPath != null)
+			{
 				currentPath.Release(this);
+				currentPath = null;
+			}
 
-			currentPath = null;
 			currentPathNode = 0;
 		}
 
@@ -355,15 +363,54 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private Vector2 explosionForce = Vector2.zero;
+
 		private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
-		public void AddPhysicsPush(Vector2 force, ForceMode2D mode)
+		public void AddPhysicsPush(Vector2 force, ForceMode2D mode, Character source)
 		{
-			physicsPushes.Add(new PhysicsPush(force, mode));
+			explosionForce += force/rb.mass;
+
+			if (this is EnemyData && source != null)
+			{
+				Monster m = GetOwner() as Monster;
+				m.AI.AddAggro(source, 2);
+			}
 		}
 
 		public virtual void FixedUpdate()
 		{
-			if (physicsPushes.Count > 0)
+			rb.velocity += explosionForce;
+
+			if (explosionForce.x > 0 || explosionForce.y > 0)
+			{
+				float decrease = rb.mass;
+				float newX = explosionForce.x;
+				float newY = explosionForce.y;
+
+				if (Math.Abs(newX) < decrease)
+					newX = 0;
+				else
+				{
+					if (newX > 0)
+						newX -= decrease;
+					else if (newX < 0)
+						newX += decrease;
+				}
+
+				if (Math.Abs(newY) < decrease)
+					newY = 0;
+				else
+				{
+					if (newY > 0)
+						newY -= decrease;
+					else if (newY < 0)
+						newY += decrease;
+				}
+
+				explosionForce = new Vector2(newX, newY);
+			}
+
+			/*if (physicsPushes.Count > 0)
 			{
 				foreach (PhysicsPush p in physicsPushes)
 				{
@@ -371,9 +418,7 @@ namespace Assets.scripts.Mono
 				}
 
 				physicsPushes.Clear();
-			}
-
-			lastVelocity = rb.velocity;
+			}*/
 		}
 
 		public virtual void Update()
@@ -490,13 +535,15 @@ namespace Assets.scripts.Mono
 					{
 						if (this is PlayerData) anim.SetFloat("MOVE_SPEED", 1);
 						
-						int speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
+						float speed = fixedSpeed > -1 ? fixedSpeed : moveSpeed;
+
+						if (fixedSpeed < 0 && GetOwner().Status.IsWalking)
+							speed = 3;
 
 						if (USE_VELOCITY_MOVEMENT)
 						{
 							Vector3 newVelocity = currentDestination - body.transform.position;
 							newVelocity.Normalize();
-
 
 							SetVelocity(newVelocity * speed);
 						}
@@ -945,22 +992,22 @@ namespace Assets.scripts.Mono
 			rotationEnabled = val;
 		}
 
-		public int GetMoveSpeed()
+		public float GetMoveSpeed()
 		{
 			return moveSpeed;
 		}
 
-		public void SetMoveSpeed(int speed)
+		public void SetMoveSpeed(float speed)
 		{
-			moveSpeed = speed;
+			moveSpeed = speed;	
 		}
 
-		public void SetFixedSpeed(int speed)
+		public void SetFixedSpeed(float speed)
 		{
 			fixedSpeed = speed;
 		}
 
-		public int GetFixedSpeed()
+		public float GetFixedSpeed()
 		{
 			return fixedSpeed;
 		}
@@ -1116,6 +1163,9 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public Vector3 GetForwardVector(int angle)
 		{
+			if (angle == 0)
+				return GetForwardVector();
+
 			// 1. moznost
 			//Vector3 nv = Quaternion.AngleAxis(angle, Vector3.forward) * heading.normalized;
 
@@ -1162,6 +1212,7 @@ namespace Assets.scripts.Mono
 
 			if (data == null || data.Equals(this))
 				return;
+			Debug.Log(Utils.CanSee(GetBody(), target.gameObject));
 
 			bool doAttack = true;
 			if (data.GetOwner().IsInteractable())
@@ -1177,7 +1228,8 @@ namespace Assets.scripts.Mono
 			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
 				return;
 
-			int range = sk.range;
+
+			int range = sk.GetUpgradableRange();
 			if (!doAttack)
 				range = 4;
 
@@ -1240,7 +1292,7 @@ namespace Assets.scripts.Mono
 			minRangeToTarget = range;
 		}
 
-		public void MoveTo(GameObject target, bool fixedRotation=false, int fixedSpeed=-1)
+		public void MoveTo(GameObject target, bool fixedRotation=false, float fixedSpeed=-1)
 		{
 			if (this is PlayerData)
 			{
@@ -1258,7 +1310,7 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public bool MoveTo(Vector3 target, bool fixedRotation = false, int fixedSpeed=-1)
+		public bool MoveTo(Vector3 target, bool fixedRotation = false, float fixedSpeed=-1)
 		{
 			if (this is PlayerData)
 			{
@@ -1295,6 +1347,14 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public virtual void UpdateInventory(Inventory inv)
+		{
+		}
+
+		public virtual void UpdateStats()
+		{
+		}
+
 		public abstract Character GetOwner();
 		public abstract void SetOwner(Character ch);
 
@@ -1303,18 +1363,24 @@ namespace Assets.scripts.Mono
 			// hit the wall
 			if (coll.gameObject != null && coll.gameObject.name.Equals("Cave Generator"))
 			{
-				float velocity = lastVelocity.sqrMagnitude;
+				float velocity = explosionForce.sqrMagnitude;
 
-				if (velocity > 100*100)
+				if (velocity > 25*25)
 				{
-					velocity = lastVelocity.magnitude;
+					velocity = explosionForce.magnitude;
 
-					int damage = (int) (velocity/100f*3);
+					int damage = (int) (velocity/8f*2);
 
-					Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
+					if (damage > 0)
+					{
+						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
+						GetOwner().ReceiveDamage(null, damage, 0);
+					}
 
-					GetOwner().ReceiveDamage(null, damage);
+					ScheduleCheckWalls(0.5f);
 				}
+
+				explosionForce = new Vector2();
 			}
 
 			foreach (Skill sk in GetOwner().Skills.Skills)
@@ -1341,6 +1407,16 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public void ScheduleCheckWalls(float time)
+		{
+			Invoke("CheckWalls", time);
+		}
+
+		private void CheckWalls()
+		{
+			GetOwner().CheckWalls();
+		}
+
 		public abstract void OnCollisionExit2D(Collision2D coll);
 		public abstract void OnCollisionStay2D(Collision2D coll);
 
@@ -1358,7 +1434,7 @@ namespace Assets.scripts.Mono
 		public abstract void OnTriggerExit2D(Collider2D obj);
 		public abstract void OnTriggerStay2D(Collider2D obj);
 
-		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill)
+		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill, bool reset=false)
 		{
 		}
 	}

@@ -9,6 +9,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -34,7 +35,7 @@ namespace Assets.scripts.Skills
 		protected float updateFrequency;
 
 		/// pri kratkem range je vhodne snizit tuto frekvenci pro presnejsi vypocet, defaultne to je nastaveno na 0.2f (5x/s)
-		protected float rangeCheckFrequency;
+		public float rangeCheckFrequency;
 
 		public float castTime;
 		public float coolDown;
@@ -45,6 +46,7 @@ namespace Assets.scripts.Skills
 		public bool resetMoveTarget;
 		public bool movementAbortsSkill;
 		public bool triggersOwnerCollision;
+		public SkillId skillToBeRechargedOnThisUse;
 
 		/// how often (in seconds) is the damage dealth - eg. 250dmg/sec will be 0.25f; if it is one time damage, leave it at 0
 		public float baseDamageFrequency;
@@ -59,7 +61,16 @@ namespace Assets.scripts.Skills
 		public bool MovementBreaksConfirmation { get; protected set; }
 
 		/// the time when the skill was last used
-		public float LastUsed { get; private set; }
+		public float LastUsed { get; set; }
+
+
+		public int maxConsecutiveCharges;
+		public int currentConsecutiveCharges;
+		public float consecutiveTimelimit;
+
+		private float firstUsedCharge;
+		private bool isWaitingForConsecutiveCharges;
+		private Coroutine startReuseTask;
 
 		/// represents the vector that usually points from the player_object to the mouse direction
 		protected Vector3 mouseDirection;
@@ -87,7 +98,9 @@ namespace Assets.scripts.Skills
 			breaksMouseMovement = true;
 			resetMoveTarget = true;
 			triggersOwnerCollision = false;
-
+			maxConsecutiveCharges = 1;
+			consecutiveTimelimit = 3f;
+			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
@@ -109,7 +122,7 @@ namespace Assets.scripts.Skills
 		public abstract void OnFinish();
 
 		/// sent from GameObjects created using this skill
-		public abstract void MonoUpdate(GameObject gameObject);
+		public abstract void MonoUpdate(GameObject gameObject, bool fixedUpdate);
 
 		/// can the player move while casting?
 		public abstract bool CanMove();
@@ -133,11 +146,18 @@ namespace Assets.scripts.Skills
 
 		protected void RotateArrowToMouseDirection(GameObject o, int plusAngle)
 		{
-			Quaternion newRotation = Quaternion.LookRotation(-mouseDirection, Vector3.forward);
-			newRotation.z = newRotation.z + plusAngle;
+			Vector3 dir = mouseDirection;
+			if (plusAngle > 0)
+			{
+				dir = Quaternion.Euler(new Vector3(0, 0, plusAngle)) * dir;
+			}
+
+			Quaternion newRotation = Quaternion.LookRotation(-dir, Vector3.forward);
+			newRotation.z = newRotation.z;
 			newRotation.x = 0;
 			newRotation.y = 0;
-			confirmObject.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
+
+			o.transform.rotation = newRotation;  //Utils.GetRotationToDirectionVector(mouseDirection);
 		}
 
 		protected void UpdateDirectionArrowScale(int range, GameObject o)
@@ -172,7 +192,7 @@ namespace Assets.scripts.Skills
 		public virtual void MonoCollisionExit(GameObject gameObject, Collision2D coll) { }
 		public virtual void MonoCollisionStay(GameObject gameObject, Collision2D coll) { }
 
-		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D other) { }
+		public virtual void MonoTriggerEnter(GameObject gameObject, Collider2D coll) { }
 		public virtual void MonoTriggerExit(GameObject gameObject, Collider2D other) { }
 		public virtual void MonoTriggerStay(GameObject gameObject, Collider2D other) { }
 		public virtual void OnAfterEnd() { }
@@ -222,6 +242,9 @@ namespace Assets.scripts.Skills
 
 		public override bool CanUse()
 		{
+			if (IsLocked)
+				return false;
+
 			if (Owner == null)
 			{
 				Debug.LogError("Error: skill ID " + Enum.GetName(typeof(SkillId), GetSkillId()) + " nema nastavenyho majitele skillu - nelze ho castit");
@@ -232,6 +255,16 @@ namespace Assets.scripts.Skills
 			{
 				//Debug.Log("skill already in use");
 				return false;
+			}
+
+			if (isWaitingForConsecutiveCharges)
+			{
+				float time = Time.time;
+
+				if (firstUsedCharge + consecutiveTimelimit < time && currentConsecutiveCharges < maxConsecutiveCharges)
+				{
+					return true;
+				}
 			}
 
 			if (reuse > 0)
@@ -281,12 +314,14 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		public override void SetReuseTimer()
 		{
+			isWaitingForConsecutiveCharges = false;
 			LastUsed = Time.time;
 			GetOwnerData().SetSkillReuseTimer(this);
 		}
 
 		public void Start(Vector3 inputPosition)
 		{
+			initTarget = null;
 			mouseDirection = inputPosition - GetOwnerData().GetBody().transform.position;
 			Start();
 		}
@@ -371,7 +406,31 @@ namespace Assets.scripts.Skills
 			}
 
 			// start the reuse timer
-			SetReuseTimer();
+			if (maxConsecutiveCharges <= 1)
+				SetReuseTimer();
+			else
+			{
+				//TODO move this to when skill ends?
+				if (isWaitingForConsecutiveCharges) // after consecutive charge fired
+				{
+					currentConsecutiveCharges++;
+
+					if (currentConsecutiveCharges >= maxConsecutiveCharges)
+					{
+						if (startReuseTask != null)
+							Owner.StopTask(startReuseTask);
+
+						SetReuseTimer();
+					}
+				}
+				else // after first charge fired
+				{
+					firstUsedCharge = Time.time;
+					isWaitingForConsecutiveCharges = true;
+					currentConsecutiveCharges = 1;
+					startReuseTask = Owner.StartTask(ScheduleStartReuse());
+				}
+			}
 
 			active = true;
 
@@ -411,6 +470,12 @@ namespace Assets.scripts.Skills
 		{
 			yield return new WaitForSeconds(GetReuse());
 			OnAterReuse();
+		}
+
+		private IEnumerator ScheduleStartReuse()
+		{
+			yield return new WaitForSeconds(consecutiveTimelimit);
+			SetReuseTimer();
 		}
 
 		public override void AbortCast()
@@ -465,7 +530,7 @@ namespace Assets.scripts.Skills
 
             //TODO if player dies he finishes casting anyway
 
-			float coolDown = this.coolDown;
+			float coolDown = GetCooldownTime();
 
 			// TODO apply cooldown modifying stuff here
 
@@ -476,6 +541,8 @@ namespace Assets.scripts.Skills
 
 			// nastavit stav - idle
 			state = SkillState.SKILL_IDLE;
+
+			RechargeNext();
 
 			OnFinish();
 
@@ -511,6 +578,16 @@ namespace Assets.scripts.Skills
 			}
 
 			yield return null;
+		}
+
+		private void RechargeNext()
+		{
+			if (skillToBeRechargedOnThisUse != 0)
+			{
+				ActiveSkill sk = Owner.Skills.GetSkill(skillToBeRechargedOnThisUse) as ActiveSkill;
+				sk.LastUsed = 0;
+				GetOwnerData().SetSkillReuseTimer(sk, true);
+			}
 		}
 
 		/// <summary>
@@ -623,25 +700,25 @@ namespace Assets.scripts.Skills
 		/// <param name="folderName">the folder in Resources/prefabs/skill to look into</param>
 		/// <param name="particleObjectName">name of the .prefab object</param>
 		/// <param name="makeChild">The particle effect position will move with player</param>
-		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
+		public GameObject CreateParticleEffect(string particleObjectName, bool makeChild)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		public GameObject CreateParticleEffect(string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, makeChild, spawnPosition);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
+		public GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, GetOwnerData().GetParticleSystemObject().transform.position);
 			return o;
 		}
 
-		protected GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild, Vector3 spawnPosition)
+		public GameObject CreateParticleEffect(string folderName, string particleObjectName, bool makeChild, Vector3 spawnPosition)
 		{
 			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, makeChild, spawnPosition);
 			return o;
@@ -731,6 +808,7 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected void DeleteParticleEffect(GameObject obj, float delay)
 		{
+			if(obj != null)
 			Object.Destroy(obj, delay);
 		}
 
@@ -810,6 +888,8 @@ namespace Assets.scripts.Skills
 
 		protected void CheckRanges()
 		{
+			int range = GetUpgradableRange();
+
 			List<GameObject> temp = new List<GameObject>(RangeChecks.Keys);
 			foreach (GameObject proj in temp)
 			{
@@ -878,6 +958,11 @@ namespace Assets.scripts.Skills
 		{
 			float reuse = this.reuse;
 
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillReuse(this, ref reuse);
+			}
+
 			foreach (SkillEffect ef in Owner.ActiveEffects)
 			{
 				ef.ModifySkillReuse(this, ref reuse);
@@ -885,9 +970,31 @@ namespace Assets.scripts.Skills
 			return reuse;
 		}
 
+		public float GetCooldownTime()
+		{
+			float coolDown = this.coolDown;
+
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillCooldown(this, ref coolDown);
+			}
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillCooldown(this, ref coolDown);
+			}
+
+			return coolDown;
+		}
+
 		public float GetCastTime()
 		{
 			float casttime = this.castTime;
+
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillCasttime(this, ref casttime);
+			}
 
 			foreach (SkillEffect ef in Owner.ActiveEffects)
 			{
@@ -895,6 +1002,30 @@ namespace Assets.scripts.Skills
 			}
 
 			return casttime;
+		}
+
+		public int GetUpgradableRange()
+		{
+			int newRange = this.range;
+
+			foreach (SkillEffect ef in Owner.ActiveEffects)
+			{
+				ef.ModifySkillRange(this, ref newRange);
+			}
+
+			return newRange;
+		}
+
+		public void SetRange(int r)
+		{
+			this.range = r;
+		}
+
+		protected int CalcAngleForProjectile(int index, int totalProjectiles, int angleAdd)
+		{
+			int temp = totalProjectiles * angleAdd - angleAdd;
+			temp = -temp / 2;
+			return temp + index * angleAdd;
 		}
 
 		//TODO finish this for other params too

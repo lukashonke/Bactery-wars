@@ -37,10 +37,18 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			    if (WorldHolder.instance.activeMap.CanTeleportToNext())
 			    {
+					WorldHolder.instance.activeMap.OnTeleportOut((Player) source);
+
                     WorldHolder.instance.LoadNextMap();
 
-                    // teleport player to new start
-                    data.transform.position = WorldHolder.instance.GetStartPosition();
+					// teleport player to new start
+					data.transform.position = WorldHolder.instance.GetStartPosition();
+
+					WorldHolder.instance.activeMap.OnTeleportIn((Player)source);
+			    }
+			    else
+			    {
+				    data.GetOwner().Message("Not all enemies are dead yet.");
 			    }
 			}
 		}

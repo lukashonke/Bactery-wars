@@ -24,7 +24,7 @@ namespace Assets.scripts.AI
 		// float around target
 		public float floatChance = -1;
 		public float floatInterval = -1;
-		public int floatSpeed = 4;
+		public float floatSpeed = 4;
 		public int floatRange = 5;
 		public float lastFloatTime;
 
@@ -51,7 +51,7 @@ namespace Assets.scripts.AI
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
-			if (isCasting)
+			if (isCasting || Owner.Status.IsStunned())
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))

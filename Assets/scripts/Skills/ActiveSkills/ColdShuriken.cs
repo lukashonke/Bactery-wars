@@ -50,7 +50,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new ColdShuriken();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}
@@ -140,7 +140,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -215,20 +215,20 @@ namespace Assets.scripts.Skills.ActiveSkills
             }
 	    }
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 			// ignorovat kolizi se samotnym hracem
-			if (targetsLeft > 0 && activeProjectile == null || other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (targetsLeft > 0 && activeProjectile == null || coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = other.gameObject.GetChar();
+			Character ch = coll.gameObject.GetChar();
 
 			if (ch != null && Owner.CanAttack(ch))
 			{
 				// main projectile hit - create subprojectiles
 				if (activeProjectile != null && activeProjectile.Equals(gameObject))
 				{
-					ApplyEffects(Owner, other.gameObject);
+					ApplyEffects(Owner, coll.gameObject);
 
 					SetNextTarget();
 				}

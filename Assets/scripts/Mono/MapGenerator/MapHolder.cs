@@ -23,6 +23,12 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		StartClassic,
 		SecondLevel,
+
+		LevelOne,
+		LevelTwo,
+		LevelThree,
+		LevelFour,
+		LevelFive,
 	}
 
     /// <summary>
@@ -220,6 +226,21 @@ namespace Assets.scripts.Mono.MapGenerator
 				case MapType.SecondLevel:
 					levelData = new SecondLevelData(this);
 					break;
+				case MapType.LevelOne:
+					levelData = new LevelOneData(this);
+					break;
+				case MapType.LevelTwo:
+					levelData = new LevelTwoData(this);
+					break;
+				case MapType.LevelThree:
+					levelData = new LevelThreeData(this);
+					break;
+				case MapType.LevelFour:
+					levelData = new LevelFourData(this);
+					break;
+				case MapType.LevelFive:
+					levelData = new LevelFiveData(this);
+					break;
 			}
 
 			if(levelData.GetRegionWidth() > 0)
@@ -233,6 +254,11 @@ namespace Assets.scripts.Mono.MapGenerator
 
             if (levelData.GetMaxRegionsY() > 0)
                 maxRegionsY = levelData.GetMaxRegionsY();
+		}
+
+		public void UpdatePathfinding()
+		{
+			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY);
 		}
 
 		public void AddPassage(MapPassage p)
@@ -792,7 +818,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			spawnableMonsters.Clear();
 			spawnableNpcs.Clear();
 
-			GameSystem.Instance.UpdatePathfinding(); // TODO set correct bounds
+			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY); // TODO set correct bounds
 			SetActive(true);
 
 			UpdateRegions();
@@ -1288,6 +1314,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        region.Status = MapRegion.STATUS_CONQUERED;
 
+		    levelData.OnConquered();
+
 			Queue<MapRegion> neighbours = new Queue<MapRegion>();
 			foreach (MapRegion reg in GetNeighbourRegions(region))
 				neighbours.Enqueue(reg);
@@ -1330,6 +1358,16 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 	    }
+
+		public void OnTeleportOut(Player player)
+		{
+			levelData.OnPlayerTeleportOut(player);
+		}
+
+		public void OnTeleportIn(Player player)
+		{
+			levelData.OnPlayerTeleportIn(player);
+		}
 
 		public int GetMonstersLeft(MapRegion reg)
 		{

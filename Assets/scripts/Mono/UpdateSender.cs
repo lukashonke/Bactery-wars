@@ -20,7 +20,13 @@ namespace Assets.scripts.Mono
 		void Update()
 		{
 			if (target != null)
-				target.MonoUpdate(gameObject);
+				target.MonoUpdate(gameObject, false);
+		}
+
+		void FixedUpdate()
+		{
+			if (target != null)
+				target.MonoUpdate(gameObject, true);
 		}
 
 		void OnDestroy()

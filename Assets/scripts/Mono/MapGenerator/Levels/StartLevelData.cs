@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 
 namespace Assets.scripts.Mono.MapGenerator.Levels
@@ -19,9 +20,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
-            start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, new[] { 118, -909, -167, 569, 949, -43, -696, 281, 434, -156, 987 }); // 0 0
-			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, new [] {-524, 862, 161, 460, -726, -167, -559, -528, -279, 743, -656}); // 0, 2
-            //end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, new [] {645, 262, 900, -496, -739, -798, 892, -804, 765, 768, 690, -552, -437, 782}, 1, 2); // 0, 2
+			start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, new[] { 118, -909, -167, 569, 949, -43, -696, 281, 434, -156, 987 }); // 0 0
+			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, new[] { -524, 862, 161, 460, -726, -167, -559, -528, -279, 743, -656 }); // 0, 2
 			end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, new[] { 768 }, 1, 2); // 0, 2
 		}
 
@@ -36,7 +36,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			        MonsterSpawnInfo shield = SpawnMonsterToRoom(MonsterId.ObstacleCell, room.GetLargestSubRoom(), room);
 			        shield.master = mob;*/
 
-			        SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).mustDieToProceed = false;
+					//SpawnMonsterToRoom(room, MonsterId.DementCell, room.GetLargestSubRoom(), 1).SetMustDieToProceed(false).AddDrop(100, UpgradeType.CLASSIC, 1, 2, 1);
 		        }
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
@@ -49,10 +49,10 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			                break;
 
 						if(count < 3)
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, false, 1);
 
 			            count ++;
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, 1);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, false, 1);
 	                }
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -66,18 +66,18 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, leaderPos, 1);
+						MonsterSpawnInfo info = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, leaderPos, false, 1);
 
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, false, 1);
 						}
 
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, pos, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, pos, false, 1);
 						}
 					}
 
@@ -94,7 +94,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, false, 1);
 						}
 					}
 

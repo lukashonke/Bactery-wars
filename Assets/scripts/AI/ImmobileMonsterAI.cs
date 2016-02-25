@@ -41,7 +41,7 @@ namespace Assets.scripts.AI
 			}
 
 			// already doing something
-			if (isCasting)
+			if (isCasting || Owner.Status.IsStunned())
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))

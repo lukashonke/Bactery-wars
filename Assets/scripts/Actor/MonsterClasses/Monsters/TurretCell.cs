@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿using System.Runtime.InteropServices;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -10,7 +11,62 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public TurretCell()
 		{
-			MaxHp = 15;
+			MaxHp = 20;
+			MaxMp = 50;
+			MaxSpeed = 0;
+
+			IsAggressive = true;
+			AggressionRange = 15;
+			RambleAround = false;
+			AlertsAllies = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			SkillTestProjectile sk = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+
+			sk.castTime = 0.5f;
+			sk.range = AggressionRange;
+		}
+
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			if(level == 2)
+				m.UpdateMaxHp(m.Status.MaxHp + 10);
+			else
+			{
+				m.UpdateMaxHp(m.Status.MaxHp + 10 * (level - 1));
+			}
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
+			a.loseInterestWhenOuttaRange = true;
+			return a;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.TurretCell;
+		}
+	}
+
+	public class MissileTurretCell : MonsterTemplate
+	{
+		public MissileTurretCell()
+		{
+			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 0;
 
@@ -46,7 +102,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterId GetMonsterId()
 		{
-			return MonsterId.TurretCell;
+			return MonsterId.MissileTurretCell;
 		}
 	}
 }

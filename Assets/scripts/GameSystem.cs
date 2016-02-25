@@ -10,6 +10,8 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
+using Pathfinding;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -33,6 +35,9 @@ namespace Assets.scripts
 			}
 		}
 
+		public Player CurrentPlayer { get; set; }
+		public int Language { get; set; }
+
 		public GameController Controller { get; private set; }
 
 		private bool paused;
@@ -55,15 +60,24 @@ namespace Assets.scripts
 
 		private int lastPlayerId = 0;
 
+		public bool disableWallNodes = true;
+
 		// starts the game, loads data, etc
 		public void Start(GameController gc)
 		{
 			Controller = gc;
+			UpgradeTable.Instance.ToString();
 		}
 
 		public void Update()
 		{
 			
+		}
+
+		public void BroadcastMessage(string msg, int level = 1)
+		{
+			if(CurrentPlayer != null)
+				CurrentPlayer.Message(msg, level);
 		}
 
 		public Coroutine StartTask(IEnumerator task)
@@ -81,11 +95,90 @@ namespace Assets.scripts
 			Controller.StopCoroutine(t);
 		}
 
-		public void UpdatePathfinding()
+		private static Vector3 RoundVector3(Vector3 v)
 		{
+			if (Mathf.Abs(v.x - Mathf.Round(v.x)) < 0.001f) v.x = Mathf.Round(v.x);
+			if (Mathf.Abs(v.y - Mathf.Round(v.y)) < 0.001f) v.y = Mathf.Round(v.y);
+			if (Mathf.Abs(v.z - Mathf.Round(v.z)) < 0.001f) v.z = Mathf.Round(v.z);
+			return v;
+		}
+
+		public bool detailedPathfinding = false;
+
+		public void UpdatePathfinding(Vector3 center, int tilesPerRegionX, int tilesPerRegionY, int mapWidth, int mapHeight)
+		{
+			Debug.Log(mapWidth + ", " + mapHeight);
+			Debug.Log(center);
 			AstarPath ap = Controller.GetComponent<AstarPath>();
 
+			foreach (IUpdatableGraph g in AstarPath.active.astarData.GetUpdateableGraphs())
+			{
+				if (g is GridGraph)
+				{
+					GridGraph gridGraph = g as GridGraph;
+
+					if (detailedPathfinding)
+					{
+						gridGraph.erosionUseTags = true;
+						gridGraph.erosionFirstTag = 1;
+						gridGraph.erodeIterations = 2;
+						gridGraph.nodeSize = 0.5f;
+					}
+					else
+					{
+						gridGraph.erosionUseTags = true;
+						gridGraph.erosionFirstTag = 1;
+						gridGraph.erodeIterations = 1;
+						gridGraph.nodeSize = 0.75f;
+					}
+
+					float tileSize = gridGraph.nodeSize;
+					int nodesX;
+					int nodesY;
+
+					if (detailedPathfinding)
+					{
+						nodesX = (int)(10 + mapWidth * (1 - tileSize + 1 * tilesPerRegionX)) * 2;
+						nodesY = (int)(10 + mapHeight * (1 - tileSize + 1 * tilesPerRegionY)) * 2;
+					}
+					else
+					{
+						nodesX = (int)(10 + mapWidth * (tileSize * tilesPerRegionX)) * 2;
+						nodesY = (int)(10 + mapHeight * (tileSize * tilesPerRegionY)) * 2;
+					}
+					
+
+					gridGraph.Width = nodesX;
+					gridGraph.Depth = nodesY;
+
+					gridGraph.center = center + new Vector3(nodesX/2f*tileSize - 3, nodesY / 2f * tileSize - 3, 0);
+
+					//gridGraph.center = new Vector3(51, 51, 0);
+					gridGraph.UpdateSizeFromWidthDepth();
+				}
+			}
+
 			ap.Scan();
+
+			if (disableWallNodes)
+			{
+				foreach (IUpdatableGraph g in AstarPath.active.astarData.GetUpdateableGraphs())
+				{
+					if (g is GridGraph)
+					{
+						GridGraph gridGraph = g as GridGraph;
+
+						foreach (GraphNode n in gridGraph.nodes)
+						{
+							if (n.Area == 1)
+							{
+								n.Tag = 2;
+								n.Walkable = false;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		public Player RegisterNewPlayer(PlayerData data, String name)
@@ -117,8 +210,11 @@ namespace Assets.scripts
 			Debug.Log("Player " + player.Name + " of team " + player.Team + " has template " + player.Template.GetClassId());
 
 			player.InitTemplate();
+			player.SetLevel(1);
 
 			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
+
+			CurrentPlayer = player;
 
 			//TODO init, save, etc
 

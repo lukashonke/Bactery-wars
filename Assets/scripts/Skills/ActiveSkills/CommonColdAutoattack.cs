@@ -1,4 +1,7 @@
-﻿using Assets.scripts.Actor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
@@ -14,6 +17,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject activeProjectile;
 
 		public int projectileForce = 30;
+		public int deviationAngle = 0;
+		public int doubleAttackChance = 0;
+		public int consecutiveDoubleattackCounter = 0;
+		public int doubleAttackProjectileCount = 1;
+		public bool toAllDirections = false;
+		public bool thunder = false;
+
+		public int shotgunChance = 0;
+		public int consecutiveShotgunCounter = 0;
+		public int shotgunProjectilesCount = 0;
+
+		private int dsCounter = 0;
+		private int shotgunCounter = 0;
 
 		public CommonColdAutoattack()
 		{
@@ -41,9 +57,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CommonColdAutoattack();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] {new EffectDamage(baseDamage, 5)};
+			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}
 
 		public override void InitTraits()
@@ -61,6 +77,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 			else
 			{
+				target = null;
 				RotatePlayerTowardsMouse();
 			}
 
@@ -70,9 +87,37 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return true;
 		}
 
+		private void CalcThunderTargets(Vector3 from, int range, Vector3 direction)
+		{
+			RaycastHit2D[] hits = Physics2D.RaycastAll(from, direction, range);
+
+			foreach (RaycastHit2D hit in hits)
+			{
+				Character ch = hit.collider.gameObject.GetChar();
+				if (ch == null)
+				{
+					Destroyable d = hit.collider.gameObject.GetComponent<Destroyable>();
+					if (d != null && !Owner.CanAttack(d))
+						continue;
+				}
+				else if (!Owner.CanAttack(ch))
+					continue;
+
+				// the only possible collisions are the projectile with target
+				ApplyEffects(Owner, hit.collider.gameObject);
+			}
+		}
+
 		public override void OnLaunch()
 		{
+			int range = GetUpgradableRange();
+
 			DeleteCastingEffect();
+
+			if(consecutiveDoubleattackCounter > 0)
+				dsCounter ++;
+			if(consecutiveShotgunCounter > 0)
+				shotgunCounter ++;
 
 			if (target != null)
 			{
@@ -83,13 +128,139 @@ namespace Assets.scripts.Skills.ActiveSkills
 				RotatePlayerTowardsMouse();
 			}
 
-			GameObject activeProjectile;
+			// double shoot
+			if (doubleAttackChance == 0 && consecutiveDoubleattackCounter == 0 && shotgunChance == 0 && consecutiveShotgunCounter == 0 )
+			{
+				if (!toAllDirections)
+				{
+					if (thunder)
+					{
+						GameObject thunderObject = CreateSkillObject("Thunder", true, false, GetOwnerData().GetShootingPosition().transform.position);
+						if (thunderObject != null)
+						{
+							LineRenderer line = thunderObject.GetComponent<LineRenderer>();
+							line.SetPosition(1, new Vector3(0, range+2, 0));
+							thunderObject.transform.rotation = Owner.GetData().GetBody().transform.rotation;
 
-			activeProjectile = CreateSkillProjectile("projectile_00", true);
+							CalcThunderTargets(GetOwnerData().GetShootingPosition().transform.position, range + 1, GetOwnerData().GetForwardVector());
+
+							Object.Destroy(thunderObject, 0.25f);
+						}
+					}
+					else
+					{
+						GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+						if (activeProjectile != null)
+						{
+							Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+							rb.velocity = (GetOwnerData().GetForwardVector(Random.Range(-deviationAngle, deviationAngle)) * projectileForce);
+
+							Object.Destroy(activeProjectile, 5f);
+						}
+					}
+				}
+				else
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (thunder)
+						{
+							GameObject thunderObject = CreateSkillObject("Thunder", true, false, GetOwnerData().GetShootingPosition().transform.position);
+							if (thunderObject != null)
+							{
+								LineRenderer line = thunderObject.GetComponent<LineRenderer>();
+								line.SetPosition(1, new Vector3(0, range + 2, 0));
+								thunderObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetOwnerData().GetBody().transform.rotation.eulerAngles.z + i*90));
+
+								CalcThunderTargets(GetOwnerData().GetShootingPosition().transform.position, range + 1, GetOwnerData().GetForwardVector(i*90));
+
+								Object.Destroy(thunderObject, 0.25f);
+							}
+						}
+						else
+						{
+							GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+							if (activeProjectile != null)
+							{
+								Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+								rb.velocity = (GetOwnerData().GetForwardVector(i * 90) * projectileForce);
+
+								Object.Destroy(activeProjectile, 5f);
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				bool shotgun = false;
+
+				int count = 1;
+				if (doubleAttackChance > 0 && Random.Range(0, 100) < doubleAttackChance)
+				{
+					count = doubleAttackProjectileCount;
+				}
+				else if (consecutiveDoubleattackCounter > 0 && dsCounter >= consecutiveDoubleattackCounter)
+				{
+					dsCounter = 0;
+					count = doubleAttackProjectileCount;
+				}
+				else if (shotgunChance > 0 && Random.Range(0, 100) < shotgunChance)
+				{
+					shotgun = true;
+					count = shotgunProjectilesCount;
+				}
+				else if (consecutiveShotgunCounter > 0 && shotgunCounter >= consecutiveShotgunCounter)
+				{
+					shotgun = true;
+					shotgunCounter = 0;
+					count = shotgunProjectilesCount;
+				}
+
+				if (!shotgun)
+				{
+					float wait = 0;
+					for (int i = 0; i < count; i++)
+					{
+						for (int j = 0; j < 4; j++)
+						{
+							Owner.StartTask(ShootDelayedProjectile(wait, GetOwnerData().GetForwardVector(j*90 + Random.Range(-deviationAngle, deviationAngle))*projectileForce));
+						}
+
+						wait += 0.05f;
+					}
+				}
+				else
+				{
+					int temp = 30/count;
+					for (int i = 0; i < count; i++)
+					{
+						for (int j = 0; j < 4; j++)
+						{
+							GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+							if (activeProjectile != null)
+							{
+								Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+								rb.velocity = (GetOwnerData().GetForwardVector(j * 90 + (0 - (count / 2) * temp) + (i * temp)) * projectileForce);
+
+								Object.Destroy(activeProjectile, 5f);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private IEnumerator ShootDelayedProjectile(float time, Vector3 dir)
+		{
+			if(time > 0)
+				yield return new WaitForSeconds(time);
+
+			GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector() * projectileForce);
+				rb.velocity = dir;
 
 				Object.Destroy(activeProjectile, 5f);
 			}
@@ -125,7 +296,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			 AbortCast();
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -138,15 +309,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = other.gameObject.GetChar();
+			Character ch = coll.gameObject.GetChar();
 			if (ch == null)
 			{
-				Destroyable d = other.gameObject.GetComponent<Destroyable>();
+				Destroyable d = coll.gameObject.GetComponent<Destroyable>();
 				if (d != null && !Owner.CanAttack(d))
 					return;
 			}
@@ -154,7 +325,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 
 			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
+			ApplyEffects(Owner, coll.gameObject);
 			DestroyProjectile(gameObject);
 		}
 

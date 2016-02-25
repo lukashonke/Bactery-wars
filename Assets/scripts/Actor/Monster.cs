@@ -90,6 +90,16 @@ namespace Assets.scripts.Actor
 			return hasMaster;
 		}
 
+		public override void DoDie(Character killer=null, SkillId skillId=0)
+		{
+			base.DoDie(killer, skillId);
+
+			if (SpawnInfo != null)
+			{
+				SpawnInfo.Drop.DoDrop(this, killer);
+			}
+		}
+
 		public new EnemyData GetData()
 		{
 			return (EnemyData) Data;
@@ -142,6 +152,8 @@ namespace Assets.scripts.Actor
 			Template.InitSkillsOnMonster(Skills, MeleeSkill, Level);
 
 			Template.InitMonsterStats(this, Level);
+
+			HealMe();
 
 			GroupTemplate gt = Template.GetGroupTemplate();
 			if (!isMinion && gt != null)

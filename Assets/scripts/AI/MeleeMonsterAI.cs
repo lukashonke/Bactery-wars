@@ -29,7 +29,7 @@ namespace Assets.scripts.AI
 			bool forcedVelocity = Owner.GetData().forcedVelocity;
 
 			// already doing something
-			if (isCasting || forcedVelocity || currentAction != null)
+			if (isCasting || forcedVelocity || currentAction != null || Owner.Status.IsStunned())
 				return;
 
 			List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);

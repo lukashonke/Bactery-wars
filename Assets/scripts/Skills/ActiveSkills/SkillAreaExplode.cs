@@ -42,7 +42,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillAreaExplode();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}
@@ -75,8 +75,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
 				rb.velocity = (GetOwnerData().GetForwardVector(0) * 5);
 
-				Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
-
 				Object.Destroy(activeProjectile, 5f);
 			}
 
@@ -95,7 +93,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 			if (exploded || launchStart == 0)
 				return;
@@ -107,9 +105,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
 			if(!exploded)

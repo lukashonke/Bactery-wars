@@ -61,7 +61,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		        }
 				else if (room.region.GetParentOrSelf().Equals(room2))
 				{
-					SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.TINY, MapRoom.DIRECTION_LEFT, 5, 1, 1, 100, false);
+					//SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.TINY, MapRoom.DIRECTION_LEFT, 5, 1, 1, 100, false);
 
 					SpawnMonstersToRoom(room, MonsterId.TurretCell, MapRoom.RoomType.VERYLARGE, MapRoom.DIRECTION_CENTER, 1, 1);
 					SpawnMonstersToRoom(room, MonsterId.FourDiagShooterCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_LEFT, 2, 1);
@@ -91,7 +91,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 				{
 					Tile largestRoom = room.GetLargestSubRoom();
 
-					SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, largestRoom, 1);
+					//SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, largestRoom, 1);
 				}
 		    }
 

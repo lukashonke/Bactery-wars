@@ -28,6 +28,7 @@ namespace Assets.scripts.Skills.Base
 		MucusWarrior,
 		RhinoBeam,
 		ColdShuriken,
+		ColdPush,
 
 		MeleeAttack,
 		CollisionDamageAttack,

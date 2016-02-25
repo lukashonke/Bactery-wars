@@ -11,10 +11,10 @@ namespace Assets.scripts.Skills.SkillEffects
 {
 	public class EffectDamage : SkillEffect
 	{
-		protected int Dmg { get; set; }
-		protected int RandomOffset { get; set; }
+		public int Dmg { get; set; }
+		public int RandomOffset { get; set; }
 
-		public EffectDamage(int damage, int randomOffset)
+		public EffectDamage(int damage, int randomOffset=0)
 		{
 			Dmg = damage;
 			RandomOffset = randomOffset;
@@ -42,7 +42,7 @@ namespace Assets.scripts.Skills.SkillEffects
 
 					source.OnAttack(targetCh);
 
-					targetCh.ReceiveDamage(source, damage);
+					targetCh.ReceiveDamage(source, damage, SourceSkill);
 				}
 			}
 		}

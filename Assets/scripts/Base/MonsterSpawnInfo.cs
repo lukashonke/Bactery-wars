@@ -5,6 +5,8 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 
 namespace Assets.scripts.Base
@@ -17,6 +19,8 @@ namespace Assets.scripts.Base
         public MapRegion Region { get; private set; }
 	    public int level;
 
+		public DropInfo Drop { get; private set; }
+
         public bool mustDieToProceed = true;
 
 	    public MonsterSpawnInfo master;
@@ -28,12 +32,37 @@ namespace Assets.scripts.Base
             SpawnPos = spawnPos;
             Region = region;
 	        level = 1;
+			Drop = new DropInfo();
         }
+
+		public MonsterSpawnInfo AddHealDrop(int chance, int level=1)
+		{
+			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level));
+			return this;
+		}
+
+		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int level=1)
+	    {
+			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level));
+			return this;
+	    }
+
+	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int level=1)
+	    {
+		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity));
+		    return this;
+	    }
 
         public void SetRegion(MapRegion region)
         {
             Region = region;
         }
+
+		public MonsterSpawnInfo SetMustDieToProceed(bool val)
+		{
+			mustDieToProceed = val;
+			return this;
+		}
 
         /*public override bool Equals(object obj)
         {

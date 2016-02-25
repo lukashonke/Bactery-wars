@@ -10,12 +10,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public ChargerCell()
         {
-            MaxHp = 30;
+            MaxHp = 20;
             MaxMp = 50;
             MaxSpeed = 1;
 
             IsAggressive = true;
-            AggressionRange = 10;
+            AggressionRange = 20;
             RambleAround = true;
         }
 
@@ -29,14 +29,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    {
 		    JumpShort skill = set.GetSkill(SkillId.JumpShort) as JumpShort;
 
-		    skill.jumpSpeed = 25;
+		    skill.jumpSpeed = 30;
 		    skill.range = 20;
 		    skill.reuse = 5f;
-		    skill.castTime = 2f;
+		    skill.castTime = 1f;
 
 			CollisionDamageAttack skill2 = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
-
-		    skill2.pushForce = 1000;
+		    skill2.pushForce = 100;
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)

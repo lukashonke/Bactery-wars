@@ -5,6 +5,7 @@ using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 
 namespace Assets.scripts.Skills
@@ -15,6 +16,8 @@ namespace Assets.scripts.Skills
 	public abstract class Skill
 	{
 		private string name;
+
+		public bool IsLocked { get; set; }
 
 		public Character Owner { get; private set; }
 
@@ -48,6 +51,11 @@ namespace Assets.scripts.Skills
 		}
 
 		public abstract string GetVisibleName();
+
+		public virtual string GetDescription()
+		{
+			return null;
+		}
 
 		public Skill()
 		{
@@ -92,38 +100,97 @@ namespace Assets.scripts.Skills
 			SkillAdded();
 		}
 
+		protected void ApplyEffect(Character source, GameObject target, SkillEffect ef, bool allowStackingSameEffect = false)
+		{
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillEffects(this, new SkillEffect[] { ef });
+			}
+
+			ef.Source = source;
+			ef.SourceSkill = GetSkillId();
+
+			if (!allowStackingSameEffect && !(ef is EffectDamage))
+			{
+				Character targetCh = target.GetChar();
+
+				if (targetCh != null && targetCh.HasEffectAlready(ef))
+				{
+					targetCh.ProlongeEffectDuration(ef);
+					return;
+				}
+			}
+
+			ef.ApplyEffect(source, target);
+		}
+
 		/// <summary>
 		/// Applies all SkillEffects of this skill to the target
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false)
+		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false, int param=0)
 		{
-			SkillEffect[] efs = CreateEffects();
+			SkillEffect[] efs = CreateEffects(param);
+
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				u.ModifySkillEffects(this, efs);
+			}
 
 			if (efs != null && !originalEffectsDisabled)
 			{
 				foreach (SkillEffect ef in efs)
 				{
 					ef.Source = source;
+					ef.SourceSkill = GetSkillId();
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
 						Character targetCh = target.GetChar();
 
 						if (targetCh != null && targetCh.HasEffectAlready(ef))
+						{
+							targetCh.ProlongeEffectDuration(ef);
 							continue;
+						}
 					}
 
 					ef.ApplyEffect(source, target);
 				}
 			}
 
+			// add new effects from ugprades
+			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			{
+				SkillEffect[] newEffects = u.CreateAdditionalSkillEffects(this, efs);
+
+				if (newEffects != null)
+				{
+					foreach (SkillEffect ef in newEffects)
+					{
+						ef.Source = source;
+						ef.SourceSkill = GetSkillId();
+
+						if (!allowStackingSameEffect && !(ef is EffectDamage))
+						{
+							Character targetCh = target.GetChar();
+							if (targetCh != null && targetCh.HasEffectAlready(ef))
+								continue;
+						}
+
+						ef.ApplyEffect(source, target);
+					}
+				}
+			}
+
+			// add new effect from templates
 			if (additionalEffects != null)
 			{
 				foreach (SkillEffect ef in additionalEffects)
 				{
 					ef.Source = source;
+					ef.SourceSkill = GetSkillId();
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
@@ -141,6 +208,11 @@ namespace Assets.scripts.Skills
 		public void DisableOriginalEffects()
 		{
 			originalEffectsDisabled = true;
+		}
+
+		public void EnableOriginalEffects()
+		{
+			originalEffectsDisabled = false;
 		}
 
 		public void AddAdditionalEffect(SkillEffect e)
@@ -183,7 +255,7 @@ namespace Assets.scripts.Skills
 
 		// vytvori novou kopii sama sebe
 		public abstract Skill Instantiate();
-		public abstract SkillEffect[] CreateEffects();
+		public abstract SkillEffect[] CreateEffects(int param);
 		public abstract void InitTraits();
 		protected abstract void InitDynamicTraits();
 

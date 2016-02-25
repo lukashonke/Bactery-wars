@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Base;
+﻿using System.Runtime.Remoting.Messaging;
+using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
@@ -11,6 +12,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject activeProjectile;
 
 		private readonly float reuseVal = 0.5f;
+
+		public float rangeBoost = 1f;
+		public int nullReuseChance = 0;
+
+		public int duration = 5;
 
 		public CellFury()
 		{
@@ -38,9 +44,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new CellFury();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override string GetDescription()
 		{
-			return new SkillEffect[] {new EffectMeleeReuse(1, 0.3f, 5, SkillTraits.Melee), };
+			return "Greatly decreases cooldown of autoattack.";
+		}
+
+		public override SkillEffect[] CreateEffects(int param)
+		{
+			int count = 1;
+			if (rangeBoost > 1 || rangeBoost < 1)
+				count++;
+
+			SkillEffect[] effects = new SkillEffect[count];
+			int index = 0;
+
+			effects[index++] = new EffectMeleeReuse(1, 0.2f, duration, SkillTraits.Melee);
+			if(rangeBoost > 1 || rangeBoost < 1)
+				effects[index++] = new EffectSkillRange(rangeBoost, duration, SkillTraits.Melee);
+
+			return effects;
 		}
 
 		public override void InitTraits()
@@ -50,24 +72,31 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			//CreateCastingEffect(true, "SkillTemplate");
-
 			return true;
 		}
 
 		public override void OnLaunch()
 		{
-			//DeleteCastingEffect();
+			particleSystem = CreateParticleEffect("ActiveEffect", true);
+			StartParticleEffect(particleSystem);
 
 			ApplyEffects(Owner, Owner.GetData().gameObject);
+			DeleteParticleEffect(particleSystem, duration);
 		}
 
 		public override void OnFinish()
 		{
-
+			if (nullReuseChance > 0)
+			{
+				if (Random.Range(0, 100) < nullReuseChance)
+				{
+					this.LastUsed = 0;
+					GetOwnerData().SetSkillReuseTimer(this, true);
+				}
+			}
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -80,7 +109,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 		}
 

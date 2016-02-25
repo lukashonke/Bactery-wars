@@ -42,11 +42,11 @@ namespace Assets.scripts.Mono
 
 			if (health == 0)
 			{
-				DoDie();
+				DoDie(source);
 			}
 		}
 
-		public void DoDie()
+		public void DoDie(Character killer)
 		{
 			Destroy(gameObject);
 		}

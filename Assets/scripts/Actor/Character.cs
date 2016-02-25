@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
@@ -14,6 +15,7 @@ using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,6 +35,8 @@ namespace Assets.scripts.Actor
 		public ActiveSkill MeleeSkill { get; set; }
 		public Knownlist Knownlist { get; private set; }
 		public AbstractAI AI { get; private set; }
+
+		public Inventory Inventory { get; private set; }
 
 		public List<Monster> summons; 
 
@@ -61,8 +65,15 @@ namespace Assets.scripts.Actor
 			AI = ai;
 		}
 
-	    public void DoDie()
+	    public virtual void DoDie(Character killer=null, SkillId skillId=0)
 	    {
+		    if (killer != null)
+		    {
+				killer.OnKill(this, skillId);
+		    }
+
+		    OnDead(killer, skillId);
+
 		    if (this is Monster)
 		    {
 			    MonsterTemplate mt = ((Monster) this).Template;
@@ -74,6 +85,19 @@ namespace Assets.scripts.Actor
             DeleteMe();
 	    }
 
+		public virtual void OnKill(Character target, SkillId skillId)
+		{
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.OnKill(target, skillId);
+			}
+		}
+
+		public virtual void OnDead(Character killer, SkillId skillId)
+		{
+			//TODO perhaps add onDead on upgrades
+		}
+
 		public void DeleteMe()
 		{
 			if(AI != null)
@@ -81,6 +105,9 @@ namespace Assets.scripts.Actor
 
 			if(Knownlist != null)
 			Knownlist.Active = false;
+
+			if(wallCheck != null)
+				StopTask(wallCheck);
 
 			try
 			{
@@ -120,6 +147,7 @@ namespace Assets.scripts.Actor
 			Status = InitStatus();
 			Skills = InitSkillSet();
 			summons = new List<Monster>();
+			Inventory = new Inventory(this, 10, 3);
 
 			Knownlist.StartUpdating();
 
@@ -129,24 +157,57 @@ namespace Assets.scripts.Actor
 			AI.StartAITask();
 
 			CheckWalls();
+
+			wallCheck = StartTask(WallCheckTask());
 		}
 
-		private void CheckWalls()
+		private Coroutine wallCheck;
+
+		private IEnumerator WallCheckTask()
 		{
+			while (GetData().GetBody() != null)
+			{
+				if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
+				{
+					if(this is Monster)
+						DoDie();
+					else if (this is Player)
+					{
+						if (!CheckWalls())
+						{
+							Message("You have been teleported at the start because you got stuck in the walls!");
+							GetData().transform.position = WorldHolder.instance.GetStartPosition();
+						}
+					}
+				}
+
+				yield return new WaitForSeconds(5f);
+			}
+		}
+
+		public bool CheckWalls()
+		{
+			int iteration = 0;
 			if (Utils.IsNotAccessible(GetData().GetBody().transform.position))
 			{
-				Debug.LogError("im in walls!, teleporting away");
+				//Debug.LogError("im in walls!, teleporting away");
 
 				int minRange = 2;
 				int maxRange = 4;
-				int limit = 6;
-				int mainLimit = 5;
+				int limit = 12;
+				int mainLimit = 7;
 				Vector3 currentPos = GetData().GetBody().transform.position;
 				Vector3 newPos = currentPos;
 				bool set = false;
 
 				while (!set)
 				{
+					iteration++;
+					if (iteration > 1000)
+					{
+						return true;
+					}
+
 					float randX = Random.Range(minRange, maxRange);
 					float randY = Random.Range(minRange, maxRange);
 
@@ -159,38 +220,134 @@ namespace Assets.scripts.Actor
 					Vector3 v = new Vector3(currentPos.x + randX, currentPos.y + randY, 0);
 
 					if (Utils.IsNotAccessible(v))
+					{
+						limit--;
+						if (limit <= 0)
+						{
+							mainLimit--;
+
+							limit = 12;
+
+							if (mainLimit <= 0)
+								break;
+
+							maxRange = (int)(maxRange + maxRange);
+						}
+
 						continue;
+					}
 
 					newPos = v;
 					set = true;
-
-					limit--;
-					if (limit <= 0)
-					{
-						mainLimit--;
-
-						if (mainLimit <= 0)
-							break;
-
-						maxRange *= 2;
-					}
 				}
 
 				if (set)
 				{
 					Debug.DrawLine(currentPos, newPos, Color.blue, 10f);
 					GetData().GetBody().transform.position = newPos;
+					return true;
 				}
 				else
 				{
 					Debug.LogError("couldnt get character " + Name + " away from walls");
+					return false;
 				}
 			}
+
+			return true;
 		}
 
 		public AbstractData GetData()
 		{
 			return Data;
+		}
+
+		public void HitUpgrade(UpgradeScript upg)
+		{
+			if (upg.upgrade.CollectableByPlayer && !(this is Player))
+				return;
+
+			if (upg.upgrade == null)
+			{
+				Debug.LogError("null upgrade for " + upg.gameObject.name);
+				return;
+			}
+
+			if (upg.upgrade.OnPickup(this))
+			{
+				upg.DeleteMe(true);
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+				return;
+			}
+
+			if (upg.upgrade.GoesIntoBasestatSlot)
+			{
+				Message("You have absorbed " + upg.upgrade.VisibleName + "");
+				Inventory.AddBasestatUpgrade(upg.upgrade);
+				upg.DeleteMe(true);
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+			}
+			else if (AddUpgrade(upg.upgrade))
+			{
+				upg.DeleteMe(true);
+				//EquipUpgrade(upg.upgrade);
+			}
+		}
+
+		public bool AddUpgrade(AbstractUpgrade u)
+		{
+			if (Inventory.CanAdd(u))
+			{
+				u.SetOwner(this);
+				Inventory.AddUpgrade(u);
+				Data.UpdateInventory(Inventory);
+				Message("You have picked up: " + u.VisibleName + "");
+				return true;
+			}
+
+			return false;
+		}
+
+		public void RemoveUpgrade(AbstractUpgrade u)
+		{
+			u.SetOwner(null);
+			Inventory.RemoveUpgrade(u);
+			Data.UpdateInventory(Inventory);
+			Message("Deleted " + u.VisibleName);
+		}
+
+		public void EquipUpgrade(AbstractUpgrade u)
+		{
+			if (!Inventory.EquipUpgrade(u))
+				return;
+
+			UpdateStats();
+
+			Data.UpdateInventory(Inventory);
+			Message("Equiped " + u.VisibleName);
+		}
+
+		public void UnequipUpgrade(AbstractUpgrade u, bool force=false)
+		{
+			Inventory.UnequipUpgrade(u, force);
+			UpdateStats();
+
+			Data.UpdateInventory(Inventory);
+			Message("Unequiped " + u.VisibleName);
+		}
+
+		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, int fromSlot, int toSlot)
+		{
+			Inventory.MoveUpgrade(source, fromSlot, toSlot, slot, target);
+			UpdateStats();
+			Data.UpdateInventory(Inventory);
+		}
+
+		public virtual void UpdateStats()
+		{
+			//TODO add support for this to monsters
 		}
 
 		protected abstract AbstractAI InitAI();
@@ -215,6 +372,11 @@ namespace Assets.scripts.Actor
 			StartEffectUpdate();
 		}
 
+		public void ProlongeEffectDuration(SkillEffect ef)
+		{
+			
+		}
+
 		public bool HasEffectAlready(SkillEffect ef)
 		{
 			if (ef.Source == null)
@@ -223,6 +385,28 @@ namespace Assets.scripts.Actor
 			foreach (SkillEffect e in ActiveEffects)
 			{
 				if (ef.GetType().Name.Equals(e.GetType().Name) && ef.Source.Equals(e.Source))
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasEffectOfSkill(SkillId sk)
+		{
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (e.SourceSkill == sk)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasEffectAlready(Type efType)
+		{
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (efType.Name.Equals(e.GetType().Name))
 					return true;
 			}
 
@@ -346,7 +530,7 @@ namespace Assets.scripts.Actor
 			// reuse check
 			if (!skill.CanUse())
 			{
-				Debug.Log("skill cannot be used again yet");
+				Message("Skill is not yet available for use.", 2);
 				return;
 			}
 
@@ -391,6 +575,9 @@ namespace Assets.scripts.Actor
 
 		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
 		{
+			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
+			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
+
 			bool crit = canCrit && Random.Range(1, 1000) <= Status.CriticalRate;
 
 			if (crit)
@@ -401,27 +588,104 @@ namespace Assets.scripts.Actor
 			return baseDamage;
 		}
 
-		public void SetMoveSpeed(int speed)
+		public void SetIsWalking(bool walking)
+		{
+			Status.IsWalking = walking;
+		}
+
+		public void SetMoveSpeed(float speed)
 		{
 			Status.MoveSpeed = speed;
 			GetData().SetMoveSpeed(speed);
 		}
 
-		public void ReceiveDamage(Character source, int damage)
+		public void SetShield(float shield)
+		{
+			Status.Shield = shield;
+		}
+
+		public void ReceiveHeal(Character source, int ammount, SkillId skillId = 0)
 		{
 			if (Status.IsDead)
 				return;
 
+			Status.ReceiveHeal(ammount);
+
+			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public void ReceiveDamage(Character source, int damage, SkillId skillId=0)
+		{
+			if (Status.IsDead || damage <= 0)
+				return;
+
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(GetData().GetBody(), damage, Color.red);
+			}
+
 			Status.ReceiveDamage(damage);
+
+			if (source != null)
+			{
+				source.OnGiveDamage(this, damage, skillId);
+			}
 
 			if (Status.IsDead)
 			{
-				DoDie();
+				DoDie(source, skillId);
 			}
 
 			GetData().SetVisibleHp(Status.Hp);
 
 			AI.AddAggro(source, damage);
+		}
+
+		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0)
+		{
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
+			}
+
+			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			{
+				u.OnGiveDamage(target, damage, skillId);
+			}
+		}
+
+		public void UpdateHp(int newHp)
+		{
+			Status.SetHp(newHp);
+			GetData().SetVisibleHp(Status.Hp);
+		}
+
+		public void UpdateMp(int newMp)
+		{
+			Status.SetMp(newMp);
+		}
+
+		public void UpdateLevel(int newLevel)
+		{
+			Level = newLevel;
+			GetData().SetVisibleLevel(Level);
+		}
+
+		public void HealMe()
+		{
+			UpdateHp(Status.MaxHp);
+		}
+
+		public void UpdateMaxHp(int newMaxHp)
+		{
+			Status.MaxHp = newMaxHp;
+			GetData().SetVisibleMaxHp(Status.MaxHp);
+		}
+
+		public void UpdateMaxMp(int newMaxMp)
+		{
+			Status.MaxMp = newMaxMp;
+			//TODO client side? 
 		}
 
 		public ActiveSkill GetMeleeAttackSkill()
@@ -567,6 +831,11 @@ namespace Assets.scripts.Actor
 		public bool HasSummons()
 		{
 			return summons.Count > 0;
+		}
+
+		public virtual void Message(string s, int level=1)
+		{
+			Debug.Log("Message: " + s);
 		}
 	}
 }

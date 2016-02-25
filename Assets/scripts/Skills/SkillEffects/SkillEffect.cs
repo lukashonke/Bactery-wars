@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
 	public abstract class SkillEffect
 	{
+		public SkillId SourceSkill { get; set; }
 		public Character Source { get; set; }
 
 		public float lastUpdateTime;
@@ -46,6 +48,16 @@ namespace Assets.scripts.Skills.SkillEffects
 		public virtual void ModifySkillReuse(ActiveSkill sk, ref float reuse)
 		{
 
+		}
+
+		public virtual void ModifySkillCooldown(ActiveSkill sk, ref float cooldown)
+		{
+			
+		}
+
+		public virtual void ModifySkillRange(ActiveSkill sk, ref int range)
+		{
+			
 		}
 
 		protected bool IsOffensive()

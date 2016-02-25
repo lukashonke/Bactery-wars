@@ -30,7 +30,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
 			sk.baseDamage = 20;
-			sk.pushForce = 1000;
+			sk.pushForce = 100;
 			sk.reuse = 1.5f;
 		}
 
@@ -48,6 +48,51 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterId GetMonsterId()
 		{
 			return MonsterId.TankCell;
+		}
+	}
+
+	public class SmallTankCell : MonsterTemplate
+	{
+		public SmallTankCell()
+		{
+			MaxHp = 55;
+			MaxMp = 50;
+			MaxSpeed = 7;
+
+			IsAggressive = true;
+			AggressionRange = 20;
+			RambleAround = false;
+			AlertsAllies = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+
+			sk.baseDamage = 20;
+			sk.pushForce = 100;
+			sk.reuse = 1.5f;
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MeleeMonsterAI a = new MeleeMonsterAI(ch);
+			return a;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.SmallTankCell;
 		}
 	}
 
@@ -76,7 +121,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
 			sk.baseDamage = 20;
-			sk.pushForce = 1000;
+			sk.pushForce = 100;
 			sk.reuse = 1.5f;
 
 			//SkillTestProjectile sk2 = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;

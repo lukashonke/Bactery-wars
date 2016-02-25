@@ -28,11 +28,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    {
 			SkillTestProjectileAllAround skill = set.GetSkill(SkillId.SkillTestProjectileAllAround) as SkillTestProjectileAllAround;
 
-			//TODO random rotation? 
 		    skill.projectileCount = 4;
-		    skill.range = 10;
+		    skill.range = 13;
 		    skill.reuse = 3f;
 		    skill.castTime = 0.5f;
+		    skill.force = 30;
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)

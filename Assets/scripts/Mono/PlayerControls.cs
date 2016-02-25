@@ -1,5 +1,11 @@
-﻿using Assets.scripts.Mono.ObjectData;
+﻿using System;
+using System.IO;
+using Assets.scripts.Actor;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
+using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
+using Assets.scripts.Upgrade.Rare;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -46,6 +52,8 @@ namespace Assets.scripts.Mono
 		{
 		}
 
+		private int temp = 0;
+
 		private void HandleSkillControls()
 		{
 			if (Input.GetKeyDown(KeyCode.Q))
@@ -53,10 +61,60 @@ namespace Assets.scripts.Mono
 				data.StartMeleeTargeting(false);
 			}
 
-			if (Input.GetMouseButtonDown(1))
+			if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0) && !ui.MouseOverUI)
 			{
 				data.StartMeleeTargeting(true);
 			}
+
+			if (Input.GetKeyDown(KeyCode.W))
+			{
+				AbstractUpgrade u = new HpUpgradeAdd(1);
+				u.Init();
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+				//data.GetOwner().AddUpgrade(u);
+				//data.GetOwner().EquipUpgrade(u);
+			}
+
+			if (Input.GetKeyDown(KeyCode.I))
+			{
+				ui.SwitchInventory();
+			}
+
+			if (Input.GetKeyDown(KeyCode.U))
+			{
+				Player p = data.GetOwner() as Player;
+				p.UnlockSkill(temp++, true);
+
+				//ui.DamageMessage(data.GetBody(), 10, Color.cyan);
+
+				//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
+				//data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
+			}
+
+			if (Input.GetKeyDown(KeyCode.E))
+			{
+				AbstractUpgrade u = new Heal(1);
+				u.Init();
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+			}
+
+			if (Input.GetKeyDown(KeyCode.R))
+			{
+				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 0, 10, 1);
+				u.Init();
+				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+			}
+
+			/*if (Input.GetKeyDown(KeyCode.R))
+			{
+				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
+				data.GetOwner().UnequipUpgrade(u);
+				data.GetOwner().RemoveUpgrade(u);
+
+				u = data.GetOwner().Inventory.GetUpgrade(typeof(TemplateUpgrade));
+				data.GetOwner().UnequipUpgrade(u);
+				data.GetOwner().RemoveUpgrade(u);
+			}*/
 
 			if (Input.GetKeyDown(KeyCode.Alpha1))
 			{
@@ -116,19 +174,6 @@ namespace Assets.scripts.Mono
 
 		public void Update()
 		{
-			if (Input.GetMouseButton(0))
-			{
-				Vector3 temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				Debug.DrawLine(data.GetBody().transform.position, temp, Color.blue, 2f);
-				/*if (Utils.IsNotAccessible(data.GetBody().transform.position, temp))
-				{
-
-				}
-				else
-				{
-				}*/
-			}
-
 			bool usingTouches = false;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
@@ -404,13 +449,11 @@ namespace Assets.scripts.Mono
 					{
 						if (data.Target != null)
 						{
-							if (Input.GetMouseButtonDown(0))
+							if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
 							{
 								Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
 								temp.z = body.transform.position.z;
 								data.lastClickPositionWorld = temp;
-
-								Debug.Log("melee interract");
 
 								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
@@ -419,7 +462,7 @@ namespace Assets.scripts.Mono
 						else
 						{
 							// change target position according to mouse when clicked
-							if (Input.GetMouseButton(0))
+							if (Input.GetMouseButton(1))
 							{
 								Vector3 newTarget = Camera.main.ScreenToWorldPoint(inputPosition);
 								newTarget.z = body.transform.position.z;
@@ -443,7 +486,7 @@ namespace Assets.scripts.Mono
 							else
 							{
 								data.MoveButtonDown = false;
-								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo)
+								if (data.moveOnlyWhenMousePressed && data.HasTargetToMoveTo && !data.forcedVelocity && data.allowMovePointChange)
 									data.HasTargetToMoveTo = false;
 							}
 						}

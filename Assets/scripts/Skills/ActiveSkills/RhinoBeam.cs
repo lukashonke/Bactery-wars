@@ -14,20 +14,23 @@ namespace Assets.scripts.Skills.ActiveSkills
 		protected GameObject ray;
 
 		private float lastDmg = 0;
+		public float rotateSpeed = 20;
+		private Vector3 aimingDirection;
 
-		private readonly float rotateSpeed = 20;
+		public float width;
 
 		public RhinoBeam()
 		{
 			castTime = 0f;
 			coolDown = 4f;
-			reuse = 30f;
+			reuse = 20f;
 
 			// 20dmg/sec
 			baseDamage = 5;
 			baseDamageFrequency = 0.25f;
 
 			range = 15;
+			width = 1f;
 
 			movementAbortsSkill = true;
 
@@ -50,9 +53,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new RhinoBeam();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override string GetDescription()
 		{
-			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(5, 2),  };
+			return "Fires a beam that deals large damage and slows targets.";
+		}
+
+		public override SkillEffect[] CreateEffects(int param)
+		{
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectSlow(0.9f, 2),  };
 		}
 
 		public override void InitTraits()
@@ -72,9 +80,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
 
 			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
+			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
+
+			/*SerializedObject so = new SerializedObject(ps);
+			so.FindProperty("ShapeModule.radius").floatValue = width/2f;
+			so.ApplyModifiedProperties();
+			*/
 			StartParticleEffect(ray);
 
 			UpdateMouseDirection(ray.transform);
+			aimingDirection = mouseDirection;
 			ray.transform.rotation = Utils.GetRotationToMouse(ray.transform);
 		}
 
@@ -92,11 +107,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				UpdateMouseDirection(ray.transform);
 
-				ray.transform.rotation = Quaternion.Lerp(ray.transform.rotation, Utils.GetRotationToDirectionVector(mouseDirection), rotateSpeed*0.001f);
+				aimingDirection = Vector3.Lerp(aimingDirection, mouseDirection, rotateSpeed*0.001f);
+
+				ray.transform.rotation = Utils.GetRotationToDirectionVector(aimingDirection);
 
 				if (lastDmg + baseDamageFrequency < Time.time)
 				{
-					RaycastHit2D[] hits = Physics2D.RaycastAll(ray.transform.position, mouseDirection, range);
+					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, width);
 
 					foreach (RaycastHit2D hit in hits)
 					{
@@ -122,7 +139,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			DeleteParticleEffect(ray);
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 

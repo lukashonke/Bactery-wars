@@ -11,6 +11,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		private GameObject activeProjectile;
 
+		public int force;
+
 		public SkillTestProjectile()
 		{
 			castTime = 0f;
@@ -20,6 +22,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 
 			range = 5;
+
+			force = 15;
 		}
 
 		public override SkillId GetSkillId()
@@ -37,7 +41,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new SkillTestProjectile();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectDamage(baseDamage, 2)};
 		}
@@ -65,7 +69,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (activeProjectile != null)
 			{
 				Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
-				rb.velocity = (GetOwnerData().GetForwardVector(0) * 15);
+				rb.velocity = (GetOwnerData().GetForwardVector(0) * force);
 
 				//Debug.DrawRay(GetOwnerData().GetShootingPosition().transform.position, rb.velocity, Color.green, 5f);
 
@@ -78,7 +82,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
@@ -91,15 +95,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = other.gameObject.GetChar();
+			Character ch = coll.gameObject.GetChar();
 			if (ch == null)
 			{
-				Destroyable d = other.gameObject.GetComponent<Destroyable>();
+				Destroyable d = coll.gameObject.GetComponent<Destroyable>();
 				if (d != null && !Owner.CanAttack(d))
 					return;
 			}
@@ -107,7 +111,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return;
 
 			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
+			ApplyEffects(Owner, coll.gameObject);
 			DestroyProjectile(gameObject);
 		}
 

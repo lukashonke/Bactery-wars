@@ -57,7 +57,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void GenerateFirstLevel()
 		{
-			MapHolder newMap = new MapHolder(this, "Start", new Cords(0, 0), MapType.StartClassic, width, height);
+			MapHolder newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height);
 			newMap.CreateMap();
 			maps.Add(new Cords(0, 0), newMap);
 
@@ -69,9 +69,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			Cords old = activeMap.Position;
 			Cords newCords = new Cords(old.x + 1, old.y);
 
-			Debug.Log("generating.. " + newCords.ToString());
+			int level = old.x + 2;
+			MapType type = MapType.LevelOne;
 
-			MapHolder newMap = new MapHolder(this, "Map " + newCords.ToString(), newCords, MapType.SecondLevel, 100, 50);
+			switch (level)
+			{
+				case 2:
+					type = MapType.LevelTwo;
+					break;
+				case 3:
+					type = MapType.LevelThree;
+					break;
+				case 4:
+					type = MapType.LevelFour;
+					break;
+				case 5:
+					type = MapType.LevelFive;
+					break;
+
+			}
+
+			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
@@ -104,6 +122,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			activeMap = map;
 			activeMap.LoadMap(reloading);
 
+			GameSystem.Instance.BroadcastMessage(activeMap.name);
+
 			// update seeds info for admin
 			StringBuilder sb = new StringBuilder();
 
@@ -131,6 +151,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			if (Input.GetKeyDown(KeyCode.Space))
 			{
+				Camera.main.orthographicSize = 55;
 				RegenMap();
 			}
 
@@ -278,8 +299,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			return new Vector3();
 		}
 
+		private List<string> tempSeeds = new List<string>();
+
 	    public void SaveCurrentMap()
 	    {
+		    Camera.main.orthographicSize = 55;
+
 	        String prev = System.IO.File.ReadAllText("mapSeeds.txt");
 
 	        StringBuilder sb = new StringBuilder();
@@ -293,6 +318,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	            {
 	                if (region.hadRandomSeed)
 	                {
+						tempSeeds.Add(region.seed);
 	                    sb.Append(region.x + " " + region.y + " " + region.fillPercent + " " + region.seed + " (s:" + region.sizeX + ", " + region.sizeY + ")");
 	                    sb.AppendLine();
 	                }
@@ -300,6 +326,11 @@ namespace Assets.scripts.Mono.MapGenerator
 	        }
 
             sb.AppendLine();
+
+		    foreach (string s in tempSeeds)
+			    sb.Append(s + ", ");
+
+		    sb.AppendLine();
 
             System.IO.File.WriteAllText("mapSeeds.txt", sb.ToString());
             Debug.Log("Saved!");

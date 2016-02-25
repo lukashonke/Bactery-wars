@@ -41,7 +41,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 			CollisionDamageAttack sk2 = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
 			sk2.baseDamage = 20;
-			sk2.pushForce = 300;
+			sk2.pushForce = 100;
 			sk2.reuse = 1f;
 		}
 

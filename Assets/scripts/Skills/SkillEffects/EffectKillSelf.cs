@@ -20,7 +20,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (source == null)
 				return;
 
-			source.DoDie();
+			source.DoDie(source);
 		}
 
 		public override void Update()

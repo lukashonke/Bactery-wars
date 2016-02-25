@@ -20,15 +20,20 @@ namespace Assets.scripts.Actor.Status
 		public int Mp { get; private set; }
 		public int MaxHp { get; set; }
 		public int MaxMp { get; set; }
-		public int MoveSpeed { get; set; }
+		public float MoveSpeed { get; set; }
 
 		public float Shield { get; set; }
 		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; set; } // if critical strike, damage is multiplied by this value
 
+		public float DamageOutputMul { get; set; }
+		public float DamageOutputAdd { get; set; }
+
 		public List<Skill> ActiveSkills { get; private set; }
 
-		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, int moveSpeed, float shield, int criticalRate, float criticalDamageMul)
+		public bool IsWalking = false;
+
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
 		{
 			IsDead = isDead;
 			Hp = hp;
@@ -37,12 +42,21 @@ namespace Assets.scripts.Actor.Status
 			MaxMp = maxMp;
 			MoveSpeed = moveSpeed;
 
+			DamageOutputAdd = damageAdd;
+			DamageOutputMul = damageMul;
+
 			Shield = shield;
-			CriticalRate = CriticalRate;
+
+			CriticalRate = criticalRate;
 			CriticalDamageMul = criticalDamageMul;
 
 			ActiveSkills = new List<Skill>();
         }
+
+		public void ReceiveHeal(int heal)
+		{
+			SetHp(Hp + heal);
+		}
 
 		public void ReceiveDamage(int dmg)
 		{
@@ -74,7 +88,7 @@ namespace Assets.scripts.Actor.Status
 			Mp = newMp;
 		}
 
-		public void SetSpeed(int newSpeed)
+		public void SetSpeed(float newSpeed)
 		{
 			MoveSpeed = newSpeed;
 		}
@@ -111,9 +125,11 @@ namespace Assets.scripts.Actor.Status
 			return ActiveSkills.Count > 0;
 		}
 
+		public bool Stunned { get; set; }
+
 		public bool IsStunned() // TODO stun finish
 		{
-			return false;
+			return Stunned;
 		}
 
 		public bool IsImmobilized()

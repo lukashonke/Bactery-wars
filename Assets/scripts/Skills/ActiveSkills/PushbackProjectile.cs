@@ -9,7 +9,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 	public class PushbackProjectile : ActiveSkill
 	{
 		private GameObject activeProjectile;
-		public int pushbackForce = 170;
+		public int pushbackForce = 25;
 
         public PushbackProjectile()
 		{
@@ -37,7 +37,7 @@ namespace Assets.scripts.Skills.ActiveSkills
             return new PushbackProjectile();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] {new EffectDamage(baseDamage, 10)};
 		}
@@ -78,27 +78,28 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
 		public override void MonoStart(GameObject gameObject)
 		{
             Vector3 pushDir = GetOwnerData().GetForwardVector(0).normalized * -1;
-			GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * pushbackForce, ForceMode2D.Impulse);
+			GetOwnerData().AddPhysicsPush(pushDir * pushbackForce, ForceMode2D.Impulse, null);
+			//GetOwnerData().gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * pushbackForce, ForceMode2D.Impulse);
 		}
 
 		public override void MonoDestroy(GameObject gameObject)
 		{
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
 			// the only possible collisions are the projectile with target
-			ApplyEffects(Owner, other.gameObject);
+			ApplyEffects(Owner, coll.gameObject);
 			DestroyProjectile(gameObject);
 		}
 

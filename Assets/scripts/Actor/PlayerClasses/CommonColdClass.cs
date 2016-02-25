@@ -9,7 +9,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 	{
 		public CommonColdClass()
 		{
-			MaxHp = 70;
+			MaxHp = 100;
 			MaxMp = 50;
 			MaxSpeed = 10;
 			Shield = 1.0f;
@@ -21,12 +21,9 @@ namespace Assets.scripts.Actor.PlayerClasses
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Dodge));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ColdPush));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MucusWarrior));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.RhinoBeam));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ColdShuriken));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile));
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround));
 
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CommonColdAutoattack));
 		}

@@ -308,7 +308,7 @@ namespace Assets.scripts.AI
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected bool MoveTo(Vector3 target, bool fixedRotation=false, int fixedSpeed=-1)
+		protected bool MoveTo(Vector3 target, bool fixedRotation=false, float fixedSpeed=-1)
 		{
 			return Owner.GetData().MoveTo(target, fixedRotation, fixedSpeed);
 		}

@@ -44,7 +44,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new MissileProjectile();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 2) };
 		}
@@ -66,8 +66,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			if (target == null)
 				target = initTarget;
-
-			Debug.Log(target);
 
 			if (target == null)
 			{
@@ -127,7 +125,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 			if (activeProjectile == null || targettedPlayer == null)
 				return;
@@ -141,16 +139,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 		}
 
-		public override void MonoTriggerEnter(GameObject gameObject, Collider2D other)
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
-			if (other.gameObject.Equals(GetOwnerData().GetBody()))
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
 				return;
 
-			Character ch = other.gameObject.GetChar();
+			Character ch = coll.gameObject.GetChar();
 			if (ch != null && !Owner.CanAttack(ch))
 				return;
 
-			ApplyEffects(Owner, other.gameObject);
+			ApplyEffects(Owner, coll.gameObject);
 			DestroyProjectile(gameObject);
 		}
 

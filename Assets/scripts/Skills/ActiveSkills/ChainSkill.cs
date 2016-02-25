@@ -41,7 +41,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return new ChainSkill();
 		}
 
-		public override SkillEffect[] CreateEffects()
+		public override SkillEffect[] CreateEffects(int param)
 		{
 			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
 		}
@@ -106,7 +106,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			DeleteParticleEffect(ray);
 		}
 
-		public override void MonoUpdate(GameObject gameObject)
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 

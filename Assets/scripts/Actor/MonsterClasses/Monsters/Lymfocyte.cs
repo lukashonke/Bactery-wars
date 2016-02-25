@@ -9,12 +9,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
         public LymfocyteRanged()
         {
-            MaxHp = 30;
+            MaxHp = 20;
             MaxMp = 50;
             MaxSpeed = 10;
 
-            IsAggressive = false;
-            AggressionRange = 30;
+            IsAggressive = true;
+            AggressionRange = 10;
             RambleAround = true;
         }
 
@@ -45,25 +45,23 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
         public LymfocyteMelee()
 		{
-			MaxHp = 40;
+			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
 
-			IsAggressive = false;
-			AggressionRange = 10;
+			IsAggressive = true;
+			AggressionRange = 5;
 			RambleAround = true;
 		}
 
 		protected override void AddSkillsToTemplate()
 		{
-			// no skills, only melee
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
 
 		public override MonsterAI CreateAI(Character ch)
 		{
 			MonsterAI ai = new MeleeMonsterAI(ch);
-		    //ai.IsAggressive = false; //TODO use this instead of template.IsAggressive
 		    return ai;
 		}
 
@@ -75,6 +73,41 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterId GetMonsterId()
 		{
 			return MonsterId.Lymfocyte_melee;
+		}
+	}
+
+	public class DurableMeleeCell : MonsterTemplate
+	{
+		public DurableMeleeCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 10;
+
+			IsAggressive = true;
+			AggressionRange = 12;
+			RambleAround = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new MeleeMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.DurableMeleeCell;
 		}
 	}
 }
