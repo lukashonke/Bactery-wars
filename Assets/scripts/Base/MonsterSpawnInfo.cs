@@ -37,19 +37,25 @@ namespace Assets.scripts.Base
 
 		public MonsterSpawnInfo AddHealDrop(int chance, int level=1)
 		{
-			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level));
+			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level, -1));
 			return this;
 		}
 
-		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int level=1)
+		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int category, int level=1)
 	    {
-			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level));
+			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level, category));
 			return this;
 	    }
 
-	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int level=1)
+		public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int rarity, int category, int level = 1)
+		{
+			Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
+			return this;
+		}
+
+	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int category, int level=1)
 	    {
-		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity));
+		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
 		    return this;
 	    }
 

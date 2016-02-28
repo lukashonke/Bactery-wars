@@ -24,6 +24,8 @@ namespace Assets.scripts.AI
 		protected Coroutine currentAction;
 	    protected bool currentActionCancelable;
 
+		public bool alwaysActive;
+
 		private Character MainTarget { get; set; }
 		protected List<Character> Targets { get; private set; }
 
@@ -38,6 +40,8 @@ namespace Assets.scripts.AI
 
 			State = AIState.IDLE;
 			ThinkInterval = 1f;
+
+			alwaysActive = false;
 
 			Targets = new List<Character>();
 		}

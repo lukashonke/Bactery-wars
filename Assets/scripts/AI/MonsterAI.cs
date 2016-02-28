@@ -80,7 +80,7 @@ namespace Assets.scripts.AI
 
 			if (GetStatus().IsDead)
 			{
-				if (State == AIState.IDLE)
+				if (State != AIState.IDLE)
 					SetAIState(AIState.IDLE);
 			}
 
@@ -117,6 +117,12 @@ namespace Assets.scripts.AI
 		{
 			if (GetStatus().IsDead)
 				return;
+
+			if (alwaysActive && !GetStatus().IsDead)
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
 
 			// pokud ma mastera, musi byt vzdy v aktivnim stavu (pro sledovani pohybu mastera, atd.)
 			if (HasMaster())
@@ -217,7 +223,7 @@ namespace Assets.scripts.AI
 			if (!stillActive && GetMaster() != null)
 				stillActive = true;
 
-			if (!stillActive)
+			if (!stillActive && !alwaysActive)
 			{
 				SetAIState(AIState.IDLE);
 				return;

@@ -19,12 +19,14 @@ namespace Assets.scripts.Base
 			public Type type;
 			public int chance;
 			public int level;
+			public int category;
 
-			public Drop(Type type, int chance, int level)
+			public Drop(Type type, int chance, int level, int category)
 			{
 				this.type = type;
 				this.chance = chance;
 				this.level = level;
+				this.category = category;
 			}
 		}
 
@@ -34,14 +36,16 @@ namespace Assets.scripts.Base
 			public int chance;
 			public int level;
 			public int minRarity, maxRarity;
+			public int category;
 
-			public RandomDrop(UpgradeType type, int chance, int level, int minRarity, int maxRarity)
+			public RandomDrop(UpgradeType type, int chance, int level, int minRarity, int maxRarity, int category)
 			{
 				this.type = type;
 				this.chance = chance;
 				this.level = level;
 				this.minRarity = minRarity;
 				this.maxRarity = maxRarity;
+				this.category = category;
 			}
 		}
 
@@ -52,19 +56,29 @@ namespace Assets.scripts.Base
 
 		public void DoDrop(Monster m, Character killer)
 		{
+			List<int> categoriesUsed = new List<int>();
+
 			foreach (Drop d in drops)
 			{
-				if (d.chance == 100 || Random.Range(0, 100) < d.chance)
+				if (d.category == -1 || !categoriesUsed.Contains(d.category))
 				{
-					DoDrop(d.type, d.level, m, killer);
+					if (d.chance == 100 || Random.Range(0, 100) < d.chance)
+					{
+						DoDrop(d.type, d.level, m, killer);
+						categoriesUsed.Add(d.category);
+					}
 				}
 			}
 
 			foreach (RandomDrop d in randomDrops)
 			{
-				if (d.chance == 100 || Random.Range(0, 100) < d.chance)
+				if (d.category == -1 || !categoriesUsed.Contains(d.category))
 				{
-					UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d.type, d.minRarity, d.maxRarity, d.level), m.GetData().GetBody().transform.position);
+					if (d.chance == 100 || Random.Range(0, 100) < d.chance)
+					{
+						UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d.type, d.minRarity, d.maxRarity, d.level), m.GetData().GetBody().transform.position);
+						categoriesUsed.Add(d.category);
+					}
 				}
 			}
 		}

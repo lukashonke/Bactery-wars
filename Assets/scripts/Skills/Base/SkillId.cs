@@ -32,6 +32,7 @@ namespace Assets.scripts.Skills.Base
 
 		MeleeAttack,
 		CollisionDamageAttack,
-		CreateCoverMob
+		CreateCoverMob,
+		SwarmerSpawnSkill,
 	}
 }

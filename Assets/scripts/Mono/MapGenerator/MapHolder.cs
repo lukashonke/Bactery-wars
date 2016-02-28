@@ -29,6 +29,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		LevelThree,
 		LevelFour,
 		LevelFive,
+		BossRush
 	}
 
     /// <summary>
@@ -240,6 +241,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.LevelFive:
 					levelData = new LevelFiveData(this);
+					break;
+				case MapType.BossRush:
+					levelData = new LevelBossRush(this);
 					break;
 			}
 

@@ -121,8 +121,24 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private MapType GetNextLevelType(int level)
 		{
-			Debug.Log("next level " + level);
-			return MapType.Test;
+			MapType nextLevel = MapType.BossRush;
+
+			switch (level)
+			{
+				case 1:
+					
+					break;
+				case 2:
+
+					break;
+				case 3:
+
+					break;
+			}
+
+
+			
+			return nextLevel;
 		}
 
 		public void SetActiveLevel(int x, int y)
