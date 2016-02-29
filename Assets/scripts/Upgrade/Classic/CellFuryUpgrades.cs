@@ -53,7 +53,7 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Range Upgrade";
-			Description = "Your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
+			Description = "When Cell Fury is activated, your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
 		}
 	}
 
@@ -93,7 +93,7 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "cellfury_upgrade";
 			VisibleName = "Cell Fury Push Upgrade";
-			Description = "Your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
+			Description = "When Cell Fury is activated, your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
 		}
 	}
 

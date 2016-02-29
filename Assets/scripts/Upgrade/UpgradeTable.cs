@@ -105,7 +105,7 @@ namespace Assets.scripts.Upgrade
 			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
 			{
-				if (info.upgradeType == type && (info.rarity >= minRarity || info.rarity <= maxRarity))
+				if (info.upgradeType == type && (info.rarity >= minRarity && info.rarity <= maxRarity))
 				{
 					possible.Add(info);
 				}

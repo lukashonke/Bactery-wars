@@ -100,7 +100,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.R))
 			{
-				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 0, 10, 1);
+				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 1, 2, 1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
