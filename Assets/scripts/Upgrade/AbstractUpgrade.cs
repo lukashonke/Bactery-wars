@@ -160,7 +160,7 @@ namespace Assets.scripts.Upgrade
 
 		public float AddValueByLevel(float baseDamage, float levelMultiplier, bool alsoNegative=false)
 		{
-			int add = (int)((Level - 1) * levelMultiplier);
+			float add = (Level - 1)*levelMultiplier;
 			if (add < 0 && !alsoNegative)
 				add = 0;
 			return (baseDamage + add);

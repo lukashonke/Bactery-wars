@@ -28,6 +28,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
 
+		public int XpReward { get; protected set; }
+
 		public bool IsAggressive = false;
 		public int AggressionRange = 5;
 
@@ -55,6 +57,12 @@ namespace Assets.scripts.Actor.MonsterClasses
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
+			XpReward = 1;
+		}
+
+		public virtual int GetXp(Monster m)
+		{
+			return XpReward * m.Level;
 		}
 
 		protected virtual void Init()

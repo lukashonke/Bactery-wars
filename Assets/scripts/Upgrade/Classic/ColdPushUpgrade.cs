@@ -15,8 +15,11 @@ namespace Assets.scripts.Upgrade.Classic
 {
 	public class ColdPushForceUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 4;
+		public const float LEVEL_ADD = 5;
 
 		private int temp;
 
@@ -56,8 +59,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class ColdPushRangeUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.RARE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 4;
+		public const float LEVEL_ADD = 5;
 
 		private int temp;
 
@@ -97,13 +103,16 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class ColdPushAngleUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		private int temp;
 
 		public ColdPushAngleUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 5;
+			MaxLevel = 1;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -135,8 +144,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class ColdPushSlowUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const float DURATION = 5f;
-		public const float DURATION_LEVEL_ADD = 0.4f;
+		public const float DURATION_LEVEL_ADD = 1f;
 
 		private float temp;
 		private float temp2;
@@ -179,8 +191,11 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class ColdPushStunUpgrade : AbstractUpgrade
+	public class ColdPushStunUpgrade : AbstractUpgrade //TODO not done
 	{
+		public static int rarity = 10;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 4;
 
@@ -213,7 +228,7 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "coldpush_upgrade";
 			VisibleName = "Cold Push Slow Upgrade";
-			Description = "Targets hit with Cold Push skill will be slowed down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
+			Description = "UNFINISHED Targets hit with Cold Push skill will be stunned down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}
 }

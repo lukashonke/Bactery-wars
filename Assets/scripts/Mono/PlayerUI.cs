@@ -48,7 +48,7 @@ namespace Assets.scripts.Mono
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
-		public const int BASESTAT_UPGRADES_SIZE = 4;
+		public const int BASESTAT_UPGRADES_SIZE = 5;
 		public GameObject[] inventorySlots;
 		public GameObject[] activeSlots;
 		public GameObject[] basestatSlots;
@@ -1002,6 +1002,13 @@ namespace Assets.scripts.Mono
 				string price = u.Price;
 				string addInfo = u.AdditionalInfo;
 
+				if (u.Level == 0)
+				{
+					description = "No effect yet.\nKill enemies to get this upgrade.";
+				}
+
+				price = Enum.GetName(typeof (UpgradeType), u.Type);
+
 				int currentUpgradeProgress = u.CurrentProgress;
 				int needForNext = u.NeedForNextLevel;
 
@@ -1240,8 +1247,8 @@ namespace Assets.scripts.Mono
 					case "Level":
 						t.text = "Level " + data.level;
 						break;
-					case "Class":
-						t.text = ((Player)data.GetOwner()).Template.GetClassId().ToString();
+					case "XP":
+						t.text = data.GetOwner().Status.XP + " / " + XpTable.GetXpForLevel(data.level + 1) + " XP";
 						break;
 					case "HP":
 						t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;

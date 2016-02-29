@@ -31,6 +31,8 @@ namespace Assets.scripts.Actor.Status
 
 		public List<Skill> ActiveSkills { get; private set; }
 
+		public int XP { get; set; }
+
 		public bool IsWalking = false;
 
 		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
@@ -52,6 +54,11 @@ namespace Assets.scripts.Actor.Status
 
 			ActiveSkills = new List<Skill>();
         }
+
+		public void AddXp(int xp)
+		{
+			XP += xp;
+		}
 
 		public void ReceiveHeal(int heal)
 		{

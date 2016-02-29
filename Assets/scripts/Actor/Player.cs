@@ -34,6 +34,21 @@ namespace Assets.scripts.Actor
 			Template = template;
 		}
 
+		public override void OnLevelChange()
+		{
+			if (Level >= 20)
+			{
+				Inventory.ActiveCapacity = 5;
+			}
+			else if (Level >= 10)
+			{
+				Inventory.ActiveCapacity = 4;
+			}
+
+			if(Inventory != null && GetData() != null && GetData().ui != null)
+				GetData().ui.UpdateInventory(Inventory);
+		}
+
 		public override void DoDie(Character killer = null, SkillId skillId = SkillId.SkillTemplate)
 		{
 			base.DoDie(killer, skillId);
@@ -84,10 +99,11 @@ namespace Assets.scripts.Actor
 			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
 			Inventory.Capacity = Template.InventoryCapacity;
 
-			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new DamageUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(0).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(0).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new DamageUpgrade(0).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(0).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(0).Init().SetOwner(this));
 
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();

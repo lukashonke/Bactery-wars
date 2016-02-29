@@ -39,7 +39,7 @@ namespace Assets.scripts.Upgrade
 			this.Owner = owner;
 			this.Capacity = capacity;
 			this.ActiveCapacity = activeCapacity;
-			BasestatCapacity = 4;
+			BasestatCapacity = 5;
 
 			upgrades = new List<AbstractUpgrade>();
 			activeUpgrades = new List<AbstractUpgrade>();

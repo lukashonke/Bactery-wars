@@ -92,6 +92,11 @@ namespace Assets.scripts.Actor
 
 		public override void DoDie(Character killer=null, SkillId skillId=0)
 		{
+			if (killer != null && killer is Player)
+			{
+				((Player)killer).AddXp(Template.GetXp(this));
+			}
+
 			base.DoDie(killer, skillId);
 
 			if (SpawnInfo != null)

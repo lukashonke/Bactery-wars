@@ -381,7 +381,7 @@ namespace Assets.scripts.Mono
 		{
 			rb.velocity += explosionForce;
 
-			if (explosionForce.x > 0 || explosionForce.y > 0)
+			if (Math.Abs(explosionForce.x) > 0 || Math.Abs(explosionForce.y) > 0)
 			{
 				float decrease = rb.mass;
 				float newX = explosionForce.x;

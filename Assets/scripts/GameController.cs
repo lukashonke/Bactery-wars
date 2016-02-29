@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,6 +50,20 @@ namespace Assets.scripts
 			Input.simulateMouseWithTouches = false;
 
 			GameSystem.Instance.Start(this);
+		}
+
+		public void WaitForPathfindingError()
+		{
+			InvokeRepeating("WaitForError", 2f, 2f);
+		}
+
+		private void WaitForError()
+		{
+			if (GameSystem.Instance.pathfindingError)
+			{
+				GameSystem.Instance.pathfindingError = false;
+				WorldHolder.instance.RegenMap();
+			}
 		}
 
 		void Update()

@@ -52,6 +52,12 @@ namespace Assets.scripts.Actor
 		{
 			Level = level;
 			Data.SetVisibleLevel(level);
+			OnLevelChange();
+		}
+
+		public virtual void OnLevelChange()
+		{
+			
 		}
 
 		protected Character(string name) : base(name)
@@ -836,6 +842,23 @@ namespace Assets.scripts.Actor
 		public bool HasSummons()
 		{
 			return summons.Count > 0;
+		}
+
+		public void AddXp(int xp)
+		{
+			Status.AddXp(xp);
+
+			if (Status.XP >= XpTable.GetXpForLevel(Level + 1))
+			{
+				LevelUp();
+			}
+		}
+
+		private void LevelUp()
+		{
+			Status.XP -= XpTable.GetXpForLevel(Level + 1);
+			SetLevel(Level + 1);
+			Message("Level up! You are now level " + Level);
 		}
 
 		public virtual void Message(string s, int level=1)

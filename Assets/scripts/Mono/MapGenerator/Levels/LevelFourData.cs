@@ -58,8 +58,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
                 {
 					Tile t = room.GetLargestSubRoom(true);
 	                SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1)
-		                .AddHealDrop(100, 10)
-		                .AddDrop(100, typeof (ShieldUpgrade), -1);
+		                .AddHealDrop(100, 10);
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {

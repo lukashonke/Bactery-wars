@@ -78,16 +78,18 @@ namespace Assets.scripts.Upgrade
 			foreach (Type t in types)
 			{
 				int rarity = 1;
+				UpgradeType uType = UpgradeType.CLASSIC;
 				try
 				{
 					rarity = (int)t.GetField("rarity").GetValue(null);
+					uType = (UpgradeType) t.GetField("type").GetValue(null);
 				}
 				catch (Exception)
 				{
 					Debug.LogWarning("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
 				}
 
-				UpgradeInfo info = new UpgradeInfo(t, type, rarity);
+				UpgradeInfo info = new UpgradeInfo(t, uType, rarity);
 				upgrades.Add(info);
 			}
 		}

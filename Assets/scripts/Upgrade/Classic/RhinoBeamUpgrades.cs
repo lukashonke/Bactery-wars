@@ -15,8 +15,11 @@ namespace Assets.scripts.Upgrade.Classic
 {
 	public class RhinobeamDurationUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 10;
 
 		private float temp;
 
@@ -56,6 +59,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamWidthUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const float WIDTH = 2;
 		public const float LEVEL_ADD = 0.1f;
 
@@ -91,14 +97,17 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "rhinobeam_upgrade";
 			VisibleName = "Rhino Beam Width Upgrade";
-			Description = "Rhino Beam's ray width is set to " + AddValueByLevel(WIDTH, LEVEL_ADD) + ".";
+			Description = "Rhino Beam's ray width is set to " + AddValueByLevel(WIDTH, LEVEL_ADD) + " (without upgrade it is 1).";
 		}
 	}
 
 	public class RhinobeamReuseUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int POWER = 25;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 2;
 
 		private float temp;
 
@@ -138,8 +147,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamEpicReuseUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const int POWER = 25;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 2;
 
 		private float temp;
 
@@ -179,7 +191,10 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamDamageUpgrade : AbstractUpgrade
 	{
-		public const int POWER = 100;
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.RARE;
+
+		public const int POWER = 50;
 		public const float LEVEL_ADD = 10;
 
 		public const int COOLDOWN_DOWN = 50;
@@ -226,8 +241,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamStunUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const float DURATION = 4;
-		public const float LEVEL_ADD = 0.4f;
+		public const float LEVEL_ADD = 0.5f;
 
 		public RhinobeamStunUpgrade(int level)
 			: base(level)
@@ -259,6 +277,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamPushUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.RARE;
+
 		public const float POWER = 5;
 		public const float LEVEL_ADD = 1;
 
@@ -313,6 +334,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class RhinobeamRotationUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		private float temp;
 
 		public RhinobeamRotationUpgrade(int level)

@@ -7,19 +7,23 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEditor;
 
 namespace Assets.scripts.Upgrade.Classic
 {
 	public class CCAADamageUpgrade : AbstractUpgrade
 	{
-		public const int DAMAGE = 2;
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
+		public const int DAMAGE = 5;
 		public const float LEVEL_MUL = 1f;
 
 		public CCAADamageUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 4;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -50,14 +54,17 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAARangeUpgrade : AbstractUpgrade
 	{
-		public const int VALUE = 3;
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
+		public const int VALUE = 5;
 		public const float LEVEL_MUL = 1f;
 
 		public CCAARangeUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 4;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -88,14 +95,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAAReuseUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int ANGLE = 10;
+		public const int ANGLE_LEVEL_ADD = -1;
 		private float val;
 
 		public CCAAReuseUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -106,7 +117,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 			val = skill.reuse/2;
 			skill.reuse -= val;
-			skill.deviationAngle = ANGLE;
+			skill.deviationAngle = (int) AddValueByLevel(ANGLE, ANGLE_LEVEL_ADD, true);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -123,20 +134,23 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "ccaa_upgrade";
 			VisibleName = "Autoattack Reuse Upgrade";
-			Description = "Decreases your autoattack reuse by 50%, but adds a random angle (up to " + ANGLE + " degrees) to shooting.";
+			Description = "Decreases your autoattack reuse by 50%, but adds a random angle (up to " + AddValueByLevel(ANGLE, ANGLE_LEVEL_ADD, true) + " degrees) to shooting.";
 		}
 	}
 
 	public class CCAADoubleattackChanceUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int CHANCE = 30;
-		public const int LEVEL_ADD = 5;
+		public const int LEVEL_ADD = 6;
 
 		public CCAADoubleattackChanceUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 6;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -169,6 +183,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAADoubleattackUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.RARE;
+
 		public const int REUSE_INCREASE = 50;
 		public const int LEVEL_ADD = -4;
 
@@ -215,8 +232,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAATripleshotUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const int REUSE_INCREASE = 75;
-		public const int LEVEL_ADD = -4;
+		public const int LEVEL_ADD = -5;
 
 		private float temp;
 
@@ -261,8 +281,11 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAAQuatroshotUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const int REUSE_INCREASE = 100;
-		public const int LEVEL_ADD = -4;
+		public const int LEVEL_ADD = -5;
 
 		private float temp;
 
@@ -307,6 +330,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAAShotgunUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public const int PROJECTILE_COUNT = 3;
 
 		public CCAAShotgunUpgrade(int level)
@@ -346,6 +372,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAAShotgunChanceUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int CONSECUTIVE_COUNTER = 3;
 		public const int PROJECTILE_COUNT = 3;
 
@@ -386,6 +415,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAASpreadshootUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.RARE;
+
 		public CCAASpreadshootUpgrade(int level)
 			: base(level)
 		{
@@ -421,6 +453,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAAThunderUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 3;
+		public static UpgradeType type = UpgradeType.EPIC;
+
 		public CCAAThunderUpgrade(int level)
 			: base(level)
 		{
@@ -456,14 +491,19 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAADamageForRangeUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 2;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		public const int VALUE = 50;
+		public const int VALUE_LEVEL_ADD = 4;
+
 		private float temp1, temp2;
 
 		public CCAADamageForRangeUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -473,7 +513,7 @@ namespace Assets.scripts.Upgrade.Classic
 				return;
 
 			temp1 = skill.range/2f;
-			temp2 = skill.baseDamage/2f;
+			temp2 = skill.baseDamage*(AddValueByLevel(VALUE, VALUE_LEVEL_ADD)/100f);
 
 			skill.range -= (int)temp1;
 			skill.baseDamage += (int)temp2;
@@ -493,12 +533,15 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			Name = "ccaa_upgrade";
 			VisibleName = "Autoattack Damage Upgrade";
-			Description = "Decreases autoattack range by 50% and increases damage by 50%.";
+			Description = "Decreases autoattack range by 50% and increases damage by " + AddValueByLevel(VALUE, VALUE_LEVEL_ADD) + "%.";
 		}
 	}
 
 	public class CCAAForceUpgrade : AbstractUpgrade
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.CLASSIC;
+
 		private int temp;
 		private float temp2;
 
@@ -542,6 +585,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 	public class CCAASlowUpgrade : AbstractUpgrade //TODO bugged - doesnt refresh counter
 	{
+		public static int rarity = 1;
+		public static UpgradeType type = UpgradeType.RARE;
+
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 5;
 		//public const float DURATION = 2.5f;

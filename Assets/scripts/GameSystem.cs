@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.MonsterClasses.Base;
@@ -60,7 +61,7 @@ namespace Assets.scripts
 
 		private int lastPlayerId = 0;
 
-		public bool disableWallNodes = true;
+		public bool disableWallNodes = false;
 
 		// starts the game, loads data, etc
 		public void Start(GameController gc)
@@ -104,6 +105,12 @@ namespace Assets.scripts
 		}
 
 		public bool detailedPathfinding = false;
+		public bool pathfindingError = false;
+
+		public void PathfindingError()
+		{
+			pathfindingError = true;
+		}
 
 		public void UpdatePathfinding(Vector3 center, int tilesPerRegionX, int tilesPerRegionY, int mapWidth, int mapHeight)
 		{
@@ -179,6 +186,13 @@ namespace Assets.scripts
 					}
 				}
 			}
+
+			Controller.WaitForPathfindingError();
+		}
+
+		private void CheckError()
+		{
+			
 		}
 
 		public Player RegisterNewPlayer(PlayerData data, String name)
