@@ -1216,8 +1216,14 @@ namespace Assets.scripts.Mono
 
 		public void MeleeInterract(GameObject target, bool repeat)
 		{
-			if (target == null || gameObject == null)
-				return;
+			try
+			{
+				if (target == null || this.gameObject == null)
+					return;
+			}
+			catch (Exception)
+			{
+			}
 
 			AbstractData data = target.GetComponent<AbstractData>();
 

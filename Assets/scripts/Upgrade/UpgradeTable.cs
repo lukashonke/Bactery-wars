@@ -84,7 +84,7 @@ namespace Assets.scripts.Upgrade
 				}
 				catch (Exception)
 				{
-					Debug.LogError("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
+					Debug.LogWarning("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
 				}
 
 				UpgradeInfo info = new UpgradeInfo(t, type, rarity);
