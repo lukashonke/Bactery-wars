@@ -110,4 +110,39 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			return MonsterId.DurableMeleeCell;
 		}
 	}
+
+	public class SwarmerMeleeCell : MonsterTemplate
+	{
+		public SwarmerMeleeCell()
+		{
+			MaxHp = 40;
+			MaxMp = 50;
+			MaxSpeed = 10;
+
+			IsAggressive = true;
+			AggressionRange = 12;
+			RambleAround = false;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new MeleeMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.SwarmerMeleeCell;
+		}
+	}
 }

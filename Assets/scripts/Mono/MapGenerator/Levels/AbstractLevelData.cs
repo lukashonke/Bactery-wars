@@ -14,14 +14,17 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 		public MapType type;
 
+		public int mapLevel;
+
 		protected MapHolder map;
 		protected bool conquered = false;
 
 		protected bool tutorialLevel;
 
-		public AbstractLevelData(MapHolder holder)
+		public AbstractLevelData(MapHolder holder, int mapLevel=1)
 		{
 			map = holder;
+			this.mapLevel = mapLevel;
 			tutorialLevel = false;
 		}
 

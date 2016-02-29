@@ -46,6 +46,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		DurableMeleeCell = 26,
 
 		SmallTankCell = 27,
+		SwarmerMeleeCell = 28,
 
 		// bosses
 		TestBoss = 200,

@@ -1058,7 +1058,9 @@ namespace Assets.scripts.Mono
 		{
 			GetOwner().DeleteMe();
 			DisableObjectData();
-			Destroy(gameObject);
+
+			if(gameObject != null)
+				Destroy(gameObject);
 
 			DisableChildObjects();
 		}
@@ -1118,19 +1120,28 @@ namespace Assets.scripts.Mono
 		public void SetMovementTarget(GameObject newTarget)
 		{
 			MovementChanged();
+
+			bool changed = !Utils.VectorEquals(targetPositionWorld, newTarget.transform.position);
+
 			targetPositionWorld = newTarget.transform.position;
 			targetMoveObject = newTarget;
 
-			CalculatePathfindingNodes();
+			if(changed)
+				CalculatePathfindingNodes();
 		}
 
 		public bool SetMovementTarget(Vector3 newTarget)
 		{
 			MovementChanged();
+
+			bool changed = !Utils.VectorEquals(targetPositionWorld, newTarget);
+
 			targetPositionWorld = newTarget;
 			targetMoveObject = null;
 
-			CalculatePathfindingNodes();
+			if (changed)
+				CalculatePathfindingNodes();
+
 			return true;
 		}
 

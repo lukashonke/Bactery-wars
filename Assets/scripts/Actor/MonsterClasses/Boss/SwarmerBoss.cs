@@ -33,6 +33,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 
 			sk.castTime = 0;
 			sk.reuse = 0f;
+			sk.mobToSpawn = MonsterId.SwarmerMeleeCell;
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -40,6 +41,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 			SwarmerBossAI a = new SwarmerBossAI(ch);
 			a.alwaysActive = true;
 			a.maxMonstersSpawned = 20;
+			a.spawnMinInterval = 2f;
+			a.spawnMaxInterval = 6f;
 
 			return a;
 		}

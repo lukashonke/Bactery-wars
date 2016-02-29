@@ -24,6 +24,11 @@ namespace Assets.scripts
 			return Physics2D.BoxCastAll(obj.transform.position, new Vector2(width, width), angle, direction, distance);
 		}
 
+		public static bool VectorEquals(Vector3 a, Vector3 b, float precision=0.5f)
+		{
+			return Vector3.SqrMagnitude(a - b) < precision;
+		}
+
 		public static bool IsInCone(GameObject source, Vector3 direction, GameObject target, int angle, int range)
 		{
 			Vector3 rayDirection = target.transform.position - source.transform.position;

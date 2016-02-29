@@ -204,7 +204,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, int mapLevel=1)
 		{
 			this.World = world;
 
@@ -243,7 +243,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					levelData = new LevelFiveData(this);
 					break;
 				case MapType.BossRush:
-					levelData = new LevelBossRush(this);
+					levelData = new LevelBossRush(this, mapLevel);
 					break;
 			}
 
@@ -814,7 +814,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("error");
+				Debug.LogError("error " + e.Message);
+				Debug.Log(e.StackTrace);
 			}
 
 			ConfigureMonstersAfterSpawn();

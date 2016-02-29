@@ -69,8 +69,9 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 			else
 			{
-				MapType type = GetNextLevelType(1);
-				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height);
+				int mapLevel = 1;
+				MapType type = GetNextLevelType(1, ref mapLevel);
+				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height, mapLevel);
 			}
 			
 			newMap.CreateMap();
@@ -92,6 +93,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			MapType type = MapType.LevelOne;
+			int mapLevel = 1;
 
 			switch (level)
 			{
@@ -108,18 +110,18 @@ namespace Assets.scripts.Mono.MapGenerator
 					type = MapType.LevelFive;
 					break;
 				default:
-					type = GetNextLevelType(level-5);
+					type = GetNextLevelType(level-5, ref mapLevel);
 					break;
 			}
 
-			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50);
+			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50, mapLevel);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
 			return newCords;
 		}
 
-		private MapType GetNextLevelType(int level)
+		private MapType GetNextLevelType(int level, ref int mapLevel)
 		{
 			MapType nextLevel = MapType.BossRush;
 
