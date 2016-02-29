@@ -18,6 +18,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 20;
 			RambleAround = false;
 			AlertsAllies = false;
+			XpReward = 5;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -63,6 +64,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 20;
 			RambleAround = false;
 			AlertsAllies = false;
+			XpReward = 3;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -108,6 +110,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 20;
 			RambleAround = false;
 			AlertsAllies = false;
+			XpReward = 4;
 		}
 
 		protected override void AddSkillsToTemplate()

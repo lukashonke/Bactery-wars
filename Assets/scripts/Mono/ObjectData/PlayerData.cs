@@ -81,6 +81,8 @@ namespace Assets.scripts.Mono.ObjectData
 				{
 					player.UnlockSkill(i, false);
 				}
+
+				player.SetLevel(2);
 			}
 
 			ui.ShowHelpWindow(Messages.ShowHelpWindow("game_start", 0.1), 0);

@@ -17,7 +17,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
             IsAggressive = true;
             AggressionRange = 10;
             RambleAround = true;
-        }
+			XpReward = 3;
+		}
 
         protected override void AddSkillsToTemplate()
         {

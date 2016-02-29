@@ -18,6 +18,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
             IsAggressive = true;
             AggressionRange = 20;
             RambleAround = false;
+			XpReward = 2;
         }
 
         protected override void AddSkillsToTemplate()
@@ -60,6 +61,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			IsAggressive = false;
 			AggressionRange = 20;
 			RambleAround = true;
+			XpReward = 1;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -108,6 +110,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			IsAggressive = true;
 			AggressionRange = 10;
 			RambleAround = true;
+			XpReward = 3;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -161,6 +164,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 20;
 			RambleAround = true;
 			RambleAroundMaxDist = 20;
+			XpReward = 1;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -203,6 +207,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			IsAggressive = true;
 			AggressionRange = 15;
 			RambleAround = true;
+			XpReward = 1;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -238,6 +243,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			IsAggressive = false;
 			AggressionRange = 30;
 			RambleAround = true;
+			XpReward = 3;
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -272,6 +278,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			IsAggressive = false;
 			AggressionRange = 30;
 			RambleAround = true;
+			XpReward = 3;
 		}
 
 		protected override void AddSkillsToTemplate()

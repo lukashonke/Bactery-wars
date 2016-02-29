@@ -17,6 +17,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
+			XpReward = 5;
 		}
 
 		protected override void AddSkillsToTemplate()

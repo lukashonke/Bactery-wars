@@ -36,13 +36,13 @@ namespace Assets.scripts.Actor
 
 		public override void OnLevelChange()
 		{
-			if (Level >= 5)
-			{
-				Inventory.ActiveCapacity = 3;
-			}
-			else if (Level >= 20)
+			if (Level >= 10)
 			{
 				Inventory.ActiveCapacity = 4;
+			}
+			else if (Level >= 5)
+			{
+				Inventory.ActiveCapacity = 3;
 			}
 
 			if(Inventory != null && GetData() != null && GetData().ui != null)

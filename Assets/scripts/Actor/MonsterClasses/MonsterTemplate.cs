@@ -29,6 +29,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
 
 		public int XpReward { get; protected set; }
+		public float XpLevelMul { get; protected set; }
 
 		public bool IsAggressive = false;
 		public int AggressionRange = 5;
@@ -58,11 +59,16 @@ namespace Assets.scripts.Actor.MonsterClasses
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
 			XpReward = 1;
+			XpLevelMul = 0.5f; // 50% more XP per each next level
 		}
 
 		public virtual int GetXp(Monster m)
 		{
-			return XpReward * m.Level;
+			float lvlBonus = (m.Level-1)*0.5f*XpReward;
+			if (lvlBonus < 0)
+				lvlBonus = 0;
+
+			return (int) (XpReward  + lvlBonus);
 		}
 
 		protected virtual void Init()
