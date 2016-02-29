@@ -21,14 +21,14 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ModifyShield(ref float shield)
 		{
-			shield += 0.05f * (Level - 1);			
+			shield += 0.05f * (Level);			
 		}
 
 		protected override void InitInfo()
 		{
 			Name = "shield_upgrade";
 			VisibleName = "Shield Upgrade";
-			Description = "Increases your shield by " + (0.05f * (Level-1) * 100) + "%.";
+			Description = "Increases your shield by " + (0.05f * (Level) * 100) + "%.";
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace Assets.scripts.Upgrade
 
 			upgrades = new List<AbstractUpgrade>();
 			activeUpgrades = new List<AbstractUpgrade>();
-			basestatUpgrades = new List<AbstractUpgrade>(3);
+			basestatUpgrades = new List<AbstractUpgrade>(5);
 		}
 
 		public void LoadUpgrades()

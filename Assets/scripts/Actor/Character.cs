@@ -153,7 +153,7 @@ namespace Assets.scripts.Actor
 			Status = InitStatus();
 			Skills = InitSkillSet();
 			summons = new List<Monster>();
-			Inventory = new Inventory(this, 10, 3);
+			Inventory = new Inventory(this, 10, 2);
 
 			Knownlist.StartUpdating();
 
@@ -848,7 +848,7 @@ namespace Assets.scripts.Actor
 		{
 			Status.AddXp(xp);
 
-			if (Status.XP >= XpTable.GetXpForLevel(Level + 1))
+			if (Status.XP >= GameProgressTable.GetXpForLevel(Level + 1))
 			{
 				LevelUp();
 			}
@@ -856,7 +856,7 @@ namespace Assets.scripts.Actor
 
 		private void LevelUp()
 		{
-			Status.XP -= XpTable.GetXpForLevel(Level + 1);
+			Status.XP -= GameProgressTable.GetXpForLevel(Level + 1);
 			SetLevel(Level + 1);
 			Message("Level up! You are now level " + Level);
 		}

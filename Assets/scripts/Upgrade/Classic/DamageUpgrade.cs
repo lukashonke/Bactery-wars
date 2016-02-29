@@ -21,14 +21,14 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ModifyDmgMul(ref float dmgMul)
 		{
-			dmgMul += 0.05f * (Level-1);
+			dmgMul += 0.05f * (Level);
 		}
 
 		protected override void InitInfo()
 		{
 			Name = "damage_upgrade";
 			VisibleName = "Damage Upgrade";
-			Description = "Increases all damage done by " + (0.05 * (Level-1) * 100) + "%.";
+			Description = "Increases all damage done by " + (0.05 * (Level) * 100) + "%.";
 		}
 	}
 }

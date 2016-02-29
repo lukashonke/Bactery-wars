@@ -982,7 +982,46 @@ namespace Assets.scripts.Mono
 			AbstractUpgrade u = GetUpgradeFromInventory(slot, slotType);
 
 			if (u == null)
+			{
+				int order = Int32.Parse(slot.name.Split('_')[1]);
+				string description = GameProgressTable.GetDescriptionOnLockedSlot(order, slotType);
+
+				if (description == null || draggingIcon)
+					return;
+
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+
+				highlightedSlot = slot;
+				currentTooltipObject = Instantiate(tooltipObject);
+				currentTooltipObject.transform.parent = inventoryPanel.transform;
+				currentTooltipObject.transform.position = Input.mousePosition;
+
+				Color titleColor = new Color();
+				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+				currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+
+				foreach (Transform child in currentTooltipObject.transform)
+				{
+					if (child.name.Equals("Title"))
+					{
+						child.GetComponent<Text>().text = "Locked slot";
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("Description"))
+					{
+						child.GetComponent<Text>().text = description;
+						continue;
+					}
+					else
+					{
+						Destroy(child.gameObject);
+					}
+				}
+
 				return;
+			}
 
 			if (!exit)
 			{
@@ -1248,7 +1287,7 @@ namespace Assets.scripts.Mono
 						t.text = "Level " + data.level;
 						break;
 					case "XP":
-						t.text = data.GetOwner().Status.XP + " / " + XpTable.GetXpForLevel(data.level + 1) + " XP";
+						t.text = data.GetOwner().Status.XP + " / " + GameProgressTable.GetXpForLevel(data.level + 1) + " XP";
 						break;
 					case "HP":
 						t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;
