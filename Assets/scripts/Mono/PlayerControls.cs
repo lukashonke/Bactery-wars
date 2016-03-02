@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using Assets.scripts.Actor;
+using Assets.scripts.Fort;
+using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
@@ -96,6 +99,29 @@ namespace Assets.scripts.Mono
 				AbstractUpgrade u = new Heal(1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+			}
+
+			if (Input.GetKeyDown(KeyCode.B))
+			{
+				AbstractLevelData levelData = WorldHolder.instance.activeMap.levelData;
+
+				if (levelData.CanHaveBase())
+				{
+					levelData.CreateBase();
+				}
+			}
+
+			if (Input.GetKeyDown(KeyCode.V))
+			{
+				AbstractLevelData levelData = WorldHolder.instance.activeMap.levelData;
+
+				if (levelData.HasBase())
+				{
+					if (SiegeManager.IsSiegeActive() == false)
+						SiegeManager.StartSiege(WorldHolder.instance.activeMap);
+					else
+						SiegeManager.CancelSiege();
+				}
 			}
 
 			if (Input.GetKeyDown(KeyCode.R))

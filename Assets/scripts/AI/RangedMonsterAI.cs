@@ -47,7 +47,7 @@ namespace Assets.scripts.AI
 
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			float dist = Utils.GetDistPwr(Owner.GetData().GetBody(), target.GetData().GetBody());
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something

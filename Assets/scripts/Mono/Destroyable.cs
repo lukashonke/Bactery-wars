@@ -11,12 +11,13 @@ namespace Assets.scripts.Mono
 	public class Destroyable : MonoBehaviour
 	{
 		public GameObject owner;
+		public int team;
 
 		public int health;
 
 		public void Start()
 		{
-			
+
 		}
 
 		public void Update()

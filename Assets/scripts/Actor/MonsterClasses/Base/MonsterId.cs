@@ -52,5 +52,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		TestBoss = 200,
 		TankSpreadshooter = 201,
 		SwarmerBoss = 202,
+
+		SimpleBase = 500,
 	}
 }

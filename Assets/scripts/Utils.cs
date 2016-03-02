@@ -217,6 +217,21 @@ namespace Assets.scripts
 			return pos;
 		}
 
+		public static float GetDistPwr(GameObject source, GameObject target)
+		{
+			Collider2D coll = target.GetComponent<Collider2D>();
+			float size = 0;
+
+			if (coll is CircleCollider2D)
+				size = ((CircleCollider2D) coll).radius;
+			else if (coll is BoxCollider2D)
+				size = ((BoxCollider2D) coll).size.x/2f;
+
+			float dist = DistancePwr(source.transform.position, target.transform.position);
+
+			return dist;
+		}
+
 		public static bool IsNotAccessible(Vector3 v)
 		{
 			Vector3 start = WorldHolder.instance.activeMap.GetStartPosition();

@@ -771,6 +771,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeleteMap()
 		{
+			levelData.OnDelete();
+
 			// destroy the map mesh
 			meshGen.Delete();
 			Object.Destroy(mesh);
@@ -838,6 +840,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			spawnableMonsters.Clear();
 			spawnableNpcs.Clear();
 
+			levelData.OnLoad();
+
 			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY); // TODO set correct bounds
 			SetActive(true);
 
@@ -855,6 +859,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeloadMap()
 		{
+			levelData.OnDeload();
+
 			// destroy the map mesh
 			meshGen.Delete();
 			Object.Destroy(mesh);
@@ -1283,21 +1289,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
             else if (ch is Monster)
             {
-                // this monster was added from editor and is not registered to the map - ignore its dead here
-                if (((Monster) ch).SpawnInfo == null)
-                    return;
+				// this monster was added from editor and is not registered to the map - ignore its dead here
+				if (((Monster)ch).SpawnInfo == null)
+					return;
 
-                for(int i = 0; i < activeMonsters.Count; i++)
-                {
-                    Monster temp = activeMonsters[i];
+				for (int i = 0; i < activeMonsters.Count; i++)
+				{
+					Monster temp = activeMonsters[i];
 
-                    if (temp.Equals(ch))
-                    {
-                        activeMonsters.Remove(temp);
-                        UpdateRegionStatus(temp.SpawnInfo.Region);
-                        break;
-                    }
-                }
+					if (temp.Equals(ch))
+					{
+						activeMonsters.Remove(temp);
+
+						if (levelData.IsUnderSiege())
+						{
+							levelData.siege.OnMonsterDied((Monster)ch);
+						}
+
+						UpdateRegionStatus(temp.SpawnInfo.Region);
+						break;
+					}
+				}
             }
 	    }
 
@@ -1445,6 +1457,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    public bool CanTeleportToNext()
 	    {
+		    if (levelData.IsUnderSiege())
+			    return false;
+
 	        foreach (MapRegion reg in regions.Values)
 	        {
 	            if (reg.hasOutTeleporter)

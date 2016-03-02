@@ -346,5 +346,10 @@ namespace Assets.scripts
 				throw new NullReferenceException();
 			}
 		}
+
+		public GameObject Instantiate(GameObject template, Vector3 position)
+		{
+			return Controller.Instantiate(template, position);
+		}
 	}
 }

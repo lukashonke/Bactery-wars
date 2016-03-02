@@ -27,6 +27,8 @@ namespace Assets.scripts.Actor
 		private bool hasMaster;
 		public bool isMinion;
 
+		public bool isSiegeMob;
+
 		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
 		{
 			Data = dataObject;

@@ -5,6 +5,7 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Fort;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,6 +19,10 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		protected MapHolder map;
 		protected bool conquered = false;
+		protected bool canHaveBase = false;
+
+		public PlayerBase playerBase = null;
+		public Siege siege = null;
 
 		protected bool tutorialLevel;
 
@@ -110,6 +115,63 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public void OnConquered() 
 		{
 			conquered = true;
+		}
+
+		public bool CanHaveBase()
+		{
+			return canHaveBase;
+		}
+
+		public void CreateBase()
+		{
+			Vector3 pos = GetBaseLocation();
+
+			playerBase = new PlayerBase(map, pos, null);
+			playerBase.LoadBase();
+		}
+
+		public bool HasBase()
+		{
+			return playerBase != null;
+		}
+
+		public void SetSiege(Siege s)
+		{
+			siege = s;
+		}
+
+		public bool IsUnderSiege()
+		{
+			return siege != null;
+		}
+
+		public virtual Vector3 GetBaseLocation()
+		{
+			return new Vector3();
+		}
+
+		public virtual void OnLoad()
+		{
+			if (HasBase())
+			{
+				playerBase.LoadBase();
+			}
+		}
+
+		public virtual void OnDeload()
+		{
+			if (HasBase())
+			{
+				playerBase.DeloadBase();
+			}
+		}
+
+		public virtual void OnDelete()
+		{
+			if (HasBase())
+			{
+				playerBase.DeloadBase();
+			}
 		}
 	}
 }

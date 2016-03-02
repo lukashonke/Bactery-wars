@@ -71,7 +71,6 @@ public class Healthbar : MonoBehaviour
 		if (hp == 0 && maxHp == 0)
 			return;
 
-
 		percent = (int) (hp/(float) maxHp*100);
 		percent = 100 - percent;
 

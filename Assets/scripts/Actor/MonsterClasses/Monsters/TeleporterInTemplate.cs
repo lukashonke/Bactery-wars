@@ -33,6 +33,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			if (source is Player)
 			{
+				if (WorldHolder.instance.activeMap.levelData.IsUnderSiege())
+				{
+					GameSystem.Instance.BroadcastMessage("Cant teleport when your base is under siege!");
+					return;
+				}
+
 				PlayerData data = ((Player) source).GetData();
 
 				WorldHolder.instance.LoadPreviousMap();

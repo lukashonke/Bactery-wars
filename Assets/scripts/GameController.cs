@@ -97,5 +97,10 @@ namespace Assets.scripts
 		{
 			Application.LoadLevel(Application.loadedLevel);
 		}
+
+		public GameObject Instantiate(GameObject template, Vector3 position)
+		{
+			return Instantiate(template, position, Quaternion.identity) as GameObject;
+		}
 	}
 }
