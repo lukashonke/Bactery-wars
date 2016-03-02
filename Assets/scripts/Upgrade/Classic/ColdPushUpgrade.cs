@@ -51,8 +51,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push pushes enemies further because it has increased force by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -95,8 +96,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push has increased range by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -136,8 +138,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push effect angle is set to 180 degrees from in front of you.";
 		}
 	}
@@ -185,8 +188,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Stun Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Stun Module";
 			Description = "Targets hit by Cold Push will be stunned for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds, but the reuse of the skill is doubled.";
 		}
 	}
@@ -226,8 +230,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Slow Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = " Slow Module";
 			Description = "UNFINISHED Targets hit with Cold Push skill will be stunned down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}

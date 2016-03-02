@@ -51,8 +51,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Duration Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Duration Module";
 			Description = "Rhino Beam maximum active time is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -95,8 +96,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Width Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Width Module";
 			Description = "Rhino Beam's ray width is set to " + AddValueByLevel(WIDTH, LEVEL_ADD) + " (without upgrade it is 1).";
 		}
 	}
@@ -139,8 +141,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Reuse Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Reuse Module";
 			Description = "Rhino Beam reuse is decreased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -183,8 +186,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Reuse Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Reuse Module";
 			Description = "Rhino Beam reuse is decreased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -233,8 +237,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Damage Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Damage Module";
 			Description = "Rhino Beam damage is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%, the max. duration of the ray is decreased by " + COOLDOWN_DOWN + "%.";
 		}
 	}
@@ -269,8 +274,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Stun Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Stun Module";
 			Description = "Rhino Beam enemies hit will be stunned for " + AddValueByLevel(DURATION, LEVEL_ADD) + " seconds.";
 		}
 	}
@@ -326,8 +332,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Push Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Push Module";
 			Description = "Rhino Beam enemies hit will be pushed away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ". Damage is increased to 400% (x4).";
 		}
 	}
@@ -367,8 +374,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Rotation Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Rotation Module";
 			Description = "Rhino Beam direction rotation/shift will be instant.";
 		}
 	}

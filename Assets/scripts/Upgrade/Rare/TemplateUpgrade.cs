@@ -55,7 +55,7 @@ namespace Assets.scripts.Upgrade.Rare
 
 		protected override void InitInfo()
 		{
-			Name = "template_upgrade";
+			FileName = "template_upgrade";
 			VisibleName = "Template upgrade";
 		}
 

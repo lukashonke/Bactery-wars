@@ -26,8 +26,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "damage_upgrade";
-			VisibleName = "Damage Upgrade";
+			FileName = "damage_upgrade";
+			VisibleName = "Damage Module";
 			Description = "Increases all damage done by " + (0.05 * (Level) * 100) + "%.";
 		}
 	}

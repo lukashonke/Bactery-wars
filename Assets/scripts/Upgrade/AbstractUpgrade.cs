@@ -21,7 +21,8 @@ namespace Assets.scripts.Upgrade
 	/// </summary>
 	public abstract class AbstractUpgrade
 	{
-		public string Name { get; protected set; }
+		public string FileName { get; protected set; }
+		public string TypeName { get; protected set; }
 		public string VisibleName { get; protected set; }
 		public string Description { get; protected set; }
 		public string Price { get; protected set; }
@@ -58,7 +59,8 @@ namespace Assets.scripts.Upgrade
 			MaxLevel = 10;
 			RequiredClass = 0; //TODO restrict drops only for the class that player currently has
 
-			VisibleName = Name;
+			VisibleName = FileName;
+			TypeName = "Stat";
 			Description = "No Description";
 			Price = "No value";
 			AdditionalInfo = null;
@@ -135,7 +137,7 @@ namespace Assets.scripts.Upgrade
 
 		protected Sprite LoadSprite(string fileName)
 		{
-			Sprite o = Resources.Load<Sprite>("Sprite/Upgrades/" + Name + "/" + fileName);
+			Sprite o = Resources.Load<Sprite>("Sprite/Upgrades/" + FileName + "/" + fileName);
 			if(o == null)
 				throw new NullReferenceException(fileName + " not found ");
 

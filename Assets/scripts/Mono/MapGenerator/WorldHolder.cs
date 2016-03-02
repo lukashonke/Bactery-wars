@@ -62,16 +62,17 @@ namespace Assets.scripts.Mono.MapGenerator
 		private void GenerateFirstLevel()
 		{
 			MapHolder newMap = null;
+			LevelParams param = new LevelParams();
 
 			if (!skipTutorial)
 			{
-				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height);
+				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height, param);
 			}
 			else
 			{
 				int mapLevel = 1;
-				MapType type = GetNextLevelType(1, ref mapLevel);
-				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height, mapLevel);
+				MapType type = GetNextLevelType(1, ref mapLevel, param);
+				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height, param, mapLevel);
 			}
 			
 			newMap.CreateMap();
@@ -94,6 +95,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			MapType type = MapType.LevelOne;
 			int mapLevel = 1;
+			LevelParams param = new LevelParams();
 
 			switch (level)
 			{
@@ -110,35 +112,38 @@ namespace Assets.scripts.Mono.MapGenerator
 					type = MapType.LevelFive;
 					break;
 				default:
-					type = GetNextLevelType(level-5, ref mapLevel);
+					type = GetNextLevelType(level-5, ref mapLevel, param);
 					break;
 			}
 
-			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50, mapLevel);
+			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50, param, mapLevel);
 			newMap.CreateMap();
 
 			maps.Add(newCords, newMap);
 			return newCords;
 		}
 
-		private MapType GetNextLevelType(int level, ref int mapLevel)
+		private MapType GetNextLevelType(int level, ref int mapLevel, LevelParams param)
 		{
-			MapType nextLevel = MapType.BossRush;
+			MapType nextLevel = MapType.SixRegions;
 
 			switch (level)
 			{
 				case 1:
-					
+					param.mapLevel = 1;
+					nextLevel = MapType.BossRush;
 					break;
 				case 2:
-
+					param.mapLevel = 1;
+					param.variant = Random.Range(1, 3);
+					nextLevel = MapType.FourRegion;
 					break;
 				case 3:
-
+					param.mapLevel = 1;
+					param.variant = Random.Range(1, 3);
+					nextLevel = MapType.FindBoss;
 					break;
 			}
-
-
 			
 			return nextLevel;
 		}

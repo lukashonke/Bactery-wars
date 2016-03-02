@@ -54,7 +54,7 @@ namespace Assets.scripts
 
 		public void WaitForPathfindingError()
 		{
-			InvokeRepeating("WaitForError", 2f, 2f);
+			//InvokeRepeating("WaitForError", 2f, 2f);
 		}
 
 		private void WaitForError()

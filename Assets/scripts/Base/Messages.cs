@@ -18,7 +18,7 @@ namespace Assets.scripts.Base
 				{
 					case "game_start":
 						{
-							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "Alfa version {0}" }, o);
+							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "Alfa version {0}", "First 5 levels are tutorial, you dont earn any upgrades." }, o);
 						}
 					case "game_start_controls":
 						{
@@ -63,6 +63,10 @@ namespace Assets.scripts.Base
 					case "fifth_level_info":
 						{
 							return CreateHelpMessageData("Last tutorial level!", new string[] { "This level contains multiple kinds of enemies.", "Combine your skills to deal with them." }, o);
+						}
+					case "Basic tutorial finished!":
+						{
+							return CreateHelpMessageData("Tutorial finished!", new string[] { "From now on, the levels will be randomly generated.", "You will be gaining upgrade modules and level them up.", "You will conquer regions and set up bases in them.", "The human body might launch attacks on your conquered regions." }, o);
 						}
 				}
 			}

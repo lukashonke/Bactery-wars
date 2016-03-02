@@ -29,7 +29,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		LevelThree,
 		LevelFour,
 		LevelFive,
-		BossRush
+		BossRush,
+
+		SixRegions,
+		FourRegion,
+		FindBoss,
 	}
 
     /// <summary>
@@ -173,6 +177,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    private MapProcessor mapProcessor;
 		public AbstractLevelData levelData;
+		public LevelParams levelParams;
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
@@ -204,7 +209,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, int mapLevel=1)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, LevelParams param, int mapLevel=1)
 		{
 			this.World = world;
 
@@ -213,6 +218,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.mapType = mapType;
 		    this.regionWidth = regionWidth;
 		    this.regionHeight = regionHeight;
+			this.levelParams = param;
 
 			levelData = null;
 
@@ -241,6 +247,15 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.LevelFive:
 					levelData = new LevelFiveData(this);
+					break;
+				case MapType.SixRegions:
+					levelData = new SixRegionLevel(this, param);
+					break;
+				case MapType.FourRegion:
+					levelData = new FourRegionComplexLevel(this, param);
+					break;
+				case MapType.FindBoss:
+					levelData = new FindBossLevel(this, param);
 					break;
 				case MapType.BossRush:
 					levelData = new LevelBossRush(this, mapLevel);
@@ -496,7 +511,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						break;
 					case MapType.Hardcoded:
 
-						GenerateHardcodedMap(0, 0, "Town", true);
+						GenerateHardcodedMap(0, 0, "TestMap", true);
 
 						break;
 

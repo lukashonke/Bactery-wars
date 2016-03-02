@@ -15,6 +15,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	{
 	    public MapRegion start, mid, end;
 
+		private int[] levelOneSeeds =
+		{
+			-128, 175, 847, -540, 634, -928, -675, -213, 303, -188, -125, 411, 414, 229, -89, 441, -54, 808, 262,
+		};
+
+		private int[] levelTwoSeeds =
+		{
+			-59, -758, 886, 895, 805, 863, -256, 188, 976, -676, -802, 943, 814, 122, 949, 700, 256, -159, -648, 609,
+		};
+
+		private int[] levelThreeSeeds =
+		{
+			-170, 568, -819, -711, -176, -427, 547, 921, 245, 917, -963, 773, 359, 588,
+		};
+
 		public LevelFiveData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelFive;
@@ -23,9 +38,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
-			start = map.GenerateDungeonRegion(0, 2, 40, true, false, false, null, 1, 1); // 0 0
-			mid = map.GenerateDungeonRegion(1, 0, 48, false, true, false, null, 2, 3); // 0, 2
-			end = map.GenerateDungeonRegion(3, 0, 45, false, true, true, null, 1, 1); // 0, 2
+			start = map.GenerateDungeonRegion(0, 2, 40, true, false, false, levelOneSeeds, 1, 1); // 0 0
+			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, levelTwoSeeds, 2, 3); // 0, 2
+			end = map.GenerateDungeonRegion(3, 0, 46, false, true, true, levelThreeSeeds, 1, 1); // 0, 2
 		}
 
 		public override void SpawnMonsters()
@@ -141,7 +156,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			if (conquered)
 			{
-				player.GetData().ui.ShowHelpWindow("Tutorial finished!", 0, "Nothing more done yet");
+				player.GetData().ui.ShowHelpWindow(Messages.ShowHelpWindow("tutorial_finished"), 0f);
 			}
 		}
 	}

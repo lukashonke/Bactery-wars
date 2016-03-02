@@ -117,7 +117,7 @@ namespace Assets.scripts.Upgrade
 
 		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)
 		{
-			Debug.Log("dropped" + upgrade.Name);
+			Debug.Log("dropped" + upgrade.FileName);
 			upgrade.Init();
 			upgrade.SpawnGameObject(Utils.GenerateRandomPositionAround(position, radius));
 		}

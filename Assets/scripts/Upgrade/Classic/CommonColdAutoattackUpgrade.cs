@@ -7,7 +7,6 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
-using UnityEditor;
 
 namespace Assets.scripts.Upgrade.Classic
 {
@@ -46,8 +45,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Damage Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Damage Module";
 			Description = "Increase your autoattack damage by " + AddValueByLevel(DAMAGE, LEVEL_MUL) + ".";
 		}
 	}
@@ -87,8 +87,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Range Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Range Module";
 			Description = "Increase your autoattack range by " + AddValueByLevel(VALUE, LEVEL_MUL) + ".";
 		}
 	}
@@ -132,8 +133,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Reuse Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Reuse Module";
 			Description = "Decreases your autoattack reuse by 50%, but adds a random angle (up to " + AddValueByLevel(ANGLE, ANGLE_LEVEL_ADD, true) + " degrees) to shooting.";
 		}
 	}
@@ -175,8 +177,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Doubleattack Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Doubleattack Module";
 			Description = "Adds a chance of " + AddValueByLevel(CHANCE, LEVEL_ADD) + " that your autoattack will fire 2 projectiles.";
 		}
 	}
@@ -224,8 +227,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Doubleattack Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Doubleattack Module";
 			Description = "Autoattack fires two projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
@@ -273,8 +277,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Tripleshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Tripleshot Module";
 			Description = "Autoattack fires 3 projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
@@ -322,8 +327,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Quatroshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Quatroshot Module";
 			Description = "Autoattack fires 4 projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
@@ -364,8 +370,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Shotgun Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Shotgun Module";
 			Description = "Every autoattack will fire " + PROJECTILE_COUNT + " projectiles in shotgun-like style.";
 		}
 	}
@@ -407,8 +414,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Shotgun Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Shotgun Module";
 			Description = "Every " + CONSECUTIVE_COUNTER + "th autoattack will fire " + PROJECTILE_COUNT + " projectiles in shotgun-like style.";
 		}
 	}
@@ -445,8 +453,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Spreadshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Spreadshot Module";
 			Description = "Fires projectiles into all four directions (forward, right, left and backwards)";
 		}
 	}
@@ -483,8 +492,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Thunder Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Thunder Module";
 			Description = "Fires projectiles into all four directions (forward, right, left and backwards)";
 		}
 	}
@@ -531,8 +541,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Damage Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Damage Module";
 			Description = "Decreases autoattack range by 50% and increases damage by " + AddValueByLevel(VALUE, VALUE_LEVEL_ADD) + "%.";
 		}
 	}
@@ -577,8 +588,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Force Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Force Module";
 			Description = "Doubles the speed of autoattack projectiles.";
 		}
 	}
@@ -618,8 +630,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Slow Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Slow Module";
 			Description = "Every hit projectile slows down your enemy by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}

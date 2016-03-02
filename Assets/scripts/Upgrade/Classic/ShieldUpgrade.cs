@@ -26,8 +26,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "shield_upgrade";
-			VisibleName = "Shield Upgrade";
+			FileName = "shield_upgrade";
+			VisibleName = "Shield Module";
 			Description = "Increases your shield by " + (0.05f * (Level) * 100) + "%.";
 		}
 	}

@@ -18,7 +18,7 @@ namespace Assets.scripts.Upgrade
 		{
 			first = u1;
 			second = u2;
-			Name = "";
+			FileName = "";
 		}
 
 		public override AbstractUpgrade Init()

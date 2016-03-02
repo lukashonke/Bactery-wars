@@ -44,8 +44,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Hit Damage Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Hit Damage Module";
 			Description = "First enemy hit by you during Dodge jump will receive " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " dmg.";
 		}
 	}
@@ -86,8 +87,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Hit Damage Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Hit Damage Module";
 			Description = "All enemies hit by you during Dodge jump will receive " + AddValueByLevel(DAMAGE, LEVEL_ADD) +" dmg.";
 		}
 	}
@@ -130,8 +132,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Penetrate Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Penetrate Module";
 			Description = "You will jump through targets, dealing " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " dmg to each.";
 		}
 	}
@@ -172,8 +175,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Range Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Range Module";
 			Description = "Increases Dodge range by " + AddValueByLevel(VALUE, LEVEL_ADD) + " points (default is 10).";
 		}
 	}
@@ -213,8 +217,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Charges Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Charges Module";
 			Description = "Gives you two charges of Dodge skill. The second charge must be triggered within " + AddValueByLevel(3, 1f) + " seconds from launching the first charge.";
 		}
 	}
@@ -250,8 +255,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Combo Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Combo Module";
 			Description = "After using Dodge skill, skill Sneeze Shot is instantly recharged and available for use.";
 		}
 	}
@@ -294,8 +300,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "dodge_upgrade";
-			VisibleName = "Dodge Spreadshot Upgrade";
+			FileName = "dodge_upgrade";
+			TypeName = "Dodge";
+			VisibleName = "Spreadshot Module";
 			Description = "Shoots out 4 projectiles in all directions that deal " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " to enemies.";
 		}
 	}

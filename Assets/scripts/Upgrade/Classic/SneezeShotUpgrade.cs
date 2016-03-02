@@ -46,8 +46,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Projectile Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Projectile Module";
 			Description = "Sneeze Shot fires one extra projectile.";
 		}
 	}
@@ -87,8 +88,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Damage Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Damage Module";
 			Description = "Sneeze Shot projectile deals " + (int)AddValueByLevel(DAMAGE, LEVEL_ADD) + " extra damage.";
 		}
 	}
@@ -127,8 +129,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Aim Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Aim Module";
 			Description = "Projectiles automatically scan area in front of them to adjust their path to hit enemies.";
 		}
 	}
@@ -176,8 +179,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Missile Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Missile Module";
 			Description = "Sneeze Shot fires one projectile that is guided to its target. Range is tripled.";
 		}
 	}
@@ -218,8 +222,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Poison Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Poison Module";
 			Description = "Sneeze Shot gives your target additional " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " dmg/sec for 5 seconds and slows him by " + AddValueByLevel(SLOW_AMMOUNT_PERCENT, SLOW_LEVEL_ADD) + "% for 5 seconds.";
 		}
 	}
@@ -256,8 +261,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetration Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetration Module";
 			Description = "Sneeze Shot penetrates through your targets to hit multiple enemies.";
 		}
 	}
@@ -292,8 +298,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Push Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Push Module";
 			Description = "Enemies hit by Sneeze Shot will be pushed away by the projectile.";
 		}
 	}
@@ -356,8 +363,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Push Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Push Module";
 			Description = "Sneeze Shot fires only one projectile which explodes on impact and deals " + AddValueByLevel(DAMAGE, DAMAGE_LEVEL_ADD) + " area damage in radius of " + AddValueByLevel(RADIUS, RADIUS_LEVEL_ADD) + ".";
 		}
 	}
@@ -421,8 +429,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explode Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explode Module";
 			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage of same strength as the skill damage.";
 		}
 	}
@@ -486,8 +495,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explode Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explode Module";
 			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage with strength same as the skill damage.";
 		}
 	}
@@ -540,8 +550,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Missile Volley Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Missile Volley Module";
 			Description = "Sneeze Shot fires " + AddValueByLevel(COUNT, COUNT_ADD) + " projectiles at random angle that guide themselves to targets. Damage is set to 10.";
 		}
 	}
@@ -598,8 +609,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetrate Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetrate Module";
 			Description = "Sneeze Shot projectiles will penetrate the first target they hit and then choose another target and guide themselves to them. Second target hit will receive " + AddValueByLevel(AFTER_DMG_AMOUNT, AFTER_DMG_LEVEL_ADD) + "% of the skill damage.";
 		}
 	}
@@ -656,8 +668,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetrate Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetrate Module";
 			Description = "Sneeze Shot will fire only 1 projectile that will penetrate through up to 4 targets. The projectile will guide itself to a new target after hitting something. Skill range is doubled.";
 		}
 	}
@@ -697,8 +710,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Reuse Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Reuse Module";
 			Description = "Sneeze Shot will have a " + AddValueByLevel(CHANCE, CHANCE_LEVEL_ADD) + "% chance that the skill will be immediately available for use after casting (= chance for zero reuse).";
 		}
 	}
@@ -733,8 +747,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Reuse Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Reuse Module";
 			Description = "Sneeze Shot will reduce the shield protection of hit enemies by 50% for " + AddValueByLevel(DURATION, AMOUNT_LEVEL_ADD) + " seconds.";
 		}
 	}
@@ -777,8 +792,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explosion Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explosion Module";
 			Description = "All enemies killed using Sneeze Shot will explode, dealing " + AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD) + " damage to all nearby enemies in range of " + AddValueByLevel(RANGE, RANGE_LEVEL_ADD) + ".";
 		}
 	}

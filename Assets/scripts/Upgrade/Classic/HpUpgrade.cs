@@ -21,8 +21,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
-			VisibleName = "HP Upgrade";
+			FileName = "hp_upgrade";
+			VisibleName = "HP Module";
 			Description = "Increases maximum HP by " + (6 * Level) + "%.";
 		}
 
@@ -49,7 +49,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
+			FileName = "hp_upgrade";
 			VisibleName = "Heal";
 			Description = "Heals you.";
 		}
@@ -67,8 +67,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
-			VisibleName = "HP Upgrade";
+			FileName = "hp_upgrade";
+			VisibleName = "HP Module";
 			Description = "Increases maximum HP by " + (5 * Level) + ".";
 		}
 

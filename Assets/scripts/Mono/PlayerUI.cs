@@ -1037,13 +1037,14 @@ namespace Assets.scripts.Mono
 				currentTooltipObject.transform.position = Input.mousePosition;
 
 				string name = u.VisibleName;
-				string description = u.Description;
+				string typeName = u.TypeName;
+				string description = Utils.StringWrap(u.Description, 40);
 				string price = u.Price;
 				string addInfo = u.AdditionalInfo;
 
 				if (u.Level == 0)
 				{
-					description = "No effect yet.\nKill enemies to get this upgrade.";
+					description = "No bonus effect yet.\nKill enemies to evolve this module.";
 				}
 
 				price = Enum.GetName(typeof (UpgradeType), u.Type);
@@ -1082,17 +1083,22 @@ namespace Assets.scripts.Mono
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
+					else if (child.name.Equals("Type") && description != null)
+					{
+						child.GetComponent<Text>().text = "[" + typeName + " Upgrade] [" + price + "]";
+						continue;
+					}
 					else if (child.name.Equals("Description") && description != null)
 					{
 						child.GetComponent<Text>().text = description;
 						continue;
 					}
-					else if (child.name.Equals("Price") && price != null)
+					/*else if (child.name.Equals("Price") && price != null)
 					{
 						child.GetComponent<Text>().text = price;
 						child.GetComponent<Text>().color = titleColor;
 						continue;
-					}
+					}*/
 					else if (child.name.Equals("AdditionalInfo") && (addInfo != null || u.RequiredClass > 0))
 					{
 						string className = null;
@@ -1186,7 +1192,7 @@ namespace Assets.scripts.Mono
 				if (u != null)
 				{
 					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
-					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
+					Debug.Log("swapping for " + u.FileName + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 				else // slot is empty - simply move the upgrade there
 				{

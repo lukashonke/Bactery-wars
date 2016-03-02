@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Assets.scripts.Mono.MapGenerator
@@ -34,7 +36,34 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		private void ApplyTemplate()
 		{
-			
+			int y = 0;
+			string line;
+
+			// Read the file and display it line by line.
+			System.IO.StreamReader file = new System.IO.StreamReader(name + ".txt");
+			while ((line = file.ReadLine()) != null)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					int c = Int32.Parse(line[i].ToString());
+
+					if (c == 1 || c == 2 )
+					{
+						tiles[y, i].tileType = WorldHolder.GROUND;
+					}
+					else if (c == 0 || c == 3)
+					{
+						tiles[y, i].tileType = WorldHolder.WALL;
+					}
+				}
+
+				y++;
+
+				if (y > height)
+					break;
+			}
+
+			file.Close();
 		}
 
 		public override Tile[,] GetTiles()

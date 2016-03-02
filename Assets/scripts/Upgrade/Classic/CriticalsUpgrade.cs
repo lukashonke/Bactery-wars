@@ -26,8 +26,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "critrate_upgrade";
-			VisibleName = "Critical Rate Upgrade";
+			FileName = "critrate_upgrade";
+			VisibleName = "Critical Rate Module";
 			Description = "Increases Critical rate by " + 3 * Level + "%.";
 		}
 	}
@@ -49,8 +49,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "critdmg_upgrade";
-			VisibleName = "Critical Damage Upgrade";
+			FileName = "critdmg_upgrade";
+			VisibleName = "Critical Damage Module";
 			Description = "Increases Critical damage by " + Level * 10 + "%.";
 		}
 	}

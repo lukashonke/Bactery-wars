@@ -18,7 +18,6 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		private static int[] room2Seeds = { -323, -378, -856, 432, 352, 54, -111, 214, 964, -48, 606, -232, 765 };
 		private static int[] minibossSeeds = { 998, -454, 940, 547, -372, 462, -771, -327, -878, 764, 852, -575 };
 
-
 		public SecondLevelData(MapHolder holder) : base(holder)
 		{
 			type = MapType.SecondLevel;

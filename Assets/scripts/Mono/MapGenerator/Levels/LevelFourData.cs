@@ -29,7 +29,6 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		private int[] levelThreeSeeds =
 		{
 			494, -287, -756, -556, -784, -242, -850, 635,
-
 		};
 
 		public LevelFourData(MapHolder holder) : base(holder)

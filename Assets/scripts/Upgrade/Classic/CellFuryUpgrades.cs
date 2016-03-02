@@ -51,8 +51,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Range Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Range Module";
 			Description = "When Cell Fury is activated, your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
 		}
 	}
@@ -91,8 +92,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Push Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Push Module";
 			Description = "When Cell Fury is activated, your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
 		}
 	}
@@ -135,8 +137,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Reuse Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Reuse Module";
 			Description = "The reuse of Cell Fury is decreased by " + AddValueByLevel(REUSE, LEVEL_ADD) + "%.";
 		}
 	}
@@ -179,8 +182,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Reuse Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Reuse Module";
 			Description = "There is a " + AddValueByLevel(CHANCE, LEVEL_ADD) + "% chance that Cell Fury skill will have no reuse (it will be available immediatelly after you cast it).";
 		}
 	}
@@ -218,8 +222,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Shield Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Shield Module";
 			Description = "When Cell Fury is active, your shield will be " + AddValueByLevel(POWER, LEVEL_ADD) + "% stronger.";
 		}
 	}
@@ -255,8 +260,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Speed Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Speed Module";
 			Description = "When Cell Fury is active, your movement speed is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
@@ -290,8 +296,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Speed Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Speed Module";
 			Description = "When Cell Fury is active, " + AddValueByLevel(POWER, LEVEL_ADD) + "% of damage you deal will be returned to you as HP.";
 		}
 	}

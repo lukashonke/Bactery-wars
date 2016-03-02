@@ -55,6 +55,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		    SpawnMonsters();
 
+
+
 			//WiddenThinPassages(null, 6, 2);
 		}
 
