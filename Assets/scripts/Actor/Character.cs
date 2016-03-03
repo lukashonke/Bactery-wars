@@ -646,7 +646,7 @@ namespace Assets.scripts.Actor
 
 			GetData().SetVisibleHp(Status.Hp);
 
-			AI.AddAggro(source, damage);
+			AI.AddAggro(source, damage*5);
 		}
 
 		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0, bool wasCrit=false)

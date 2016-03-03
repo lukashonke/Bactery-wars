@@ -47,7 +47,8 @@ namespace Assets.scripts.AI
 
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-			float dist = Utils.GetDistPwr(Owner.GetData().GetBody(), target.GetData().GetBody());
+			//float distSqr = Utils.DistanceObjectsSqr(Owner.GetData().GetBody(), target.GetData().GetBody());
+			float distSqr = Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, target.GetData().GetBody().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
@@ -86,7 +87,7 @@ namespace Assets.scripts.AI
 		        }
 		    }
 
-			if (dist < 10*10 && floatInterval > -1 && lastFloatTime + floatInterval < Time.time)
+			if (distSqr < 10*10 && floatInterval > -1 && lastFloatTime + floatInterval < Time.time)
 			{
 				if (floatChance < 0 || Random.Range(1, 100) < floatChance)
 				{
@@ -123,7 +124,7 @@ namespace Assets.scripts.AI
 			//Debug.Log(topSkill.GetName());
 
 			if (topSkill != null)
-				StartAction(CastSkill(target, topSkill, dist, false, true, 0, 0), 10f, false, shootWhileMoving);
+				StartAction(CastSkill(target, topSkill, distSqr, false, true), 10f, false, shootWhileMoving);
 			else if(HasMeleeSkill())
 				Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
 		}

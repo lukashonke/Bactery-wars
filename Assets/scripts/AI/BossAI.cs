@@ -153,7 +153,7 @@ namespace Assets.scripts.AI
 
 			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
 			Vector3 targetPos = target.GetData().GetBody().transform.position;
-			float dist = Vector3.Distance(ownerPos, targetPos);
+			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
 
 			if (currentAction == null && canSee && jump != null && GetTimer("jump", jumpInterval))
 			{
@@ -165,7 +165,7 @@ namespace Assets.scripts.AI
 
 				jump.range = (int)range;
 
-				if (StartAction(CastSkill(pos, jump, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(pos, jump, distSqr, true, false, 0f, 0f), 0.5f))
 				{
 					SetTimer("jump");
 					return;
@@ -174,7 +174,7 @@ namespace Assets.scripts.AI
 
 			if (shot != null && GetTimer("shoot", spreadshootInterval))
 			{
-				if (StartAction(CastSkill(null, shot, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(null, shot, distSqr, true, false, 0f, 0f), 0.5f))
 				{
 					SetTimer("shoot");
 					return;
@@ -237,7 +237,7 @@ namespace Assets.scripts.AI
 
 			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
 			Vector3 targetPos = target.GetData().GetBody().transform.position;
-			float dist = Vector3.Distance(ownerPos, targetPos);
+			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
 
 			if (currentAction == null && jump != null && GetTimer("jump", jumpInterval))
 			{
@@ -263,7 +263,7 @@ namespace Assets.scripts.AI
 
 				jump.range = (int) range;
 
-				if (StartAction(CastSkill(pos, jump, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(pos, jump, distSqr, true, false, 0f, 0f), 0.5f))
 				{
 					SetTimer("jump");
 					return;
@@ -272,7 +272,7 @@ namespace Assets.scripts.AI
 
 			if (shot != null && GetTimer("shoot", spreadshootInterval))
 			{
-				if (StartAction(CastSkill(null, shot, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(null, shot, distSqr, true, false, 0f, 0f), 0.5f))
 				{
 					SetTimer("shoot");
 					return;

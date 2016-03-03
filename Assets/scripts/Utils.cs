@@ -217,21 +217,6 @@ namespace Assets.scripts
 			return pos;
 		}
 
-		public static float GetDistPwr(GameObject source, GameObject target)
-		{
-			Collider2D coll = target.GetComponent<Collider2D>();
-			float size = 0;
-
-			if (coll is CircleCollider2D)
-				size = ((CircleCollider2D) coll).radius;
-			else if (coll is BoxCollider2D)
-				size = ((BoxCollider2D) coll).size.x/2f;
-
-			float dist = DistancePwr(source.transform.position, target.transform.position);
-
-			return dist;
-		}
-
 		public static bool IsNotAccessible(Vector3 v)
 		{
 			Vector3 start = WorldHolder.instance.activeMap.GetStartPosition();
@@ -330,9 +315,44 @@ namespace Assets.scripts
 			GameSystem.Instance.RegisterNewNpc(d, mId);
 		}
 
-		public static float DistancePwr(Vector3 v1, Vector3 v2)
+		public static float DistanceSqr(Vector3 v1, Vector3 v2)
 		{
 			return (v1 - v2).sqrMagnitude;
+		}
+
+		public static float Distance(Vector3 v1, Vector3 v2)
+		{
+			return (v1 - v2).magnitude;
+		}
+
+		public static float DistanceObjectsSqr(GameObject source, GameObject target)
+		{
+			Collider2D coll = target.GetComponent<Collider2D>();
+			float size = 0;
+
+			if (coll is CircleCollider2D)
+				size = ((CircleCollider2D)coll).radius;
+			else if (coll is BoxCollider2D)
+				size = ((BoxCollider2D)coll).size.x / 2f;
+
+			float dist = DistanceSqr(source.transform.position, target.transform.position) - (size * size);
+
+			return dist;
+		}
+
+		public static float DistanceObjects(GameObject source, GameObject target)
+		{
+			Collider2D coll = target.GetComponent<Collider2D>();
+			float size = 0;
+
+			if (coll is CircleCollider2D)
+				size = ((CircleCollider2D)coll).radius;
+			else if (coll is BoxCollider2D)
+				size = ((BoxCollider2D)coll).size.x / 2f;
+
+			float dist = Distance(source.transform.position, target.transform.position) - (size);
+
+			return dist;
 		}
 
 		public static List<Type> GetTypesInNamespace(string ns, bool onlyClasses, Type baseClass)

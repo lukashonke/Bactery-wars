@@ -44,7 +44,7 @@ namespace Assets.scripts.AI
 				Owner.GetData().Target = target.GetData().GetBody();
 			}
 
-			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			float dist = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 			bool isImmobilized = Owner.GetData().CanMove();
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 			int targetHpPercentage = (int)((target.Status.Hp / (float)target.Status.MaxHp) * 100);

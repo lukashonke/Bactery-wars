@@ -44,28 +44,28 @@ namespace Assets.scripts.AI
 
 			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
 			Vector3 targetPos = target.GetData().GetBody().transform.position;
-			float dist = Vector3.Distance(ownerPos, targetPos);
+			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
 
 			ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
 			if (jump != null && jump.CanUse() && !Owner.GetData().forcedVelocity)
 			{
-				if (StartAction(CastSkill(target, jump, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(target, jump, distSqr, true, false, 0f, 0f), 0.5f))
 					return;
 			}
 
 			ActiveSkill dmg = (ActiveSkill)GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
 			if (dmg != null && dmg.CanUse() && !Owner.GetData().forcedVelocity)
 			{
-				if (StartAction(CastSkill(target, dmg, dist, true, false, 0f, 0f), 0.5f))
+				if (StartAction(CastSkill(target, dmg, distSqr, true, false, 0f, 0f), 0.5f))
 					return;
 			}
 
-			if (dodgeRate > 0 && dist > 3)
+			if (dodgeRate > 0 && distSqr > 3*3)
 			{
 				if (Random.Range(0, 100) < dodgeRate)
 				{
 					Vector3 nextTarget;
-					nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, dist/2);
+					nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr)/2f));
 					Debug.DrawRay(ownerPos, nextTarget, Color.cyan, 1f);
 
 					StartAction(MoveAction(nextTarget, false), 1f);

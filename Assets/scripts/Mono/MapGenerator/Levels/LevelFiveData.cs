@@ -38,9 +38,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
-			start = map.GenerateDungeonRegion(0, 2, 40, true, false, false, levelOneSeeds, 1, 1); // 0 0
-			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, levelTwoSeeds, 2, 3); // 0, 2
-			end = map.GenerateDungeonRegion(3, 0, 46, false, true, true, levelThreeSeeds, 1, 1); // 0, 2
+			start = map.GenerateDungeonRegion(0, 2, 40, true, false, false, null, 1, 1); // 0 0
+			mid = map.GenerateDungeonRegion(1, 0, 47, false, true, false, null, 2, 3); // 0, 2
+			end = map.GenerateDungeonRegion(3, 0, 46, false, true, true, null, 1, 1); // 0, 2
 		}
 
 		public override void SpawnMonsters()

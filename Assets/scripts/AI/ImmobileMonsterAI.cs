@@ -31,10 +31,10 @@ namespace Assets.scripts.AI
 
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			float distSqr = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
-			if (loseInterestWhenOuttaRange && dist > AggressionRange*AggressionRange)
+			if (loseInterestWhenOuttaRange && distSqr > AggressionRange*AggressionRange)
 			{
 				RemoveAggro(target);
 				return;
@@ -64,7 +64,7 @@ namespace Assets.scripts.AI
 			}
 
 			if (topSkill != null)
-				StartAction(CastSkill(target, topSkill, dist, false, true, 0, 0), 10f);
+				StartAction(CastSkill(target, topSkill, distSqr, false, true, 0, 0), 10f);
 		}
 	}
 }

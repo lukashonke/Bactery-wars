@@ -495,7 +495,7 @@ namespace Assets.scripts.Mono
 							//Debug.Log("current node index " + currentPathNode);
 							currentDestination = currentPath.vectorPath[currentPathNode];
 
-							if (Utils.DistancePwr(body.transform.position, currentDestination) < nextWaypointDistance*nextWaypointDistance)
+							if (Utils.DistanceSqr(body.transform.position, currentDestination) < nextWaypointDistance*nextWaypointDistance)
 							{
 								lastFoundWaypointPosition = body.transform.position;
 								lastFoundWaypointTime = Time.time;

@@ -295,7 +295,7 @@ namespace Assets.scripts.AI
 		{
 			if (HasMaster())
 			{
-				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
+				float dist = Utils.DistanceSqr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
 				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
 				if (dist > distToFollow*distToFollow + 30*30)
@@ -305,6 +305,8 @@ namespace Assets.scripts.AI
 			}
 			return false;
 		}
+
+		private int tempAggroCounter = 0;
 
 		protected virtual void ThinkAttack()
 		{
@@ -335,10 +337,13 @@ namespace Assets.scripts.AI
 			NotifyNearbyAggroAdded(possibleTarget);
 			NotifySummonsAboutAttack(possibleTarget);
 
+			tempAggroCounter++;
+
 			// target is too far (> attackdistance*2) - abandone attacking
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
+			if (tempAggroCounter >= 3 && Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
 			{
 				RemoveAggro(possibleTarget, 1);
+				tempAggroCounter = 0;
 			}
 
 			AttackTarget(possibleTarget);
@@ -357,7 +362,7 @@ namespace Assets.scripts.AI
 
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(moveDestination, leaderPos) > (distToFollow*distToFollow))
+					if (Utils.DistanceSqr(moveDestination, leaderPos) > (distToFollow*distToFollow))
 					{
 						retargetMove = true;
 					}
@@ -377,7 +382,7 @@ namespace Assets.scripts.AI
 					Vector3 leaderPos = master.Data.GetBody().transform.position;
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
+					if (Utils.DistanceSqr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
 					{
 						Vector3 rnd = Owner.Data.GetBody().transform.position;
 
@@ -409,7 +414,7 @@ namespace Assets.scripts.AI
 
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					if (Utils.DistanceSqr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
 					{
 						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow - 1);
 						rnd.z = 0;
@@ -432,7 +437,7 @@ namespace Assets.scripts.AI
 
 			if (!Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
 			{
-				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
+				if (Utils.DistanceSqr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
 				{
 					SetIsWalking(false);
 					MoveTo(homeLocation);
@@ -531,6 +536,8 @@ namespace Assets.scripts.AI
 		{
 			if(ch == null)
 				return;
+
+			Debug.Log("adding " + points);
 
 			if (!aggro.ContainsKey(ch))
 			{
@@ -686,13 +693,13 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
 			if (target != null && !noRangeCheck && sk.range != 0)
 			{
-				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				while (Mathf.Pow((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * 0.6f < distSqrToTarget)
 				{
-					dist = Vector3.Distance(target.GetData().transform.position, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 
 					if (moveTowardsIfRequired)
 					{
