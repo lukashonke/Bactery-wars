@@ -69,8 +69,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					Tile t = room.GetLargestSubRoom(true);
 					SpawnMonsterToRoom(room, MonsterId.SwarmerBoss, t, false, 1)
 						.AddHealDrop(100, 10)
-						.AddDrop(33, UpgradeType.CLASSIC, 2, 1)
-						.AddDrop(100, UpgradeType.CLASSIC, 1, 1);
+						.AddDrop(33, ItemType.CLASSIC, 2, 1)
+						.AddDrop(100, ItemType.CLASSIC, 1, 1);
 				}
 				else if (room.region.GetParentOrSelf().Equals(start)) // start room - nothing interesting here
 				{

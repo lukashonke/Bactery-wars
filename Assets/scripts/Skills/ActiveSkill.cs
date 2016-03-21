@@ -958,7 +958,7 @@ namespace Assets.scripts.Skills
 		{
 			float reuse = this.reuse;
 
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				u.ModifySkillReuse(this, ref reuse);
 			}
@@ -974,7 +974,7 @@ namespace Assets.scripts.Skills
 		{
 			float coolDown = this.coolDown;
 
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				u.ModifySkillCooldown(this, ref coolDown);
 			}
@@ -991,7 +991,7 @@ namespace Assets.scripts.Skills
 		{
 			float casttime = this.castTime;
 
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				u.ModifySkillCasttime(this, ref casttime);
 			}

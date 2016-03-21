@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class HpUpgrade : AbstractUpgrade
+	public class HpUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 
@@ -32,7 +32,7 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class Heal : AbstractUpgrade
+	public class Heal : InventoryItem
 	{
 		public static int rarity = 1;
 
@@ -55,7 +55,30 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class HpUpgradeAdd : AbstractUpgrade
+	public class HpPotion : ActivableItem
+	{
+		public static int rarity = 1;
+
+		public HpPotion(int level) : base(level)
+		{
+		}
+
+		public override bool OnActivate()
+		{
+			owner.ReceiveHeal(owner, Level * 10);
+			GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(owner.GetData().GetBody(), "Heal +" + Level * 10, Color.green);
+			return true;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "hp_upgrade";
+			VisibleName = "Healing Potion";
+			Description = "Heals you.";
+		}
+	}
+
+	public class HpUpgradeAdd : EquippableItem
 	{
 		public static int rarity = 1;
 

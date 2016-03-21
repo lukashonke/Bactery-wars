@@ -12,6 +12,7 @@ using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -61,7 +62,7 @@ namespace Assets.scripts.Mono
 
 		public bool draggingIcon = false;
 		private GameObject draggedObject;
-		private AbstractUpgrade draggedUpgrade;
+		private InventoryItem draggedItem;
 		private int draggedUpgradeSlot;
 
 		public Text[] statsTexts;
@@ -740,7 +741,7 @@ namespace Assets.scripts.Mono
 
 				if (t != null)
 				{
-					AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
+					EquippableItem u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
 					UpgradeTable.Instance.DropItem(u, data.GetBody().transform.position);
 				}
 			}
@@ -799,7 +800,7 @@ namespace Assets.scripts.Mono
 				{
 					StoppedDragging(mousePos);
 					draggingIcon = false;
-					draggedUpgrade = null;
+					draggedItem = null;
 					draggedUpgradeSlot = -1;
 					SetMouseNotOverUi();
 					Destroy(draggedObject);
@@ -961,16 +962,16 @@ namespace Assets.scripts.Mono
 			return order;
 		}
 
-		public AbstractUpgrade GetUpgradeFromInventory(GameObject slot, int slotType)
+		public InventoryItem GetUpgradeFromInventory(GameObject slot, int slotType)
 		{
 			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
 
-			AbstractUpgrade u = null;
+			InventoryItem u = null;
 
 			if (slotType == 1)
 				u = data.GetOwner().Inventory.GetActiveUpgrade(order);
 			else if (slotType == 0)
-				u = data.GetOwner().Inventory.GetUpgrade(order);
+				u = data.GetOwner().Inventory.GetItem(order);
 			else if (slotType == 2) // base stat
 				u = data.GetOwner().Inventory.GetBasestatUpgrade(order);
 
@@ -979,7 +980,7 @@ namespace Assets.scripts.Mono
 
 		public void OnUpgradeHover(GameObject slot, bool exit, int slotType)
 		{
-			AbstractUpgrade u = GetUpgradeFromInventory(slot, slotType);
+			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
 
 			if (u == null)
 			{
@@ -1047,29 +1048,34 @@ namespace Assets.scripts.Mono
 					description = "No bonus effect yet.\nKill enemies to evolve this module.";
 				}
 
-				price = Enum.GetName(typeof (UpgradeType), u.Type);
+				if (u.IsUpgrade())
+				{
+					EquippableItem upg = u as EquippableItem;
 
-				int currentUpgradeProgress = u.CurrentProgress;
-				int needForNext = u.NeedForNextLevel;
+					price = Enum.GetName(typeof(ItemType), ((EquippableItem)u).Type);
 
-				if (u.GoesIntoBasestatSlot)
-					addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
+					int currentUpgradeProgress = upg.CurrentProgress;
+					int needForNext = upg.NeedForNextLevel;
 
-				UpgradeType type = u.Type;
+					if (upg.GoesIntoBasestatSlot)
+						addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
+				}
+				
+				ItemType type = u.Type;
 
 				Color titleColor = new Color();
 
 				switch (type)
 				{
-					case UpgradeType.CLASSIC:
+					case ItemType.CLASSIC:
 						titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case UpgradeType.EPIC:
+					case ItemType.EPIC:
 						titleColor = new Color(109 / 255f, 58 / 255f, 65 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case UpgradeType.RARE:
+					case ItemType.RARE:
 						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
 						break;
@@ -1099,21 +1105,9 @@ namespace Assets.scripts.Mono
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}*/
-					else if (child.name.Equals("AdditionalInfo") && (addInfo != null || u.RequiredClass > 0))
+					else if (child.name.Equals("AdditionalInfo") && (addInfo != null))
 					{
-						string className = null;
-						ClassId cId = u.RequiredClass;
-						if (cId > 0)
-						{
-							className = Enum.GetName(typeof(ClassId), cId);
-						}
-
-						string info = "";
-						if (addInfo != null)
-							info = addInfo;
-
-						if (className != null)
-							info = addInfo + " Required class: " + className;
+						string info = addInfo;
 
 						child.GetComponent<Text>().text = info;
 						continue;
@@ -1171,9 +1165,9 @@ namespace Assets.scripts.Mono
 			if (trashBin)
 			{
 				if (draggedUpgradeSlot == 1) // is active, unequip first
-					data.GetOwner().UnequipUpgrade(draggedUpgrade, true);
+					data.GetOwner().UnequipItem(draggedItem, true);
 
-				data.GetOwner().RemoveUpgrade(draggedUpgrade);
+				data.GetOwner().RemoveItem(draggedItem);
 				return;
 			}
 
@@ -1185,18 +1179,18 @@ namespace Assets.scripts.Mono
 
 			if (targetSlot != null)
 			{
-				AbstractUpgrade u = GetUpgradeFromInventory(targetSlot, targetSlotType);
+				InventoryItem u = GetUpgradeFromInventory(targetSlot, targetSlotType);
 				int number = GetSlotNumberFromObject(targetSlot);
 
 				// slot is not empty - swap
 				if (u != null)
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
-					Debug.Log("swapping for " + u.FileName + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
+					data.GetOwner().SwapItem(draggedItem, u, number, draggedUpgradeSlot, targetSlotType);
+					Debug.Log("swapping for " + u.TypeName + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 				else // slot is empty - simply move the upgrade there
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
+					data.GetOwner().SwapItem(draggedItem, u, number, draggedUpgradeSlot, targetSlotType);
 					Debug.Log("puttint into slot id " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 			}
@@ -1229,9 +1223,9 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			draggedUpgrade = GetUpgradeFromInventory(obj, slotType);
+			draggedItem = GetUpgradeFromInventory(obj, slotType);
 
-			if (draggedUpgrade == null)
+			if (draggedItem == null)
 				return;
 
 			draggedUpgradeSlot = slotType;
@@ -1240,7 +1234,16 @@ namespace Assets.scripts.Mono
 
 			if (doubleClick)
 			{
-				data.GetOwner().SwapUpgrade(draggedUpgrade, null, -1, draggedUpgradeSlot, targetSlot);
+				if (draggedItem is ActivableItem)
+				{
+					((ActivableItem) draggedItem).OnActivate();
+					if (((ActivableItem) draggedItem).ConsumeOnUse)
+					{
+						data.GetOwner().RemoveItem(draggedItem, false);
+					}
+				}
+				else
+					data.GetOwner().SwapItem(draggedItem, null, -1, draggedUpgradeSlot, targetSlot);
 			}
 			else
 			{
@@ -1329,9 +1332,9 @@ namespace Assets.scripts.Mono
 			int basestatCapacity = inv.BasestatUpgrades.Count;
 
 			int i = 0;
-			foreach (AbstractUpgrade u in inv.Upgrades)
+			foreach (InventoryItem u in inv.Items)
 			{
-				if (u == null || inv.IsEquipped(u))
+				if (u == null || (u.IsUpgrade() && inv.IsEquipped((EquippableItem) u)))
 					continue;
 
 				GameObject o = inventorySlots[i].transform.GetChild(0).gameObject;
@@ -1353,7 +1356,7 @@ namespace Assets.scripts.Mono
 			}
 
 			i = 0;
-			foreach (AbstractUpgrade u in inv.ActiveUpgrades)
+			foreach (EquippableItem u in inv.ActiveUpgrades)
 			{
 				GameObject o = activeSlots[i].transform.GetChild(0).gameObject;
 				Image img = o.GetComponent<Image>();
@@ -1374,7 +1377,7 @@ namespace Assets.scripts.Mono
 			}
 
 			i = 0;
-			foreach (AbstractUpgrade u in inv.BasestatUpgrades)
+			foreach (EquippableItem u in inv.BasestatUpgrades)
 			{
 				GameObject o = basestatSlots[i].transform.GetChild(0).gameObject;
 				Image img = o.GetComponent<Image>();

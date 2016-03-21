@@ -66,7 +66,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (!skipTutorial)
 			{
-				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.Test, width, height, param);
+				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height, param);
 			}
 			else
 			{

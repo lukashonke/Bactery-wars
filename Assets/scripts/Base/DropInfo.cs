@@ -32,13 +32,13 @@ namespace Assets.scripts.Base
 
 		public struct RandomDrop
 		{
-			public UpgradeType type;
+			public ItemType type;
 			public int chance;
 			public int level;
 			public int minRarity, maxRarity;
 			public int category;
 
-			public RandomDrop(UpgradeType type, int chance, int level, int minRarity, int maxRarity, int category)
+			public RandomDrop(ItemType type, int chance, int level, int minRarity, int maxRarity, int category)
 			{
 				this.type = type;
 				this.chance = chance;

@@ -9,7 +9,7 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class ShieldUpgrade : AbstractUpgrade
+	public class ShieldUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 

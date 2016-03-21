@@ -13,10 +13,10 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class ColdPushForceUpgrade : AbstractUpgrade
+	public class ColdPushForceUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -58,10 +58,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class ColdPushRangeUpgrade : AbstractUpgrade
+	public class ColdPushRangeUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -103,10 +103,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class ColdPushAngleUpgrade : AbstractUpgrade
+	public class ColdPushAngleUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		private int temp;
 
@@ -145,10 +145,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class ColdPushSlowUpgrade : AbstractUpgrade
+	public class ColdPushSlowUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const float DURATION = 5f;
 		public const float DURATION_LEVEL_ADD = 1f;
@@ -195,10 +195,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class ColdPushStunUpgrade : AbstractUpgrade //TODO not done
+	public class ColdPushStunUpgrade : EquippableItem //TODO not done
 	{
 		public static int rarity = 10;
-		public static UpgradeType type = UpgradeType.EPIC;
+		public static ItemType type = ItemType.EPIC;
 
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 4;

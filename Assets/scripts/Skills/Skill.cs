@@ -102,7 +102,7 @@ namespace Assets.scripts.Skills
 
 		protected void ApplyEffect(Character source, GameObject target, SkillEffect ef, bool allowStackingSameEffect = false)
 		{
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				u.ModifySkillEffects(this, new SkillEffect[] { ef });
 			}
@@ -133,7 +133,7 @@ namespace Assets.scripts.Skills
 		{
 			SkillEffect[] efs = CreateEffects(param);
 
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				u.ModifySkillEffects(this, efs);
 			}
@@ -161,7 +161,7 @@ namespace Assets.scripts.Skills
 			}
 
 			// add new effects from ugprades
-			foreach (AbstractUpgrade u in Owner.Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
 				SkillEffect[] newEffects = u.CreateAdditionalSkillEffects(this, efs);
 

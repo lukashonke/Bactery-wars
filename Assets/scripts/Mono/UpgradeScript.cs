@@ -12,7 +12,7 @@ namespace Assets.scripts.Mono
 {
 	public class UpgradeScript : MonoBehaviour
 	{
-		public AbstractUpgrade upgrade;
+		public InventoryItem item;
 
 		public float rotationOffset;
 		public int rotationSpeed;
@@ -62,7 +62,7 @@ namespace Assets.scripts.Mono
 					if (ch == null)
 						return;
 
-					ch.HitUpgrade(this);
+					ch.HitItem(this);
 				}
 			}
 		}

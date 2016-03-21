@@ -9,7 +9,7 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Rare
 {
-	public class TemplateUpgrade : AbstractUpgrade
+	public class TemplateUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 		private int originalRange;

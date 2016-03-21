@@ -28,10 +28,10 @@ namespace Assets.scripts.Upgrade
 		public class UpgradeInfo
 		{
 			public Type upgrade;
-			public UpgradeType upgradeType;
+			public ItemType upgradeType;
 			public int rarity;
 
-			public UpgradeInfo(Type u, UpgradeType type, int rarity)
+			public UpgradeInfo(Type u, ItemType type, int rarity)
 			{
 				this.upgrade = u;
 				this.upgradeType = type;
@@ -44,15 +44,15 @@ namespace Assets.scripts.Upgrade
 			Load();
 		}
 
-		public CombinedUpgrade CombineUpgrades(AbstractUpgrade first, AbstractUpgrade second)
+		public CombinedUpgrade CombineUpgrades(EquippableItem first, EquippableItem second)
 		{
 			CombinedUpgrade upg = new CombinedUpgrade(1, first, second);
 			return upg;
 		}
 
-		public AbstractUpgrade[] DismantleCombinedUpgrade(CombinedUpgrade upg)
+		public EquippableItem[] DismantleCombinedUpgrade(CombinedUpgrade upg)
 		{
-			AbstractUpgrade[] upgrades = new AbstractUpgrade[2];
+			EquippableItem[] upgrades = new EquippableItem[2];
 			upgrades[0] = upg.first;
 			upgrades[1] = upg.second;
 
@@ -61,28 +61,28 @@ namespace Assets.scripts.Upgrade
 
 		private void Load()
 		{
-			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.CLASSIC);
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.CLASSIC);
 
-			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.RARE);
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.RARE);
 
-			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.EPIC);
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.EPIC);
 
 			dropBg = Resources.Load<Sprite>("Sprite/inventory/drop_background");
 		}
 
-		private void LoadTypes(List<Type> types, UpgradeType type)
+		private void LoadTypes(List<Type> types, ItemType type)
 		{
 			foreach (Type t in types)
 			{
 				int rarity = 1;
-				UpgradeType uType = UpgradeType.CLASSIC;
+				ItemType uType = ItemType.CLASSIC;
 				try
 				{
 					rarity = (int)t.GetField("rarity").GetValue(null);
-					uType = (UpgradeType) t.GetField("type").GetValue(null);
+					uType = (ItemType) t.GetField("type").GetValue(null);
 				}
 				catch (Exception)
 				{
@@ -94,13 +94,13 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public AbstractUpgrade GenerateUpgrade(Type type, int level)
+		public EquippableItem GenerateUpgrade(Type type, int level)
 		{
-			AbstractUpgrade u = Activator.CreateInstance(type, level) as AbstractUpgrade;
+			EquippableItem u = Activator.CreateInstance(type, level) as EquippableItem;
 			return u;
 		}
 
-		public AbstractUpgrade GenerateUpgrade(UpgradeType type, int minRarity, int maxRarity, int level)
+		public EquippableItem GenerateUpgrade(ItemType type, int minRarity, int maxRarity, int level)
 		{
 			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
@@ -115,7 +115,7 @@ namespace Assets.scripts.Upgrade
 			return GenerateUpgrade(final.upgrade, level);
 		}
 
-		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)
+		public void DropItem(EquippableItem upgrade, Vector3 position, int radius=1)
 		{
 			Debug.Log("dropped" + upgrade.FileName);
 			upgrade.Init();

@@ -16,6 +16,7 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -93,7 +94,7 @@ namespace Assets.scripts.Actor
 
 		public virtual void OnKill(Character target, SkillId skillId)
 		{
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.OnKill(target, skillId);
 			}
@@ -268,18 +269,18 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
-		public void HitUpgrade(UpgradeScript upg)
+		public void HitItem(UpgradeScript upg)
 		{
-			if (upg.upgrade.CollectableByPlayer && !(this is Player))
+			if (upg.item.CollectableByPlayer && !(this is Player))
 				return;
 
-			if (upg.upgrade == null)
+			if (upg.item == null)
 			{
-				Debug.LogError("null upgrade for " + upg.gameObject.name);
+				Debug.LogError("null item for " + upg.gameObject.name);
 				return;
 			}
 
-			if (upg.upgrade.OnPickup(this))
+			if (upg.item.OnPickup(this))
 			{
 				upg.DeleteMe(true);
 				Data.UpdateInventory(Inventory);
@@ -287,27 +288,40 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			if (upg.upgrade.GoesIntoBasestatSlot)
+			EquippableItem upgrade = upg.item as EquippableItem;
+
+			if (upgrade != null)
 			{
-				Message("You have absorbed " + upg.upgrade.VisibleName + "");
-				Inventory.AddBasestatUpgrade(upg.upgrade);
-				upg.DeleteMe(true);
-				Data.UpdateInventory(Inventory);
-				UpdateStats();
+				if (upgrade.GoesIntoBasestatSlot)
+				{
+					Message("You have absorbed " + upg.item.VisibleName + "");
+					Inventory.AddBasestatUpgrade(upgrade);
+					upg.DeleteMe(true);
+					Data.UpdateInventory(Inventory);
+					UpdateStats();
+				}
+				else if (AddItem(upgrade))
+				{
+					upg.DeleteMe(true);
+					//EquipUpgrade(upg.upgrade);
+				}
 			}
-			else if (AddUpgrade(upg.upgrade))
+			else
 			{
-				upg.DeleteMe(true);
-				//EquipUpgrade(upg.upgrade);
+				if (AddItem(upg.item))
+				{
+					upg.DeleteMe(true);
+					//EquipUpgrade(upg.upgrade);
+				}
 			}
 		}
 
-		public bool AddUpgrade(AbstractUpgrade u)
+		public bool AddItem(InventoryItem u)
 		{
 			if (Inventory.CanAdd(u))
 			{
 				u.SetOwner(this);
-				Inventory.AddUpgrade(u);
+				Inventory.AddItem(u);
 				Data.UpdateInventory(Inventory);
 				Message("You have picked up: " + u.VisibleName + "");
 				return true;
@@ -316,15 +330,17 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
-		public void RemoveUpgrade(AbstractUpgrade u)
+		public void RemoveItem(InventoryItem u, bool showMsg=true)
 		{
 			u.SetOwner(null);
-			Inventory.RemoveUpgrade(u);
+			Inventory.RemoveItem(u);
 			Data.UpdateInventory(Inventory);
-			Message("Deleted " + u.VisibleName);
+
+			if(showMsg)
+				Message("Deleted " + u.VisibleName);
 		}
 
-		public void EquipUpgrade(AbstractUpgrade u)
+		public void EquipUpgrade(EquippableItem u)
 		{
 			if (!Inventory.EquipUpgrade(u))
 				return;
@@ -335,20 +351,32 @@ namespace Assets.scripts.Actor
 			Message("Equiped " + u.VisibleName);
 		}
 
-		public void UnequipUpgrade(AbstractUpgrade u, bool force=false)
+		public void UnequipItem(InventoryItem u, bool force=false)
 		{
-			Inventory.UnequipUpgrade(u, force);
-			UpdateStats();
+			if (u.IsUpgrade())
+			{
+				EquippableItem upgr = (EquippableItem) u;
 
-			Data.UpdateInventory(Inventory);
-			Message("Unequiped " + u.VisibleName);
+				Inventory.UnequipUpgrade(upgr, force);
+				UpdateStats();
+
+				Data.UpdateInventory(Inventory);
+				Message("Unequiped " + u.VisibleName);
+			}
 		}
 
-		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, int fromSlot, int toSlot)
+		public void SwapItem(InventoryItem source, InventoryItem target, int slot, int fromSlot, int toSlot)
 		{
-			Inventory.MoveUpgrade(source, fromSlot, toSlot, slot, target);
-			UpdateStats();
-			Data.UpdateInventory(Inventory);
+			// can only swap upgrades from active slots to inventory slots
+			if (source.IsUpgrade() && (target == null || target.IsUpgrade()))
+			{
+				EquippableItem sourceUpgr = (EquippableItem) source;
+				EquippableItem targetUpgr = (EquippableItem) target;
+
+				Inventory.MoveUpgrade(sourceUpgr, fromSlot, toSlot, slot, targetUpgr);
+				UpdateStats();
+				Data.UpdateInventory(Inventory);
+			}
 		}
 
 		public virtual void UpdateStats()
@@ -659,7 +687,7 @@ namespace Assets.scripts.Actor
 					((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
 			}
 
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.OnGiveDamage(target, damage, skillId);
 			}

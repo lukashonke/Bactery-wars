@@ -71,7 +71,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.W))
 			{
-				AbstractUpgrade u = new HpUpgradeAdd(1);
+				EquippableItem u = new HpUpgradeAdd(1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 				//data.GetOwner().AddUpgrade(u);
@@ -96,9 +96,13 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				AbstractUpgrade u = new Heal(1);
+				InventoryItem u = new Heal(1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+
+				InventoryItem p = new HpPotion(1);
+				p.Init();
+				p.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}
 
 			if (Input.GetKeyDown(KeyCode.B))
@@ -126,7 +130,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.R))
 			{
-				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 1, 2, 1);
+				EquippableItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC, 1, 2, 1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}

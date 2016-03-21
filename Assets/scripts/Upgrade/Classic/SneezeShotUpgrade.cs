@@ -14,10 +14,10 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class SneezeShotThreeProjectiles : AbstractUpgrade
+	public class SneezeShotThreeProjectiles : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public SneezeShotThreeProjectiles(int level)
 			: base(level)
@@ -53,10 +53,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotDamageUpgrade : AbstractUpgrade
+	public class SneezeShotDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int DAMAGE = 10;
 		public const float LEVEL_ADD = 2;
@@ -95,10 +95,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotAimedProjectiles : AbstractUpgrade
+	public class SneezeShotAimedProjectiles : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public SneezeShotAimedProjectiles(int level)
 			: base(level)
@@ -136,10 +136,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotHomingMissile : AbstractUpgrade
+	public class SneezeShotHomingMissile : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		private int temp;
 		private int temp2;
@@ -186,10 +186,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotPoisonUpgrade : AbstractUpgrade
+	public class SneezeShotPoisonUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int DAMAGE = 5;
 		public const float LEVEL_ADD = 1f;
@@ -229,10 +229,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotPenetrateUpgrade : AbstractUpgrade
+	public class SneezeShotPenetrateUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public SneezeShotPenetrateUpgrade(int level)
 			: base(level)
@@ -268,10 +268,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotPushUpgrade : AbstractUpgrade
+	public class SneezeShotPushUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public SneezeShotPushUpgrade(int level)
 			: base(level)
@@ -305,10 +305,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotExplodeUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotExplodeUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const float RADIUS = 5;
 		public const float RADIUS_LEVEL_ADD = 0.6f;
@@ -370,10 +370,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotDoubleExploderUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotDoubleExploderUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.EPIC;
+		public static ItemType type = ItemType.EPIC;
 
 		public const float RADIUS = 5;
 		public const float RADIUS_LEVEL_ADD = 0.6f;
@@ -436,10 +436,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotTripleExploderUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotTripleExploderUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.EPIC;
+		public static ItemType type = ItemType.EPIC;
 
 		public const float RADIUS = 5;
 		public const float RADIUS_LEVEL_ADD = 0.6f;
@@ -502,10 +502,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotMissilesUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotMissilesUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.EPIC;
+		public static ItemType type = ItemType.EPIC;
 
 		public const int COUNT = 6;
 		public const float COUNT_ADD = 1f;
@@ -557,10 +557,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotPenetrateAimUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotPenetrateAimUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public const int AFTER_DMG_AMOUNT = 50;
 		public const int AFTER_DMG_LEVEL_ADD = 10;
@@ -616,10 +616,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotPenetrateMissilePenetratorUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotPenetrateMissilePenetratorUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		private int temp, temp2, temp4;
 		private float temp3;
@@ -675,10 +675,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotZeroReuseUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotZeroReuseUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int CHANCE = 25;
 		public const int CHANCE_LEVEL_ADD = 2;
@@ -717,10 +717,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotWeakenUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotWeakenUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const float DURATION = 5;
 		public const float AMOUNT_LEVEL_ADD = 1f;
@@ -754,10 +754,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class SneezeShotDieExplodeUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotDieExplodeUpgrade : EquippableItem //TODO effect 
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const float DAMAGE = 30;
 		public const float AMOUNT_LEVEL_ADD = 5;

@@ -9,7 +9,7 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class SpeedUpgrade : AbstractUpgrade
+	public class SpeedUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 

@@ -9,7 +9,7 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class CriticalRateUpgrade : AbstractUpgrade
+	public class CriticalRateUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 
@@ -32,7 +32,7 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class CriticalDamageUpgrade : AbstractUpgrade
+	public class CriticalDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 

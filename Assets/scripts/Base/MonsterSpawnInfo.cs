@@ -47,13 +47,13 @@ namespace Assets.scripts.Base
 			return this;
 	    }
 
-		public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int rarity, int category, int level = 1)
+		public MonsterSpawnInfo AddDrop(int chance, ItemType randomType, int rarity, int category, int level = 1)
 		{
 			Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
 			return this;
 		}
 
-	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int category, int level=1)
+	    public MonsterSpawnInfo AddDrop(int chance, ItemType randomType, int minRarity, int maxRarity, int category, int level=1)
 	    {
 		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
 		    return this;

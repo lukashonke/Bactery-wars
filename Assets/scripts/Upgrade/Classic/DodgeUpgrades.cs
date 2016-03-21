@@ -9,10 +9,10 @@ using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class DodgeFirstHitDamageUpgrade : AbstractUpgrade
+	public class DodgeFirstHitDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int DAMAGE = 20;
 		public const float LEVEL_ADD = 4;
@@ -51,10 +51,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgeHitDamageUpgrade : AbstractUpgrade
+	public class DodgeHitDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int DAMAGE = 15;
 		public const float LEVEL_ADD = 4;
@@ -94,10 +94,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgePenetrateThroughTargets : AbstractUpgrade
+	public class DodgePenetrateThroughTargets : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public const int DAMAGE = 10;
 		public const float LEVEL_ADD = 3;
@@ -139,10 +139,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgeRangeIncrease : AbstractUpgrade
+	public class DodgeRangeIncrease : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int VALUE = 5;
 		public const float LEVEL_ADD = 1f;
@@ -182,10 +182,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgeCharges : AbstractUpgrade
+	public class DodgeCharges : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public DodgeCharges(int level)
 			: base(level)
@@ -224,10 +224,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgeRechargeShotUpgrade : AbstractUpgrade
+	public class DodgeRechargeShotUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static UpgradeType type = UpgradeType.RARE;
+		public static ItemType type = ItemType.RARE;
 
 		public DodgeRechargeShotUpgrade(int level)
 			: base(level)
@@ -262,10 +262,10 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class DodgeSpreadshotOnLand : AbstractUpgrade
+	public class DodgeSpreadshotOnLand : EquippableItem
 	{
 		public static int rarity = 2;
-		public static UpgradeType type = UpgradeType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC;
 
 		public const int DAMAGE = 15;
 		public const float LEVEL_ADD = 3f;

@@ -1,6 +1,6 @@
 ﻿namespace Assets.scripts.Upgrade
 {
-	public enum UpgradeType
+	public enum ItemType
 	{
 		CLASSIC,
 		RARE,

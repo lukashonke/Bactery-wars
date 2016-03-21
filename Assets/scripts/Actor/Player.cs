@@ -99,11 +99,11 @@ namespace Assets.scripts.Actor
 			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
 			Inventory.Capacity = Template.InventoryCapacity;
 
-			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(0).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(0).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new DamageUpgrade(0).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(0).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(0).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new DamageUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(0).Init().SetOwner(this) as EquippableItem);
 
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
@@ -145,7 +145,7 @@ namespace Assets.scripts.Actor
 			float tmpDmgAdd = Template.DamageAdd;
 			float tmpShield = Template.Shield;
 
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.ModifyMaxHp(ref tmpMaxHp);
 				u.ModifyMaxMp(ref tmpMaxMp);
@@ -157,7 +157,7 @@ namespace Assets.scripts.Actor
 				u.ModifyShield(ref tmpShield);
 			}
 
-			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
+			foreach (EquippableItem u in Inventory.BasestatUpgrades)
 			{
 				u.ModifyMaxHp(ref tmpMaxHp);
 				u.ModifyMaxMp(ref tmpMaxMp);
