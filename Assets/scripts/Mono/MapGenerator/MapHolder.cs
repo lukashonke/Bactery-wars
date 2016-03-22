@@ -220,6 +220,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		    this.regionHeight = regionHeight;
 			this.levelParams = param;
 
+			Debug.Log("aaa " + mapType);
+
 			levelData = null;
 
 			switch (mapType)

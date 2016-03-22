@@ -41,11 +41,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 				PlayerData data = ((Player) source).GetData();
 
-				WorldHolder.instance.LoadPreviousMap();
+				data.ui.ShowLevelsView();
+
+				/*WorldHolder.instance.LoadPreviousMap();
 
 				//TODO bug - it teleports anyway
 				// teleport player to new start
-				data.transform.position = WorldHolder.instance.GetStartPosition();
+				data.transform.position = WorldHolder.instance.GetStartPosition();*/
 			}
 		}
 

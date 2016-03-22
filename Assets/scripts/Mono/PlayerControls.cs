@@ -115,6 +115,16 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			if (Input.GetKeyDown(KeyCode.L))
+			{
+				ui.ShowLevelsView();
+			}
+
+			if (Input.GetKeyDown(KeyCode.M))
+			{
+				ui.HideLevelsView();
+			}
+
 			if (Input.GetKeyDown(KeyCode.V))
 			{
 				AbstractLevelData levelData = WorldHolder.instance.activeMap.levelData;

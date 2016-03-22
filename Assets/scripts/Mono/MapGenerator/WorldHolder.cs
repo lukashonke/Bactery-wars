@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Assets.scripts.Mono.MapGenerator.Levels;
+using Assets.scripts.Mono.ObjectData;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -16,10 +18,12 @@ namespace Assets.scripts.Mono.MapGenerator
 	public class WorldHolder : MonoBehaviour
 	{
 		public static WorldHolder instance;
+		private int worldLevel;
 
 		public static string[] allowedSeeds = { "500", "555", "-516", "777", "-876", "643", "725" };
 
 		// data
+		public LevelTree mapTree;
 		public Dictionary<Cords, MapHolder> maps;
 		public MapHolder activeMap;
 
@@ -53,32 +57,276 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			skipTutorial = GameSession.skipTutorial;
 
+			if (skipTutorial)
+				worldLevel = 1;
+			else
+				worldLevel = 0;
+
 			darkPlaneTemplate = GameObject.Find("Total Background");
+
+			GenerateWorldLevels();
 
 			// create the first map
 			GenerateFirstLevel();
 		}
 
-		private void GenerateFirstLevel()
+		private void GenerateWorldLevels()
 		{
-			MapHolder newMap = null;
-			LevelParams param = new LevelParams();
+			int id = 0;
+			LevelParams param = new LevelParams(MapType.LevelOne);
+			param.worldLevel = worldLevel;
 
-			if (!skipTutorial)
+			if (worldLevel > 0)
 			{
-				newMap = new MapHolder(this, "Level 1", new Cords(0, 0), MapType.LevelOne, width, height, param);
+				param.levelType = MapType.SixRegions; //TODO
+				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 			}
 			else
 			{
-				int mapLevel = 1;
-				MapType type = GetNextLevelType(1, ref mapLevel, param);
-				newMap = new MapHolder(this, "Level 6", new Cords(0, 0), type, width, height, param, mapLevel);
+				param.levelType = MapType.LevelOne;
+				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
 			}
-			
-			newMap.CreateMap();
-			maps.Add(new Cords(0, 0), newMap);
 
-			SetActiveLevel(0, 0, false);
+			mapTree.Unlocked = true;
+
+			int levelsCount = 15;
+			int mainLineCount = 5;
+			int minGenericLevelsCount;
+			int minSpecialLevelsCount;
+			switch (worldLevel)
+			{
+				case 1:
+					levelsCount = 10;
+					mainLineCount = 4;
+					break;
+				case 2:
+					levelsCount = Random.Range(14,16);
+					mainLineCount = 5;
+					break;
+				case 3:
+					levelsCount = Random.Range(14, 16);
+					mainLineCount = 5;
+					break;
+				case 4:
+					levelsCount = Random.Range(14, 16);
+					mainLineCount = 5;
+					break;
+				default:
+					levelsCount = 5;
+					mainLineCount = 5;
+					break;
+			}
+
+			int maxSpecialLevelsCount = Mathf.CeilToInt((levelsCount - mainLineCount)/4);
+
+			if (maxSpecialLevelsCount <= 0)
+				maxSpecialLevelsCount = 1;
+
+			Debug.Log("max special levels: " + maxSpecialLevelsCount);
+
+			// one level is already created
+			levelsCount--;
+			mainLineCount --;
+
+			int counter = levelsCount;
+
+			if (worldLevel > 0)
+			{
+				// main line - all medium
+				for (int i = 0; i < mainLineCount; i++)
+				{
+					LevelTree newNode = null;
+					param = new LevelParams(MapType.LevelOne);
+					param.worldLevel = worldLevel;
+
+					// grand boss is the last level
+					if (i + 1 == mainLineCount)
+					{
+						param.levelType = MapType.FindBoss; // TODO change
+						param.mapLevel = worldLevel;
+						param.worldLevel = worldLevel;
+						newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_MEDIUM, i + 1, param, "Main" + (levelsCount - counter));
+					}
+					else
+					{
+						newNode = CreateRandomMainNodeLevel(++id, i + 1);
+					}
+
+					if (newNode == null) continue;
+					
+					mapTree.GetLastMainNode().AddChild(newNode);
+
+					if (i + 1 == mainLineCount)
+					{
+						newNode.IsLastNode = true;
+					}
+
+					counter--;
+				}
+			}
+			else
+			{
+				// main line - tutorial levels - all easy
+				for (int i = 0; i < mainLineCount; i++)
+				{
+					LevelTree newNode = null;
+					param = new LevelParams(MapType.LevelOne);
+					param.worldLevel = worldLevel;
+
+					switch (i)
+					{
+						case 0:
+							param.levelType = MapType.LevelTwo;
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Second Tutorial", "Unknown");
+							break;
+						case 1:
+							param.levelType = MapType.LevelThree;
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Third Tutorial", "Unknown");
+							break;
+						case 2:
+							param.levelType = MapType.LevelFour;
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Fourth Tutorial", "Unknown");
+							break;
+						case 3:
+							param.levelType = MapType.LevelFive;
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Last Tutorial", "Unknown");
+							break;
+					}
+
+					if (newNode == null) continue; // shouldnt happen
+					
+					mapTree.GetLastMainNode().AddChild(newNode);
+
+					if (i + 1 == mainLineCount)
+					{
+						newNode.IsLastNode = true;
+					}
+
+					counter--;
+				}
+			}
+
+			if (worldLevel > 0)
+			{
+				for (int i = 0; i < counter; i++)
+				{
+					LevelTree mainNode = mapTree.GetRandomMainNode();
+					LevelTree nextNode = CreateRandomExtraNodeLevel(++id, mainNode.Depth);
+					mainNode.AddChild(nextNode);
+
+					Debug.Log("generating extra node to depth " + nextNode.Depth);
+				}
+
+				for (int i = 0; i < maxSpecialLevelsCount; i++)
+				{
+					LevelTree mainNode = mapTree.GetRandomSpecialNode();
+					LevelTree nextNode = CreateRandomExtraNodeLevel(++id, mainNode.Depth);
+					mainNode.AddChild(nextNode);
+
+					Debug.Log("generating special node to depth " + nextNode.Depth);
+				}
+			}
+
+			Debug.Log(mapTree.PrintInfo());
+		}
+
+		public LevelTree CreateRandomMainNodeLevel(int id, int depth)
+		{
+			LevelParams param = new LevelParams(MapType.SixRegions);
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_MEDIUM, depth, param, "Level " + id);
+			return newNode;
+		}
+
+		public LevelTree CreateRandomExtraNodeLevel(int id, int depth)
+		{
+			LevelParams param = new LevelParams(MapType.BossRush); //TODO new types
+
+			int difficulty = LevelTree.DIFF_MEDIUM;
+			int rnd = Random.Range(0, 100);
+			if (rnd < 25)
+				difficulty = LevelTree.DIFF_EASY;
+			if(rnd > 75)
+				difficulty = LevelTree.DIFF_HARD;
+
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, ++id, difficulty, depth, param, "Extra Level " + id);
+			return newNode;
+		}
+
+		public bool OnLevelSelect(PlayerData data, LevelTree node)
+		{
+			Debug.Log("selected " + node.Name + "" + node.Depth);
+
+			if (!CanSelectLevel(node))
+			{
+				data.player.Message("This level is locked.");
+				return false;
+			}
+
+			activeMap.OnTeleportOut(data.player);
+
+			GenerateAndOpenLevel(node);
+
+			// teleport player to new start
+			data.transform.position = GetStartPosition();
+
+			activeMap.OnTeleportIn(data.player);
+
+			return true;
+		}
+
+		public void OnLevelFinished()
+		{
+			LevelTree currentNode = null;
+
+			foreach (LevelTree t in mapTree.GetAllNodes())
+			{
+				if (activeMap.levelData.Equals(t.levelData))
+				{
+					currentNode = t;
+					break;
+				}
+			}
+
+			foreach (LevelTree ch in currentNode.Childs)
+			{
+				ch.Unlocked = true;
+			}
+		}
+
+		public bool CanSelectLevel(LevelTree node)
+		{
+			if (node.Unlocked == false)
+				return false;
+
+			return true;
+		}
+
+		public void GenerateAndOpenLevel(LevelTree levelNode)
+		{
+			LevelParams param = levelNode.LevelParams;
+
+			// map hasnt been generated yet
+			if (!maps.ContainsKey(new Cords(levelNode.Id, 0)))
+			{
+				MapHolder newMap = new MapHolder(this, levelNode.Name, new Cords(levelNode.Id, 0), param.levelType, width, height, param);
+
+				newMap.CreateMap();
+				maps.Add(new Cords(levelNode.Id, 0), newMap);
+
+				levelNode.levelData = newMap.levelData;
+			}
+
+			foreach (LevelTree n in mapTree.GetAllNodes())
+				n.CurrentlyActive = false;
+			levelNode.CurrentlyActive = true;
+			levelNode.Unlocked = true;
+
+			SetActiveLevel(levelNode.Id, 0, false);
+		}
+
+		private void GenerateFirstLevel()
+		{
+			GenerateAndOpenLevel(mapTree);
 		}
 
 		public Cords GenerateNextLevel(int teleporterType)
@@ -86,7 +334,18 @@ namespace Assets.scripts.Mono.MapGenerator
 			Cords old = activeMap.Position;
 			Cords newCords = new Cords(old.x + 1, old.y);
 
-			int level = old.x + 2;
+			int newId = newCords.x;
+
+			LevelTree nextNode = mapTree.GetNode(newId);
+
+			if (nextNode == null)
+			{
+				Debug.LogError("no more next nodes - need to proceed to next world");
+			}
+			else
+				GenerateAndOpenLevel(nextNode);
+
+			/*int level = old.x + 2;
 			if (skipTutorial)
 			{
 				level += 5;
@@ -95,7 +354,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			MapType type = MapType.LevelOne;
 			int mapLevel = 1;
-			LevelParams param = new LevelParams();
+			LevelParams param = new LevelParams(MapType.LevelOne);
 
 			switch (level)
 			{
@@ -119,7 +378,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			MapHolder newMap = new MapHolder(this, "Level " + (newCords.x+1), newCords, type, 100, 50, param, mapLevel);
 			newMap.CreateMap();
 
-			maps.Add(newCords, newMap);
+			maps.Add(newCords, newMap);*/
 			return newCords;
 		}
 

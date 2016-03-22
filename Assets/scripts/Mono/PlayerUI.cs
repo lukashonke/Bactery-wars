@@ -45,7 +45,10 @@ namespace Assets.scripts.Mono
 		public GameObject settingsPanel = null;
 		public GameObject inventoryPanel = null;
 
-		public GameObject tooltipObject;
+		public Canvas levelsViewCanvas = null;
+
+		public GameObject inventoryTooltipObject;
+		public GameObject levelTooltipObject;
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
@@ -75,7 +78,7 @@ namespace Assets.scripts.Mono
 		private GameObject upgradesAdminPanel;
 		private Dropdown upgradesDropdownPanel;
 
-		public GameObject highlightedSlot;
+		public GameObject highlightedObject;
 
 		public GameObject currentTooltipObject;
 
@@ -496,6 +499,9 @@ namespace Assets.scripts.Mono
 
 			chatPosition = GameObject.Find("ChatPosition");
 
+			levelsViewCanvas = GameObject.Find("LevelsView").GetComponent<Canvas>();
+			levelsViewCanvas.enabled = false;
+
 			//msgStyle = new GUIStyle();
 			//msgStyle.fontSize = 20;
 			//msgStyle.alignment = TextAnchor.LowerCenter;
@@ -559,7 +565,8 @@ namespace Assets.scripts.Mono
 
 				GameObject.Find("InvScrollbar").GetComponent<Scrollbar>().value = 1f;
 
-				tooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
+				inventoryTooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
+				levelTooltipObject = Resources.Load("Sprite/inventory/LevelTooltip") as GameObject;
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
@@ -720,6 +727,291 @@ namespace Assets.scripts.Mono
 			{
 				Debug.LogError("error initializing admin panel");
 			}
+
+			levelIconTemplate = GameObject.Find("LevelIconTemplate");
+			levelsViewPanel = GameObject.Find("LevelsViewPanel");
+		}
+
+		private GameObject levelIconTemplate;
+		private GameObject levelsViewPanel;
+
+		private Dictionary<GameObject, LevelTree> levelsViewIcons = new Dictionary<GameObject, LevelTree>();
+
+		public void ShowLevelsView()
+		{
+			levelsViewCanvas.enabled = true;
+			SetMouseOverUi();
+
+			float x = 0;
+			float y = 0;
+
+			LevelTree main = WorldHolder.instance.mapTree;
+
+			int depth;
+
+			const int maxNodesDown = 5;
+
+			int spacingY = Screen.height / maxNodesDown;
+			int spacingX = Math.Min(spacingY, Screen.width/6);
+			int rndHeight = spacingY/5;
+			int rndWidth = spacingX / 2;
+
+			List<LevelTree> mainNodes = main.GetAllMainNodes();
+			List<LevelTree> nodes = main.GetAllNodes();
+			bool done = false;
+
+			int temp = 0;
+
+			// draw all main nodes first
+			for (int i = 0; i < 100; i++)
+			{
+				temp = 0;
+
+				foreach (LevelTree t in mainNodes)
+				{
+					if (t.Depth == i)
+					{
+						temp++;
+						depth = t.Depth;
+
+						y = (Screen.height/2f) - (spacingY)*(depth + 1) + Random.Range(-rndHeight, rndHeight) + (spacingY/2f);
+						x = Random.Range(-rndWidth, rndWidth);
+
+						Debug.Log(y);
+
+						GameObject newImg = Instantiate(levelIconTemplate);
+						newImg.GetComponent<Image>().enabled = true;
+						newImg.name = "Main" + t.Name + "IconD" + t.Depth;
+						newImg.transform.parent = levelsViewPanel.transform;
+						RectTransform trans = newImg.GetComponent<RectTransform>();
+						trans.localPosition = new Vector3(x, y);
+
+						if (!t.Unlocked)
+						{
+							newImg.GetComponent<Image>().color = Color.gray;
+						}
+
+						if (t.CurrentlyActive)
+						{
+							newImg.GetComponent<Image>().color = Color.yellow;
+						}
+
+						AddLevelHoverAction(newImg);
+						levelsViewIcons.Add(newImg, t);
+
+						if (t.IsLastNode)
+							done = true;
+					}
+				}
+
+				if (done)
+					break;
+			}
+
+			done = false;
+
+			// draw the secondary nodes
+			for (int i = 0; i < 100; i++)
+			{
+				temp = 0;
+				foreach (LevelTree t in nodes)
+				{
+					if (t.Depth == i && t.LevelNodeType == LevelTree.LEVEL_EXTRA)
+					{
+						GameObject mainNodeObj = null;
+						LevelTree mainNode = null;
+
+						foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
+						{
+							if (e.Value.Depth == t.Depth && e.Value.LevelNodeType == LevelTree.LEVEL_MAIN)
+							{
+								mainNodeObj = e.Key;
+								mainNode = e.Value;
+							}
+						}
+
+						if (mainNodeObj == null)
+							continue;
+							
+						temp++;
+						depth = t.Depth;
+
+						float mainX = mainNodeObj.transform.localPosition.x;
+
+						x = 0;
+						y = mainNodeObj.transform.localPosition.y - Random.Range(rndHeight/2, rndHeight);
+
+						switch (temp)
+						{
+							case 1:
+								x = mainX + spacingX;
+								Debug.Log("1X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 2:
+								x = mainX - spacingX;
+								Debug.Log("2X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 3:
+								x = mainX + 2* spacingX;
+								Debug.Log("3X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 4:
+								x = mainX - 2* spacingX;
+								Debug.Log("4X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 5:
+								x = mainX + 1.5f* spacingX;
+								y -= (spacingY/2f);
+								break;
+							case 6:
+								x = mainX + 1.5f* spacingX;
+								y -= (spacingY / 2f);
+								break;
+						}
+
+						GameObject newImg = Instantiate(levelIconTemplate);
+						newImg.GetComponent<Image>().enabled = true;
+						newImg.GetComponent<Image>().color = Color.red;
+						newImg.name = "Extra" + t.Name + "IconD" + t.Depth;
+						newImg.transform.parent = levelsViewPanel.transform;
+						RectTransform trans = newImg.GetComponent<RectTransform>();
+						trans.localPosition = new Vector3(x, y);
+
+						if (!t.Unlocked)
+						{
+							newImg.GetComponent<Image>().color = Color.gray;
+						}
+
+						AddLevelHoverAction(newImg);
+						levelsViewIcons.Add(newImg, t);
+
+						if (t.IsLastNode)
+							done = true;
+					}
+				}
+
+				if (done)
+					break;
+			}
+		}
+
+		private void AddLevelHoverAction(GameObject target)
+		{
+			EventTrigger trigger = target.AddComponent<EventTrigger>();
+
+			EventTrigger.Entry entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerDown;
+			entry.callback.AddListener(delegate { OnLevelIconClick(target); });
+			trigger.triggers.Add(entry);
+
+			entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerEnter;
+			entry.callback.AddListener(delegate { OnLevelIconHover(target, false); });
+			trigger.triggers.Add(entry);
+
+			entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerExit;
+			entry.callback.AddListener(delegate { OnLevelIconHover(target, true); });
+			trigger.triggers.Add(entry);
+		}
+
+		public void HideLevelsView()
+		{
+			foreach (GameObject o in levelsViewIcons.Keys)
+			{
+				Destroy(o);
+			}
+
+			levelsViewIcons.Clear();
+
+			levelsViewCanvas.enabled = false;
+			SetMouseNotOverUi();
+		}
+
+		public void OnLevelIconClick(GameObject target)
+		{
+			LevelTree node;
+
+			if (!levelsViewIcons.TryGetValue(target, out node))
+				return;
+
+			if(WorldHolder.instance.OnLevelSelect(data, node))
+				HideLevelsView();
+		}
+
+		public void OnLevelIconHover(GameObject target, bool exit)
+		{
+			LevelTree node;
+
+			if (!levelsViewIcons.TryGetValue(target, out node))
+				return;
+
+			if (!exit)
+			{
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+
+				highlightedObject = target;
+				currentTooltipObject = Instantiate(levelTooltipObject);
+				currentTooltipObject.transform.parent = levelsViewPanel.transform;
+				currentTooltipObject.transform.position = Input.mousePosition;
+
+				Color titleColor = new Color();
+				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+				currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+
+				foreach (Transform child in currentTooltipObject.transform)
+				{
+					if (child.name.Equals("Title"))
+					{
+						child.GetComponent<Text>().text = "Level " + Enum.GetName(typeof(MapType), node.LevelParams.levelType) + (node.Unlocked ? "" : " [Locked]");
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("Description"))
+					{
+						child.GetComponent<Text>().text = node.Description;
+						continue;
+					}
+					else if (child.name.Equals("Type"))
+					{
+						string difficulty = "Unknown";
+						switch (node.Difficulty)
+						{
+							case 1:
+								difficulty = "Easy";break;
+							case 2:
+								difficulty = "Medium"; break;
+							case 3:
+								difficulty = "Hard"; break;
+							case 4:
+								difficulty = "Very Hard"; break;
+						}
+						child.GetComponent<Text>().text = difficulty + " difficulty";
+						continue;
+					}
+					/*else if (child.name.Equals("Price") && price != null)
+					{
+						child.GetComponent<Text>().text = price;
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}*/
+					else if (child.name.Equals("AdditionalInfo"))
+					{
+						child.GetComponent<Text>().text = node.RewardDescription;
+						continue;
+					}
+					else
+					{
+						Destroy(child.gameObject);
+					}
+				}
+			}
+			else
+			{
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+			}
 		}
 
 		public void AdminUpgradeChosen()
@@ -817,7 +1109,7 @@ namespace Assets.scripts.Mono
 				bool stillAboveIcon = false;
 				foreach (RaycastResult r in hits)
 				{
-					if (r.gameObject.Equals(highlightedSlot))
+					if (r.gameObject.Equals(highlightedObject))
 					{
 						stillAboveIcon = true;
 						break;
@@ -993,8 +1285,8 @@ namespace Assets.scripts.Mono
 				if (currentTooltipObject != null)
 					Destroy(currentTooltipObject);
 
-				highlightedSlot = slot;
-				currentTooltipObject = Instantiate(tooltipObject);
+				highlightedObject = slot;
+				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = inventoryPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
 
@@ -1032,8 +1324,8 @@ namespace Assets.scripts.Mono
 				if (currentTooltipObject != null)
 					Destroy(currentTooltipObject);
 
-				highlightedSlot = slot;
-				currentTooltipObject = Instantiate(tooltipObject);
+				highlightedObject = slot;
+				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = inventoryPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
 
