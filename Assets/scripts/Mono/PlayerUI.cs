@@ -9,6 +9,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
@@ -49,6 +50,7 @@ namespace Assets.scripts.Mono
 
 		public GameObject inventoryTooltipObject;
 		public GameObject levelTooltipObject;
+		public GameObject levelLineDot;
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
@@ -567,6 +569,7 @@ namespace Assets.scripts.Mono
 
 				inventoryTooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
 				levelTooltipObject = Resources.Load("Sprite/inventory/LevelTooltip") as GameObject;
+				levelLineDot = Resources.Load("Sprite/inventory/LevelLineDot") as GameObject;
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
@@ -893,6 +896,117 @@ namespace Assets.scripts.Mono
 				if (done)
 					break;
 			}
+
+			Utils.Timer.StartTimer("line");
+
+			foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
+			{
+				GameObject first = e.Key;
+				GameObject second;
+
+				foreach (LevelTree n in e.Value.Childs)
+				{
+					if (n.IsLastNode)
+					{
+						Debug.Log(e.Value.Name + " has last node");
+					}
+
+					foreach (KeyValuePair<GameObject, LevelTree> e1 in levelsViewIcons)
+					{
+						if (e1.Value.Id == n.Id)
+						{
+							if (e1.Value.IsLastNode)
+							{
+								Debug.Log("connecting to last node node " + e.Value.Name);
+							}
+
+							second = e1.Key;
+							ConnectIcons(first, second, n.Unlocked);
+							second = null;
+							break;
+						}
+					}
+				}
+
+				first = null;
+			}
+
+			Utils.Timer.EndTimer("line");
+		}
+
+		private void ConnectIcons(GameObject first, GameObject second, bool secondUnlocked)
+		{
+			int x1 = (int) first.transform.localPosition.x;
+			int y1 = (int) first.transform.localPosition.y;
+
+			int x2 = (int) second.transform.localPosition.x;
+			int y2 = (int) second.transform.localPosition.y;
+
+			int d = 0;
+
+			int dx = Math.Abs(x2 - x1);
+			int dy = Math.Abs(y2 - y1);
+
+			int dy2 = (dy << 1);
+			int dx2 = (dx << 1);
+
+			int ix = x1 < x2 ? 1 : -1;
+			int iy = y1 < y2 ? 1 : -1;
+
+			if (dy <= dx)
+			{
+				for (;;)
+				{
+					PlantDot(x1, y1, secondUnlocked ? Color.white : Color.gray);
+
+					if (Math.Abs(x1 - x2) < Math.Abs(ix))
+						break;
+
+					x1 += ix;
+					d += dy2;
+
+					if (d > dx)
+					{
+						y1 += iy;
+						d -= dx2;
+					}
+				}
+			}
+			else
+			{
+				for (;;)
+				{
+					PlantDot(x1, y1, secondUnlocked ? Color.white : Color.gray);
+
+					if (Math.Abs(y1 - y2) < Math.Abs(iy))
+						break;
+
+					y1 += iy;
+					d += dx2;
+					if (d > dy)
+					{
+						x1 += ix;
+						d -= dy2;
+					}
+				}
+			}
+		}
+
+		private int counter = 0;
+		private List<GameObject> dots = new List<GameObject>(); 
+
+		private void PlantDot(float x, float y, Color color)
+		{
+			counter ++;
+			if (counter%20 == 0)
+			{
+				GameObject dot = Instantiate(levelLineDot);
+				dot.GetComponent<Image>().color = color;
+				dot.transform.parent = levelsViewPanel.transform;
+				dot.transform.localPosition = new Vector3(x, y);
+				dot.transform.SetAsFirstSibling();
+				dots.Add(dot);
+			}
 		}
 
 		private void AddLevelHoverAction(GameObject target)
@@ -921,6 +1035,13 @@ namespace Assets.scripts.Mono
 			{
 				Destroy(o);
 			}
+
+			foreach (GameObject o in dots)
+			{
+				Destroy(o);
+			}
+
+			dots.Clear();
 
 			levelsViewIcons.Clear();
 

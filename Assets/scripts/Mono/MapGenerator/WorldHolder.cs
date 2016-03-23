@@ -79,12 +79,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			if (worldLevel > 0)
 			{
 				param.levelType = MapType.SixRegions; //TODO
-				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
+				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 			}
 			else
 			{
 				param.levelType = MapType.LevelOne;
-				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
+				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
 			}
 
 			mapTree.Unlocked = true;
@@ -145,11 +145,11 @@ namespace Assets.scripts.Mono.MapGenerator
 						param.levelType = MapType.FindBoss; // TODO change
 						param.mapLevel = worldLevel;
 						param.worldLevel = worldLevel;
-						newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_MEDIUM, i + 1, param, "Main" + (levelsCount - counter));
+						newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, i + 1, param, "Main" + id);
 					}
 					else
 					{
-						newNode = CreateRandomMainNodeLevel(++id, i + 1);
+						newNode = CreateRandomMainNodeLevel(id++, i + 1);
 					}
 
 					if (newNode == null) continue;
@@ -177,19 +177,19 @@ namespace Assets.scripts.Mono.MapGenerator
 					{
 						case 0:
 							param.levelType = MapType.LevelTwo;
-							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Second Tutorial", "Unknown");
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, i + 1, param, "Second Tutorial", "Unknown");
 							break;
 						case 1:
 							param.levelType = MapType.LevelThree;
-							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Third Tutorial", "Unknown");
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, i + 1, param, "Third Tutorial", "Unknown");
 							break;
 						case 2:
 							param.levelType = MapType.LevelFour;
-							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Fourth Tutorial", "Unknown");
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, i + 1, param, "Fourth Tutorial", "Unknown");
 							break;
 						case 3:
 							param.levelType = MapType.LevelFive;
-							newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_EASY, i + 1, param, "Last Tutorial", "Unknown");
+							newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, i + 1, param, "Last Tutorial", "Unknown");
 							break;
 					}
 
@@ -211,7 +211,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				for (int i = 0; i < counter; i++)
 				{
 					LevelTree mainNode = mapTree.GetRandomMainNode();
-					LevelTree nextNode = CreateRandomExtraNodeLevel(++id, mainNode.Depth);
+					LevelTree nextNode = CreateRandomExtraNodeLevel(id++, mainNode.Depth);
 					mainNode.AddChild(nextNode);
 
 					Debug.Log("generating extra node to depth " + nextNode.Depth);
@@ -220,7 +220,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				for (int i = 0; i < maxSpecialLevelsCount; i++)
 				{
 					LevelTree mainNode = mapTree.GetRandomSpecialNode();
-					LevelTree nextNode = CreateRandomExtraNodeLevel(++id, mainNode.Depth);
+					LevelTree nextNode = CreateRandomExtraNodeLevel(id++, mainNode.Depth);
 					mainNode.AddChild(nextNode);
 
 					Debug.Log("generating special node to depth " + nextNode.Depth);
@@ -233,7 +233,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public LevelTree CreateRandomMainNodeLevel(int id, int depth)
 		{
 			LevelParams param = new LevelParams(MapType.SixRegions);
-			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, ++id, LevelTree.DIFF_MEDIUM, depth, param, "Level " + id);
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_MEDIUM, depth, param, "Level " + id);
 			return newNode;
 		}
 
@@ -248,7 +248,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			if(rnd > 75)
 				difficulty = LevelTree.DIFF_HARD;
 
-			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, ++id, difficulty, depth, param, "Extra Level " + id);
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, id, difficulty, depth, param, "Extra Level " + id);
 			return newNode;
 		}
 
@@ -258,7 +258,6 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (!CanSelectLevel(node))
 			{
-				data.player.Message("This level is locked.");
 				return false;
 			}
 
@@ -298,6 +297,9 @@ namespace Assets.scripts.Mono.MapGenerator
 			if (node.Unlocked == false)
 				return false;
 
+			if (node.CurrentlyActive)
+				return false;
+
 			return true;
 		}
 
@@ -318,6 +320,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			foreach (LevelTree n in mapTree.GetAllNodes())
 				n.CurrentlyActive = false;
+
 			levelNode.CurrentlyActive = true;
 			levelNode.Unlocked = true;
 
