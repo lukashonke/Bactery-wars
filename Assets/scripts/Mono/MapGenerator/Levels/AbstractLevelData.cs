@@ -24,6 +24,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public PlayerBase playerBase = null;
 		public Siege siege = null;
 
+		public int DnaReward { get; protected set; } //TODO also add item reward
+
 		protected bool tutorialLevel;
 
 		public AbstractLevelData(MapHolder holder, int mapLevel=1)
@@ -31,6 +33,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			map = holder;
 			this.mapLevel = mapLevel;
 			tutorialLevel = false;
+			DnaReward = 0;
 		}
 
 		public abstract void Generate();
@@ -115,6 +118,11 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public void OnConquered() 
 		{
 			conquered = true;
+			if (DnaReward > 0)
+			{
+				GameSystem.Instance.CurrentPlayer.AddDnaPoints(DnaReward);
+				GameSystem.Instance.BroadcastMessage("You have obtained " + DnaReward + " DNA.");
+			}
 		}
 
 		public bool CanHaveBase()
