@@ -19,6 +19,7 @@ namespace Assets.scripts.Actor
 	public class Player : Character
 	{
 		public ClassTemplate Template { get; set; }
+		public int DnaPoints { get; private set; }
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
@@ -250,6 +251,21 @@ namespace Assets.scripts.Actor
 		public override void Message(string s, int level=1)
 		{
 			GetData().ui.ScreenMessage(s, level);
+		}
+
+		public void AddDnaPoints(int n)
+		{
+			DnaPoints += n;
+		}
+
+		public bool ReduceDnaPoints(int n)
+		{
+			if (DnaPoints > n)
+			{
+				DnaPoints -= n;
+				return true;
+			}
+			return false;
 		}
 	}
 }

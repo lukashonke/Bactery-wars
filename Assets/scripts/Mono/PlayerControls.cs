@@ -11,6 +11,7 @@ using Assets.scripts.Upgrade.Classic;
 using Assets.scripts.Upgrade.Rare;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono
 {
@@ -96,7 +97,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				InventoryItem u = new Heal(1);
+				InventoryItem u = new DnaItem(Random.Range(10, 20));
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 

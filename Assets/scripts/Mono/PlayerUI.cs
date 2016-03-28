@@ -1741,6 +1741,9 @@ namespace Assets.scripts.Mono
 						float shield = ((Player)data.GetOwner()).Status.Shield;
 						t.text = "Shield " + (int)(shield * 100 - 100) + "%";
 						break;
+					case "DNA": //TODO add to inventory
+						t.text = ((Player) data.GetOwner()).DnaPoints + "p";
+						break;
 				}
 			}
 		}
