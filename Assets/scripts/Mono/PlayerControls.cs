@@ -140,7 +140,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.R))
 			{
-				EquippableItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC, 1, 2, 1);
+				InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC, 1, 2, 1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}

@@ -554,6 +554,36 @@ namespace Assets.scripts.Mono.MapGenerator
 			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
 			Utils.Timer.EndTimer("mapprocess");
+
+			PrintMapToTxt();
+		}
+
+		public void PrintMapToTxt()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < SceneMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < SceneMap.GetLength(1); j++)
+				{
+					Tile t = SceneMap[i, j];
+					if(t == null)
+						continue;
+
+					switch (t.tileType)
+					{
+						case 0:
+							sb.Append("#");
+							break;
+						case 1:
+							sb.Append(".");
+							break;
+					}
+				}
+				sb.AppendLine();
+			}
+
+			System.IO.File.WriteAllText("mapTxt.txt", sb.ToString());
 		}
 
 		private void CreateDarkPlanes() //TODO scale the objects to adjust lightning here

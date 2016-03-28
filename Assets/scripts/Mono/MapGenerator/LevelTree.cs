@@ -38,8 +38,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int LEVEL_EXTRA = 2;
 
 		public const int DIFF_EASY = 1;
-		public const int DIFF_MEDIUM = 1;
-		public const int DIFF_HARD = 1;
+		public const int DIFF_MEDIUM = 2;
+		public const int DIFF_HARD = 3;
 
 		public LevelTree(int nodeType, int id, int difficulty, int depth=-1, LevelParams levelParams=null, string name = null, string desc = null, string reward = null)
 		{

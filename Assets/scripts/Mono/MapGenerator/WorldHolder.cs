@@ -70,6 +70,15 @@ namespace Assets.scripts.Mono.MapGenerator
 			GenerateFirstLevel();
 		}
 
+		public bool GoToNextWorld()
+		{
+			worldLevel ++;
+			GenerateWorldLevels();
+			GameSystem.Instance.BroadcastMessage("You proceed to world " + worldLevel);
+			//GenerateFirstLevel();
+			return true;
+		}
+
 		private void GenerateWorldLevels()
 		{
 			int id = 0;
@@ -290,6 +299,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				ch.Unlocked = true;
 			}
+
+			if (currentNode.IsLastNode)
+			{
+				GoToNextWorld();
+			}
 		}
 
 		public bool CanSelectLevel(LevelTree node)
@@ -343,10 +357,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (nextNode == null)
 			{
-				Debug.LogError("no more next nodes - need to proceed to next world");
+				WorldHolder.instance.GoToNextWorld();
 			}
-			else
-				GenerateAndOpenLevel(nextNode);
+
+			GenerateAndOpenLevel(nextNode);
 
 			/*int level = old.x + 2;
 			if (skipTutorial)
@@ -467,6 +481,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				Camera.main.orthographicSize = 55;
 				RegenMap();
+
+				activeMap.PrintMapToTxt();
 			}
 
 			if (Input.GetKeyDown(KeyCode.N))

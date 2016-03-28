@@ -94,13 +94,13 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public EquippableItem GenerateUpgrade(Type type, int level)
+		public InventoryItem GenerateUpgrade(Type type, int level)
 		{
-			EquippableItem u = Activator.CreateInstance(type, level) as EquippableItem;
+			InventoryItem u = Activator.CreateInstance(type, level) as InventoryItem;
 			return u;
 		}
 
-		public EquippableItem GenerateUpgrade(ItemType type, int minRarity, int maxRarity, int level)
+		public InventoryItem GenerateUpgrade(ItemType type, int minRarity, int maxRarity, int level)
 		{
 			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
@@ -115,7 +115,7 @@ namespace Assets.scripts.Upgrade
 			return GenerateUpgrade(final.upgrade, level);
 		}
 
-		public void DropItem(EquippableItem upgrade, Vector3 position, int radius=1)
+		public void DropItem(InventoryItem upgrade, Vector3 position, int radius=1)
 		{
 			Debug.Log("dropped" + upgrade.FileName);
 			upgrade.Init();

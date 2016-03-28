@@ -1081,20 +1081,22 @@ namespace Assets.scripts.Mono
 				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
 				currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 
+				string additInfo = (node.Unlocked ? null : " [Locked]");
+
 				foreach (Transform child in currentTooltipObject.transform)
 				{
 					if (child.name.Equals("Title"))
 					{
-						child.GetComponent<Text>().text = "Level " + Enum.GetName(typeof(MapType), node.LevelParams.levelType) + (node.Unlocked ? "" : " [Locked]");
+						child.GetComponent<Text>().text = "Level " + Enum.GetName(typeof (MapType), node.LevelParams.levelType);
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
 					else if (child.name.Equals("Description"))
 					{
-						child.GetComponent<Text>().text = node.Description;
+						child.GetComponent<Text>().text = Utils.StringWrap(node.Description, 40);
 						continue;
 					}
-					else if (child.name.Equals("Type"))
+					else if (child.name.Equals("Difficulty"))
 					{
 						string difficulty = "Unknown";
 						switch (node.Difficulty)
@@ -1117,9 +1119,14 @@ namespace Assets.scripts.Mono
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}*/
-					else if (child.name.Equals("AdditionalInfo"))
+					else if (child.name.Equals("Reward"))
 					{
 						child.GetComponent<Text>().text = node.RewardDescription;
+						continue;
+					}
+					else if (child.name.Equals("AdditionalInfo") && additInfo != null)
+					{
+						child.GetComponent<Text>().text = additInfo;
 						continue;
 					}
 					else
@@ -1130,8 +1137,8 @@ namespace Assets.scripts.Mono
 			}
 			else
 			{
-				if (currentTooltipObject != null)
-					Destroy(currentTooltipObject);
+				//if (currentTooltipObject != null)
+				//	Destroy(currentTooltipObject);
 			}
 		}
 
@@ -1154,7 +1161,7 @@ namespace Assets.scripts.Mono
 
 				if (t != null)
 				{
-					EquippableItem u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
+					InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
 					UpgradeTable.Instance.DropItem(u, data.GetBody().transform.position);
 				}
 			}
