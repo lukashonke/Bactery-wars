@@ -53,11 +53,36 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			SpawnTeleporters();
 
+			SpawnShop();
+
 		    SpawnMonsters();
-
-
-
 			//WiddenThinPassages(null, 6, 2);
+		}
+
+		private void SpawnShop()
+		{
+			if (mapHolder.levelData.shopData != null)
+			{
+				foreach (MapRoom room in rooms)
+				{
+					if (room.region.isStartRegion)
+					{
+						Tile mostRight = null;
+						int mostRightX = Int32.MinValue;
+
+						foreach (Tile t in room.edgeTiles)
+						{
+							if (t.tileX > mostRightX)
+							{
+								mostRight = t;
+								mostRightX = t.tileX;
+							}
+						}
+
+						mapHolder.AddNpcToMap(MonsterId.Shop, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left * 2);
+					}
+				}
+			}
 		}
 
 		private void UpdateRegions()

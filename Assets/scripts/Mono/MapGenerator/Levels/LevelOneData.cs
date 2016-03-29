@@ -7,6 +7,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -40,6 +41,12 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
+			shopData = new ShopData();
+
+			shopData.AddItem(typeof(HpPotion));
+			shopData.AddItem(typeof(CCAADoubleattackUpgrade));
+			shopData.AddItem(typeof(Heal));
+
 			start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, levelOneSeeds); // 0 0
 			mid = map.GenerateDungeonRegion(1, 0, 43, false, true, false, levelTwoSeeds); // 0, 2
 			end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, levelThree, 1, 2); // 0, 2

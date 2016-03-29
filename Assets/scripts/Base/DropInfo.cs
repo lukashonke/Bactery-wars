@@ -54,7 +54,7 @@ namespace Assets.scripts.Base
 			
 		}
 
-		public void DoDrop(Monster m, Character killer)
+		public void DoDrop(Monster m, Character killer, bool pickup=false)
 		{
 			List<int> categoriesUsed = new List<int>();
 
@@ -64,7 +64,11 @@ namespace Assets.scripts.Base
 				{
 					if (d.chance == 100 || Random.Range(0, 100) < d.chance)
 					{
-						DoDrop(d.type, d.level, m, killer);
+						if(!pickup)
+							DoDrop(d.type, d.level, m, killer);
+						else
+							GiveItem(d.type, d.level, m, killer);
+
 						categoriesUsed.Add(d.category);
 					}
 				}
@@ -76,7 +80,15 @@ namespace Assets.scripts.Base
 				{
 					if (d.chance == 100 || Random.Range(0, 100) < d.chance)
 					{
-						UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d.type, d.minRarity, d.maxRarity, d.level), m.GetData().GetBody().transform.position);
+						if (!pickup)
+						{
+							UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d.type, d.minRarity, d.maxRarity, d.level), m.GetData().GetBody().transform.position);
+						}
+						else
+						{
+							UpgradeTable.Instance.GiveItem(UpgradeTable.Instance.GenerateUpgrade(d.type, d.minRarity, d.maxRarity, d.level), killer);
+						}
+
 						categoriesUsed.Add(d.category);
 					}
 				}
@@ -85,7 +97,50 @@ namespace Assets.scripts.Base
 
 		public void DoDrop(Type d, int level, Monster m, Character killer)
 		{
-			UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d, level), m.GetData().GetBody().transform.position);
+			UpgradeTable.Instance.DropItem(UpgradeTable.Instance.GenerateUpgrade(d, level), (m != null ? m.GetData().GetBody().transform.position : new Vector3()));
+		}
+
+		public void GiveItem(Type d, int level, Monster m, Character killer)
+		{
+			UpgradeTable.Instance.GiveItem(UpgradeTable.Instance.GenerateUpgrade(d, level), killer);
+		}
+
+		public override string ToString()
+		{
+			if(drops.Count == 0 && randomDrops.Count == 0)
+			{
+				return null;
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < drops.Count; i++)
+			{
+				Drop d = drops[i];
+
+				if (d.chance < 100)
+					sb.Append(d.chance + "% chance ");
+
+				sb.Append(d.type.Name);
+
+				if (i + 1 < drops.Count)
+					sb.Append("\n");
+			}
+
+			for (int i = 0; i < randomDrops.Count; i++)
+			{
+				RandomDrop d = randomDrops[i];
+
+				if (d.chance < 100)
+					sb.Append(d.chance + "% chance ");
+
+				sb.Append(d.type.ToString());
+
+				if (i + 1 < drops.Count)
+					sb.Append("\n");
+			}
+
+			return Utils.StringWrap(sb.ToString(), 50);
 		}
 	}
 }

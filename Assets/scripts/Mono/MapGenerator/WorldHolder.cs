@@ -4,8 +4,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -18,7 +20,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	public class WorldHolder : MonoBehaviour
 	{
 		public static WorldHolder instance;
-		private int worldLevel;
+		public int worldLevel;
 
 		public static string[] allowedSeeds = { "500", "555", "-516", "777", "-876", "643", "725" };
 
@@ -95,6 +97,10 @@ namespace Assets.scripts.Mono.MapGenerator
 				param.levelType = MapType.LevelOne;
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
 			}
+
+			mapTree.AddLevelReward(typeof(HpPotion), 50);
+			mapTree.AddLevelReward(typeof(Heal));
+			mapTree.AddLevelReward(typeof(CCAADoubleattackUpgrade), 75);
 
 			mapTree.Unlocked = true;
 
@@ -306,6 +312,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
+		public void OnShopOpen(Player player)
+		{
+			activeMap.OnShopOpen(player);
+		}
+
 		public bool CanSelectLevel(LevelTree node)
 		{
 			if (node.Unlocked == false)
@@ -324,7 +335,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			// map hasnt been generated yet
 			if (!maps.ContainsKey(new Cords(levelNode.Id, 0)))
 			{
-				MapHolder newMap = new MapHolder(this, levelNode.Name, new Cords(levelNode.Id, 0), param.levelType, width, height, param);
+				MapHolder newMap = new MapHolder(this, levelNode.Name, new Cords(levelNode.Id, 0), param.levelType, width, height, param, levelNode.LevelReward);
 
 				newMap.CreateMap();
 				maps.Add(new Cords(levelNode.Id, 0), newMap);

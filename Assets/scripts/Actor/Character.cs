@@ -269,6 +269,43 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
+		public void GiveItem(InventoryItem item)
+		{
+			if (item.CollectableByPlayer && !(this is Player))
+				return;
+
+			if (item.OnPickup(this))
+			{
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+				return;
+			}
+
+			EquippableItem upgrade = item as EquippableItem;
+
+			if (upgrade != null)
+			{
+				if (upgrade.GoesIntoBasestatSlot)
+				{
+					Message("You have absorbed " + item.VisibleName + "");
+					Inventory.AddBasestatUpgrade(upgrade);
+					Data.UpdateInventory(Inventory);
+					UpdateStats();
+				}
+				else if (AddItem(upgrade))
+				{
+					//EquipUpgrade(upg.upgrade);
+				}
+			}
+			else
+			{
+				if (AddItem(item))
+				{
+					//EquipUpgrade(upg.upgrade);
+				}
+			}
+		}
+
 		public void HitItem(UpgradeScript upg)
 		{
 			if (upg.item.CollectableByPlayer && !(this is Player))

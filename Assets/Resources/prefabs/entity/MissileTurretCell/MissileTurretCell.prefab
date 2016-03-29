@@ -16,7 +16,7 @@ GameObject:
   - 114: {fileID: 11401748}
   - 58: {fileID: 5895428}
   m_Layer: 0
-  m_Name: TurretCell
+  m_Name: MissileTurretCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

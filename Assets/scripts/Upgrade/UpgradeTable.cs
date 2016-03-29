@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -120,6 +121,12 @@ namespace Assets.scripts.Upgrade
 			Debug.Log("dropped" + upgrade.FileName);
 			upgrade.Init();
 			upgrade.SpawnGameObject(Utils.GenerateRandomPositionAround(position, radius));
+		}
+
+		public void GiveItem(InventoryItem upgrade, Character target)
+		{
+			upgrade.Init();
+			target.GiveItem(upgrade);
 		}
 	}
 }

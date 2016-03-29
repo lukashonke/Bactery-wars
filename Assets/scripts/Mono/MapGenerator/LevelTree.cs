@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator.Levels;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,6 +21,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public AbstractLevelData levelData;
 
+		public DropInfo LevelReward { get; private set; }
+
 		public int Id { get; set; }
 		public int Depth { get; set; }
 
@@ -31,6 +35,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public string RewardDescription { get; set; }
 		public LevelParams LevelParams { get; set; }
 
+		private bool hardcodedRewardDesc;
+
 		public bool Unlocked { get; set; }
 		public bool CurrentlyActive { get; set; }
 
@@ -41,11 +47,13 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int DIFF_MEDIUM = 2;
 		public const int DIFF_HARD = 3;
 
-		public LevelTree(int nodeType, int id, int difficulty, int depth=-1, LevelParams levelParams=null, string name = null, string desc = null, string reward = null)
+		public LevelTree(int nodeType, int id, int difficulty, int depth=-1, LevelParams levelParams=null, string name = null, string desc = null, string fixedRewardDescription = null)
 		{
 			levelData = null;
 
 			Unlocked = false;
+
+			LevelReward = new DropInfo();
 
 			this.LevelNodeType = nodeType;
 			this.Id = id;
@@ -54,7 +62,38 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.LevelParams = levelParams;
 			this.Name = name;
 			this.Description = desc;
-			this.RewardDescription = reward;
+
+			if (fixedRewardDescription != null)
+			{
+				this.RewardDescription = fixedRewardDescription;
+				hardcodedRewardDesc = true;
+			}
+			else
+				hardcodedRewardDesc = false;
+		}
+
+		public void AddLevelReward(Type upgradeType, int chance = 100, int category = 1, int level = 1)
+		{
+			LevelReward.drops.Add(new DropInfo.Drop(upgradeType, chance, level, category));
+
+			if (!hardcodedRewardDesc)
+				this.RewardDescription = LevelReward.ToString();
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int rarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
+
+			if (!hardcodedRewardDesc)
+				this.RewardDescription = LevelReward.ToString();
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int minRarity, int maxRarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
+
+			if (!hardcodedRewardDesc)
+				this.RewardDescription = LevelReward.ToString();
 		}
 
 		public void AddChild(LevelTree child)

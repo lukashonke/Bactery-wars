@@ -291,6 +291,11 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
+		public void OpenShopUI(ShopData data)
+		{
+			ui.ShowShopView(data);
+		}
+
 		public override void UpdateInventory(Inventory inv)
 		{
 			if(ui != null)

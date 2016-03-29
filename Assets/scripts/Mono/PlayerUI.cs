@@ -733,10 +733,13 @@ namespace Assets.scripts.Mono
 
 			levelIconTemplate = GameObject.Find("LevelIconTemplate");
 			levelsViewPanel = GameObject.Find("LevelsViewPanel");
+			levelsViewTitle = GameObject.Find("LevelsTitle");
 		}
 
 		private GameObject levelIconTemplate;
 		private GameObject levelsViewPanel;
+
+		private GameObject levelsViewTitle;
 
 		private Dictionary<GameObject, LevelTree> levelsViewIcons = new Dictionary<GameObject, LevelTree>();
 
@@ -744,6 +747,8 @@ namespace Assets.scripts.Mono
 		{
 			levelsViewCanvas.enabled = true;
 			SetMouseOverUi();
+
+			//levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
 
 			float x = 0;
 			float y = 0;
@@ -2057,6 +2062,27 @@ namespace Assets.scripts.Mono
 				adminPanel.SetActive(false);
 				//adminSpawnPanel.gameObject.SetActive(false);
 			}
+		}
+
+		private Canvas showViewCanvas;
+
+		public void ShowShopView(ShopData shopData)
+		{
+			showViewCanvas.enabled = true;
+			SetMouseOverUi();
+
+			//TODO
+		}
+
+		public void HideShopView()
+		{
+			/*foreach (GameObject o in levelsViewIcons.Keys)
+			{
+				Destroy(o);
+			}*/
+
+			showViewCanvas.enabled = false;
+			SetMouseNotOverUi();
 		}
 	}
 }

@@ -6,11 +6,11 @@ using Assets.scripts.Upgrade;
 
 namespace Assets.scripts.Base
 {
-	public class RandomShopSelection
+	public class ShopData
 	{
 		public List<Type> Items { get; private set; }
 
-		public RandomShopSelection()
+		public ShopData()
 		{
 			Items = new List<Type>();
 		}

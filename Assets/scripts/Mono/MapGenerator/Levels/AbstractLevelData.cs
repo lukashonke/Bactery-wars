@@ -6,6 +6,7 @@ using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Fort;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -25,14 +26,19 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public Siege siege = null;
 
 		public int DnaReward { get; protected set; } //TODO also add item reward
+		public DropInfo LevelReward { get; set; }
+
+		public ShopData shopData;
 
 		protected bool tutorialLevel;
 
-		public AbstractLevelData(MapHolder holder, int mapLevel=1)
+		public AbstractLevelData(MapHolder holder,  int mapLevel=1)
 		{
 			map = holder;
 			this.mapLevel = mapLevel;
 			tutorialLevel = false;
+			shopData = null;
+			LevelReward = null;
 			DnaReward = 0;
 		}
 
@@ -47,6 +53,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			int roll = Random.Range(0, 100);
 			return roll < chance;
+		}
+
+		public void AddLevelReward(Type upgradeType, int chance=100, int category=1, int level = 1)
+		{
+			LevelReward.drops.Add(new DropInfo.Drop(upgradeType, chance, level, category));
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int rarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int minRarity, int maxRarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
 		}
 
 		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, MonsterId id, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
@@ -118,6 +139,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public void OnConquered() 
 		{
 			conquered = true;
+			LevelReward.DoDrop(null, GameSystem.Instance.CurrentPlayer, true);
+
 			if (DnaReward > 0)
 			{
 				GameSystem.Instance.CurrentPlayer.AddDnaPoints(DnaReward);

@@ -189,7 +189,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		private List<Monster> activeMonsters;
 		private List<Npc> activeNpcs;
 		private List<MonsterSpawnInfo> spawnableMonsters;
-		private List<MonsterSpawnInfo> spawnableNpcs; 
+		private List<MonsterSpawnInfo> spawnableNpcs;
+
+		private ShopData mapShop;
 
 		private int maxRegionsX = 3;
         private int maxRegionsY = 3;
@@ -209,7 +211,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, LevelParams param, int mapLevel=1)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, LevelParams param, DropInfo rewards, int mapLevel=1)
 		{
 			this.World = world;
 
@@ -219,8 +221,6 @@ namespace Assets.scripts.Mono.MapGenerator
 		    this.regionWidth = regionWidth;
 		    this.regionHeight = regionHeight;
 			this.levelParams = param;
-
-			Debug.Log("aaa " + mapType);
 
 			levelData = null;
 
@@ -263,6 +263,8 @@ namespace Assets.scripts.Mono.MapGenerator
 					levelData = new LevelBossRush(this, mapLevel);
 					break;
 			}
+
+			levelData.LevelReward = rewards;
 
 			if(levelData.GetRegionWidth() > 0)
 				this.regionWidth = levelData.GetRegionWidth();
@@ -1240,6 +1242,15 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
+		public Npc AddShopToMap(MonsterId monsterId, Vector3 position, ShopData data, bool forceSpawnNow = false)
+		{
+			Npc npc = AddNpcToMap(monsterId, position, forceSpawnNow);
+
+			mapShop = data;
+
+			return npc;
+		}
+
 		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
 		{
 			if (isActive || forceSpawnNow)
@@ -1378,8 +1389,6 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        region.Status = MapRegion.STATUS_CONQUERED;
 
-		    levelData.OnConquered();
-
 			Queue<MapRegion> neighbours = new Queue<MapRegion>();
 			foreach (MapRegion reg in GetNeighbourRegions(region))
 				neighbours.Enqueue(reg);
@@ -1431,6 +1440,12 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void OnTeleportIn(Player player)
 		{
 			levelData.OnPlayerTeleportIn(player);
+		}
+
+		public void OnShopOpen(Player player)
+		{
+			if (mapShop != null)
+				player.GetData().OpenShopUI(mapShop);
 		}
 
 		public int GetMonstersLeft(MapRegion reg)
@@ -1498,8 +1513,11 @@ namespace Assets.scripts.Mono.MapGenerator
 	            {
 	                UpdateRegionStatus(reg);
 
-                    if(reg.Status == MapRegion.STATUS_CONQUERED)
+		            if (reg.Status == MapRegion.STATUS_CONQUERED)
+		            {
+						levelData.OnConquered();
                         return true;
+		            }
 	            }
 	        }
 
