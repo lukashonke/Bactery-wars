@@ -298,7 +298,7 @@ MonoBehaviour:
   movementEnabled: 1
   rotationEnabled: 1
   repathRate: 0.25
-  monsterId: 100
+  monsterId: 102
   distanceToFollowLeader: 8
 --- !u!198 &19832366
 ParticleSystem:

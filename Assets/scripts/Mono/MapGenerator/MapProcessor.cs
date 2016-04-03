@@ -79,7 +79,7 @@ namespace Assets.scripts.Mono.MapGenerator
 							}
 						}
 
-						mapHolder.AddNpcToMap(MonsterId.Shop, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left * 2);
+						mapHolder.AddShopToMap(MonsterId.Shop, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left * 2, mapHolder.levelData.shopData);
 					}
 				}
 			}

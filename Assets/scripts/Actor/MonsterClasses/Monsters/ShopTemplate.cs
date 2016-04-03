@@ -2,6 +2,7 @@
 using Assets.scripts.AI;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
 {

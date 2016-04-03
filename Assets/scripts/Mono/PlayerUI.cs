@@ -734,6 +734,14 @@ namespace Assets.scripts.Mono
 			levelIconTemplate = GameObject.Find("LevelIconTemplate");
 			levelsViewPanel = GameObject.Find("LevelsViewPanel");
 			levelsViewTitle = GameObject.Find("LevelsTitle");
+
+			showViewCanvas = GameObject.Find("ShopView").GetComponent<Canvas>();
+			shopContent = GameObject.Find("ShopContent");
+			shopStatsViewPanel = GameObject.Find("ShopStatsViewPanel");
+			shopItemTemplate = Resources.Load<GameObject>("Sprite/inventory/ShopItem");
+
+			dialogConfirmObject = GameObject.Find("ConfirmDialog");
+			dialogConfirmPanel = dialogConfirmObject.transform.FindChild("ConfirmCanvasPanel").gameObject;
 		}
 
 		private GameObject levelIconTemplate;
@@ -748,7 +756,7 @@ namespace Assets.scripts.Mono
 			levelsViewCanvas.enabled = true;
 			SetMouseOverUi();
 
-			//levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
+			levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
 
 			float x = 0;
 			float y = 0;
@@ -2064,25 +2072,155 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		private ShopData activeShopData;
 		private Canvas showViewCanvas;
+		private GameObject shopContent;
+		private GameObject shopItemTemplate;
+		private GameObject shopStatsViewPanel;
 
 		public void ShowShopView(ShopData shopData)
 		{
-			showViewCanvas.enabled = true;
-			SetMouseOverUi();
+			if (showViewCanvas.enabled)
+			{
+				HideShopView();
+				activeShopData = null;
+				return;
+			}
 
-			//TODO
+			showViewCanvas.enabled = true;
+
+			activeShopData = shopData;
+
+			Text txt;
+
+			foreach (Transform child in shopStatsViewPanel.transform)
+			{
+				switch (child.name)
+				{
+					case "Money":
+						txt = child.GetComponent<Text>();
+						txt.text = ((Player) data.GetOwner()).DnaPoints + " DNA";
+						break;
+					case "Slots":
+						txt = child.GetComponent<Text>();
+						int taken = ((Player) data.GetOwner()).Inventory.Items.Count;
+						txt.text = taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
+						break;
+				}
+			}
+
+			foreach (ShopItem item in shopData.Items)
+			{
+				GameObject itemObject = Instantiate(shopItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
+				itemObject.transform.parent = shopContent.transform;
+				itemObject.transform.localPosition = new Vector3(0, 0);
+				itemObject.transform.localScale = new Vector3(1, 1);
+
+				foreach (Transform child in itemObject.transform)
+				{
+					switch (child.name)
+					{
+						case "ShopItemFrame":
+							Image img = child.GetChild(0).GetComponent<Image>();
+							img.sprite = item.item.MainSprite;
+							break;
+						case "ShopItemName":
+							txt = child.GetComponent<Text>();
+							txt.text = item.item.VisibleName;
+							break;
+						case "ShopItemDesc":
+							txt = child.GetComponent<Text>();
+							txt.text = item.item.Description;
+							break;
+						case "ShopItemPrice":
+							txt = child.GetComponent<Text>();
+							txt.text = item.price + "";
+							break;
+					}
+				}
+
+				EventTrigger trigger = itemObject.AddComponent<EventTrigger>();
+
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerClick;
+
+				var item1 = item;
+				entry.callback.AddListener(delegate { OnClickShopItem(itemObject, item1); });
+				trigger.triggers.Add(entry);
+			}
+		}
+
+		private GameObject dialogConfirmObject;
+		private GameObject dialogConfirmPanel;
+
+		private GameObject activePurchasingItemObject;
+		private ShopItem activePurchasingItem;
+
+		public void OnClickShopItem(GameObject obj, ShopItem item)
+		{
+			string text = "Are you sure you want to purchase " + item.item.VisibleName + "?";
+
+			if (dialogConfirmObject == null)
+			{
+				Debug.LogError("helpcanvaspanel is null, cant show help");
+				return;
+			}
+
+			activePurchasingItem = item;
+			activePurchasingItemObject = obj;
+
+			GameObject helpContent = dialogConfirmPanel.transform.FindChild("ConfirmDialogContent").gameObject;
+			foreach (Transform t in helpContent.transform)
+			{
+				if (t.name.Equals("ConfirmDialogText"))
+				{
+					t.gameObject.GetComponent<Text>().text = text;
+				}
+			}
+
+			dialogConfirmObject.GetComponent<Canvas>().enabled = true;
+		}
+
+		public void DoConfirm(bool value)
+		{
+			dialogConfirmObject.GetComponent<Canvas>().enabled = false;
+
+			if (value && activePurchasingItem != null)
+			{
+				DoPurchase();
+			}
+		}
+
+		private void DoPurchase()
+		{
+			Player p = data.player;
+
+			if (data.player.DnaPoints >= activePurchasingItem.price)
+			{
+				data.player.ReduceDnaPoints(activePurchasingItem.price);
+
+				activeShopData.DoPurchase(activePurchasingItem);
+
+				HideShopView();
+				ShowShopView(activeShopData);
+
+				activePurchasingItem = null;
+				activePurchasingItemObject = null;
+			}
+			else
+			{
+				data.player.Message("You dont have enought DNA.");
+			}
 		}
 
 		public void HideShopView()
 		{
-			/*foreach (GameObject o in levelsViewIcons.Keys)
+			foreach (Transform t in shopContent.transform)
 			{
-				Destroy(o);
-			}*/
+				Destroy(t.gameObject);
+			}
 
 			showViewCanvas.enabled = false;
-			SetMouseNotOverUi();
 		}
 	}
 }

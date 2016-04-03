@@ -43,9 +43,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			shopData = new ShopData();
 
-			shopData.AddItem(typeof(HpPotion));
-			shopData.AddItem(typeof(CCAADoubleattackUpgrade));
-			shopData.AddItem(typeof(Heal));
+			shopData.AddItem(new HpPotion(1), 10);
+			shopData.AddItem(new CCAADoubleattackChanceUpgrade(1), 10);
+			shopData.AddItem(new Heal(5), 10);
 
 			start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, levelOneSeeds); // 0 0
 			mid = map.GenerateDungeonRegion(1, 0, 43, false, true, false, levelTwoSeeds); // 0, 2
