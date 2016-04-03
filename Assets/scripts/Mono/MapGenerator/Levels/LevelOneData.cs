@@ -43,7 +43,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			shopData = new ShopData();
 
-			shopData.AddItem(new HpPotion(1), 10);
+			shopData.AddItem(new HpPotion(1), 1);
 			shopData.AddItem(new CCAADoubleattackChanceUpgrade(1), 10);
 			shopData.AddItem(new Heal(5), 10);
 

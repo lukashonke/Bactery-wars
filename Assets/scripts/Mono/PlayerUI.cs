@@ -59,6 +59,7 @@ namespace Assets.scripts.Mono
 		public GameObject[] activeSlots;
 		public GameObject[] basestatSlots;
 		public GameObject trashBin;
+		public GameObject disposeValObj;
 		public Sprite iconEmptySprite;
 		public Sprite lockedIconSprite;
 
@@ -559,6 +560,7 @@ namespace Assets.scripts.Mono
 				basestatSlots = new GameObject[BASESTAT_UPGRADES_SIZE];
 
 				trashBin = GameObject.Find("Trashbin");
+				disposeValObj = GameObject.Find("DisposeValue");
 				ShowTrashBin(false);
 
 				GameObject iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
@@ -1493,6 +1495,11 @@ namespace Assets.scripts.Mono
 					if (upg.GoesIntoBasestatSlot)
 						addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
 				}
+
+				if (addInfo == null)
+				{
+					addInfo = "Dispose value: " + u.DisposePrice + " DNA";
+				}
 				
 				ItemType type = u.Type;
 
@@ -1549,15 +1556,18 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void ShowTrashBin(bool state)
+		public void ShowTrashBin(bool state, int price=0)
 		{
 			if (state)
 			{
 				trashBin.SetActive(true);
+				disposeValObj.GetComponent<Text>().text = "You will gain: " + price + " DNA";
+				disposeValObj.SetActive(true);
 			}
 			else
 			{
 				trashBin.SetActive(false);
+				disposeValObj.SetActive(false);
 			}
 		}
 
@@ -1599,6 +1609,9 @@ namespace Assets.scripts.Mono
 			{
 				if (draggedUpgradeSlot == 1) // is active, unequip first
 					data.GetOwner().UnequipItem(draggedItem, true);
+
+				data.player.AddDnaPoints(draggedItem.DisposePrice);
+				data.player.Message("You have received " + draggedItem.DisposePrice + " DNA.");
 
 				data.GetOwner().RemoveItem(draggedItem);
 				return;
@@ -1694,7 +1707,7 @@ namespace Assets.scripts.Mono
 				preview.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
 
 				draggedObject = preview;
-				ShowTrashBin(true);
+				ShowTrashBin(true, draggedItem.DisposePrice);
 			}
 		}
 
@@ -2134,7 +2147,9 @@ namespace Assets.scripts.Mono
 							break;
 						case "ShopItemPrice":
 							txt = child.GetComponent<Text>();
-							txt.text = item.price + "";
+
+							txt.text = item.price + " DNA";
+							child.GetChild(0).GetComponent<Text>().text = txt.text;
 							break;
 					}
 				}
@@ -2203,14 +2218,14 @@ namespace Assets.scripts.Mono
 
 				HideShopView();
 				ShowShopView(activeShopData);
-
-				activePurchasingItem = null;
-				activePurchasingItemObject = null;
 			}
 			else
 			{
 				data.player.Message("You dont have enought DNA.");
 			}
+
+			activePurchasingItem = null;
+			activePurchasingItemObject = null;
 		}
 
 		public void HideShopView()

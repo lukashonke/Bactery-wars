@@ -260,7 +260,7 @@ namespace Assets.scripts.Actor
 
 		public bool ReduceDnaPoints(int n)
 		{
-			if (DnaPoints > n)
+			if (DnaPoints >= n)
 			{
 				DnaPoints -= n;
 				return true;

@@ -17,6 +17,8 @@ namespace Assets.scripts.Upgrade
 		public string Price { get; protected set; }
 		public string AdditionalInfo { get; protected set; }
 
+		public int DisposePrice { get; protected set; }
+
 		public bool CollectableByPlayer { get; protected set; }
 
 		public ItemType Type { get; protected set; }
@@ -72,6 +74,19 @@ namespace Assets.scripts.Upgrade
 					//Debug.LogError(e.StackTrace);
 					MainSprite = Resources.Load<Sprite>("Sprite/Upgrades/default");
 				}
+			}
+
+			switch (Type)
+			{
+				case ItemType.CLASSIC:
+					DisposePrice = 1;
+				break;
+				case ItemType.RARE:
+					DisposePrice = 5;
+					break;
+				case ItemType.EPIC:
+					DisposePrice = 10;
+					break;
 			}
 
 			return this;
