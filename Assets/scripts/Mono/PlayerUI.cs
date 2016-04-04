@@ -734,6 +734,7 @@ namespace Assets.scripts.Mono
 			}
 
 			levelIconTemplate = GameObject.Find("LevelIconTemplate");
+			shopButtonTemplate = GameObject.Find("LevelsViewShopButton");
 			levelsViewPanel = GameObject.Find("LevelsViewPanel");
 			levelsViewTitle = GameObject.Find("LevelsTitle");
 
@@ -744,9 +745,12 @@ namespace Assets.scripts.Mono
 
 			dialogConfirmObject = GameObject.Find("ConfirmDialog");
 			dialogConfirmPanel = dialogConfirmObject.transform.FindChild("ConfirmCanvasPanel").gameObject;
+
+			HideLevelsView();
 		}
 
 		private GameObject levelIconTemplate;
+		private GameObject shopButtonTemplate;
 		private GameObject levelsViewPanel;
 
 		private GameObject levelsViewTitle;
@@ -756,6 +760,7 @@ namespace Assets.scripts.Mono
 		public void ShowLevelsView()
 		{
 			levelsViewCanvas.enabled = true;
+			shopButtonTemplate.SetActive(true);
 			SetMouseOverUi();
 
 			levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
@@ -804,6 +809,18 @@ namespace Assets.scripts.Mono
 						RectTransform trans = newImg.GetComponent<RectTransform>();
 						trans.localPosition = new Vector3(x, y);
 
+						if (t.levelData != null && t.levelData.shopData != null)
+						{
+							GameObject textObj = Instantiate(shopButtonTemplate);
+							textObj.GetComponent<Image>().enabled = true;
+							textObj.GetComponent<Button>().enabled = true;
+							textObj.transform.parent = newImg.transform;
+							textObj.transform.localPosition = new Vector3(newImg.GetComponent<RectTransform>().sizeDelta.x, 0);
+
+							var t1 = t;
+							textObj.GetComponent<Button>().onClick.AddListener(delegate { OnShopButtonClick(t1); });
+						}
+
 						if (!t.Unlocked)
 						{
 							newImg.GetComponent<Image>().color = Color.gray;
@@ -825,6 +842,8 @@ namespace Assets.scripts.Mono
 				if (done)
 					break;
 			}
+
+			shopButtonTemplate.SetActive(false);
 
 			done = false;
 
@@ -947,6 +966,14 @@ namespace Assets.scripts.Mono
 			}
 
 			Utils.Timer.EndTimer("line");
+		}
+
+		public void OnShopButtonClick(LevelTree node)
+		{
+			if (node.levelData != null && node.levelData.shopData != null)
+			{
+				ShowShopView(node.levelData.shopData);
+			}
 		}
 
 		private void ConnectIcons(GameObject first, GameObject second, bool secondUnlocked)
@@ -2117,7 +2144,7 @@ namespace Assets.scripts.Mono
 					case "Slots":
 						txt = child.GetComponent<Text>();
 						int taken = ((Player) data.GetOwner()).Inventory.Items.Count;
-						txt.text = taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
+						txt.text = "Inventory slots: " + taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
 						break;
 				}
 			}
