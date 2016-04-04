@@ -31,6 +31,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public int XpReward { get; protected set; }
 		public float XpLevelMul { get; protected set; }
 
+		public bool ShowNameInGame = false;
+
 		public bool IsAggressive = false;
 		public int AggressionRange = 5;
 

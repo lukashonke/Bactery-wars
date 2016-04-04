@@ -33,6 +33,7 @@ namespace Assets.scripts.Mono
 		public bool rotateTowardsMouse;
 		public string aiType;
 		public bool usesPathfinding;
+		public bool showObjectName;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove = 0.2f;
@@ -165,6 +166,8 @@ namespace Assets.scripts.Mono
 					healthBar.maxHp = visibleMaxHp;
 				}
 			}
+
+			//showObjectName = false;
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;

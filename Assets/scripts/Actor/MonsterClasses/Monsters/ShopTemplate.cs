@@ -13,6 +13,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
+
+			ShowNameInGame = true;
 		}
 
 		protected override void AddSkillsToTemplate()

@@ -180,6 +180,11 @@ namespace Assets.scripts.Actor
 			}
 
 			AI.AnalyzeSkills();
+
+			if (Template.ShowNameInGame)
+			{
+				GetData().showObjectName = true;
+			}
 		}
 
 		public void SpawnAssociatedMonster(MonsterId id, int level)
