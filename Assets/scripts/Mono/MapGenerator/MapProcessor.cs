@@ -367,14 +367,18 @@ namespace Assets.scripts.Mono.MapGenerator
                         // soused startovniho regionu je jeho potomek - jsou spojeny - pridat do seznamu connectedToStart
 					    if (reg.IsInFamily(startRoom.region))
 					    {
-                            foreach (MapRoom r in GetRoomsInRegion(reg))
+						    foreach (MapRoom r in GetRoomsInRegion(reg))
+						    {
                                 connectedToStart.Add(r);
+						    }
 
                             // pridat vsechny sousedy child regionu
 					        foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
 					        {
-					            if(r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !checks.Contains(r))
+						        if (r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !checks.Contains(r))
+						        {
                                     neighbours.Enqueue(r);
+						        }
 					        }
 
 					        continue;
@@ -414,8 +418,15 @@ namespace Assets.scripts.Mono.MapGenerator
 
 						Queue<MapRegion> neighbours = new Queue<MapRegion>();
 						foreach (MapRegion reg in mapHolder.GetNeighbourRegions(toConnectRoom.region))
-                            if (!reg.empty)
-							    neighbours.Enqueue(reg);
+						{
+							if (reg.hasOutTeleporter)
+							{
+								Debug.Log("out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
+							}
+
+							if (!reg.empty)
+								neighbours.Enqueue(reg);
+						}
 
 						checks = new List<MapRegion>();
 
@@ -440,6 +451,11 @@ namespace Assets.scripts.Mono.MapGenerator
 								// pridat vsechny sousedy child regionu
 								foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
 								{
+									if (reg.hasOutTeleporter)
+									{
+										Debug.Log("2 out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
+									}
+
 									if (r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !r.IsInFamily(reg) && !checks.Contains(r))
 									{
 										//Debug.Log("pridavam souseda (reg " + reg.x + ", " + reg.y + ")  : " + r.x + ", " + r.y);

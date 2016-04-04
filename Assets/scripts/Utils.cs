@@ -427,6 +427,8 @@ namespace Assets.scripts
 			int startIndex = 0;
 			while (true)
 			{
+				if (splitChars == null) parts.ToArray();
+
 				int index = str.IndexOfAny(splitChars, startIndex);
 
 				if (index == -1)

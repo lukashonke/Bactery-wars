@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Upgrade;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Base
 {
@@ -25,6 +26,18 @@ namespace Assets.scripts.Base
 		{
 			UpgradeTable.Instance.GiveItem(item.item, GameSystem.Instance.CurrentPlayer);
 			Items.Remove(item);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="worldLevel"></param>
+		/// <param name="mapDifficulty">1=easy, 2=medium, 3=hard</param>
+		public void GenerateRandomShopItems(int worldLevel, int mapDifficulty)
+		{
+			int maxItems = Random.Range(6, 10);
+
+
 		}
 	}
 

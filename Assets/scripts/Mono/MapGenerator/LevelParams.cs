@@ -9,6 +9,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	{
 		public MapType levelType;
 		public int variant = 1;
+		public int difficulty = 2; // 2 = medium
 		public int mapLevel = 1;
 		public int worldLevel = 1;
 

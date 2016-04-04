@@ -89,7 +89,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (worldLevel > 0)
 			{
-				param.levelType = MapType.SixRegions; //TODO
+				param.levelType = MapType.GenericMonster; //TODO
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 			}
 			else
@@ -247,8 +247,22 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public LevelTree CreateRandomMainNodeLevel(int id, int depth)
 		{
-			LevelParams param = new LevelParams(MapType.SixRegions);
-			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, id, LevelTree.DIFF_MEDIUM, depth, param, "Level " + id);
+			int roll = Random.Range(0, 100);
+
+			int difficulty = 2;
+
+			if (roll < 15)
+			{
+				difficulty = 1;
+			}
+			else if (roll < 30)
+			{
+				difficulty = 3;
+			}
+
+			LevelParams param = new LevelParams(MapType.GenericMonster);
+			param.difficulty = difficulty;
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, id, difficulty, depth, param, "Level " + id, "This level is filled with random monsters.");
 			return newNode;
 		}
 
