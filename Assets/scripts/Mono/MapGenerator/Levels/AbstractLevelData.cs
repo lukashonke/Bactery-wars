@@ -38,7 +38,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			this.mapLevel = mapLevel;
 			tutorialLevel = false;
 			shopData = null;
-			LevelReward = null;
+
+			LevelReward = new DropInfo();
+
 			DnaReward = 0;
 		}
 

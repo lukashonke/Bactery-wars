@@ -16,7 +16,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryRangeUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int RANGE = 100;
 		public const float LEVEL_ADD = 10;
@@ -61,7 +61,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryPushUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int POWER = 25;
 		public const float LEVEL_ADD = 5;
@@ -102,7 +102,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryReuseUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int REUSE = 25;
 		public const float LEVEL_ADD = 4;
@@ -147,7 +147,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryNullReuseUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int CHANCE = 10;
 		public const float LEVEL_ADD = 2;
@@ -192,7 +192,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryShieldUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -232,7 +232,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFurySpeedUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -270,7 +270,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CellFuryDrainUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int POWER = 20;
 		public const float LEVEL_ADD = 4;

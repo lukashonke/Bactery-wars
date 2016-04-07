@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -121,9 +122,14 @@ namespace Assets.scripts.Base
 				if (d.chance < 100)
 					sb.Append(d.chance + "% chance ");
 
-				sb.Append(d.type.Name);
+				if (d.type == typeof (DnaItem))
+				{
+					sb.Append(d.level + " DNA");
+				}
+				else 
+					sb.Append(d.type.Name);
 
-				if (i + 1 < drops.Count)
+				//if (i + 1 == drops.Count)
 					sb.Append("\n");
 			}
 
@@ -134,9 +140,9 @@ namespace Assets.scripts.Base
 				if (d.chance < 100)
 					sb.Append(d.chance + "% chance ");
 
-				sb.Append(d.type.ToString());
+				sb.Append("random " + d.type.ToString());
 
-				if (i + 1 < drops.Count)
+				if (i + 1 != drops.Count)
 					sb.Append("\n");
 			}
 

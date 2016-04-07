@@ -2,8 +2,9 @@
 {
 	public enum ItemType
 	{
-		CLASSIC,
-		RARE,
-		EPIC
+		STAT_UPGRADE,
+		CLASSIC_UPGRADE,
+		RARE_UPGRADE,
+		EPIC_UPGRADE
 	}
 }

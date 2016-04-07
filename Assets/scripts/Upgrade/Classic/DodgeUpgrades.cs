@@ -12,7 +12,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeFirstHitDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int DAMAGE = 20;
 		public const float LEVEL_ADD = 4;
@@ -54,7 +54,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeHitDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int DAMAGE = 15;
 		public const float LEVEL_ADD = 4;
@@ -97,7 +97,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgePenetrateThroughTargets : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int DAMAGE = 10;
 		public const float LEVEL_ADD = 3;
@@ -142,7 +142,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeRangeIncrease : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int VALUE = 5;
 		public const float LEVEL_ADD = 1f;
@@ -185,7 +185,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeCharges : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public DodgeCharges(int level)
 			: base(level)
@@ -227,7 +227,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeRechargeShotUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public DodgeRechargeShotUpgrade(int level)
 			: base(level)
@@ -265,7 +265,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class DodgeSpreadshotOnLand : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int DAMAGE = 15;
 		public const float LEVEL_ADD = 3f;

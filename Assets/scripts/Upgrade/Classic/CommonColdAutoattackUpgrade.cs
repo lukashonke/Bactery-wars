@@ -13,7 +13,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAADamageUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int DAMAGE = 5;
 		public const float LEVEL_MUL = 1f;
@@ -55,7 +55,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAARangeUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int VALUE = 5;
 		public const float LEVEL_MUL = 1f;
@@ -97,7 +97,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAReuseUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int ANGLE = 10;
 		public const int ANGLE_LEVEL_ADD = -1;
@@ -143,7 +143,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAADoubleattackChanceUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int CHANCE = 30;
 		public const int LEVEL_ADD = 6;
@@ -187,7 +187,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAADoubleattackUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int REUSE_INCREASE = 50;
 		public const int LEVEL_ADD = -4;
@@ -237,7 +237,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAATripleshotUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int REUSE_INCREASE = 75;
 		public const int LEVEL_ADD = -5;
@@ -287,7 +287,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAQuatroshotUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int REUSE_INCREASE = 100;
 		public const int LEVEL_ADD = -5;
@@ -337,7 +337,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAShotgunUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int PROJECTILE_COUNT = 3;
 
@@ -380,7 +380,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAShotgunChanceUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int CONSECUTIVE_COUNTER = 3;
 		public const int PROJECTILE_COUNT = 3;
@@ -424,7 +424,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAASpreadshootUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public CCAASpreadshootUpgrade(int level)
 			: base(level)
@@ -463,7 +463,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAThunderUpgrade : EquippableItem
 	{
 		public static int rarity = 3;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public CCAAThunderUpgrade(int level)
 			: base(level)
@@ -502,7 +502,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAADamageForRangeUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int VALUE = 50;
 		public const int VALUE_LEVEL_ADD = 4;
@@ -551,7 +551,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAAForceUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		private int temp;
 		private float temp2;
@@ -598,7 +598,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CCAASlowUpgrade : EquippableItem //TODO bugged - doesnt refresh counter
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 5;

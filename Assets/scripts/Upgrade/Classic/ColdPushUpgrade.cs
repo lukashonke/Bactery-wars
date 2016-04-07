@@ -16,7 +16,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class ColdPushForceUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -61,7 +61,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class ColdPushRangeUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 5;
@@ -106,7 +106,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class ColdPushAngleUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		private int temp;
 
@@ -148,7 +148,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class ColdPushSlowUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const float DURATION = 5f;
 		public const float DURATION_LEVEL_ADD = 1f;
@@ -198,7 +198,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class ColdPushStunUpgrade : EquippableItem //TODO not done
 	{
 		public static int rarity = 10;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 4;

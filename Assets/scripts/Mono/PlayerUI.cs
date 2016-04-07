@@ -908,7 +908,13 @@ namespace Assets.scripts.Mono
 
 						GameObject newImg = Instantiate(levelIconTemplate);
 						newImg.GetComponent<Image>().enabled = true;
-						newImg.GetComponent<Image>().color = Color.red;
+						//newImg.GetComponent<Image>().color = Color.red;
+
+						if (t.CurrentlyActive)
+						{
+							newImg.GetComponent<Image>().color = Color.yellow;
+						}
+
 						newImg.name = "Extra" + t.Name + "IconD" + t.Depth;
 						newImg.transform.parent = levelsViewPanel.transform;
 						RectTransform trans = newImg.GetComponent<RectTransform>();
@@ -1135,7 +1141,8 @@ namespace Assets.scripts.Mono
 					}
 					else if (child.name.Equals("Description"))
 					{
-						child.GetComponent<Text>().text = Utils.StringWrap(node.Description, 40);
+						if(node.Description != null)
+							child.GetComponent<Text>().text = Utils.StringWrap(node.Description, 40);
 						continue;
 					}
 					else if (child.name.Equals("Difficulty"))
@@ -1519,13 +1526,20 @@ namespace Assets.scripts.Mono
 					int currentUpgradeProgress = upg.CurrentProgress;
 					int needForNext = upg.NeedForNextLevel;
 
-					if (upg.GoesIntoBasestatSlot)
+					if (upg.GoesIntoBasestatSlot && needForNext > 1)
 						addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
 				}
 
 				if (addInfo == null)
 				{
-					addInfo = "Dispose value: " + u.DisposePrice + " DNA";
+					if (u is EquippableItem && ((EquippableItem) u).GoesIntoBasestatSlot)
+					{
+						addInfo = "Cannot be disposed.";
+					}
+					else
+					{
+						addInfo = "Dispose value: " + u.DisposePrice + " DNA";
+					}
 				}
 				
 				ItemType type = u.Type;
@@ -1534,15 +1548,15 @@ namespace Assets.scripts.Mono
 
 				switch (type)
 				{
-					case ItemType.CLASSIC:
+					case ItemType.CLASSIC_UPGRADE:
 						titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case ItemType.EPIC:
+					case ItemType.EPIC_UPGRADE:
 						titleColor = new Color(109 / 255f, 58 / 255f, 65 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case ItemType.RARE:
+					case ItemType.RARE_UPGRADE:
 						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
 						break;

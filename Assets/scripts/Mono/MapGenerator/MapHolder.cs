@@ -270,8 +270,9 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			levelData.LevelReward = rewards;
+			levelData.shopData = param.shop;
 
-			if(levelData.GetRegionWidth() > 0)
+			if (levelData.GetRegionWidth() > 0)
 				this.regionWidth = levelData.GetRegionWidth();
 
 			if (levelData.GetRegionHeight() > 0)

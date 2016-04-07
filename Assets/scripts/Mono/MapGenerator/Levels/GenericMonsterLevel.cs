@@ -364,39 +364,116 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
             Utils.Timer.StartTimer("spawnmap");
 
-		    foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
-		    {
-			    if (room.region.GetParentOrSelf().Equals(start))
-			    {
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
-				}
-				else if (mainRooms.Contains(room.region.GetParentOrSelf()))
+			if (difficulty == 1) // EASY
+			{
+				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
 				{
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
+					if (room.region.GetParentOrSelf().Equals(start))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
+					}
+					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
+					}
+					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
+					}
+					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(boss))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(end))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
+					}
 				}
-				else if (sideRooms.Contains(room.region.GetParentOrSelf()))
+			}
+			else if (difficulty == 2) // MEDIUM
+			{
+				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
 				{
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
+					if (room.region.GetParentOrSelf().Equals(start))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
+					}
+					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
+					}
+					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
+					}
+					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(boss))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(end))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
+					}
 				}
-				else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
+			}
+			else if (difficulty == 3) // HARD
+			{
+				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
 				{
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
+					if (room.region.GetParentOrSelf().Equals(start))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
+					}
+					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
+					}
+					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
+					}
+					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(boss))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
+					}
+					else if (room.region.GetParentOrSelf().Equals(end))
+					{
+						Tile t = room.GetLargestSubRoom(true);
+						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
+					}
 				}
-				else if (room.region.GetParentOrSelf().Equals(boss))
-				{
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
-				}
-				else if (room.region.GetParentOrSelf().Equals(end))
-				{
-					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
-				}
-		    }
+			}
+
+
 
             Utils.Timer.EndTimer("spawnmap");
 		}

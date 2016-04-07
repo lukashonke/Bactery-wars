@@ -8,7 +8,6 @@ using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
-using Assets.scripts.Upgrade.Rare;
 using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
@@ -141,7 +140,7 @@ namespace Assets.scripts.Mono
 
 			if (Input.GetKeyDown(KeyCode.R))
 			{
-				InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC, 1, 2, 1);
+				InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC_UPGRADE, 1, 2, 1);
 				u.Init();
 				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 			}

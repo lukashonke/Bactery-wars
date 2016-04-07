@@ -38,7 +38,7 @@ namespace Assets.scripts.Upgrade
 		{
 			this.Level = level;
 
-			Type = ItemType.CLASSIC;
+			Type = ItemType.CLASSIC_UPGRADE;
 
 			VisibleName = FileName;
 			TypeName = "Item";
@@ -78,13 +78,13 @@ namespace Assets.scripts.Upgrade
 
 			switch (Type)
 			{
-				case ItemType.CLASSIC:
+				case ItemType.CLASSIC_UPGRADE:
 					DisposePrice = 1;
 				break;
-				case ItemType.RARE:
+				case ItemType.RARE_UPGRADE:
 					DisposePrice = 5;
 					break;
-				case ItemType.EPIC:
+				case ItemType.EPIC_UPGRADE:
 					DisposePrice = 10;
 					break;
 			}

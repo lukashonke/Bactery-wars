@@ -63,13 +63,13 @@ namespace Assets.scripts.Upgrade
 		private void Load()
 		{
 			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(EquippableItem));
-			LoadTypes(types, ItemType.CLASSIC);
+			LoadTypes(types, ItemType.CLASSIC_UPGRADE);
 
 			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(EquippableItem));
-			LoadTypes(types, ItemType.RARE);
+			LoadTypes(types, ItemType.RARE_UPGRADE);
 
 			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(EquippableItem));
-			LoadTypes(types, ItemType.EPIC);
+			LoadTypes(types, ItemType.EPIC_UPGRADE);
 
 			dropBg = Resources.Load<Sprite>("Sprite/inventory/drop_background");
 		}
@@ -79,7 +79,7 @@ namespace Assets.scripts.Upgrade
 			foreach (Type t in types)
 			{
 				int rarity = 1;
-				ItemType uType = ItemType.CLASSIC;
+				ItemType uType = ItemType.CLASSIC_UPGRADE;
 				try
 				{
 					rarity = (int)t.GetField("rarity").GetValue(null);
@@ -126,6 +126,7 @@ namespace Assets.scripts.Upgrade
 		public void GiveItem(InventoryItem upgrade, Character target)
 		{
 			upgrade.Init();
+			GameSystem.Instance.BroadcastMessage("Received " + upgrade.VisibleName);
 			target.GiveItem(upgrade);
 		}
 	}

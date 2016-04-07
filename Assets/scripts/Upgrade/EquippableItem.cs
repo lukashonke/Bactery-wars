@@ -61,7 +61,8 @@ namespace Assets.scripts.Upgrade
 
 				CurrentProgress = 0;
 
-				NeedForNextLevel = (int) Math.Pow(2, Level);
+				//NeedForNextLevel = (int) Math.Pow(2, Level);
+				NeedForNextLevel = 1;
 			}
 		}
 

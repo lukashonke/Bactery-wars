@@ -5,8 +5,10 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
+using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -137,8 +139,6 @@ namespace Assets.scripts.Mono.MapGenerator
 			if (maxSpecialLevelsCount <= 0)
 				maxSpecialLevelsCount = 1;
 
-			Debug.Log("max special levels: " + maxSpecialLevelsCount);
-
 			// one level is already created
 			levelsCount--;
 			mainLineCount --;
@@ -147,6 +147,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (worldLevel > 0)
 			{
+				int shopLevel = Random.Range(0, mainLineCount-1);
+
 				// main line - all medium
 				for (int i = 0; i < mainLineCount; i++)
 				{
@@ -164,7 +166,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					}
 					else
 					{
-						newNode = CreateRandomMainNodeLevel(id++, i + 1);
+						newNode = CreateRandomMainNodeLevel(id++, i + 1, shopLevel == i, LevelTree.DIFF_MEDIUM);
 					}
 
 					if (newNode == null) continue;
@@ -228,8 +230,6 @@ namespace Assets.scripts.Mono.MapGenerator
 					LevelTree mainNode = mapTree.GetRandomMainNode();
 					LevelTree nextNode = CreateRandomExtraNodeLevel(id++, mainNode.Depth);
 					mainNode.AddChild(nextNode);
-
-					Debug.Log("generating extra node to depth " + nextNode.Depth);
 				}
 
 				for (int i = 0; i < maxSpecialLevelsCount; i++)
@@ -237,47 +237,74 @@ namespace Assets.scripts.Mono.MapGenerator
 					LevelTree mainNode = mapTree.GetRandomSpecialNode();
 					LevelTree nextNode = CreateRandomExtraNodeLevel(id++, mainNode.Depth);
 					mainNode.AddChild(nextNode);
-
-					Debug.Log("generating special node to depth " + nextNode.Depth);
 				}
 			}
 
 			Debug.Log(mapTree.PrintInfo());
 		}
 
-		public LevelTree CreateRandomMainNodeLevel(int id, int depth)
+		public LevelTree CreateRandomMainNodeLevel(int id, int depth, bool addShop, int difficulty)
 		{
-			int roll = Random.Range(0, 100);
-
-			int difficulty = 2;
-
-			if (roll < 15)
-			{
-				difficulty = 1;
-			}
-			else if (roll < 30)
-			{
-				difficulty = 3;
-			}
-
 			LevelParams param = new LevelParams(MapType.GenericMonster);
 			param.difficulty = difficulty;
+
+			if (addShop)
+			{
+				param.shop = new ShopData();
+				param.shop.GenerateRandomShopItems(worldLevel, 2);
+			}
+
 			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, id, difficulty, depth, param, "Level " + id, "This level is filled with random monsters.");
+
+			switch (difficulty)
+			{
+				case 1:
+					newNode.AddLevelRewardRandom(100, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 10);
+					break;
+				case 2:
+					newNode.AddLevelRewardRandom(100, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 20);
+					break;
+				case 3:
+					newNode.AddLevelRewardRandom(100, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 30);
+					break;
+			}
+
 			return newNode;
 		}
 
 		public LevelTree CreateRandomExtraNodeLevel(int id, int depth)
 		{
-			LevelParams param = new LevelParams(MapType.BossRush); //TODO new types
+			LevelParams param = new LevelParams(MapType.GenericMonster); //TODO new types
 
 			int difficulty = LevelTree.DIFF_MEDIUM;
 			int rnd = Random.Range(0, 100);
 			if (rnd < 25)
 				difficulty = LevelTree.DIFF_EASY;
-			if(rnd > 75)
+			if(rnd < 50)
 				difficulty = LevelTree.DIFF_HARD;
 
-			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, id, difficulty, depth, param, "Extra Level " + id);
+			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, id, difficulty, depth, param, "Extra Level " + id, "This level is filled with random monsters.");
+
+			switch (difficulty)
+			{
+				case 1:
+					newNode.AddLevelRewardRandom(66, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 10);
+					break;
+				case 2:
+					newNode.AddLevelRewardRandom(100, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 20);
+					break;
+				case 3:
+					newNode.AddLevelRewardRandom(100, ItemType.STAT_UPGRADE, 1, 1);
+					newNode.AddLevelRewardRandom(100, ItemType.CLASSIC_UPGRADE, 1, 1);
+					newNode.AddLevelReward(typeof(DnaItem), 100, 3, 30);
+					break;
+			}
+
 			return newNode;
 		}
 
@@ -521,6 +548,8 @@ namespace Assets.scripts.Mono.MapGenerator
 					GenerateNextLevel(1);
 					onlyReload = false;
 				}
+
+				activeMap.levelData.LevelReward.DoDrop(null, GameSystem.Instance.CurrentPlayer, true);
 
 				SetActiveLevel(newC.x, newC.y, onlyReload);
 

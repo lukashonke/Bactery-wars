@@ -16,7 +16,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamDurationUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 10;
@@ -61,7 +61,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamWidthUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const float WIDTH = 2;
 		public const float LEVEL_ADD = 0.1f;
@@ -106,7 +106,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamReuseUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		public const int POWER = 25;
 		public const float LEVEL_ADD = 2;
@@ -151,7 +151,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamEpicReuseUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const int POWER = 25;
 		public const float LEVEL_ADD = 2;
@@ -196,7 +196,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const int POWER = 50;
 		public const float LEVEL_ADD = 10;
@@ -247,7 +247,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamStunUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
-		public static ItemType type = ItemType.EPIC;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
 
 		public const float DURATION = 4;
 		public const float LEVEL_ADD = 0.5f;
@@ -284,7 +284,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamPushUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.RARE;
+		public static ItemType type = ItemType.RARE_UPGRADE;
 
 		public const float POWER = 5;
 		public const float LEVEL_ADD = 1;
@@ -342,7 +342,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class RhinobeamRotationUpgrade : EquippableItem
 	{
 		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
 
 		private float temp;
 

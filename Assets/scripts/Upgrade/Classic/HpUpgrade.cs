@@ -81,6 +81,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class HpUpgradeAdd : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public HpUpgradeAdd(int level)
 			: base(level)
