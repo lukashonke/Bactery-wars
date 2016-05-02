@@ -53,6 +53,26 @@ namespace Assets.scripts
 			return true;
 		}
 
+		public static bool CanSee(GameObject obj, Vector3 target)
+		{
+			if (Physics2D.Linecast(obj.transform.position, target, 1 << OBSTACLES_LAYER))
+				return false;
+			return true;
+		}
+
+		public static bool CanSee(Vector3 source, Vector3 target)
+		{
+			if (Physics2D.Linecast(source, target, 1 << OBSTACLES_LAYER))
+				return false;
+			return true;
+		}
+
+		public static bool ChanceCheck(int chance)
+		{
+			int roll = Random.Range(0, 100);
+			return roll < chance;
+		}
+
 		public static RaycastHit2D[] DoubleRaycast(Vector3 origin, Vector3 direction, int range, float width, bool includeCenter=false)
 		{
 			Vector3 shiftDir1 = new Vector3(-origin.y, origin.x, 0).normalized * width;
@@ -110,6 +130,16 @@ namespace Assets.scripts
 			mousePos.z = 0;
 
 			Vector3 target = mousePos - t.position;
+			Quaternion r = Quaternion.LookRotation(target);
+			return r;
+		}
+
+		public static Quaternion GetRotationToTarget(Transform t, GameObject obj)
+		{
+			Vector3 pos = obj.transform.position;
+			pos.z = 0;
+
+			Vector3 target = pos - t.position;
 			Quaternion r = Quaternion.LookRotation(target);
 			return r;
 		}

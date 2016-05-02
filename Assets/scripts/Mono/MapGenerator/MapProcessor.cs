@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
@@ -20,11 +21,15 @@ namespace Assets.scripts.Mono.MapGenerator
 		private Tile[,] tiles;
 		private MapType mapType;
 
+		private List<Tile> edgeTiles; 
+
 		public Tile[,] Tiles { get { return tiles; } }
 		public List<MapRoom> rooms;
 
 		private int width;
 		private int height;
+
+		private const int rozmezi = 6;
 
 		public MapProcessor(MapHolder mapHolder, Tile[,] tiles, MapType type)
 		{
@@ -55,8 +60,180 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			SpawnShop();
 
-		    SpawnMonsters();
+			Utils.Timer.StartTimer("oprava");
+			if(GameSession.repairMap)
+				RepairMap();
+			Utils.Timer.EndTimer("oprava");
+
+			SpawnMonsters();
 			//WiddenThinPassages(null, 6, 2);
+		}
+
+		private void RepairMap()
+		{
+			// naplnit edges
+			edgeTiles = new List<Tile>();
+
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					Tile t = GetTile(x, y);
+
+					if (t.tileType == WorldHolder.GROUND && IsOnEdge(t))
+					{
+						edgeTiles.Add(t);
+					}
+				}
+			}
+
+			Debug.LogError("mame " + edgeTiles.Count + " okraju");
+
+			// projit pole
+			foreach (Tile tile in edgeTiles)
+			{
+				if (IsInsideMap(tile.tileX, tile.tileY, rozmezi/2))
+				{
+					CheckShape(tile);
+				}
+			}
+		}
+
+		private void CheckShape(Tile tile)
+		{
+			tile.SetColor(Tile.BLUE);
+			int x = tile.tileX;
+			int y = tile.tileY;
+
+			int[,] shapeForSearch = new int[rozmezi, rozmezi];
+
+			// nastavit okraje shapu na 1
+			for (int i = 0; i < rozmezi; i++)
+			{
+				shapeForSearch[i, 0] = 1;
+				shapeForSearch[i, rozmezi - 1] = 1;
+				shapeForSearch[0, i] = 1;
+				shapeForSearch[rozmezi - 1, i] = 1;
+			}
+
+			for (int i = 1; i < rozmezi - 1; i++)
+			{
+				for (int j = 1; j < rozmezi - 1; j++)
+				{
+					Tile t = GetTile(x - rozmezi/2 + i, y - rozmezi/2 + j);
+					if (t.tileType == 0)
+					{
+						shapeForSearch[i, j] = 1;
+					}
+					else
+					{
+						shapeForSearch[i, j] = 0;
+					}
+				}
+			}
+
+			FindFirstZero(shapeForSearch);
+
+			if (IsPath(shapeForSearch))
+			{
+				for (int i = 1; i < rozmezi; i++)
+				{
+					for (int j = 1; j < rozmezi; j++)
+					{
+						Tile t = GetTile(x - rozmezi/2 + i, y - rozmezi/2 + j);
+
+						SetTile(t, WorldHolder.GROUND);
+
+						Debug.LogError("rozsiruji " + t.tileX + ", " + t.tileY);
+						//t.SetColor(Tile.BLUE);
+					}
+				}
+			}
+		}
+
+		private bool IsPath(int[,] shapeForSearch)
+		{
+			for (int i = 0; i < rozmezi; i++)
+			{
+				for (int j = 0; j < rozmezi; j++)
+				{
+					if (shapeForSearch[i, j] == 0)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		private void FindFirstZero(int[,] shapeForSearch)
+		{
+			bool konec = false;
+
+			for (int i = 0; i < rozmezi; i++)
+			{
+				if (konec) break;
+
+				for (int j = 0; j < rozmezi; j++)
+				{
+					if (konec) break;
+
+					if (shapeForSearch[i, j] == 0)
+					{
+						SetAndExploreSurrounding(shapeForSearch, i, j);
+						konec = true;
+						break;
+					}
+				}
+			}
+		}
+
+		private void SetAndExploreSurrounding(int[,] shapeForSearch, int x, int y)
+		{
+			shapeForSearch[x, y] = 1;
+			ProjitOkoli(shapeForSearch, x, y);
+		}
+
+		private void ProjitOkoli(int[,] shapeForSearch, int x, int y)
+		{
+			for (int i = x - 1; i <= x + 1; i++)
+			{
+				for (int j = y - 1; j <= y + 1; j++)
+				{
+					if (IsInsideShape(i, j))
+					{
+						if (shapeForSearch[i, j] == 0)
+							SetAndExploreSurrounding(shapeForSearch, i, j);
+					}
+				}
+			}
+		}
+
+		private bool IsInsideShape(int x, int y)
+		{
+			return x >= 0 && x < rozmezi && y >= 0 && y < rozmezi;
+		}
+
+		private bool IsOnEdge(Tile tile)
+		{
+			for (int i = tile.tileX - 1; i <= tile.tileX + 1; i++)
+			{
+				for (int j = tile.tileY - 1; j <= tile.tileY + 1; j++)
+				{
+					if (IsInsideMap(i, j, 0))
+					{
+						Tile tt = GetTile(i, j);
+
+						if (tt != null && tt.tileType == WorldHolder.WALL)
+							return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private bool IsInsideMap(int x, int y, int okoli)
+		{
+			return x >= 0 + okoli && x < width - okoli && y >= 0 + okoli && y < height - okoli;
 		}
 
 		private void SpawnShop()

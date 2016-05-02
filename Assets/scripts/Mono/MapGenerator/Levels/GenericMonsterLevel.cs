@@ -364,6 +364,34 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
             Utils.Timer.StartTimer("spawnmap");
 
+			foreach (MapRoom room in map.GetMapRooms())
+			{
+				if (room.region.GetParentOrSelf().Equals(start))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.START_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+				else if (mainRooms.Contains(room.region.GetParentOrSelf()))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.MAIN_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+				else if (sideRooms.Contains(room.region.GetParentOrSelf()))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.SIDE_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+				else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BONUS_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+				else if (room.region.GetParentOrSelf().Equals(boss))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BOSS_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+				else if (room.region.GetParentOrSelf().Equals(end))
+				{
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.END_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+				}
+			}
+
 			if (difficulty == 1) // EASY
 			{
 				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes

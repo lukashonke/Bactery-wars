@@ -56,6 +56,7 @@ namespace Assets.scripts.Skills
 		public bool breaksMouseMovement;
 
 		protected GameObject initTarget;
+		public GameObject InitTarget { get { return initTarget; } }
 
 		/// not used currently
 		public bool MovementBreaksConfirmation { get; protected set; }
@@ -497,7 +498,8 @@ namespace Assets.scripts.Skills
 					return;
 				}
 
-				Owner.StopTask(Task);
+				if(Task != null)
+					Owner.StopTask(Task);
 
 				End();
 			}

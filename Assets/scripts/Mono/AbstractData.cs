@@ -119,6 +119,7 @@ namespace Assets.scripts.Mono
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
 		public bool cancelForcedVelocityOnCollision;
+		public bool cancelMovementTargetOnCollision;
 
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
@@ -302,6 +303,7 @@ namespace Assets.scripts.Mono
 		{
 			if (HasTargetToMoveTo && lastCheckVelocityTime + VELOCITY_CHECK_INTERVAL < Time.time)
 			{
+				Debug.Log(rb.velocity);
 				lastCheckVelocityTime = Time.time;
 
 				if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
@@ -313,7 +315,7 @@ namespace Assets.scripts.Mono
 					}
 					else
 					{
-						//Debug.Log("breaking movementEnabled!");
+						Debug.Log("breaking movementEnabled!");
 						BreakMovement(true);
 						wasCloseTozero = false;
 					}
@@ -324,6 +326,15 @@ namespace Assets.scripts.Mono
 					wasCloseTozero = false;
 				}
 			}
+		}
+
+		public bool HasZeroVelocity()
+		{
+			if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
+			{
+				return true;
+			}
+			return false;
 		}
 
 		private Vector3 lastFoundWaypointPosition;
@@ -739,6 +750,16 @@ namespace Assets.scripts.Mono
 				if (GetOwner().MeleeSkill.IsActive())
 					GetOwner().MeleeSkill.OnMove();
 			}
+		}
+
+		public void Teleport(Vector3 position, float range)
+		{
+			MovementChanged();
+
+			SetRotation(position, true);
+			SetPosition(position, true);
+
+			HasTargetToMoveTo = false;
 		}
 
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
@@ -1421,6 +1442,11 @@ namespace Assets.scripts.Mono
 			}
 
 			if (forcedVelocity && cancelForcedVelocityOnCollision)
+			{
+				BreakMovement(true);
+			}
+
+			if (cancelMovementTargetOnCollision)
 			{
 				BreakMovement(true);
 			}

@@ -12,5 +12,8 @@ namespace Assets.scripts
 		public static string gameType = "Normal";
 		public static string profileName = "Lukas";
 		public static bool skipTutorial = true;
+
+
+		public static bool repairMap = false;
 	}
 }

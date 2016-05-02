@@ -21,11 +21,11 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
-			start = map.GenerateDungeonRegion(0, 0, WorldHolder.instance.randomFillPercent, true, null, 2, 1); // 0 0
+			start = map.GenerateDungeonRegion(0, 0, 49, true, new int[] { 5}, 2, 1); // 0 0
 
-			theBase = map.GenerateDungeonRegion(2, 0, 40, false, true, false, null, 1, 1); // 0, 2
+			theBase = map.GenerateDungeonRegion(2, 0, 40, false, true, false, new int[] { 5 }, 1, 1); // 0, 2
 
-			end = map.GenerateDungeonRegion(3, 0, WorldHolder.instance.randomFillPercent, false, true, true, null, 2, 1); // 0 0
+			end = map.GenerateDungeonRegion(3, 0, 49, false, true, true, new int[] { 5 }, 2, 1); // 0 0
 		}
 
 		public override void SpawnMonsters()
@@ -37,12 +37,12 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override int GetRegionWidth()
 		{
-			return 50;
+			return 100;
 		}
 
 		public override int GetRegionHeight()
 		{
-			return 50;
+			return 100;
 		}
 
 		public override int GetMaxRegionsX()

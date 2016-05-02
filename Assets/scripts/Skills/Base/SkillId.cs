@@ -34,5 +34,9 @@ namespace Assets.scripts.Skills.Base
 		CollisionDamageAttack,
 		CreateCoverMob,
 		SwarmerSpawnSkill,
+
+		SlowBeam,
+		Teleport,
+		HealBeam,
 	}
 }

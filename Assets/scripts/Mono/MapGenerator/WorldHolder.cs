@@ -97,6 +97,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			else
 			{
 				param.levelType = MapType.LevelOne;
+				//param.levelType = MapType.Test;
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
 			}
 

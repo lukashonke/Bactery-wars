@@ -107,7 +107,7 @@ namespace Assets.scripts.AI
 			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
 
 			// 1. get the most damage skill and cast if it is available
-			int topDamage = 0;
+			int topDamage = -1;
 			ActiveSkill topSkill = null;
 
 			foreach (Skill skill in skills)
@@ -124,7 +124,9 @@ namespace Assets.scripts.AI
 			//Debug.Log(topSkill.GetName());
 
 			if (topSkill != null)
+			{
 				StartAction(CastSkill(target, topSkill, distSqr, false, true), 10f, false, shootWhileMoving);
+			}
 			else if(HasMeleeSkill())
 				Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
 		}

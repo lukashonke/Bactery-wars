@@ -48,6 +48,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		SmallTankCell = 27,
 		SwarmerMeleeCell = 28,
+		BigPassiveFloatingCell = 29,
+		BigPassiveCell = 30,
+
+		SniperCell = 31,
+
+		SlowerCell = 40,
+		RogueCell = 41,
+		HealerCell = 42,
 
 		// bosses
 		TestBoss = 200,

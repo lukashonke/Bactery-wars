@@ -77,7 +77,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			lastDmg = 0;
 
-			GetPlayerData().SetRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition), true);
+			RotatePlayerTowardsMouse();
 
 			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
 			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
@@ -89,26 +89,56 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			StartParticleEffect(ray);
 
-			UpdateMouseDirection(ray.transform);
-			aimingDirection = mouseDirection;
-			ray.transform.rotation = Utils.GetRotationToMouse(ray.transform);
+			if (GetPlayerData() != null)
+			{
+				UpdateMouseDirection(ray.transform);
+				aimingDirection = mouseDirection;
+
+				ray.transform.rotation = Utils.GetRotationToMouse(ray.transform);
+			}
+			else if (initTarget != null)
+			{
+				aimingDirection = Utils.GetDirectionVector(initTarget.transform.position, GetOwnerData().GetBody().transform.position);
+				ray.transform.rotation = Utils.GetRotationToTarget(ray.transform, initTarget);
+			}
 		}
 
 		public override void UpdateLaunched()
 		{
 			if (ray != null)
 			{
-				Quaternion newRotation = Quaternion.LookRotation(GetOwnerData().GetBody().transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
+				Vector3 target;
+
+				if (GetPlayerData() != null)
+				{
+					target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				}
+				else if (initTarget != null)
+				{
+					target = initTarget.transform.position;
+				}
+				else
+				{
+					AbortCast();
+					return;
+				}
+
+				Quaternion newRotation = Quaternion.LookRotation(GetOwnerData().GetBody().transform.position - target, Vector3.forward);
 				newRotation.x = 0;
 				newRotation.y = 0;
-
-				newRotation = Quaternion.Lerp(GetOwnerData().GetBody().transform.rotation, newRotation, rotateSpeed*0.001f);
+				newRotation = Quaternion.Lerp(GetOwnerData().GetBody().transform.rotation, newRotation, rotateSpeed * 0.001f);
 
 				GetOwnerData().SetRotation(newRotation, true);
 
-				UpdateMouseDirection(ray.transform);
-
-				aimingDirection = Vector3.Lerp(aimingDirection, mouseDirection, rotateSpeed*0.001f);
+				if (GetPlayerData() != null)
+				{
+					UpdateMouseDirection(ray.transform);
+					aimingDirection = Vector3.Lerp(aimingDirection, mouseDirection, rotateSpeed * 0.001f);
+				}
+				else if (initTarget != null)
+				{
+					aimingDirection = Vector3.Lerp(aimingDirection, Utils.GetDirectionVector(initTarget.transform.position, GetOwnerData().GetBody().transform.position), rotateSpeed * 0.001f);
+				}
 
 				ray.transform.rotation = Utils.GetRotationToDirectionVector(aimingDirection);
 

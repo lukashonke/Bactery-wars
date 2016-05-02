@@ -1,9 +1,11 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
 {
@@ -193,6 +195,108 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterId GetMonsterId()
 		{
 			return MonsterId.DementCell;
+		}
+	}
+
+	public class BigPassiveFloatingCell : MonsterTemplate
+	{
+		public BigPassiveFloatingCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 10;
+
+			IsAggressive = false;
+			AggressionRange = 20;
+			RambleAround = true;
+			RambleAroundMaxDist = 15;
+			XpReward = 1;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+			//skill.AddAdditionalEffect(new EffectKillSelf());
+		}
+
+		public override void InitAppearanceData(Monster m, EnemyData data)
+		{
+			Vector3 current = data.GetBody().transform.localScale;
+
+			data.GetBody().transform.localScale = new Vector3(current.x*(1.1f*(m.Level)), current.y*(1.1f*(m.Level)));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			BouncingAI ai = new BouncingAI(ch);
+			//ai.IsAggressive = false;
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.BigPassiveFloatingCell;
+		}
+	}
+
+	public class BigPassiveCell : MonsterTemplate
+	{
+		public BigPassiveCell()
+		{
+			MaxHp = 50;
+			MaxMp = 50;
+			MaxSpeed = 10;
+
+			IsAggressive = false;
+			AggressionRange = 20;
+			RambleAround = false;
+			RambleAroundMaxDist = 15;
+			XpReward = 1;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+			//skill.AddAdditionalEffect(new EffectKillSelf());
+		}
+
+		public override void InitAppearanceData(Monster m, EnemyData data)
+		{
+			Vector3 current = data.GetBody().transform.localScale;
+
+			data.GetBody().transform.localScale = new Vector3(current.x * (1.1f * (m.Level)), current.y * (1.1f * (m.Level)));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			BouncingAI ai = new BouncingAI(ch);
+			//ai.IsAggressive = false;
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.BigPassiveCell;
 		}
 	}
 

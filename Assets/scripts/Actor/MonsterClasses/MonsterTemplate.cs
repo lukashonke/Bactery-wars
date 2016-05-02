@@ -8,6 +8,7 @@ using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -93,6 +94,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 			//Debug.Log("level is " + level);
 			//status.MaxHp = status.MaxHp * level;
 			//m.Status.SetHp(status.MaxHp);
+		}
+
+		public virtual void InitAppearanceData(Monster m, EnemyData data)
+		{
+			
 		}
 
 		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)

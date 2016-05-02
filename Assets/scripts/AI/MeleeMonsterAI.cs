@@ -16,8 +16,21 @@ namespace Assets.scripts.AI
 	{
 		public int dodgeRate = 0;
 
+		private bool hasSpawnSkills = false;
+		private bool hasJumpSkill = false;
+		private bool hasLongRangeDmgSkill = false;
+		private bool hasTeleportSkill = false;
+
 		public MeleeMonsterAI(Character o) : base(o)
 		{
+		}
+
+		public override void AnalyzeSkills()
+		{
+			hasSpawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion).Count > 0;
+			hasJumpSkill = GetSkillWithTrait(SkillTraits.Jump) != null;
+			hasLongRangeDmgSkill = GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange) != null;
+			hasTeleportSkill = GetSkillWithTrait(SkillTraits.Teleport) != null;
 		}
 
 		protected override void AttackTarget(Character target)
@@ -32,11 +45,14 @@ namespace Assets.scripts.AI
 			if (isCasting || forcedVelocity || currentAction != null || Owner.Status.IsStunned())
 				return;
 
-			List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
-			foreach (Skill s in spawnSkills)
+			if (hasSpawnSkills)
 			{
-				if (s.CanUse())
-					StartAction(CastSkill(null, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
+				List<Skill> spawnSkills = GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
+				foreach (Skill s in spawnSkills)
+				{
+					if (s.CanUse())
+						StartAction(CastSkill(null, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
+				}
 			}
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
@@ -46,18 +62,35 @@ namespace Assets.scripts.AI
 			Vector3 targetPos = target.GetData().GetBody().transform.position;
 			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
 
-			ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
-			if (jump != null && jump.CanUse() && !Owner.GetData().forcedVelocity)
+			if (hasJumpSkill)
 			{
-				if (StartAction(CastSkill(target, jump, distSqr, true, false, 0f, 0f), 0.5f))
-					return;
+				ActiveSkill jump = (ActiveSkill)GetSkillWithTrait(SkillTraits.Jump);
+				if (jump != null && jump.CanUse() && !Owner.GetData().forcedVelocity)
+				{
+					if (StartAction(CastSkill(target, jump, distSqr, true, false, 0f, 0f), 0.5f))
+						return;
+				}
 			}
 
-			ActiveSkill dmg = (ActiveSkill)GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
-			if (dmg != null && dmg.CanUse() && !Owner.GetData().forcedVelocity)
+			if (hasTeleportSkill)
 			{
-				if (StartAction(CastSkill(target, dmg, distSqr, true, false, 0f, 0f), 0.5f))
-					return;
+				ActiveSkill teleport = (ActiveSkill)GetSkillWithTrait(SkillTraits.Teleport);
+				// if range too high, teleport
+				if (teleport.CanUse() && !Owner.GetData().forcedVelocity && distSqr >= (teleport.range*teleport.range)/3f && distSqr <= (teleport.range*teleport.range))
+				{
+					if (StartAction(CastSkill(target, teleport, distSqr, true, false, 0f, 0f), 0.5f))
+						return;
+				}
+			}
+
+			if (hasLongRangeDmgSkill)
+			{
+				ActiveSkill dmg = (ActiveSkill)GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
+				if (dmg != null && dmg.CanUse() && !Owner.GetData().forcedVelocity)
+				{
+					if (StartAction(CastSkill(target, dmg, distSqr, true, false, 0f, 0f), 0.5f))
+						return;
+				}
 			}
 
 			if (dodgeRate > 0 && distSqr > 3*3)

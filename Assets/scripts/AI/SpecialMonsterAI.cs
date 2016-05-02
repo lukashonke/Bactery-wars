@@ -16,6 +16,8 @@ namespace Assets.scripts.AI
 	{
 		public BouncingAI(Character o) : base(o)
 		{
+			alwaysActive = true;
+			o.GetData().cancelMovementTargetOnCollision = true;
 		}
 
 		protected override void AttackTarget(Character target)
@@ -26,47 +28,55 @@ namespace Assets.scripts.AI
 
 		protected override void ThinkActive()
 		{
-			if (GetTemplate().RambleAround && !Owner.GetData().HasTargetToMoveTo)
+			if (GetTemplate().RambleAround)
 			{
-				SetIsWalking(false);
-				bool found = false;
-
-				int limit = 5;
-				while (!found)
+				if (Owner.GetData().HasTargetToMoveTo && Owner.GetData().HasZeroVelocity())
 				{
-					int dist = GetTemplate().RambleAroundMaxDist;
-					Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist);
+					Owner.GetData().BreakMovement(true);
+				}
 
-					//TODO region check
-					//TODO add object collision check on target around, to check if he can fit
+				if (!Owner.GetData().HasTargetToMoveTo)
+				{
+					SetIsWalking(false);
+					bool found = false;
 
-					bool collides = false;
-					foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))
+					int limit = 5;
+					while (!found)
 					{
-						if (r2d.collider == null)
-							continue;
+						int dist = GetTemplate().RambleAroundMaxDist;
+						Vector3 randomPos = Utils.GenerateRandomPositionAround(homeLocation, dist, 1);
 
-						if (r2d.collider.gameObject.Equals(Owner.GetData().GetBody()))
-							continue;
+						//TODO region check
+						//TODO add object collision check on target around, to check if he can fit
 
-						collides = true;
+						bool collides = false;
+						foreach (RaycastHit2D r2d in Physics2D.RaycastAll(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Vector3.Distance(Owner.GetData().GetBody().transform.position, randomPos)))
+						{
+							if (r2d.collider == null)
+								continue;
+
+							if (r2d.collider.gameObject.Equals(Owner.GetData().GetBody()))
+								continue;
+
+							collides = true;
+						}
+
+						if (collides)
+						{
+							//Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
+						}
+						else
+						{
+							found = true;
+
+							MoveTo(randomPos);
+							//Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.green, 5);
+						}
+
+						limit--;
+						if (limit <= 0)
+							break;
 					}
-
-					if (collides)
-					{
-						Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.blue, 5);
-					}
-					else
-					{
-						found = true;
-
-						MoveTo(randomPos);
-						Debug.DrawRay(Owner.GetData().GetBody().transform.position, randomPos - Owner.GetData().GetBody().transform.position, Color.green, 5);
-					}
-
-					limit--;
-					if (limit <= 0)
-						break;
 				}
 			}
 		}
