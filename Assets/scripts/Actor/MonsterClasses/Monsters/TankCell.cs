@@ -10,6 +10,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public TankCell()
 		{
+			Name = "Cell";
 			MaxHp = 65;
 			MaxMp = 50;
 			MaxSpeed = 7;

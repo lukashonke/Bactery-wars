@@ -9,15 +9,18 @@ using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
 {
-    public class HelperCell : MonsterTemplate
+    public class BasicCell : MonsterTemplate
     {
-		public HelperCell()
+		public BasicCell()
         {
-            MaxHp = 5;
+			Name = "Neutrophyle Patrol";
+			MaxHp = 5;
             MaxMp = 50;
             MaxSpeed = 5;
 
-            IsAggressive = true;
+			HpLevelScale = 5;
+
+			IsAggressive = true;
             AggressionRange = 20;
             RambleAround = false;
 			XpReward = 2;
@@ -28,7 +31,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
         }
 
-	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			base.InitMonsterStats(m, level);
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 	    {
 			SkillTestProjectile skill = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
 		    skill.range = 8;
@@ -48,14 +56,66 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         public override MonsterId GetMonsterId()
         {
-            return MonsterId.HelperCell;
+            return MonsterId.BasicCell;
         }
     }
+
+	public class BasicMeleeCell : MonsterTemplate
+	{
+		public BasicMeleeCell()
+		{
+			Name = "Melee Cell";
+			MaxHp = 5;
+			MaxMp = 50;
+			MaxSpeed = 5;
+
+			HpLevelScale = 5;
+
+			IsAggressive = true;
+			AggressionRange = 20;
+			RambleAround = false;
+			XpReward = 2;
+		}
+
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			base.InitMonsterStats(m, level);
+		}
+
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+			MeleeAttack skill = meleeSkill as MeleeAttack;
+			skill.range = 8;
+			skill.castTime = 1f;
+		}
+
+		protected override void AddSkillsToTemplate()
+		{
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new MeleeMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.BasicMeleeCell;
+		}
+	}
 
 	public class NonaggressiveHelperCell : MonsterTemplate
 	{
 		public NonaggressiveHelperCell()
 		{
+			Name = "Cell";
 			MaxHp = 5;
 			MaxMp = 50;
 			MaxSpeed = 5;
@@ -73,6 +133,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitMonsterStats(Monster m, int level)
 		{
+			base.InitMonsterStats(m, level);
 			m.UpdateMaxHp(m.Status.MaxHp + 10 * (level-1));
 		}
 
@@ -97,7 +158,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterId GetMonsterId()
 		{
-			return MonsterId.NonaggressiveHelperCell;
+			return MonsterId.NonaggressiveBasicCell;
 		}
 	}
 
@@ -105,6 +166,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public FloatingHelperCell()
 		{
+			Name = "Cell";
 			MaxHp = 10;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -129,6 +191,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterAI CreateAI(Character ch)
 		{
+			Name = "Cell";
 			RangedMonsterAI ai = new RangedMonsterAI(ch);
 			//ai.IsAggressive = false;
 			ai.evadeInterval = -1;
@@ -150,7 +213,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterId GetMonsterId()
 		{
-			return MonsterId.FloatingHelperCell;
+			return MonsterId.FloatingBasicCell;
 		}
 	}
 
@@ -158,6 +221,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public DementCell()
 		{
+			Name = "Cell";
 			MaxHp = 5;
 			MaxMp = 50;
 			MaxSpeed = 20;
@@ -202,6 +266,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public BigPassiveFloatingCell()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -253,6 +318,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public BigPassiveCell()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -304,6 +370,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public PassiveHelperCell()
 		{
+			Name = "Cell";
 			MaxHp = 10;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -340,6 +407,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public ObstacleCell()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 4;
@@ -375,6 +443,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public IdleObstacleCell()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 4;

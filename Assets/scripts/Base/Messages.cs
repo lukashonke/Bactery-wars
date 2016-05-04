@@ -18,7 +18,7 @@ namespace Assets.scripts.Base
 				{
 					case "game_start":
 						{
-							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "Alfa version {0}", "First 5 levels are tutorial, you dont earn any upgrades." }, o);
+							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "Alfa version {0}", "Tab to open admin console (write help for info)" }, o);
 						}
 					case "game_start_controls":
 						{

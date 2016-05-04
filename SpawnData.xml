@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Umisteni v danem tagu xxx_room (main_room, side_room, bonus_room, atd.) udava, v jakych mistnostech se skupina muze spawnout
+	Format napsani skupiny <group>: 
+
+	!! - parametry v hranatych zavorkach jsou dobrovolne 
+
+	<group [id="1"] min_level="2" [max_level="99"] [min_world="1"] [max_world="99"] frequency="5">
+
+	- ID je treba udat, kdyz se ma skupina otestovat ve hre vyvojarem, pomoci prikazu spawn ID (napsat do konzole, ktera se otevre tlac. TAB)
+
+	Popis parametru:
+	id : ID skupiny, pokud neni dane, je automaticky vygenerovane
+	min_level; max_level : min;max level hrace aby se skupina mohla objevovat [defaultni hodnota 1;99]
+	min_world; max_world : min;max cislo sveta, ve kterem se skupina muze objevit (prvni svet ma cislo 1, tutorialovy svet ma cislo 0) [default 1;99]
+	frequency : cetnost ku 10ti = jak casto se skupina bude spawnovat v porovnani s ostatnimi - napr. 5 = objevi se zhruba v 5ti mistnostech z 10ti; 2 = objevi se zhruba v 2 mistnostech z 10ti
+
+	==========
+	Format napsani jednoho monstera do skupiny <mob>:
+
+	<mob type="LeukocyteMelee" [count="1"] [level="1"] [chance="100] location="center/left/right/up/down/largest" [room_size="tiny/small/medium/large/verylarge/huge/epic"] [exclude="false/true"] >
+
+	Popis parametru:
+	type : typ monstera, viz nize
+	count : pocet monsteru, ktere se na dane misto spawnou [default 1]
+	level : level monstera, obvykle staci 1 [default 1]
+	chance : sance, ze se dane monstrum spawne, v % [default 100]
+	location : pozice, kam se hra bude snazit monstrum v dane mistnosti spawnout, mozne hodnoty:
+		- center (=dostredu), left, right, up, down, largest (=najde nejvetsi otevrenou oblast v mistnosti)
+	room_size : kolik mista okolo sebe monstrum potrebuje = jak velky musi byt otevreny prostor v dane mistnosti, aby se do nej mohlo monstrum spawnout; [default small]; dostupne hodnoty:
+		- tiny (potrebuje uplne minimum mista - vhodne ke spawnuti monster i do uzkych chodeb, atd.), small (obvykle nejvhodnejsi), medium, large, verylarge, huge, epic
+
+	exclude : kdyz true, tak pokud se na dane misto spawne tento mob, uz se na to stejne misto v mistnosti NEMUZE spawnout jiny mob [default true]
+
+
+	==========
+	Dostupne typy monster:
+
+	========== 
+	Dole jsou nejaky priklady skupin co jsou predvytvoreny
+
+-->
+<data>
+	<main_room>
+
+
+		<group id="1" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="JumpCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+				
+		</group>
+
+		<group id="2" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="TankCell" count="5" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+				
+		</group>
+
+
+
+	</main_room>
+
+	<side_room>
+
+		<group min_level="2" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="TankCell" count="1" level="2" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob id="2" type="TankCell" count="1" level="2" chance="100" room_size="small" exclude="true" location="center"/>
+				
+		</group>
+
+	</side_room>
+
+	<bonus_room>
+
+	</bonus_room>
+
+	<boss_room>
+
+	</boss_room>
+
+	<end_room>
+
+	</end_room>
+
+	<start_room>
+
+	</start_room>
+</data>

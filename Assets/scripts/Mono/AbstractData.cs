@@ -303,7 +303,6 @@ namespace Assets.scripts.Mono
 		{
 			if (HasTargetToMoveTo && lastCheckVelocityTime + VELOCITY_CHECK_INTERVAL < Time.time)
 			{
-				Debug.Log(rb.velocity);
 				lastCheckVelocityTime = Time.time;
 
 				if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
@@ -603,15 +602,17 @@ namespace Assets.scripts.Mono
 			{
 				GetOwner().OnUpdate();
 			}
-			catch (NullReferenceException)
+			catch (Exception e)
 			{
+				Debug.Log(e.Message);
 				if (this is EnemyData)
 				{
-					Monster m = GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null);
+					//Monster m = GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null);
+
+					Monster m = GameSystem.Instance.RegisterNewCustomMonster((EnemyData) this, ((EnemyData) this).monsterTypeName, false, 1, null);
 					SetOwner(m);
 					WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
-					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " +
-					                 ((Monster) GetOwner()).Template.GetType().Name);
+					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " + ((Monster) GetOwner()).Template.GetType().Name);
 				}
 			}
 		}

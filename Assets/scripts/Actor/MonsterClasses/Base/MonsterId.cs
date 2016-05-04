@@ -18,7 +18,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
         Lymfocyte_melee = 5,
         Lymfocyte_ranged = 6,
-		HelperCell = 7,
+		BasicCell = 7,
 		PassiveHelperCell = 8,
 		SpiderCell = 9,
 		DementCell = 10,
@@ -34,14 +34,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		FourDiagShooterCell = 15,
 		ChargerCell = 16,
 		ArmoredCell = 17,
-		FloatingHelperCell = 18,
+		FloatingBasicCell = 18,
 		ObstacleCell = 19,
 		IdleObstacleCell = 20,
 		MorphCellBig = 21,
 		MorphCellMedium = 22,
 		MorphCellSmall = 23,
 
-		NonaggressiveHelperCell = 24,
+		NonaggressiveBasicCell = 24,
 		MissileTurretCell = 25,
 
 		DurableMeleeCell = 26,
@@ -56,6 +56,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		SlowerCell = 40,
 		RogueCell = 41,
 		HealerCell = 42,
+		PusherCell = 43,
+		SwarmCell = 44,
+
+		BasicMeleeCell = 45,
 
 		// bosses
 		TestBoss = 200,
@@ -63,5 +67,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		SwarmerBoss = 202,
 
 		SimpleBase = 500,
+
+		CustomMonster = 999,
 	}
 }

@@ -67,7 +67,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 				if (room.region.GetParentOrSelf().Equals(boss)) // boss room
 				{
 					Tile t = room.GetLargestSubRoom(true);
-					SpawnMonsterToRoom(room, MonsterId.SwarmerBoss, t, false, 1)
+					SpawnMonsterToRoom(room, MonsterId.SwarmerBoss.ToString(), t, false, 1)
 						.AddHealDrop(100, 10)
 						.AddDrop(33, ItemType.CLASSIC_UPGRADE, 2, 1)
 						.AddDrop(100, ItemType.CLASSIC_UPGRADE, 1, 1);
@@ -78,7 +78,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DementCell, t, true, 1).AddHealDrop(33);
+						SpawnMonsterToRoom(room, MonsterId.DementCell.ToString(), t, true, 1).AddHealDrop(33);
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(second)) // second room: jump cells, armored cell and floating ranged
@@ -87,21 +87,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.JumpCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.JumpCell.ToString(), t, true, mapLevel);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_CENTER, 1))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, true, mapLevel).AddHealDrop(33);
+						SpawnMonsterToRoom(room, MonsterId.ArmoredCell.ToString(), t, true, mapLevel).AddHealDrop(33);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.TINY, MapRoom.DIRECTION_CENTER, 2))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.FloatingBasicCell.ToString(), t, true, mapLevel);
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(thirdBig))
@@ -110,14 +110,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.SpiderCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.SpiderCell.ToString(), t, true, mapLevel);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER, 1))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.MorphCellBig, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.MorphCellBig.ToString(), t, true, mapLevel);
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(fourth))
@@ -126,7 +126,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.SuiciderCell.ToString(), t, true, mapLevel);
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(fifthBig))
@@ -135,25 +135,25 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.TankCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.TankCell.ToString(), t, true, mapLevel);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER, 1))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.MissileTurretCell, t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.MissileTurretCell.ToString(), t, true, mapLevel);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER_RIGHT, 1))
 					{
 						if (t == null) break;
 
-						MonsterSpawnInfo patrol = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, t, true, mapLevel);
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, true, mapLevel).master = patrol;
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, true, mapLevel).master = patrol;
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, true, mapLevel).master = patrol;
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, true, mapLevel).master = patrol;
+						MonsterSpawnInfo patrol = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol.ToString(), t, true, mapLevel);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), t, true, mapLevel).master = patrol;
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), t, true, mapLevel).master = patrol;
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged.ToString(), t, true, mapLevel).master = patrol;
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged.ToString(), t, true, mapLevel).master = patrol;
 					}
 				}
 				else if (room.region.GetParentOrSelf().Equals(end))
@@ -162,7 +162,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DementCell, t, true, 1).AddHealDrop(33);
+						SpawnMonsterToRoom(room, MonsterId.DementCell.ToString(), t, true, 1).AddHealDrop(33);
 					}
 				}
 			}

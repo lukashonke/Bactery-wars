@@ -9,7 +9,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public SpiderCell()
         {
-            MaxHp = 10;
+			Name = "Cell";
+			MaxHp = 10;
             MaxMp = 50;
             MaxSpeed = 8;
 

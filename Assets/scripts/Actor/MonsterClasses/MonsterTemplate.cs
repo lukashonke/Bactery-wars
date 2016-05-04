@@ -20,17 +20,19 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public List<Skill> TemplateSkills { get; set; }
 		public ActiveSkill MeleeSkill;
 
-		public string Name { get; protected set; }
+		public string Name { get; set; }
 
-		public int MaxHp { get; protected set; }
-		public int MaxMp { get; protected set; }
-		public float MaxSpeed { get; protected set; }
-		public float Shield { get; protected set; }
-		public int CriticalRate { get; protected set; } // 1000 equals 100% to critical strike
-		public float CriticalDamageMul { get; protected set; } // if critical strike, damage is multiplied by this value
+		public int MaxHp { get; set; }
+		public int MaxMp { get; set; }
+		public float MaxSpeed { get; set; }
+		public float Shield { get; set; }
+		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
+		public float CriticalDamageMul { get; set; } // if critical strike, damage is multiplied by this value
 
-		public int XpReward { get; protected set; }
-		public float XpLevelMul { get; protected set; }
+		public int HpLevelScale { get; set; }
+
+		public int XpReward { get; set; }
+		public float XpLevelMul { get; set; }
 
 		public bool ShowNameInGame = false;
 
@@ -63,6 +65,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 			CriticalDamageMul = 2f;
 			XpReward = 1;
 			XpLevelMul = 0.5f; // 50% more XP per each next level
+
+			HpLevelScale = 0;
 		}
 
 		public virtual int GetXp(Monster m)
@@ -91,9 +95,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public virtual void InitMonsterStats(Monster m, int level)
 		{
-			//Debug.Log("level is " + level);
-			//status.MaxHp = status.MaxHp * level;
-			//m.Status.SetHp(status.MaxHp);
+			m.Status.MaxHp = Scale(m.Status.MaxHp, HpLevelScale, level);
+			m.Status.SetHp(m.Status.MaxHp);
 		}
 
 		public virtual void InitAppearanceData(Monster m, EnemyData data)
@@ -116,5 +119,31 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public abstract GroupTemplate GetGroupTemplate();
 		public abstract MonsterId GetMonsterId();
+
+		public virtual string GetMonsterTypeName()
+		{
+			return GetMonsterId().ToString();
+		}
+
+		public virtual string GetFolderName()
+		{
+			return GetMonsterId().ToString();
+		}
+
+		protected int Scale(int defaultVal, int addPerLevel, int level)
+		{
+			return defaultVal + ((level - 1)*addPerLevel);
+		}
+
+		protected float Scale(float defaultVal, float addPerLevel, int level)
+		{
+			return defaultVal + ((level - 1) * addPerLevel);
+		}
+
+		/// <param name="mulPerLevel">0.3 --- +30% per level</param>
+		protected float ScalePercent(int defaultVal, float mulPerLevel, int level)
+		{
+			return defaultVal + defaultVal*((level - 1)*mulPerLevel);
+		}
 	}
 }

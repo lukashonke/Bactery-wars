@@ -74,7 +74,7 @@ namespace Assets.scripts.Mono
 		public Text[] statsTexts;
 
 		private List<SpawnData> adminSpawnedData;
-		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.HealerCell, MonsterId.SlowerCell, MonsterId.RogueCell, MonsterId.SniperCell, MonsterId.BigPassiveFloatingCell, MonsterId.BigPassiveCell, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, MonsterId.SwarmerBoss};
+		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.SwarmCell, MonsterId.PusherCell, MonsterId.HealerCell, MonsterId.SlowerCell, MonsterId.RogueCell, MonsterId.SniperCell, MonsterId.BigPassiveFloatingCell, MonsterId.BigPassiveCell, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingBasicCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.BasicCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, MonsterId.SwarmerBoss};
 		public GameObject adminPanel;
 		public Dropdown adminSpawnPanel;
 
@@ -742,6 +742,9 @@ namespace Assets.scripts.Mono
 			shopContent = GameObject.Find("ShopContent");
 			shopStatsViewPanel = GameObject.Find("ShopStatsViewPanel");
 			shopItemTemplate = Resources.Load<GameObject>("Sprite/inventory/ShopItem");
+
+			consoleCanvas = GameObject.Find("ConsoleCanvas").GetComponent<Canvas>();
+			consoleCanvas.enabled = false;
 
 			dialogConfirmObject = GameObject.Find("ConfirmDialog");
 			dialogConfirmPanel = dialogConfirmObject.transform.FindChild("ConfirmCanvasPanel").gameObject;
@@ -1752,6 +1755,44 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public bool consoleActive = false;
+		private Canvas consoleCanvas;
+
+		public void SwitchConsole()
+		{
+			InputField inputField = consoleCanvas.transform.FindChild("InputField").GetComponent<InputField>();
+
+			if (consoleCanvas.enabled)
+			{
+				consoleCanvas.enabled = false;
+				consoleActive = false;
+
+				inputField.text = "";
+			}
+			else
+			{
+				consoleCanvas.enabled = true;
+				consoleActive = true;
+
+				EventSystem.current.SetSelectedGameObject(inputField.gameObject, null);
+				inputField.OnPointerClick(new PointerEventData(EventSystem.current));
+
+				inputField.text = "";
+			}
+		}
+
+		public void OnEnter()
+		{
+			if (consoleCanvas.enabled)
+			{
+				InputField field = consoleCanvas.transform.FindChild("InputField").GetComponent<InputField>();
+				string msg = field.text;
+
+				GameSystem.Instance.AdminCommand(msg);
+				SwitchConsole();
+			}
+		}
+
 		public void SwitchInventory()
 		{
 			if (inventoryPanel != null)
@@ -1962,7 +2003,7 @@ namespace Assets.scripts.Mono
 
 		public void TestSpawnMonsters()
 		{
-			MonsterId mId = MonsterId.TestMonster;
+			/*MonsterId mId = MonsterId.TestMonster;
 
 			switch (Random.Range(1, 2))
 			{
@@ -1974,13 +2015,13 @@ namespace Assets.scripts.Mono
 					break;
 			}
 
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);*/
 		}
 
 		public void TestSpawnMonsters2()
 		{
-			MonsterId mId = MonsterId.TestMonster;
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
+			/*MonsterId mId = MonsterId.TestMonster;
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);*/
 		}
 
 		public void Skill(int order)
@@ -2038,7 +2079,7 @@ namespace Assets.scripts.Mono
 
 			if (mouseButton == 0)
 			{
-				Monster m = GameSystem.Instance.SpawnMonster((MonsterId)Enum.Parse(typeof(MonsterId), adminSpawnPanel.captionText.text), position, false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(adminSpawnPanel.captionText.text, position, false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 			}
 			else if (mouseButton == 1)
@@ -2057,12 +2098,13 @@ namespace Assets.scripts.Mono
 
 		struct SpawnData
 		{
-			public MonsterId id;
+			//public MonsterId id;
+			public string monsterTypeName;
 			public Vector3 pos;
 
-			public SpawnData(MonsterId id, Vector3 pos)
+			public SpawnData(string monsterTypeName, Vector3 pos)
 			{
-				this.id = id;
+				this.monsterTypeName = monsterTypeName;
 				this.pos = pos;
 			}
 		}
@@ -2077,7 +2119,7 @@ namespace Assets.scripts.Mono
 				{
 					if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
 					{
-						SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterId(), o.GetData().GetBody().transform.position);
+						SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterTypeName(), o.GetData().GetBody().transform.position);
 						adminSpawnedData.Add(data);
 					}
 				}
@@ -2088,7 +2130,7 @@ namespace Assets.scripts.Mono
 		{
 			foreach (SpawnData data in adminSpawnedData)
 			{
-				Monster m = GameSystem.Instance.SpawnMonster(data.id, data.pos, false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(data.monsterTypeName, data.pos, false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 			}
 		}

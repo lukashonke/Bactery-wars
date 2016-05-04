@@ -305,6 +305,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int DIRECTION_CENTER_LEFT = 6;
 		public const int DIRECTION_CENTER_RIGHT = 7;
 
+		public const int DIRECTION_LARGEST_ROOM = 10;
+
 		public Tile GetSubRoom(int minTiles, int maxRadius, int preferredDirection, bool exclude = false)
 		{
 			try

@@ -11,7 +11,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public SuiciderCell()
         {
-            MaxHp = 25;
+			Name = "Cell";
+			MaxHp = 25;
             MaxMp = 50;
             MaxSpeed = 6;
 

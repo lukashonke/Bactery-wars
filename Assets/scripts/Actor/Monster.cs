@@ -190,22 +190,22 @@ namespace Assets.scripts.Actor
 			}
 		}
 
-		public void SpawnAssociatedMonster(MonsterId id, int level)
+		public void SpawnAssociatedMonster(string monsterTypeName, int level)
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, SpawnInfo.SpawnPos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, SpawnInfo.SpawnPos);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 
 			map.AddMonsterToMap(info);
 		}
 
-		public Monster SpawnAssociatedMonster(MonsterId id, int level, Vector3 pos)
+		public Monster SpawnAssociatedMonster(string monsterTypeName, int level, Vector3 pos)
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 

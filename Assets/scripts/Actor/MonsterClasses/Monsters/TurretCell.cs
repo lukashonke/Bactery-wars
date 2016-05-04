@@ -11,6 +11,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public TurretCell()
 		{
+			Name = "Cell";
 			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 0;
@@ -37,7 +38,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitMonsterStats(Monster m, int level)
 		{
-			if(level == 2)
+			base.InitMonsterStats(m, level);
+
+			if (level == 2)
 				m.UpdateMaxHp(m.Status.MaxHp + 10);
 			else
 			{

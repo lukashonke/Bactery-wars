@@ -1,0 +1,6 @@
+Argument cannot be null.
+Parameter name: value 
+   at System.Enum.Parse (System.Type enumType, System.String value, Boolean ignoreCase) [0x00017] in /Users/builduser/buildslave/mono-runtime-and-classlibs/build/mcs/class/corlib/System/Enum.cs:608 
+  at System.Enum.Parse (System.Type enumType, System.String value) [0x00000] in /Users/builduser/buildslave/mono-runtime-and-classlibs/build/mcs/class/corlib/System/Enum.cs:547 
+  at Assets.scripts.Actor.MonsterClasses.Base.MonsterTemplateTable.LoadXml () [0x00127] in D:\Project\Bactery-wars\Assets\scripts\Actor\MonsterClasses\Base\MonsterTemplateTable.cs:162 
+  at Assets.scripts.Actor.MonsterClasses.Base.MonsterTemplateTable.Load () [0x00000] in D:\Project\Bactery-wars\Assets\scripts\Actor\MonsterClasses\Base\MonsterTemplateTable.cs:124 

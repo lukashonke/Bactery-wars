@@ -10,6 +10,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public SniperCell()
 		{
+			Name = "Cell";
 			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;

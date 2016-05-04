@@ -10,6 +10,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellBig()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -35,7 +36,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void OnDie(Monster m)
 		{
-			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellMedium, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellMedium.ToString(), m.Level, m.GetData().GetBody().transform.position);
 			child.AI.CopyAggroFrom(m.AI);
 		}
 
@@ -54,6 +55,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellMedium()
 		{
+			Name = "Cell";
 			MaxHp = 25;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -79,7 +81,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void OnDie(Monster m)
 		{
-			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellSmall, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellSmall.ToString(), m.Level, m.GetData().GetBody().transform.position);
 			child.AI.CopyAggroFrom(m.AI);
 		}
 
@@ -98,6 +100,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellSmall()
 		{
+			Name = "Cell";
 			MaxHp = 10;
 			MaxMp = 50;
 			MaxSpeed = 10;

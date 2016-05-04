@@ -10,7 +10,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public JumpCell()
         {
-            MaxHp = 30;
+			Name = "Decursio Cell";
+			MaxHp = 30;
             MaxMp = 50;
             MaxSpeed = 0;
 

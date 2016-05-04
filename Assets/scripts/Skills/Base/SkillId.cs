@@ -38,5 +38,8 @@ namespace Assets.scripts.Skills.Base
 		SlowBeam,
 		Teleport,
 		HealBeam,
+		PushBeam,
+
+		SwarmSkill,
 	}
 }

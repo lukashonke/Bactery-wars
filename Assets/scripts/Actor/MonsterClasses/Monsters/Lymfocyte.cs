@@ -9,7 +9,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
         public LymfocyteRanged()
         {
-            MaxHp = 20;
+			Name = "Cell";
+			MaxHp = 20;
             MaxMp = 50;
             MaxSpeed = 10;
 
@@ -46,6 +47,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
         public LymfocyteMelee()
 		{
+			Name = "Cell";
 			MaxHp = 20;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -82,6 +84,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public DurableMeleeCell()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -118,6 +121,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public SwarmerMeleeCell()
 		{
+			Name = "Cell";
 			MaxHp = 40;
 			MaxMp = 50;
 			MaxSpeed = 10;

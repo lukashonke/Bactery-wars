@@ -530,49 +530,52 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Space))
+			if (GameSystem.Instance.CurrentPlayer.GetData().ui.consoleActive == false)
 			{
-				Camera.main.orthographicSize = 55;
-				RegenMap();
-
-				activeMap.PrintMapToTxt();
-			}
-
-			if (Input.GetKeyDown(KeyCode.N))
-			{
-				Cords c = activeMap.Position;
-				Cords newC = new Cords(c.x + 1, c.y);
-
-				bool onlyReload = true;
-				if (!maps.ContainsKey(newC))
+				if (Input.GetKeyDown(KeyCode.Space))
 				{
-					GenerateNextLevel(1);
-					onlyReload = false;
+					Camera.main.orthographicSize = 55;
+					RegenMap();
+
+					activeMap.PrintMapToTxt();
 				}
 
-				activeMap.levelData.LevelReward.DoDrop(null, GameSystem.Instance.CurrentPlayer, true);
+				if (Input.GetKeyDown(KeyCode.N))
+				{
+					Cords c = activeMap.Position;
+					Cords newC = new Cords(c.x + 1, c.y);
 
-				SetActiveLevel(newC.x, newC.y, onlyReload);
+					bool onlyReload = true;
+					if (!maps.ContainsKey(newC))
+					{
+						GenerateNextLevel(1);
+						onlyReload = false;
+					}
 
-				GameObject player = GameObject.Find("Player");
-				player.transform.position = WorldHolder.instance.GetStartPosition();
+					activeMap.levelData.LevelReward.DoDrop(null, GameSystem.Instance.CurrentPlayer, true);
+
+					SetActiveLevel(newC.x, newC.y, onlyReload);
+
+					GameObject player = GameObject.Find("Player");
+					player.transform.position = WorldHolder.instance.GetStartPosition();
+				}
+
+				if (Input.GetKeyDown(KeyCode.P))
+				{
+					Cords c = activeMap.Position;
+					Cords newC = new Cords(c.x - 1, c.y);
+
+					SetActiveLevel(newC.x, newC.y);
+
+					GameObject player = GameObject.Find("Player");
+					player.transform.position = WorldHolder.instance.GetStartPosition();
+				}
+
+				if (Input.GetKeyDown(KeyCode.S))
+				{
+					SaveCurrentMap();
+				}
 			}
-
-			if (Input.GetKeyDown(KeyCode.P))
-			{
-				Cords c = activeMap.Position;
-				Cords newC = new Cords(c.x - 1, c.y);
-
-				SetActiveLevel(newC.x, newC.y);
-
-				GameObject player = GameObject.Find("Player");
-				player.transform.position = WorldHolder.instance.GetStartPosition();
-			}
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                SaveCurrentMap();
-            }
 		}
 
 		// temp from mobile

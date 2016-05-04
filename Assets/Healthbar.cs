@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.scripts;
+using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 
@@ -86,7 +88,15 @@ public class Healthbar : MonoBehaviour
 			float x = position.x - 30;
 			float y = Screen.height - position.y;
 
-			GUI.Label(new Rect(x, y, 60, 20), ownerData.GetOwner().Name, labelStyle);
+			string name = ownerData.GetOwner().Name;
+
+			if (ownerData.GetOwner() is Monster)
+			{
+				MonsterTemplate template = ((Monster) ownerData.GetOwner()).Template;
+				name = template.Name;
+			}
+
+			GUI.Label(new Rect(x, y, 60, 20), name, labelStyle);
 		}
 	}
 

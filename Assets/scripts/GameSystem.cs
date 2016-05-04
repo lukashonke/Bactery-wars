@@ -44,9 +44,14 @@ namespace Assets.scripts
 		private bool paused;
 		public bool Paused
 		{
-			get { return paused; }
+			get
+			{
+				Debug.Log("is paused asing?");
+				return paused;
+			}
 			set
 			{
+				Debug.Log("setting puse to " + value);
 				paused = value;
 				if (paused)
 				{
@@ -79,6 +84,97 @@ namespace Assets.scripts
 		{
 			if(CurrentPlayer != null)
 				CurrentPlayer.Message(msg, level);
+		}
+
+		public void AdminCommand(string msg)
+		{
+			if (msg.ToLower().StartsWith("help"))
+			{
+				BroadcastMessage("group [group-ID]   - spawne grupu mobu z SpawnData.xml (automaticky zvoli groupy z kategorie main_room)");
+				//BroadcastMessage("spawn [type] [group-ID]   - spawne grupu mobu z SpawnData.xml (za type se pise \"main\" \"side\" \"bonus\" \"boss\" \"end\" \"start\" a to da kategorii ze ktery se groupa bere)");
+			}
+
+			if (msg.ToLower().StartsWith("spawn "))
+			{
+				MonsterTemplateTable.Instance.Load();
+
+				string[] args = msg.Split(' ');
+				string type = null;
+
+				try
+				{
+					type = args[1];
+				}
+				catch (Exception)
+				{
+					BroadcastMessage("spatne parametry - treba zadat jmeno monstera, ve jmenu nesmi byt mezera");
+					return;
+				}
+
+				Tile t = WorldHolder.instance.activeMap.GetTileFromWorldPosition(CurrentPlayer.GetData().GetBody().transform.position);
+
+				if (t == null)
+					return;
+
+				Monster m = GameSystem.Instance.SpawnMonster(type, Utils.GenerateRandomPositionAround(CurrentPlayer.GetData().GetBody().transform.position, 7, 4), false, 1);
+				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
+			}
+
+			// spawn GROUP_ID || spawn TYPE GROUP_ID
+			if (msg.ToLower().StartsWith("spawngroup ") || msg.ToLower().StartsWith("group "))
+			{
+				MonsterGenerator.Instance.LoadXmlFile();
+
+				string[] args = msg.ToLower().Split(' ');
+				int id;
+				string type;
+
+				try
+				{
+					id = Int32.Parse(args[1]);
+					type = "main";
+				}
+				catch (Exception)
+				{
+					type = args[1];
+					id = Int32.Parse(args[2]);
+				}
+				
+
+				MonsterGenerator.RoomType currentRoomType = MonsterGenerator.RoomType.MAIN_ROOM;
+
+				switch (type)
+				{
+					case "main":
+						currentRoomType = MonsterGenerator.RoomType.MAIN_ROOM;
+						break;
+					case "side":
+						currentRoomType = MonsterGenerator.RoomType.SIDE_ROOM;
+						break;
+					case "bonus":
+						currentRoomType = MonsterGenerator.RoomType.BONUS_ROOM;
+						break;
+					case "boss":
+						currentRoomType = MonsterGenerator.RoomType.BOSS_ROOM;
+						break;
+					case "end":
+						currentRoomType = MonsterGenerator.RoomType.END_ROOM;
+						break;
+					case "start":
+						currentRoomType = MonsterGenerator.RoomType.START_ROOM;
+						break;
+				}
+
+				Tile t = WorldHolder.instance.activeMap.GetTileFromWorldPosition(CurrentPlayer.GetData().GetBody().transform.position);
+
+				if (t == null)
+					return;
+
+				MapRoom room = t.region.GetParentOrSelf().GetMapRoom();
+
+				MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, WorldHolder.instance.activeMap.levelData, currentRoomType, 2, id);
+				BroadcastMessage("Spawned group ID " + id + " (roomtype " + currentRoomType + ")");
+			}
 		}
 
 		public Coroutine StartTask(IEnumerator task)
@@ -235,11 +331,12 @@ namespace Assets.scripts
 			return player;
 		}
 
-		public Monster RegisterNewMonster(EnemyData data, String name, int id, int level, Dictionary<string, string> parameters)
+		/*public Monster RegisterNewMonster(EnemyData data, String name, int id, int level, Dictionary<string, string> parameters)
 		{
 			Monster monster;
 
 			MonsterId mId = (MonsterId) Enum.Parse(typeof (MonsterId), ""+id);
+
 			MonsterTemplate mt = MonsterTemplateTable.Instance.GetType(mId);
 
 			if (mt is BossTemplate)
@@ -258,7 +355,7 @@ namespace Assets.scripts
 			monster.InitTemplate();
 
 			return monster;
-		}
+		}*/
 
 		//TODO make use of parameters dictionary to pass level, etc
 		private Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion, int level, Dictionary<string, string> parameters=null)
@@ -285,6 +382,53 @@ namespace Assets.scripts
 			return monster;
 		}
 
+		public Monster RegisterNewCustomMonster(EnemyData data, MonsterTemplate mt, bool isMinion, int level, Dictionary<string, string> parameters = null)
+		{
+			Monster monster;
+
+			if (mt is BossTemplate)
+			{
+				monster = new Boss(mt.Name, data, (BossTemplate)mt);
+			}
+			else
+			{
+				monster = new Monster(mt.Name, data, mt);
+			}
+
+			data.SetOwner(monster);
+			monster.SetLevel(level);
+			monster.Init();
+
+			monster.isMinion = isMinion;
+			monster.InitTemplate();
+
+			return monster;
+		}
+
+		public Monster RegisterNewCustomMonster(EnemyData data, string monsterTypeName, bool isMinion, int level, Dictionary<string, string> parameters = null)
+		{
+			Monster monster;
+			MonsterTemplate mt = MonsterTemplateTable.Instance.GetType(monsterTypeName);
+
+			if (mt is BossTemplate)
+			{
+				monster = new Boss(mt.Name, data, (BossTemplate)mt);
+			}
+			else
+			{
+				monster = new Monster(mt.Name, data, mt);
+			}
+
+			data.SetOwner(monster);
+			monster.SetLevel(level);
+			monster.Init();
+
+			monster.isMinion = isMinion;
+			monster.InitTemplate();
+
+			return monster;
+		}
+
 		public Npc RegisterNewNpc(EnemyData data, MonsterId id)
 		{
 			Npc npc;
@@ -298,7 +442,14 @@ namespace Assets.scripts
 			return npc;
 		}
 
-		public Npc SpawnNpc(MonsterId id, Vector3 position)
+		public Npc SpawnNpc(string npcTypeName, Vector3 position)
+		{
+			MonsterId id = (MonsterId) Enum.Parse(typeof (MonsterId), npcTypeName);
+
+			return SpawnNpc(id, position);
+		}
+
+		private Npc SpawnNpc(MonsterId id, Vector3 position)
 		{
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
 			if (go == null)
@@ -310,6 +461,7 @@ namespace Assets.scripts
 			return RegisterNewNpc(data, id);
 		}
 
+		// deprecated
 		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion, int level, int team=0)
 		{
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
@@ -324,6 +476,63 @@ namespace Assets.scripts
 				m.Team = team;
 
 			return m;
+		}
+
+		public Monster SpawnMonster(string monsterTypeName, Vector3 position, bool isMinion, int level, int team = 0)
+		{
+			MonsterTemplate template = MonsterTemplateTable.Instance.GetType(monsterTypeName);
+
+			if (template == null)
+				throw new NullReferenceException("cant find monstertemplate for " + monsterTypeName);
+
+			string name = template.GetFolderName();
+
+			GameObject go = Resources.Load("Prefabs/entity/" + name + "/" + name) as GameObject;
+
+			if (go == null)
+				throw new NullReferenceException("Prefabs/entity/" + name + "/" + name);
+
+			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
+			EnemyData data = result.GetComponent<EnemyData>();
+
+			Monster m = RegisterNewCustomMonster(data, template, isMinion, level);
+			if (team > 0)
+				m.Team = team;
+
+			return m;
+		}
+
+		public Boss SpawnBoss(string monsterTypeName, Vector3 position, int level)
+		{
+			MonsterTemplate template = MonsterTemplateTable.Instance.GetType(monsterTypeName);
+
+			if (template == null)
+				throw new NullReferenceException("cant find monstertemplate for " + monsterTypeName);
+
+			string name;
+			if (template.GetMonsterId() == MonsterId.CustomMonster)
+				name = ((CustomMonsterTemplate)template).GetOldTemplateFolderId();
+			else
+				name = template.GetMonsterId().ToString();
+
+			GameObject go = Resources.Load("Prefabs/entity/" + name + "/" + name) as GameObject;
+			if (go == null)
+				throw new NullReferenceException("Prefabs/entity/" + name + "/" + name);
+
+			GameObject result = Object.Instantiate(go, position, Quaternion.identity) as GameObject;
+			EnemyData data = result.GetComponent<EnemyData>();
+
+			//Monster m = RegisterNewMonster(data, id, false, level);
+			Monster m = RegisterNewCustomMonster(data, template, false, level);
+			if (m is Boss)
+			{
+				return (Boss)m;
+			}
+			else
+			{
+				Debug.LogError("tried to spawn boss - but it was a monster ! fix it in data");
+				throw new NullReferenceException();
+			}
 		}
 
 		public Boss SpawnBoss(MonsterId id, Vector3 position, int level)

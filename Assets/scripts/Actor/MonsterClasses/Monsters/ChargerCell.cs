@@ -10,7 +10,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public ChargerCell()
         {
-            MaxHp = 20;
+			Name = "Cell";
+			MaxHp = 20;
             MaxMp = 50;
             MaxSpeed = 1;
 

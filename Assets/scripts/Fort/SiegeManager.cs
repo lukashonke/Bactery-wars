@@ -21,8 +21,8 @@ namespace Assets.scripts.Fort
 
 			currentSiege.mobs.Add(new SiegeMobData(MonsterId.Neutrophyle_Patrol, 1, 0, 1, Siege.DIRECTION_RIGHT));
 			currentSiege.mobs.Add(new SiegeMobData(MonsterId.Neutrophyle_Patrol, 1, 0, 1, Siege.DIRECTION_RIGHT));
-			currentSiege.mobs.Add(new SiegeMobData(MonsterId.FloatingHelperCell, 1, 5, 1, Siege.DIRECTION_RIGHT));
-			currentSiege.mobs.Add(new SiegeMobData(MonsterId.FloatingHelperCell, 1, 5, 1, Siege.DIRECTION_RIGHT));
+			currentSiege.mobs.Add(new SiegeMobData(MonsterId.FloatingBasicCell, 1, 5, 1, Siege.DIRECTION_RIGHT));
+			currentSiege.mobs.Add(new SiegeMobData(MonsterId.FloatingBasicCell, 1, 5, 1, Siege.DIRECTION_RIGHT));
 
 			currentSiege.StartSiege();
 		}

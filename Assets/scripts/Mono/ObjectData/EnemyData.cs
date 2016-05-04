@@ -1,7 +1,10 @@
-﻿using Assets.scripts.Actor;
+﻿using System;
+using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.ObjectData
 {
@@ -10,6 +13,7 @@ namespace Assets.scripts.Mono.ObjectData
 		private Monster owner;
 
 		public int monsterId;
+		public string monsterTypeName = null;
 
 		public int distanceToFollowLeader = 8;
 
@@ -17,6 +21,18 @@ namespace Assets.scripts.Mono.ObjectData
 		public new void Start()
 		{
 			base.Start();
+
+			if (monsterTypeName == null)
+			{
+				try
+				{
+					monsterTypeName = Enum.GetName(typeof(MonsterId), "" + monsterId);
+				}
+				catch (Exception)
+				{
+					Debug.LogError("cant get name for monsterId " + monsterId);
+				}
+			}
 
 			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
 			//Debug.Log("Registering new data for monster ");

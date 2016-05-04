@@ -270,3 +270,30 @@ FindBoss
 0 0 45 313 (s:0, 0)
 
 313, 313, 313, 
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+
+GenericMonster
+
+

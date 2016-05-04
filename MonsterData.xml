@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+	<monster>
+		<name>Nicitel</name>
+		<template>TankCell</template>
+		<stats> 
+			<MaxHp>150</MaxHp>
+			<MaxHp_scale>50</MaxHp_scale>
+			<MaxSpeed>13</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>15</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>true</AlertsAllies>
+
+			<XpReward>3</XpReward>
+		</stats>
+
+	</monster>
+</data>

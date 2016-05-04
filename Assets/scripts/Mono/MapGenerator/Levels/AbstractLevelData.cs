@@ -72,7 +72,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
 		}
 
-		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, MonsterId id, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
+		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, string monsterTypeName, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -88,14 +88,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 				for (int i = 0; i < countMobsPerRoom; i++)
 				{
-					info = SpawnMonsterToRoom(room, id, t, randomOffset, level);
+					info = SpawnMonsterToRoom(room, monsterTypeName, t, randomOffset, level);
 				}
 			}
 
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Tile roomTile, bool randomOffset=false, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, string monsterTypeName, Tile roomTile, bool randomOffset=false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -104,7 +104,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			if (randomOffset)
 				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 
@@ -112,7 +112,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Vector3 pos, bool randomOffset = false, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, string monsterTypeName, Vector3 pos, bool randomOffset = false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -120,7 +120,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			if (randomOffset)
 				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 

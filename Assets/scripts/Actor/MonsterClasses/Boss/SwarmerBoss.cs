@@ -33,7 +33,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 
 			sk.castTime = 0;
 			sk.reuse = 0f;
-			sk.mobToSpawn = MonsterId.SwarmerMeleeCell;
+			sk.mobToSpawn = MonsterId.SwarmerMeleeCell.ToString();
 		}
 
 		public override MonsterAI CreateAI(Character ch)

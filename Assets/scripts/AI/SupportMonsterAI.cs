@@ -129,6 +129,8 @@ namespace Assets.scripts.AI
 							return;
 					}
 				}
+
+				//TODO add buffdamage skills
 			}
 
             if (evadeInterval > -1 && lastEvadeTime + evadeInterval < Time.time)

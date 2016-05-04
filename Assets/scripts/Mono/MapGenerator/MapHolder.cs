@@ -866,7 +866,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				foreach (MonsterSpawnInfo info in spawnableNpcs)
 				{
-				    AddNpcToMap(info.MonsterId, info.SpawnPos, true);
+				    AddNpcToMap(info.MonsterTypeName, info.SpawnPos, true);
 				}
 			}
 			catch (Exception e)
@@ -928,7 +928,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
+					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -1248,20 +1248,20 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		public Npc AddShopToMap(MonsterId monsterId, Vector3 position, ShopData data, bool forceSpawnNow = false)
+		public Npc AddShopToMap(string npcTypeName, Vector3 position, ShopData data, bool forceSpawnNow = false)
 		{
-			Npc npc = AddNpcToMap(monsterId, position, forceSpawnNow);
+			Npc npc = AddNpcToMap(npcTypeName, position, forceSpawnNow);
 
 			mapShop = data;
 
 			return npc;
 		}
 
-		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
+		public Npc AddNpcToMap(string monsterTypeName, Vector3 position, bool forceSpawnNow=false)
 		{
 			if (isActive || forceSpawnNow)
 			{
-                Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
+                Npc npc = GameSystem.Instance.SpawnNpc(monsterTypeName, position);
 
                 RegisterNpcToMap(npc);
 
@@ -1269,7 +1269,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			// ulozit NPC do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
-			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterId, position));
+			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterTypeName, position));
 			return null;
 		}
 
@@ -1277,7 +1277,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	    {
 	        if (isActive || forceSpawnNow)
 	        {
-                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false, info.level);
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterTypeName, info.SpawnPos, false, info.level);
                 m.SetSpawnInfo(info);
 
                 RegisterMonsterToMap(m, info);
@@ -1295,7 +1295,7 @@ namespace Assets.scripts.Mono.MapGenerator
             if (info == null)
             {
                 Vector3 pos = m.GetData().GetBody().transform.position;
-                info = new MonsterSpawnInfo(this, m.Template.GetMonsterId(), pos);
+                info = new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), pos);
 
                 MapRegion reg = GetRegionFromWorldPosition(pos);
 

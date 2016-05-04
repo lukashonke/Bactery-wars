@@ -256,7 +256,7 @@ namespace Assets.scripts.Mono.MapGenerator
 							}
 						}
 
-						mapHolder.AddShopToMap(MonsterId.Shop, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left * 2, mapHolder.levelData.shopData);
+						mapHolder.AddShopToMap(MonsterId.Shop.ToString(), mapHolder.GetTileWorldPosition(mostRight) + Vector3.left * 2, mapHolder.levelData.shopData);
 					}
 				}
 			}
@@ -310,7 +310,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
-					mapHolder.AddNpcToMap(MonsterId.TeleporterIn, mapHolder.GetTileWorldPosition(mostLeft) + Vector3.right*2);
+					mapHolder.AddNpcToMap(MonsterId.TeleporterIn.ToString(), mapHolder.GetTileWorldPosition(mostLeft) + Vector3.right*2);
 				}
 
 				if (room.region.hasOutTeleporter)
@@ -327,7 +327,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
-					mapHolder.AddNpcToMap(MonsterId.TeleporterOut, mapHolder.GetTileWorldPosition(mostRight) + Vector3.left*2);
+					mapHolder.AddNpcToMap(MonsterId.TeleporterOut.ToString(), mapHolder.GetTileWorldPosition(mostRight) + Vector3.left*2);
 				}
 			}
 		}

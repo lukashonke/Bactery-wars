@@ -368,140 +368,29 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			{
 				if (room.region.GetParentOrSelf().Equals(start))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.START_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.START_ROOM, difficulty);
 				}
 				else if (mainRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.MAIN_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.MAIN_ROOM, difficulty);
 				}
 				else if (sideRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.SIDE_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.SIDE_ROOM, difficulty);
 				}
 				else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BONUS_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BONUS_ROOM, difficulty);
 				}
 				else if (room.region.GetParentOrSelf().Equals(boss))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BOSS_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BOSS_ROOM, difficulty);
 				}
 				else if (room.region.GetParentOrSelf().Equals(end))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.END_ROOM, MonsterGenerator.RoomSize.MEDIUM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.END_ROOM, difficulty);
 				}
 			}
-
-			if (difficulty == 1) // EASY
-			{
-				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
-				{
-					if (room.region.GetParentOrSelf().Equals(start))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
-					}
-					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
-					}
-					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
-					}
-					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(boss))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(end))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
-					}
-				}
-			}
-			else if (difficulty == 2) // MEDIUM
-			{
-				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
-				{
-					if (room.region.GetParentOrSelf().Equals(start))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
-					}
-					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
-					}
-					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
-					}
-					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(boss))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(end))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
-					}
-				}
-			}
-			else if (difficulty == 3) // HARD
-			{
-				foreach (MapRoom room in map.GetMapRooms()) // TODO throws NPE sometimes
-				{
-					if (room.region.GetParentOrSelf().Equals(start))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.FloatingHelperCell, t, false, 1);
-					}
-					else if (mainRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankCell, t, false, 1);
-					}
-					else if (sideRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.ArmoredCell, t, false, 1);
-					}
-					else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.DementCell, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(boss))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1);
-					}
-					else if (room.region.GetParentOrSelf().Equals(end))
-					{
-						Tile t = room.GetLargestSubRoom(true);
-						SpawnMonsterToRoom(room, MonsterId.SuiciderCell, t, false, 1);
-					}
-				}
-			}
-
-
 
             Utils.Timer.EndTimer("spawnmap");
 		}

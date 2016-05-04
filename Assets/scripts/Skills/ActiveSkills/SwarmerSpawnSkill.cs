@@ -20,7 +20,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public int countMinions = 1;
 
-		public MonsterId mobToSpawn;
+		public string mobToSpawn;
 
 		public Monster lastSpawned;
 
@@ -32,7 +32,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
 
-			mobToSpawn = MonsterId.Lymfocyte_melee;
+			mobToSpawn = MonsterId.Lymfocyte_melee.ToString();
 		}
 
 		public override SkillId GetSkillId()

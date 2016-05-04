@@ -10,7 +10,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public FourDiagShooterCell()
         {
-            MaxHp = 40;
+			Name = "Cell";
+			MaxHp = 40;
             MaxMp = 50;
             MaxSpeed = 6;
 
