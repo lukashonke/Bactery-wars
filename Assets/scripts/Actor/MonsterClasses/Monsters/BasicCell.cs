@@ -28,7 +28,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         protected override void AddSkillsToTemplate()
         {
-            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
         }
 
 		public override void InitMonsterStats(Monster m, int level)
@@ -38,7 +38,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 	    {
-			SkillTestProjectile skill = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+			Projectile skill = set.GetSkill(SkillId.Projectile) as Projectile;
 		    skill.range = 8;
 		    skill.castTime = 1f;
 	    }
@@ -128,7 +128,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
 
 		public override void InitMonsterStats(Monster m, int level)
@@ -139,7 +139,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			SkillTestProjectile skill = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+			Projectile skill = set.GetSkill(SkillId.Projectile) as Projectile;
 			skill.range = 12;
 			skill.castTime = 1f;
 			skill.reuse = 0.5f;
@@ -179,7 +179,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)

@@ -25,14 +25,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileAllAround));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
 		}
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			SkillTestProjectileAllAround sk = set.GetSkill(SkillId.SkillTestProjectileAllAround) as SkillTestProjectileAllAround;
+			ProjectileAllAround sk = set.GetSkill(SkillId.ProjectileAllAround) as ProjectileAllAround;
 
 			sk.baseDamage = 10;
 			sk.projectileCount = 12;

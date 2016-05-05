@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SkillTestProjectileTriple : SkillTestProjectile
+	public class ProjectileTriple : Projectile
 	{
-		public SkillTestProjectileTriple()
+		public ProjectileTriple()
 		{
 			castTime = 0;
 			reuse = 0.5f;
@@ -18,7 +18,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.SkillTestProjectileTriple;
+			return SkillId.ProjectileTriple;
 		}
 
 		public override string GetVisibleName()
@@ -28,7 +28,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectileTriple();
+			return new ProjectileTriple();
 		}
 
 		public override void OnBeingConfirmed()

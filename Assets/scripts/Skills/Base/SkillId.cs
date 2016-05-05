@@ -8,9 +8,9 @@ namespace Assets.scripts.Skills.Base
 	public enum SkillId
 	{
 		SkillTemplate,
-		SkillTestProjectile,
-		SkillTestProjectileAllAround,
-		SkillTestProjectileTriple,
+		Projectile,
+		ProjectileAllAround,
+		ProjectileTriple,
 
 		SkillAreaExplode,
 		MissileProjectile,

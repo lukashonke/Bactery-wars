@@ -314,7 +314,6 @@ namespace Assets.scripts.Mono
 					}
 					else
 					{
-						Debug.Log("breaking movementEnabled!");
 						BreakMovement(true);
 						wasCloseTozero = false;
 					}
@@ -1414,7 +1413,6 @@ namespace Assets.scripts.Mono
 
 					if (damage > 0)
 					{
-						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
 						GetOwner().ReceiveDamage(null, damage, 0);
 					}
 

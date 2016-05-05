@@ -25,12 +25,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			SkillTestProjectile sk = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+			Projectile sk = set.GetSkill(SkillId.Projectile) as Projectile;
 
 			sk.castTime = 0.5f;
 			sk.range = AggressionRange;

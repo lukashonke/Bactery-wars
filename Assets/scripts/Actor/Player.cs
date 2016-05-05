@@ -135,8 +135,6 @@ namespace Assets.scripts.Actor
 
 		public override void UpdateStats()
 		{
-			Debug.Log("updating stats");
-
 			int tmpMaxHp = Template.MaxHp;
 			int tmpMaxMp = Template.MaxMp;
 			int tmpCritRate = Template.CriticalRate;

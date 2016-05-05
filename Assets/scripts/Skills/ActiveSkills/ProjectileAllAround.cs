@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SkillTestProjectileAllAround : SkillTestProjectile
+	public class ProjectileAllAround : Projectile
 	{
 		public int projectileCount = 12;
 
-		public SkillTestProjectileAllAround()
+		public ProjectileAllAround()
 		{
 			castTime = 2f;
 			reuse = 0.5f;
@@ -20,7 +20,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.SkillTestProjectileAllAround;
+			return SkillId.ProjectileAllAround;
 		}
 
 		public override string GetVisibleName()
@@ -30,7 +30,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectileAllAround();
+			return new ProjectileAllAround();
 		}
 
 		public override void OnLaunch()

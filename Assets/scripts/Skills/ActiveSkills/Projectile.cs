@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SkillTestProjectile : ActiveSkill
+	public class Projectile : ActiveSkill
 	{
 		private GameObject activeProjectile;
 
 		public int force;
 
-		public SkillTestProjectile()
+		public Projectile()
 		{
 			castTime = 0f;
 			reuse = 1;
@@ -28,7 +28,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.SkillTestProjectile;
+			return SkillId.Projectile;
 		}
 
 		public override string GetVisibleName()
@@ -38,7 +38,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override Skill Instantiate()
 		{
-			return new SkillTestProjectile();
+			return new Projectile();
 		}
 
 		public override SkillEffect[] CreateEffects(int param)

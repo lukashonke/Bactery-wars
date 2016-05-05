@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
-	<monster>
-		<name>Nicitel</name>
+	<monster name="Nicitel">
+		<visibleName>Nicitel</visibleName>
 		<template>TankCell</template>
 		<stats> 
 			<MaxHp>150</MaxHp>
@@ -15,6 +15,12 @@
 
 			<XpReward>3</XpReward>
 		</stats>
+
+		<ai type="Melee">
+			<dodgeRate>75</dodgeRate>
+		</ai>
+
+
 
 	</monster>
 </data>

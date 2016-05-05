@@ -46,12 +46,10 @@ namespace Assets.scripts
 		{
 			get
 			{
-				Debug.Log("is paused asing?");
 				return paused;
 			}
 			set
 			{
-				Debug.Log("setting puse to " + value);
 				paused = value;
 				if (paused)
 				{
@@ -210,8 +208,6 @@ namespace Assets.scripts
 
 		public void UpdatePathfinding(Vector3 center, int tilesPerRegionX, int tilesPerRegionY, int mapWidth, int mapHeight)
 		{
-			Debug.Log(mapWidth + ", " + mapHeight);
-			Debug.Log(center);
 			AstarPath ap = Controller.GetComponent<AstarPath>();
 
 			foreach (IUpdatableGraph g in AstarPath.active.astarData.GetUpdateableGraphs())

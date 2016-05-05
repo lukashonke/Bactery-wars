@@ -271,7 +271,6 @@ namespace Assets.scripts.AI
 
 						if (monster.AI.State != AIState.ATTACKING)
 						{
-							Debug.Log("notified " + monster.Name);
 							monster.AI.AddAggro(target, 1);
 							continue;
 						}
@@ -536,8 +535,6 @@ namespace Assets.scripts.AI
 		{
 			if(ch == null)
 				return;
-
-			Debug.Log("adding " + points);
 
 			if (!aggro.ContainsKey(ch))
 			{

@@ -134,6 +134,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		private void LoadXml()
 		{
+			customTypes.Clear();
+
 			XmlDocument doc = new XmlDocument();
 			doc.Load("MonsterData.xml");
 
@@ -146,6 +148,17 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 				if (!monsterNode.Name.Equals("monster")) continue;
 
 				newTemplate = new CustomMonsterTemplate();
+
+				if (monsterNode.Attributes != null)
+				{
+					foreach (XmlAttribute attr in monsterNode.Attributes)
+					{
+						if (attr.Name == "name")
+						{
+							newTemplate.TemplateName = attr.Value;
+						}
+					}
+				}
 
 				foreach (XmlNode mainParam in monsterNode.ChildNodes)
 				{
@@ -199,6 +212,32 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 										newTemplate.XpReward = Int32.Parse(statNode.InnerText);
 										break;
 								}
+							}
+
+							break;
+						case "ai":
+
+							string aiType = null;
+
+							if (mainParam.Attributes != null)
+							{
+								foreach (XmlAttribute attr in mainParam.Attributes)
+								{
+									if (attr.Name == "type")
+									{
+										aiType = attr.Value;
+									}
+								}
+							}
+
+							if (aiType == null)
+								continue;
+
+							newTemplate.AiType = aiType + "MonsterAI";
+
+							foreach (XmlNode statNode in mainParam.ChildNodes)
+							{
+								newTemplate.AddAiParam(statNode.Name, statNode.InnerText);
 							}
 
 							break;

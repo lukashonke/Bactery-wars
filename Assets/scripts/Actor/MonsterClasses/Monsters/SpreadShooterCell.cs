@@ -23,12 +23,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
         protected override void AddSkillsToTemplate()
         {
-            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround));
+            TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileAllAround));
         }
 
 	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 	    {
-			SkillTestProjectileAllAround skill = set.GetSkill(SkillId.SkillTestProjectileAllAround) as SkillTestProjectileAllAround;
+			ProjectileAllAround skill = set.GetSkill(SkillId.ProjectileAllAround) as ProjectileAllAround;
 
 		    skill.projectileCount = 4;
 		    skill.range = 13;

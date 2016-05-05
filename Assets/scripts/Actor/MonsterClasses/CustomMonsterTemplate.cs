@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
@@ -18,8 +19,14 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public string TemplateName { get; set; }
 
+		public string AiType { get; set; }
+		public Dictionary<string, string> AiParams { get; set; } 
+
 		public CustomMonsterTemplate()
 		{
+			AiType = null;
+			AiParams = new Dictionary<string, string>();
+
 			Name = "Custom Cell";
 			MaxHp = 20;
 			MaxMp = 50;
@@ -30,6 +37,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 			RambleAround = false;
 			AlertsAllies = false;
 			XpReward = 3;
+		}
+
+		public void AddAiParam(string key, string value)
+		{
+			AiParams.Add(key, value);
 		}
 
 		protected override void AddSkillsToTemplate()
@@ -62,16 +74,69 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			if (OldTemplate != null)
+			if (AiType != null)
+			{
+				MonsterAI ai = null;
+				MonsterTemplate t;
+				List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.AI", true, typeof(MonsterAI));
+
+				foreach (Type type in types)
+				{
+					if (type.Name.Equals(AiType, StringComparison.InvariantCultureIgnoreCase))
+					{
+						ai = Activator.CreateInstance(type, ch) as MonsterAI;
+						break;
+					}
+				}
+
+				if (ai == null)
+					throw new NullReferenceException("CustomAIType " + AiType + " doesnt exist!");
+
+				FieldInfo field;
+				foreach (KeyValuePair<string, string> e in AiParams)
+				{
+					string key = e.Key;
+					string value = e.Value;
+
+					field = ai.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
+					if (field != null)
+					{
+						if (field.FieldType == typeof (int))
+						{
+							field.SetValue(ai, Int32.Parse(value));
+						}
+						else if (field.FieldType == typeof(float))
+						{
+							field.SetValue(ai, float.Parse(value));
+						}
+						else if (field.FieldType == typeof (double))
+						{
+							field.SetValue(ai, Double.Parse(value));
+						}
+						else if (field.FieldType == typeof (string))
+						{
+							field.SetValue(ai, value);
+						}
+						else
+						{
+							throw new ArgumentException("invalid custom AI field " + key + " - has unknown type (not int, float, double or string)");
+						}
+					}
+					else
+					{
+						Debug.LogError("Cant write to property " + key + " in " + ai.GetType().Name + " (property is null)");
+					}
+				}
+
+				Debug.Log("Created custom " + ai.GetType().Name + " AI for " + ch.Name);
+				return ai;
+			}
+			else if (OldTemplate != null)
 			{
 				return OldTemplate.CreateAI(ch);
 			}
 
-			/*ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
-			a.loseInterestWhenOuttaRange = true;
-			return a;*/
-
-			return null;
+			throw new NullReferenceException("null AI (not set for some reason");
 		}
 
 		public override void InitAppearanceData(Monster m, EnemyData data)

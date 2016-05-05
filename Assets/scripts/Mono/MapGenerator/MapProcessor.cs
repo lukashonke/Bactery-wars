@@ -87,7 +87,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 
-			Debug.LogError("mame " + edgeTiles.Count + " okraju");
+			//Debug.LogError("mame " + edgeTiles.Count + " okraju");
 
 			// projit pole
 			foreach (Tile tile in edgeTiles)
@@ -144,7 +144,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 						SetTile(t, WorldHolder.GROUND);
 
-						Debug.LogError("rozsiruji " + t.tileX + ", " + t.tileY);
+						//Debug.LogError("rozsiruji " + t.tileX + ", " + t.tileY);
 						//t.SetColor(Tile.BLUE);
 					}
 				}
@@ -598,7 +598,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						{
 							if (reg.hasOutTeleporter)
 							{
-								Debug.Log("out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
+								Debug.LogWarning("out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
 							}
 
 							if (!reg.empty)

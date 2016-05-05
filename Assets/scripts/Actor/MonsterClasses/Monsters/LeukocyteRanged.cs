@@ -19,7 +19,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			// no skills
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile)); // the projectile test skill
 		}
 
 		public override MonsterAI CreateAI(Character ch)

@@ -24,9 +24,9 @@ namespace Assets.scripts.Actor.PlayerClasses
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile)); // the projectile test skill
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileTriple)); // the projectile test skill triple
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectileAllAround)); // aura
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile)); // the projectile test skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileTriple)); // the projectile test skill triple
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileAllAround)); // aura
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort)); // jump
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ChainSkill)); // chain skill
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillAreaExplode)); // bomb skill
