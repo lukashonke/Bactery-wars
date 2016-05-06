@@ -64,6 +64,53 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         }
     }
 
+	public class CustomCell : MonsterTemplate
+	{
+		public CustomCell()
+		{
+			Name = "Blank Cell";
+			MaxHp = 20;
+			MaxMp = 50;
+			MaxSpeed = 5;
+
+			HpLevelScale = 5;
+
+			IsAggressive = false;
+			AggressionRange = 20;
+			RambleAround = false;
+			XpReward = 2;
+		}
+
+		public override void InitMonsterStats(Monster m, int level)
+		{
+			base.InitMonsterStats(m, level);
+		}
+		
+		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
+		{
+		}
+
+		public override void AddSkillsToTemplate()
+		{
+		}
+
+		public override MonsterAI CreateAI(Character ch)
+		{
+			MonsterAI ai = new MeleeMonsterAI(ch);
+			return ai;
+		}
+
+		public override GroupTemplate GetGroupTemplate()
+		{
+			return null;
+		}
+
+		public override MonsterId GetMonsterId()
+		{
+			return MonsterId.CustomCell;
+		}
+	}
+
 	public class BasicMeleeCell : MonsterTemplate
 	{
 		public BasicMeleeCell()

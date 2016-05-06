@@ -66,6 +66,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		TankSpreadshooter = 201,
 		SwarmerBoss = 202,
 
+		CustomCell = 300,
+
 		SimpleBase = 500,
 
 		CustomMonster = 999,

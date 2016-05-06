@@ -34,5 +34,43 @@
 			</HealBeam>
 		</modify_skills>
 
+		<add_skills>
+			<CollisionDamageAttack>
+
+			</CollisionDamageAttack>
+		</add_skills>
+
+	</monster>
+
+	<monster name="Brutal">
+		<visibleName>Brutalizator</visibleName>
+		<template>CustomCell</template>
+		<stats> 
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>10</MaxHp_scale>
+			<MaxSpeed>10</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>15</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>true</AlertsAllies>
+
+			<XpReward>3</XpReward>
+		</stats>
+
+		<ai type="Melee">
+		</ai>
+
+		<add_skills>
+			<JumpShort>
+				<reuse>1.0</reuse>
+			</JumpShort>
+		</add_skills>
+
+		<add_skills>
+			<CollisionDamageAttack>
+				<add_effect name="HealSelf" value="10"/>
+			</CollisionDamageAttack>
+		</add_skills>
 	</monster>
 </data>
