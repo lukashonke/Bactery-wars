@@ -8,6 +8,8 @@ namespace Assets.scripts.Skills.Base
 	public enum SkillId
 	{
 		SkillTemplate,
+		CustomRemove,
+
 		Projectile,
 		ProjectileAllAround,
 		ProjectileTriple,

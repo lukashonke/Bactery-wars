@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileAllAround));
         }
@@ -30,11 +30,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    {
 			ProjectileAllAround skill = set.GetSkill(SkillId.ProjectileAllAround) as ProjectileAllAround;
 
-		    skill.projectileCount = 4;
-		    skill.range = 13;
-		    skill.reuse = 3f;
-		    skill.castTime = 0.5f;
-		    skill.force = 30;
+			if (skill != null)
+			{
+				skill.projectileCount = 4;
+				skill.range = 13;
+				skill.reuse = 3f;
+				skill.castTime = 0.5f;
+				skill.force = 30;
+			}
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)

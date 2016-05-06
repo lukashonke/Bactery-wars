@@ -58,6 +58,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (initTarget == null)
 				return;
 
+			Debug.Log(pushForce);
+
 			GameObject o = CreateParticleEffect("Explosion", false);
 			StartParticleEffect(o);
 			Object.Destroy(o, 2f);

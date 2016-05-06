@@ -23,7 +23,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Boss
 			XpReward = 20;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ProjectileAllAround));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));

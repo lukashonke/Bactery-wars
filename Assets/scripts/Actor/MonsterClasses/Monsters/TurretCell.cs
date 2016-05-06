@@ -23,7 +23,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
@@ -32,8 +32,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			Projectile sk = set.GetSkill(SkillId.Projectile) as Projectile;
 
-			sk.castTime = 0.5f;
-			sk.range = AggressionRange;
+			if (sk != null)
+			{
+				sk.castTime = 0.5f;
+				sk.range = AggressionRange;
+			}
 		}
 
 		public override void InitMonsterStats(Monster m, int level)
@@ -81,7 +84,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile));
 		}
@@ -90,7 +93,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			MissileProjectile sk = set.GetSkill(SkillId.MissileProjectile) as MissileProjectile;
 
-			sk.range = AggressionRange*2;
+			if (sk != null)
+			{
+				sk.range = AggressionRange*2;
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)

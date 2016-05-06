@@ -14,7 +14,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxSpeed = 10;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			// no skills
 		}

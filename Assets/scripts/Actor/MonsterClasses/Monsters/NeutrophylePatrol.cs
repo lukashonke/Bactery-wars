@@ -20,7 +20,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CreateCoverMob));

@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 		}
 

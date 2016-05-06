@@ -78,7 +78,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			return (int) (XpReward  + lvlBonus);
 		}
 
-		protected virtual void Init()
+		public virtual void Init()
 		{
 			AddSkillsToTemplate();
 		}
@@ -109,7 +109,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			MeleeSkill = skill;
 		}
 
-		protected abstract void AddSkillsToTemplate();
+		public abstract void AddSkillsToTemplate();
 		public abstract MonsterAI CreateAI(Character ch);
 
 		public virtual void OnTalkTo(Character source)

@@ -26,7 +26,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
         }
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
         }
@@ -39,8 +39,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 	    {
 			Projectile skill = set.GetSkill(SkillId.Projectile) as Projectile;
-		    skill.range = 8;
-		    skill.castTime = 1f;
+
+			if (skill != null)
+			{
+				skill.range = 8;
+				skill.castTime = 1f;
+			}
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)
@@ -85,11 +89,15 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			MeleeAttack skill = meleeSkill as MeleeAttack;
-			skill.range = 8;
-			skill.castTime = 1f;
+
+			if (skill != null)
+			{
+				skill.range = 8;
+				skill.castTime = 1f;
+			}
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
@@ -126,7 +134,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
@@ -140,9 +148,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			Projectile skill = set.GetSkill(SkillId.Projectile) as Projectile;
-			skill.range = 12;
-			skill.castTime = 1f;
-			skill.reuse = 0.5f;
+
+			if (skill != null)
+			{
+				skill.range = 12;
+				skill.castTime = 1f;
+				skill.reuse = 0.5f;
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -177,7 +189,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Projectile));
 		}
@@ -233,7 +245,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
@@ -241,7 +253,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
-			skill.AddAdditionalEffect(new EffectKillSelf());
+
+			if (skill != null)
+			{
+				skill.AddAdditionalEffect(new EffectKillSelf());
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -278,7 +294,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
@@ -286,6 +302,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+
+			if (skill != null)
+			{
+
+			}
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}
 
@@ -330,7 +351,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
@@ -338,6 +359,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
+
+			if (skill != null)
+			{
+
+			}
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}
 
@@ -381,7 +407,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 		}
 
@@ -418,7 +444,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 		}
 
@@ -454,7 +480,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 		}
 

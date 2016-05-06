@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SlowBeam));
         }
@@ -29,6 +29,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			SlowBeam skill = set.GetSkill(SkillId.SlowBeam) as SlowBeam;
+
+			if (skill != null)
+			{
+
+			}
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}
 
@@ -64,7 +69,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.PushBeam));
 		}
@@ -73,8 +78,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			PushBeam skill = set.GetSkill(SkillId.PushBeam) as PushBeam;
 
-			skill.baseDamage = 40;
-			skill.rotateSpeed = 40;
+			if (skill != null)
+			{
+				skill.baseDamage = 40;
+				skill.rotateSpeed = 40;
+			}
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}
 
@@ -110,7 +118,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SwarmSkill));
 		}
@@ -119,7 +127,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			SwarmSkill skill = set.GetSkill(SkillId.SwarmSkill) as SwarmSkill;
 
-			skill.countMinions = 3;
+			if (skill != null)
+			{
+				skill.countMinions = 3;
+			}
 
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}

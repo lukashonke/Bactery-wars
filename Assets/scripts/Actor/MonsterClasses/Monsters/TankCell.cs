@@ -22,7 +22,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
@@ -31,9 +31,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
-			sk.baseDamage = 20;
-			sk.pushForce = 100;
-			sk.reuse = 1.5f;
+			if (sk != null)
+			{
+				sk.baseDamage = 20;
+				sk.pushForce = 100;
+				sk.reuse = 1.5f;
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -68,7 +71,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 		}
@@ -77,9 +80,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
-			sk.baseDamage = 20;
-			sk.pushForce = 100;
-			sk.reuse = 1.5f;
+			if (sk != null)
+			{
+				sk.baseDamage = 20;
+				sk.pushForce = 100;
+				sk.reuse = 1.5f;
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)
@@ -114,7 +120,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 4;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SkillTestProjectile));
@@ -124,9 +130,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			CollisionDamageAttack sk = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
 
-			sk.baseDamage = 20;
-			sk.pushForce = 100;
-			sk.reuse = 1.5f;
+			if (sk != null)
+			{
+				sk.baseDamage = 20;
+				sk.pushForce = 100;
+				sk.reuse = 1.5f;
+			}
 
 			//SkillTestProjectile sk2 = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
 

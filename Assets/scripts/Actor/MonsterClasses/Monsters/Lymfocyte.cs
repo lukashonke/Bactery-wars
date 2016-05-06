@@ -20,7 +20,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.PushbackProjectile));
         }
@@ -58,7 +58,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
@@ -95,7 +95,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}
@@ -132,7 +132,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 0;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 		}

@@ -2,7 +2,7 @@
 <data>
 	<monster name="Nicitel">
 		<visibleName>Nicitel</visibleName>
-		<template>TankCell</template>
+		<template>BasicMeleeCell</template>
 		<stats> 
 			<MaxHp>150</MaxHp>
 			<MaxHp_scale>50</MaxHp_scale>
@@ -16,11 +16,23 @@
 			<XpReward>3</XpReward>
 		</stats>
 
-		<ai type="Melee">
-			<dodgeRate>75</dodgeRate>
-		</ai>
+		<add_autoattack>
+			<MeleeAttack>
+				<add_effect name="Pushaway" force="150"/>
+			</MeleeAttack>
+		</add_autoattack>
 
+	</monster>
 
+	<monster name="Healovac">
+		<visibleName>DivnejHealer</visibleName>
+		<template>HealerCell</template>
+
+		<modify_skills>
+			<HealBeam>
+				<add_effect name="Pushaway" force="150"/>
+			</HealBeam>
+		</modify_skills>
 
 	</monster>
 </data>

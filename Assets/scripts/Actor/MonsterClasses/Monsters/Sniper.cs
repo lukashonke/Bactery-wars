@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.PushbackProjectile));
 		}
@@ -30,7 +30,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			PushbackProjectile sk = set.GetSkill(SkillId.PushbackProjectile) as PushbackProjectile;
 
-			sk.range = 0; // infinite range
+			if (sk != null)
+			{
+				sk.range = 0; // infinite range
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)

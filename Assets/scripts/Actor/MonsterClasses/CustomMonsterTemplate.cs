@@ -9,10 +9,39 @@ using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
+	public struct SkillModifyInfo
+	{
+		public SkillId id;
+		public string key;
+		public string value;
+
+		public SkillModifyInfo(SkillId id, string key, string value)
+		{
+			this.id = id;
+			this.key = key;
+			this.value = value;
+		}
+	}
+
+	public struct SkillEffectInfo
+	{
+		public SkillId id;
+		public string effectName;
+		public Dictionary<string, string> parameters;
+
+		public SkillEffectInfo(SkillId id, string effectName, Dictionary<string, string> parameters)
+		{
+			this.id = id;
+			this.effectName = effectName;
+			this.parameters = parameters;
+		}
+	}
+
 	class CustomMonsterTemplate : MonsterTemplate
 	{
 		public MonsterTemplate OldTemplate { get; protected set; }
@@ -20,12 +49,31 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public string TemplateName { get; set; }
 
 		public string AiType { get; set; }
-		public Dictionary<string, string> AiParams { get; set; } 
+		public Dictionary<string, string> AiParams { get; set; }
+
+		public List<SkillId> NewSkills { get; private set; } 
+		public List<SkillId> SkillsToRemove { get; private set; }
+		public List<SkillId> DisabledEffects { get; private set; } 
+		public SkillId NewAutoattack { get; set; }
+		public bool DisabledMeleeEffects { get; private set; }
+
+		public List<SkillModifyInfo> SkillModifyInfo { get; private set; }
+		public List<SkillModifyInfo> AutoattackSkillModifyInfos { get; private set; }
+		public List<SkillEffectInfo> SkillAddEffects { get; private set; } 
+		public List<SkillEffectInfo> MeleeAddEffects { get; private set; }
 
 		public CustomMonsterTemplate()
 		{
 			AiType = null;
 			AiParams = new Dictionary<string, string>();
+			NewSkills = new List<SkillId>();
+			SkillsToRemove = new List<SkillId>();
+			DisabledEffects = new List<SkillId>();
+			SkillModifyInfo = new List<SkillModifyInfo>();
+			AutoattackSkillModifyInfos = new List<SkillModifyInfo>();
+			SkillAddEffects = new List<SkillEffectInfo>();
+			MeleeAddEffects = new List<SkillEffectInfo>();
+			NewAutoattack = SkillId.SkillTemplate;
 
 			Name = "Custom Cell";
 			MaxHp = 20;
@@ -44,9 +92,88 @@ namespace Assets.scripts.Actor.MonsterClasses
 			AiParams.Add(key, value);
 		}
 
-		protected override void AddSkillsToTemplate()
+		public void AddSkillModifyInfo(SkillId id, string key, string value)
 		{
-			//TODO inject custom code
+			SkillModifyInfo info = new SkillModifyInfo(id, key, value);
+			SkillModifyInfo.Add(info);
+		}
+
+		public void AddAutoattackModifyInfo(SkillId id, string key, string value)
+		{
+			SkillModifyInfo info = new SkillModifyInfo(id, key, value);
+			AutoattackSkillModifyInfos.Add(info);
+		}
+
+		public void AddAdditionalSkillEffects(SkillId id, string effectName, Dictionary<string, string> parameters)
+		{
+			// disable the original effects
+			DisableSkillEffects(id);
+
+			SkillEffectInfo info = new SkillEffectInfo(id, effectName, parameters);
+			SkillAddEffects.Add(info);
+		}
+
+		public void AddMeleeSkillEffects(SkillId id, string effectName, Dictionary<string, string> parameters)
+		{
+			DisableMeleeEffects();
+
+			SkillEffectInfo info = new SkillEffectInfo(id, effectName, parameters);
+			MeleeAddEffects.Add(info);
+		}
+
+		public void DisableSkillEffects(SkillId id)
+		{
+			DisabledEffects.Add(id);
+		}
+
+		public void DisableMeleeEffects()
+		{
+			DisabledMeleeEffects = true;
+		}
+
+		public override void AddSkillsToTemplate()
+		{
+		}
+
+		public void InitCustomSkillsOnTemplate()
+		{
+			if (NewSkills != null)
+			{
+				foreach (SkillId id in NewSkills)
+				{
+					bool contains = false;
+					foreach (Skill sk in TemplateSkills)
+					{
+						if (sk.GetSkillId() == id)
+						{
+							contains = true;
+							break;
+						}
+					}
+
+					if(!contains)
+						TemplateSkills.Add(SkillTable.Instance.GetSkill(id));
+				}
+			}
+
+			if (NewAutoattack != SkillId.SkillTemplate)
+			{
+				if (NewAutoattack == SkillId.CustomRemove)
+					SetMeleeAttackSkill(null);
+				else
+					SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(NewAutoattack));
+			}
+
+			if (SkillsToRemove != null && SkillsToRemove.Count > 0)
+			{
+				foreach (Skill sk in TemplateSkills.ToArray())
+				{
+					if (SkillsToRemove.Contains(sk.GetSkillId()))
+					{
+						TemplateSkills.Remove(sk);
+					}
+				}
+			}
 		}
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
@@ -56,10 +183,253 @@ namespace Assets.scripts.Actor.MonsterClasses
 				OldTemplate.InitSkillsOnMonster(set, meleeSkill, level);
 			}
 
-			/*SkillTestProjectile sk = set.GetSkill(SkillId.SkillTestProjectile) as SkillTestProjectile;
+			FieldInfo field;
 
-			sk.castTime = 0.5f;
-			sk.range = AggressionRange;*/
+			foreach (SkillModifyInfo info in SkillModifyInfo)
+			{
+				string key = info.key;
+				string value = info.value;
+				Skill sk = set.GetSkill(info.id);
+
+				field = sk.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
+
+				if (field != null)
+				{
+					if (field.FieldType == typeof(int))
+					{
+						field.SetValue(sk, Int32.Parse(value));
+					}
+					else if (field.FieldType == typeof(float))
+					{
+						field.SetValue(sk, float.Parse(value));
+					}
+					else if (field.FieldType == typeof(double))
+					{
+						field.SetValue(sk, Double.Parse(value));
+					}
+					else if (field.FieldType == typeof(string))
+					{
+						field.SetValue(sk, value);
+					}
+					else
+					{
+						throw new ArgumentException("invalid custom skill field " + key + " - has unknown type (not int, float, double or string)");
+					}
+				}
+				else
+				{
+					Debug.LogError("Cant write to property " + key + " in " + sk.GetType().Name + " (property is null)");
+				}
+			}
+
+			if(MeleeSkill != null)
+			foreach (SkillModifyInfo info in AutoattackSkillModifyInfos)
+			{
+				string key = info.key;
+				string value = info.value;
+
+				field = meleeSkill.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
+
+				if (field != null)
+				{
+					if (field.FieldType == typeof(int))
+					{
+						field.SetValue(meleeSkill, Int32.Parse(value));
+					}
+					else if (field.FieldType == typeof(float))
+					{
+						field.SetValue(meleeSkill, float.Parse(value));
+					}
+					else if (field.FieldType == typeof(double))
+					{
+						field.SetValue(meleeSkill, Double.Parse(value));
+					}
+					else if (field.FieldType == typeof(string))
+					{
+						field.SetValue(meleeSkill, value);
+					}
+					else
+					{
+						throw new ArgumentException("invalid custom autoattack skill field " + key + " - has unknown type (not int, float, double or string)");
+					}
+				}
+				else
+				{
+					Debug.LogError("Cant write to property " + key + " in " + meleeSkill.GetType().Name + " (property is null)");
+				}
+			}
+
+			if (DisabledEffects.Count > 0)
+			{
+				foreach (SkillId id in DisabledEffects)
+				{
+					Skill sk = set.GetSkill(id);
+					sk.DisableOriginalEffects();
+				}
+			}
+
+			if (DisabledMeleeEffects)
+			{
+				if(meleeSkill != null)
+					meleeSkill.DisableOriginalEffects();
+			}
+
+			if (SkillAddEffects.Count > 0)
+			{
+				foreach (SkillEffectInfo info in SkillAddEffects)
+				{
+					Skill sk = set.GetSkill(info.id);
+					string name = info.effectName;
+
+					object[] parameters;
+
+					SkillEffect effect = null;
+					foreach (Type t in Utils.GetTypesInNamespace("Assets.scripts.Skills.SkillEffects", true, typeof (SkillEffect)))
+					{
+						if (t.Name.Equals("Effect" + name, StringComparison.InvariantCultureIgnoreCase))
+						{
+							foreach (ConstructorInfo ci in t.GetConstructors())
+							{
+								parameters = new object[ci.GetParameters().Length];
+
+								bool matches = true;
+
+								// pro dany konstruktor zjistit, jestli jsou jeho parametry definovane
+								for (int i = 0; i < ci.GetParameters().Length; i++)
+								{
+									ParameterInfo pi = ci.GetParameters()[i];
+									string val;
+									if (!info.parameters.TryGetValue(pi.Name, out val))
+									{
+										matches = false;
+										break;
+									}
+									else
+									{
+										if (pi.ParameterType == typeof(int))
+										{
+											parameters[i] = Int32.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(float))
+										{
+											parameters[i] = float.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(double))
+										{
+											parameters[i] = Double.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(string))
+										{
+											parameters[i] = val;
+										}
+										else
+										{
+											throw new ArgumentException("invalid param when constructing skill effect " + pi.ParameterType + " - cant parse");
+										}
+									}
+								}
+
+								// this constructor will be used
+								if (matches)
+								{
+									effect = (SkillEffect) ci.Invoke(parameters);
+									break;
+								}
+							}
+
+							break;
+						}
+					}
+
+					if (effect != null)
+					{
+						sk.AddAdditionalEffect(effect);
+					}
+					else
+					{
+						Debug.LogError("couldnt create instance of " + name + " with parameters " + info.parameters);
+					}
+				}
+			}
+
+
+
+			if (MeleeAddEffects.Count > 0 && meleeSkill != null)
+			{
+				foreach (SkillEffectInfo info in MeleeAddEffects)
+				{
+					string name = info.effectName;
+
+					object[] parameters;
+
+					SkillEffect effect = null;
+					foreach (Type t in Utils.GetTypesInNamespace("Assets.scripts.Skills.SkillEffects", true, typeof(SkillEffect)))
+					{
+						if (t.Name.Equals("Effect" + name, StringComparison.InvariantCultureIgnoreCase))
+						{
+							foreach (ConstructorInfo ci in t.GetConstructors())
+							{
+								parameters = new object[ci.GetParameters().Length];
+
+								bool matches = true;
+
+								// pro dany konstruktor zjistit, jestli jsou jeho parametry definovane
+								for (int i = 0; i < ci.GetParameters().Length; i++)
+								{
+									ParameterInfo pi = ci.GetParameters()[i];
+									string val;
+									if (!info.parameters.TryGetValue(pi.Name, out val))
+									{
+										matches = false;
+										break;
+									}
+									else
+									{
+										if (pi.ParameterType == typeof(int))
+										{
+											parameters[i] = Int32.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(float))
+										{
+											parameters[i] = float.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(double))
+										{
+											parameters[i] = Double.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(string))
+										{
+											parameters[i] = val;
+										}
+										else
+										{
+											throw new ArgumentException("invalid param when constructing skill effect " + pi.ParameterType + " - cant parse");
+										}
+									}
+								}
+
+								// this constructor will be used
+								if (matches)
+								{
+									effect = (SkillEffect)ci.Invoke(parameters);
+									break;
+								}
+							}
+
+							break;
+						}
+					}
+
+					if (effect != null)
+					{
+						meleeSkill.AddAdditionalEffect(effect);
+					}
+					else
+					{
+						Debug.LogError("couldnt create instance of " + name + " with parameters " + info.parameters);
+					}
+				}
+			}
 		}
 
 		public override void InitMonsterStats(Monster m, int level)

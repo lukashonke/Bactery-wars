@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 3;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
@@ -31,10 +31,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    {
 		    JumpShort skill = set.GetSkill(SkillId.JumpShort) as JumpShort;
 
-		    skill.jumpSpeed = 75;
-		    skill.range = 15;
-		    skill.reuse = 4f;
-		    skill.castTime = 1f;
+			if (skill != null)
+			{
+				skill.jumpSpeed = 75;
+				skill.range = 15;
+				skill.reuse = 4f;
+				skill.castTime = 1f;
+			}
 	    }
 
 	    public override MonsterAI CreateAI(Character ch)

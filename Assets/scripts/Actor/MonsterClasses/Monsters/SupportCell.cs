@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.HealBeam));
         }
@@ -29,6 +29,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			HealBeam skill = set.GetSkill(SkillId.HealBeam) as HealBeam;
+
+			if (skill != null)
+			{
+
+			}
 			//skill.AddAdditionalEffect(new EffectKillSelf());
 		}
 

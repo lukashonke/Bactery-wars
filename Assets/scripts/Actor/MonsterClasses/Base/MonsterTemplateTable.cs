@@ -6,6 +6,8 @@ using System.Text;
 using System.Xml;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
+using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Base
@@ -126,6 +128,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 			catch (Exception e)
 			{
 				Debug.LogError("chyba nacitani xml monsterdata - check monsterdata_errors.txt");
+				Debug.LogError(e.Message + ", " + e.StackTrace);
 				System.IO.StreamWriter file = new System.IO.StreamWriter("MonsterData_errors.txt");
 				file.WriteLine(e.Message + " \n " + e.StackTrace);
 				file.Close();
@@ -241,8 +244,158 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 							}
 
 							break;
+						case "add_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId) Enum.Parse(typeof (SkillId), skillName);
+
+								newTemplate.NewSkills.Add(skillId);
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddAdditionalSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableSkillEffects(skillId);
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddSkillModifyInfo(skillId, paramName, val);
+									}
+								}
+							}
+
+							break;
+						case "modify_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddAdditionalSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableSkillEffects(skillId);
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddSkillModifyInfo(skillId, paramName, val);
+									}
+								}
+							}
+
+							break;
+						case "remove_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								newTemplate.SkillsToRemove.Add(skillId);
+							}
+
+							break;
+						case "add_autoattack":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								newTemplate.NewAutoattack = skillId;
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddMeleeSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableMeleeEffects();
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddAutoattackModifyInfo(skillId, paramName, val);
+									}
+								}
+
+								break;
+							}
+
+							break;
+						case "remove_autoattack":
+
+							newTemplate.NewAutoattack = SkillId.CustomRemove;
+
+							break;
 					}
 				}
+
+				newTemplate.InitCustomSkillsOnTemplate();
 
 				customTypes.Add(newTemplate);
 			}

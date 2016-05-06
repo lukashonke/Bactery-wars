@@ -17,7 +17,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			ShowNameInGame = true;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			// no skills
 		}

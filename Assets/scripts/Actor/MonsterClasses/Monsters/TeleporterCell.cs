@@ -21,7 +21,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			XpReward = 2;
 		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
 			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Teleport));
@@ -30,11 +30,18 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			Teleport skill = set.GetSkill(SkillId.Teleport) as Teleport;
-			skill.range = 15;
-			skill.castTime = 0.5f;
 
-			((MeleeAttack) meleeSkill).castTime = 0.5f;
-			((MeleeAttack) meleeSkill).range = 3;
+			if (skill != null)
+			{
+				skill.range = 15;
+				skill.castTime = 0.5f;
+			}
+
+			if (meleeSkill != null)
+			{
+				((MeleeAttack) meleeSkill).castTime = 0.5f;
+				((MeleeAttack) meleeSkill).range = 3;
+			}
 		}
 
 		public override MonsterAI CreateAI(Character ch)
