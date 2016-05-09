@@ -16,10 +16,6 @@ namespace Assets.scripts.AI
 {
 	public class SummonerMonsterAI : MonsterAI
 	{
-		private List<Monster> spawned = new List<Monster>();
-
-		public delegate void Callback();
-
 		public SummonerMonsterAI(Character o)
 			: base(o)
 		{
@@ -29,7 +25,7 @@ namespace Assets.scripts.AI
 		public override void CreateModules()
 		{
 			AddAttackModule(new SpawnMinionModule(this));
-			//AddAttackModule(new RambleAroundModule(this));
+			AddAttackModule(new RambleAroundModule(this));
 		}
 
 		public override void AnalyzeSkills()
@@ -68,10 +64,6 @@ namespace Assets.scripts.AI
 					return;
 				}
 			}
-
-			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
-			Vector3 nextTarget = Utils.GenerateRandomPositionAround(ownerPos, 5f);
-			StartAction(MoveAction(nextTarget, false), 1f);
 		}
 	}
 }

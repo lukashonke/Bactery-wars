@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI.Modules
 {
+	/// <summary>
+	/// spawns minions and makes him attack the original target
+	/// </summary>
 	public class SpawnMinionModule : AIAttackModule
 	{
 		public delegate void SummonNotify(Monster m);

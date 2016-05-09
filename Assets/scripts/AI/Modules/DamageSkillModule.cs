@@ -10,6 +10,10 @@ namespace Assets.scripts.AI.Modules
 {
 	public class DamageSkillModule : AIAttackModule
 	{
+		// by default, AI will shoot skill if the distance between player and monster is <= 60% of skill's range
+		// you tweak the % value by settings this variable: 0.2 will make the AI shoot when distance is <= 60+20%
+		public float boostShootRange = 0f;
+
 		public bool shootWhileMoving;
 
 		private List<Skill> skills;
@@ -43,7 +47,7 @@ namespace Assets.scripts.AI.Modules
 
 			if (topSkill != null)
 			{
-				ai.StartAction(ai.CastSkill(target, topSkill, distSqr, false, true), topSkill.GetSkillActiveDuration()*2, false, shootWhileMoving);
+				ai.StartAction(ai.CastSkill(target, topSkill, distSqr, false, true, boostShootRange), topSkill.GetSkillActiveDuration()*2, false, shootWhileMoving);
 				return true;
 			}
 

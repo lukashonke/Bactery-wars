@@ -10,6 +10,9 @@ using Random = System.Random;
 
 namespace Assets.scripts.AI.Modules
 {
+	/// <summary>
+	/// if the distance is correct, the owner of this module will move in an "evasive way"
+	/// </summary>
 	public class EvasiveMovementModule : AIAttackModule
 	{
 		public float chanceEveryTick = 75;

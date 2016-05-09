@@ -748,7 +748,7 @@ namespace Assets.scripts.AI
 		{
 			if (target != null && !noRangeCheck && sk.range != 0)
 			{
-				while (Mathf.Pow((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * 0.6f < distSqrToTarget)
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f+skillRangeAdd) < distSqrToTarget)
 				{
 					distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
@@ -54,7 +55,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
-			a.loseInterestWhenOuttaRange = true;
+			a.GetAttackModule<WeakAggroModule>().enabled = true;
 			return a;
 		}
 
@@ -102,8 +103,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
-			a.loseInterestWhenOuttaRange = true;
-		    return a;
+			a.GetAttackModule<WeakAggroModule>().enabled = true;
+			return a;
 		}
 
 		public override GroupTemplate GetGroupTemplate()

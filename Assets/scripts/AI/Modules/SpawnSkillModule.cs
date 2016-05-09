@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace Assets.scripts.AI.Modules
 {
+	/// <summary>
+	/// simply uses SpawnSkill without setting minions aggro or something
+	/// </summary>
 	public class SpawnSkillModule : AIAttackModule
 	{
 		private List<Skill> spawnSkills;

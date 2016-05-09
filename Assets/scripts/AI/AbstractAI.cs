@@ -307,22 +307,22 @@ namespace Assets.scripts.AI
 			return skills;
 		}
 
-		protected void RotateToTarget(Character target)
+		public void RotateToTarget(Character target)
 		{
 			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);
 		}
 
-		protected void RotateToTarget(Vector3 target)
+		public void RotateToTarget(Vector3 target)
 		{
 			Owner.GetData().SetRotation(target, true);
 		}
 
-		protected void MoveTo(Character target)
+		public void MoveTo(Character target)
 		{
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected bool MoveTo(Vector3 target, bool fixedRotation=false, float fixedSpeed=-1)
+		public bool MoveTo(Vector3 target, bool fixedRotation=false, float fixedSpeed=-1)
 		{
 			return Owner.GetData().MoveTo(target, fixedRotation, fixedSpeed);
 		}

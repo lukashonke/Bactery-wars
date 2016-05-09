@@ -15,16 +15,17 @@ namespace Assets.scripts.AI
 {
 	public class ImmobileMonsterAI : MonsterAI
 	{
-		public bool loseInterestWhenOuttaRange = false;
-
 		public ImmobileMonsterAI(Character o) : base(o)
 		{
 		}
 
 		public override void CreateModules()
 		{
+			AddAttackModule(new WeakAggroModule(this)).enabled = false;
 			AddAttackModule(new DamageSkillModule(this));
 			AddAttackModule(new AutoattackModule(this));
+
+			GetAttackModule<DamageSkillModule>().boostShootRange = 0.2f;
 		}
 
 		protected override void AttackTarget(Character target)
@@ -35,12 +36,6 @@ namespace Assets.scripts.AI
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 			float distSqr = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
-
-			if (loseInterestWhenOuttaRange && distSqr > AggressionRange*AggressionRange)
-			{
-				RemoveAggro(target);
-				return;
-			}
 
 			// already doing something
 			if (isCasting || Owner.Status.IsStunned())

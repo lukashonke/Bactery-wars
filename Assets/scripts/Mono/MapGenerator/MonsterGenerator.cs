@@ -247,6 +247,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if ((roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel && group.maxWorld >= world && group.minWorld <= world && forcedId < 0) || (forcedId > 0 && group.id == forcedId))
 				{
+					List<MonsterSpawnInfo> infos = new List<MonsterSpawnInfo>();
+
 					foreach (MobData mob in group.mobs)
 					{
 						Tile tile;
@@ -255,8 +257,6 @@ namespace Assets.scripts.Mono.MapGenerator
 							tile = room.GetLargestSubRoom(mob.exclude);
 						else
 							tile = room.GetSubRoom(mob.roomSize, mob.location, mob.exclude);
-
-						List<MonsterSpawnInfo> infos = new List<MonsterSpawnInfo>();
 
 						MonsterSpawnInfo monsterInfo;
 
@@ -332,6 +332,8 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				}
 			}
+
+			WorldHolder.instance.activeMap.ConfigureMonstersAfterSpawn();
 		}
 	}
 
