@@ -14,6 +14,7 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
+	//TODO modularise
 	public class SupportMonsterAI : MonsterAI
 	{
 		public SupportMonsterAI(Character o) : base(o)
