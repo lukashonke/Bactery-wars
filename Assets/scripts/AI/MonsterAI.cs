@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -16,6 +17,8 @@ namespace Assets.scripts.AI
 {
 	public abstract class MonsterAI : AbstractAI
 	{
+		protected List<AIAttackModule> attackModules; 
+
 		protected Dictionary<Character, int> aggro;
 
 		public bool IsAggressive { get; set; }
@@ -31,12 +34,18 @@ namespace Assets.scripts.AI
 
 		protected MonsterAI(Character o) : base(o)
 		{
+			attackModules = new List<AIAttackModule>();
 			aggro = new Dictionary<Character, int>();
 
 			useTimers = false;
 
 			IsAggressive = GetTemplate().IsAggressive;
 			AggressionRange = GetTemplate().AggressionRange;
+		}
+
+		public void AddAttackModule(AIAttackModule mod)
+		{
+			attackModules.Add(mod);
 		}
 
 		protected void UseTimers()
@@ -71,6 +80,14 @@ namespace Assets.scripts.AI
 			if (!found)
 				return true;
 			return time + minTimeToPass <= Time.time;
+		}
+
+		public override void InitModules()
+		{
+			foreach (AIAttackModule module in attackModules)
+			{
+				module.Init();
+			}
 		}
 
 		public override void Think()
@@ -343,6 +360,14 @@ namespace Assets.scripts.AI
 			{
 				RemoveAggro(possibleTarget, 1);
 				tempAggroCounter = 0;
+			}
+
+			foreach (AIAttackModule module in attackModules)
+			{
+				if (module.Launch()) //TODO set and get target here
+				{
+					return;
+				}
 			}
 
 			AttackTarget(possibleTarget);
@@ -618,7 +643,7 @@ namespace Assets.scripts.AI
 
 		protected abstract void AttackTarget(Character target);
 
-		protected virtual IEnumerator RunAway(Character target, float distance, int randomAngleAdd)
+		public virtual IEnumerator RunAway(Character target, float distance, int randomAngleAdd)
 		{
 			Vector3 dirVector = -Utils.GetDirectionVector(target.GetData().GetBody().transform.position, Owner.GetData().transform.position).normalized * distance;
 
@@ -647,7 +672,7 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, float fixedSpeed=-1)
+        public virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, float fixedSpeed=-1)
         {
             MoveTo(target, fixedRotation, fixedSpeed);
 
@@ -661,7 +686,7 @@ namespace Assets.scripts.AI
             currentAction = null;
         }
 
-		protected virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{
@@ -690,7 +715,7 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
+		public virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
 			if (target != null && !noRangeCheck && sk.range != 0)
 			{

@@ -16,10 +16,24 @@ namespace Assets.scripts.AI
 	{
 		public int dodgeRate = 0;
 
+		public float teleportInterval = -1;
+
+		// ==== SELF BUFF SKILL CAST INTERVAL ====
+		// -1 to make it always cast if the skill is available
+		public float selfBuffCastInterval = -1;
+		// chance to cast self buff (-1 to make it 100%)
+		public float selfBuffCastChance = -1;
+		// min percent HP to cast self buff (-1 to disable)
+		public float minHpPercentToCastSelfBuff = -1;
+
 		private bool hasSpawnSkills = false;
 		private bool hasJumpSkill = false;
 		private bool hasLongRangeDmgSkill = false;
 		private bool hasTeleportSkill = false;
+		private bool hasSelfBuffSkills = false;
+
+		private float lastSelfBuffCastTime;
+		private float lastTeleportTime;
 
 		public MeleeMonsterAI(Character o) : base(o)
 		{
@@ -31,6 +45,7 @@ namespace Assets.scripts.AI
 			hasJumpSkill = GetSkillWithTrait(SkillTraits.Jump) != null;
 			hasLongRangeDmgSkill = GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange) != null;
 			hasTeleportSkill = GetSkillWithTrait(SkillTraits.Teleport) != null;
+			hasSelfBuffSkills = GetAllSkillsWithTrait(SkillTraits.BuffDamage, SkillTraits.BuffDefense).Count > 0;
 		}
 
 		protected override void AttackTarget(Character target)
@@ -40,6 +55,7 @@ namespace Assets.scripts.AI
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
 			bool forcedVelocity = Owner.GetData().forcedVelocity;
+			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
 			if (isCasting || forcedVelocity || currentAction != null || Owner.Status.IsStunned())
@@ -52,6 +68,22 @@ namespace Assets.scripts.AI
 				{
 					if (s.CanUse())
 						StartAction(CastSkill(null, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
+				}
+			}
+
+			if (hasSelfBuffSkills && (minHpPercentToCastSelfBuff < 0 || hpPercentage <= minHpPercentToCastSelfBuff))
+			{
+				if (selfBuffCastInterval < 0 || lastSelfBuffCastTime + selfBuffCastInterval < Time.time)
+				{
+					if (selfBuffCastChance < 0 || Random.Range(1, 100) < selfBuffCastChance)
+					{
+						List<Skill> buffSkills = GetAllSkillsWithTrait(SkillTraits.BuffDamage, SkillTraits.BuffDefense);
+						foreach (Skill s in buffSkills)
+						{
+							if (s.CanUse())
+								StartAction(CastSkill(Owner, (ActiveSkill)s, 0, true, false, 0, 0), 0.5f);
+						}
+					}
 				}
 			}
 
@@ -74,12 +106,15 @@ namespace Assets.scripts.AI
 
 			if (hasTeleportSkill)
 			{
-				ActiveSkill teleport = (ActiveSkill)GetSkillWithTrait(SkillTraits.Teleport);
-				// if range too high, teleport
-				if (teleport.CanUse() && !Owner.GetData().forcedVelocity && distSqr >= (teleport.range*teleport.range)/3f && distSqr <= (teleport.range*teleport.range))
+				if (teleportInterval < 0 || lastTeleportTime + teleportInterval < Time.time)
 				{
-					if (StartAction(CastSkill(target, teleport, distSqr, true, false, 0f, 0f), 0.5f))
-						return;
+					ActiveSkill teleport = (ActiveSkill)GetSkillWithTrait(SkillTraits.Teleport);
+					// if range too high, teleport
+					if (teleport.CanUse() && !Owner.GetData().forcedVelocity && distSqr >= (teleport.range * teleport.range) / 3f && distSqr <= (teleport.range * teleport.range))
+					{
+						if (StartAction(CastSkill(target, teleport, distSqr, true, false, 0f, 0f), 0.5f))
+							return;
+					}
 				}
 			}
 

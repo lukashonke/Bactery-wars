@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Assets.scripts.Actor;
+using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
+using UnityEngine;
+using Random = System.Random;
+
+namespace Assets.scripts.AI.Modules
+{
+	public class EvasiveMovementModule : AIAttackModule
+	{
+		public float chanceEveryTick = 75;
+
+		public float minRange = 3f;
+
+		public EvasiveMovementModule(MonsterAI ai) : base(ai)
+		{
+		}
+
+		public override void Init()
+		{
+			available = true;
+		}
+
+		public override bool Trigger(Character target, float distSqr)
+		{
+			if (chanceEveryTick > 0 && distSqr > (minRange*minRange))
+			{
+				Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
+				Vector3 targetPos = target.GetData().GetBody().transform.position;
+
+				if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
+				{
+					Vector3 nextTarget;
+					nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
+
+					Debug.DrawRay(ownerPos, nextTarget, Color.cyan, 1f);
+
+					if(ai.StartAction(ai.MoveAction(nextTarget, false), 1f))
+						return true;
+				}
+				else
+				{
+					if(ai.StartAction(ai.MoveAction(targetPos, false), 1f))
+						return true;
+				}
+			}
+
+			return false;
+		}
+	}
+}

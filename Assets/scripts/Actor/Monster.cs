@@ -182,6 +182,7 @@ namespace Assets.scripts.Actor
 				}
 			}
 
+			AI.InitModules();
 			AI.AnalyzeSkills();
 
 			if (Template.ShowNameInGame)

@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI.Base;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -72,7 +73,7 @@ namespace Assets.scripts.AI
 			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
-		protected bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
+		public bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
 		{
 		    if (currentAction == null || currentActionCancelable || forceReplace)
 		    {
@@ -98,7 +99,7 @@ namespace Assets.scripts.AI
 			BreakCurrentAction();
 		}
 
-		protected void BreakCurrentAction()
+		public void BreakCurrentAction()
 		{
 			if (currentAction != null)
 			{
@@ -107,6 +108,10 @@ namespace Assets.scripts.AI
 				currentAction = null;
 			    currentActionCancelable = true;
 			}
+		}
+
+		public virtual void InitModules()
+		{
 		}
 
 		public virtual void AnalyzeSkills()
