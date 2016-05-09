@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
@@ -13,19 +14,11 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
-	//TODO make modular
 	public class SummonerMonsterAI : MonsterAI
 	{
-		public float spawnMinInterval = 4f;
-		public float spawnMaxInterval = 5f;
-
-		private float nextSpawnInterval;
-
-		public int maxMonstersSpawned = 20;
-
-		protected ActiveSkill spawnSkill = null;
-
 		private List<Monster> spawned = new List<Monster>();
+
+		public delegate void Callback();
 
 		public SummonerMonsterAI(Character o)
 			: base(o)
@@ -33,11 +26,14 @@ namespace Assets.scripts.AI
 			UseTimers();
 		}
 
+		public override void CreateModules()
+		{
+			AddAttackModule(new SpawnMinionModule(this));
+			//AddAttackModule(new RambleAroundModule(this));
+		}
+
 		public override void AnalyzeSkills()
 		{
-			spawnSkill = (ActiveSkill)GetSkillWithTrait(SkillTraits.SpawnMinion);
-
-			nextSpawnInterval = Random.Range(spawnMinInterval, spawnMaxInterval);
 		}
 
 		/*protected override void ThinkActive()
@@ -56,55 +52,26 @@ namespace Assets.scripts.AI
 			SetMainTarget(target);
 
 			bool isCasting = Owner.GetData().IsCasting;
+			float distSqr = Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, target.GetData().GetBody().transform.position);
 
 			// already doing something
-			if (isCasting)
+			if (isCasting || Owner.Status.IsStunned())
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
-
-			DoSpawn();
-
-			Vector3 nextTarget = Utils.GenerateRandomPositionAround(ownerPos, 5f);
-			StartAction(MoveAction(nextTarget, false), 1f);
-		}
-
-		private void DoSpawn()
-		{
-			int count = 0;
-
-			for (int i = spawned.Count - 1; i >= 0; i--)
+			foreach (AIAttackModule module in attackModules)
 			{
-				Monster m = spawned[i];
-
-				if (m.Status.IsDead)
+				if (module.Launch(target, distSqr))
 				{
-					spawned.RemoveAt(i);
-					continue;
-				}
-
-				count++;
-			}
-
-			if (count < 20 && spawnSkill != null && GetTimer("spawn", nextSpawnInterval))
-			{
-				if (StartAction(CastSkill(null, spawnSkill, 0, true, false, 0f, 0f), 0.5f))
-				{
-					SetTimer("spawn");
-
 					return;
 				}
 			}
-		}
 
-		public void NotifySummonSpawned(Monster m)
-		{
-			m.AI.AddAggro(GameSystem.Instance.CurrentPlayer, 10000);
-
-			spawned.Add(m);
+			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
+			Vector3 nextTarget = Utils.GenerateRandomPositionAround(ownerPos, 5f);
+			StartAction(MoveAction(nextTarget, false), 1f);
 		}
 	}
 }

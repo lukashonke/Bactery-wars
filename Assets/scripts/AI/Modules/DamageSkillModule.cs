@@ -12,6 +12,8 @@ namespace Assets.scripts.AI.Modules
 	{
 		public bool shootWhileMoving;
 
+		private List<Skill> skills;
+
 		public DamageSkillModule(MonsterAI ai) : base(ai)
 		{
 			shootWhileMoving = false;
@@ -19,13 +21,12 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = ai.GetAllSkillsWithTrait(SkillTraits.Damage).Count > 0;
+			skills = ai.GetAllSkillsWithTrait(SkillTraits.Damage);
+			canTrigger = skills.Count > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			List<Skill> skills = ai.GetAllSkillsWithTrait(SkillTraits.Damage); //TODO put into cache
-
 			// 1. get the most damage skill and cast if it is available
 			int topDamage = -1;
 			ActiveSkill topSkill = null;
@@ -42,7 +43,7 @@ namespace Assets.scripts.AI.Modules
 
 			if (topSkill != null)
 			{
-				ai.StartAction(ai.CastSkill(target, topSkill, distSqr, false, true), 10f, false, shootWhileMoving);
+				ai.StartAction(ai.CastSkill(target, topSkill, distSqr, false, true), topSkill.GetSkillActiveDuration()*2, false, shootWhileMoving);
 				return true;
 			}
 

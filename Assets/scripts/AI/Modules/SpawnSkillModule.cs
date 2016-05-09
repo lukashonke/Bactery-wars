@@ -11,18 +11,20 @@ namespace Assets.scripts.AI.Modules
 {
 	public class SpawnSkillModule : AIAttackModule
 	{
+		private List<Skill> spawnSkills;
+		 
 		public SpawnSkillModule(MonsterAI ai) : base(ai)
 		{
 		}
 
 		public override void Init()
 		{
-			available = ai.GetAllSkillsWithTrait(SkillTraits.SpawnMinion).Count > 0;
+			spawnSkills = ai.GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
+			canTrigger = spawnSkills.Count > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			List<Skill> spawnSkills = ai.GetAllSkillsWithTrait(SkillTraits.SpawnMinion);
 			foreach (Skill s in spawnSkills)
 			{
 				if (s.CanUse())

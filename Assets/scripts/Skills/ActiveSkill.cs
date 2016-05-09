@@ -1030,6 +1030,11 @@ namespace Assets.scripts.Skills
 			return temp + index * angleAdd;
 		}
 
+		public float GetSkillActiveDuration()
+		{
+			return castTime + coolDown;
+		}
+
 		//TODO finish this for other params too
 	}
 }

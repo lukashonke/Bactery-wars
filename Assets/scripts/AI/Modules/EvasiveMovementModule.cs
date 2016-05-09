@@ -23,7 +23,7 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = true;
+			canTrigger = true;
 		}
 
 		public override bool Trigger(Character target, float distSqr)

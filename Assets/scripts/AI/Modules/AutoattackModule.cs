@@ -16,7 +16,7 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = ai.HasMeleeSkill();
+			canTrigger = ai.HasMeleeSkill();
 		}
 
 		public override bool Trigger(Character target, float distSqr)

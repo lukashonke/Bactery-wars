@@ -85,7 +85,7 @@ namespace Assets.scripts.AI
 			return null;
 		}
 
-		protected void UseTimers()
+		public void UseTimers()
 		{
 			useTimers = true;
 			timers = new Dictionary<string, float>();
@@ -725,7 +725,7 @@ namespace Assets.scripts.AI
 
 					if (moveTowardsIfRequired)
 					{
-						MoveTo(target);
+						MoveTo(target); //TODO not working with pathnodes - replace with setmovementtarget
 						yield return null;
 					}
 					else // too far, cant move closer - break the action

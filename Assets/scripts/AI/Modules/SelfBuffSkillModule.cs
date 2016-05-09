@@ -13,6 +13,8 @@ namespace Assets.scripts.AI.Modules
 	{
 		public int minHpPercent = -1;
 
+		private List<Skill> buffSkills; 
+
 		public SelfBuffSkillModule(MonsterAI ai, int minHpPercent=-1) : base(ai)
 		{
 			this.minHpPercent = minHpPercent;
@@ -20,14 +22,14 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = ai.GetAllSkillsWithTrait(SkillTraits.BuffDamage, SkillTraits.BuffDefense).Count > 0;
+			buffSkills = ai.GetAllSkillsWithTrait(SkillTraits.BuffDamage, SkillTraits.BuffDefense);
+			canTrigger = buffSkills.Count > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
 			if (minHpPercent < 0 || GetHpPercentage() <= minHpPercent)
 			{
-				List<Skill> buffSkills = ai.GetAllSkillsWithTrait(SkillTraits.BuffDamage, SkillTraits.BuffDefense);
 				foreach (Skill s in buffSkills)
 				{
 					if (s.CanUse())

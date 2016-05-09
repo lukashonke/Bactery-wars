@@ -27,24 +27,21 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = true;
+			canTrigger = interval > -1;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (interval > -1) // interval must be at least -1
+			if (distSqr < Math.Pow(maxRange, 2))
 			{
-				if (distSqr < Math.Pow(maxRange, 2))
-				{
-					// circulate target
-					Vector3 pos = Utils.GenerateRandomPositionOnCircle(target.GetData().GetBody().transform.position, floatRange, lastAngle);
+				// circulate target
+				Vector3 pos = Utils.GenerateRandomPositionOnCircle(target.GetData().GetBody().transform.position, floatRange, lastAngle);
 
-					if (ai.StartAction(ai.MoveAction(pos, true, floatSpeed), 2f, false))
-					{
-						lastAngle = lastAngle + UnityEngine.Random.Range(-2, 2);
-						Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.green, 4f);
-						return true;
-					}
+				if (ai.StartAction(ai.MoveAction(pos, true, floatSpeed), 2f, false))
+				{
+					lastAngle = lastAngle + UnityEngine.Random.Range(-2, 2);
+					Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.green, 4f);
+					return true;
 				}
 			}
 

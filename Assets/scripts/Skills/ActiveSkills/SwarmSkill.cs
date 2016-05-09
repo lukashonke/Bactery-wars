@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.MapGenerator;
@@ -15,7 +16,7 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SwarmSkill : ActiveSkill
+	public class SwarmSkill : ActiveSkill, ISummonNotifyCallback
 	{
 		private Monster[] minions;
 
@@ -23,7 +24,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public string mobToSpawn;
 
-		public Monster lastSpawned;
+		public List<Monster> lastSpawned; 
+
+		private SpawnMinionModule.SummonNotify callbackDelegate = null;
 
 		public SwarmSkill()
 		{
@@ -32,6 +35,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
+
+			lastSpawned = new List<Monster>();
 
 			mobToSpawn = MonsterId.FloatingBasicCell.ToString();
 		}
@@ -84,16 +89,18 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				Monster m = GameSystem.Instance.SpawnMonster(mobToSpawn, Utils.GenerateRandomPositionAround(Owner.GetData().GetBody().transform.position, 5, 3), false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
-				lastSpawned = m;
+				lastSpawned.Add(m);
 			}
 		}
 
 		public override void OnFinish()
 		{
-			if (Owner.AI is SummonerMonsterAI)
+			if (callbackDelegate != null)
 			{
-				((SummonerMonsterAI) Owner.AI).NotifySummonSpawned(lastSpawned);
-				lastSpawned = null;
+				foreach(Monster m in lastSpawned)
+					callbackDelegate(m);
+
+				lastSpawned.Clear();
 			}
 		}
 
@@ -156,6 +163,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override bool CanRotate()
 		{
 			return CanMove();
+		}
+
+		public void SetCallback(SpawnMinionModule.SummonNotify del)
+		{
+			callbackDelegate = del;
+		}
+
+		public SpawnMinionModule.SummonNotify GetCallback()
+		{
+			return callbackDelegate;
 		}
 	}
 }

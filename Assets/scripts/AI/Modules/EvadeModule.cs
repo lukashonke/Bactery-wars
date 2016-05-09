@@ -23,20 +23,17 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = true;
+			canTrigger = interval > -1;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (interval > -1) // interval must be at least 0
-			{
-				Vector3 pos = Utils.GenerateRandomPositionAround(ai.Owner.GetData().GetBody().transform.position, maxRange, minRange);
+			Vector3 pos = Utils.GenerateRandomPositionAround(ai.Owner.GetData().GetBody().transform.position, maxRange, minRange);
 
-				if (ai.StartAction(ai.MoveAction(pos, true), 3f))
-				{
-					Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.blue, 4f);
-					return true;
-				}
+			if (ai.StartAction(ai.MoveAction(pos, true), 3f))
+			{
+				Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.blue, 4f);
+				return true;
 			}
 
 			return false;

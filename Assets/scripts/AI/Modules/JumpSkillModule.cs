@@ -20,7 +20,7 @@ namespace Assets.scripts.AI.Modules
 
 		public override void Init()
 		{
-			available = ai.GetAllSkillsWithTrait(SkillTraits.Jump).Count > 0;
+			canTrigger = ai.GetAllSkillsWithTrait(SkillTraits.Jump).Count > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
