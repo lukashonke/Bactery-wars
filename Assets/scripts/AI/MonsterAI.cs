@@ -75,6 +75,16 @@ namespace Assets.scripts.AI
 			return null;
 		}
 
+		public AIAttackModule GetAttackModule(string typeName)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.GetType().Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase))
+					return mod;
+			}
+			return null;
+		}
+
 		protected void UseTimers()
 		{
 			useTimers = true;

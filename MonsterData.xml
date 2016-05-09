@@ -59,6 +59,7 @@
 		</stats>
 
 		<ai type="Melee">
+			<set module="SpawnSkill" param="interval" value="5.4"/>
 		</ai>
 
 		<add_skills>

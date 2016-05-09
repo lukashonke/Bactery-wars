@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -42,6 +43,20 @@ namespace Assets.scripts.Actor.MonsterClasses
 		}
 	}
 
+	public struct AiParamInfo
+	{
+		public string module;
+		public string param;
+		public string value;
+
+		public AiParamInfo(string module, string param, string value)
+		{
+			this.module = module;
+			this.param = param;
+			this.value = value;
+		}
+	}
+
 	class CustomMonsterTemplate : MonsterTemplate
 	{
 		public MonsterTemplate OldTemplate { get; protected set; }
@@ -49,7 +64,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public string TemplateName { get; set; }
 
 		public string AiType { get; set; }
-		public Dictionary<string, string> AiParams { get; set; }
+		public List<AiParamInfo> AiParams { get; set; }
 
 		public List<SkillId> NewSkills { get; private set; } 
 		public List<SkillId> SkillsToRemove { get; private set; }
@@ -65,7 +80,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public CustomMonsterTemplate()
 		{
 			AiType = null;
-			AiParams = new Dictionary<string, string>();
+			AiParams = new List<AiParamInfo>();
 			NewSkills = new List<SkillId>();
 			SkillsToRemove = new List<SkillId>();
 			DisabledEffects = new List<SkillId>();
@@ -87,9 +102,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 			XpReward = 3;
 		}
 
-		public void AddAiParam(string key, string value)
+		public void AddAiParam(string module, string key, string value)
 		{
-			AiParams.Add(key, value);
+			AiParamInfo info = new AiParamInfo(module, key, value);
+			AiParams.Add(info);
 		}
 
 		public void AddSkillModifyInfo(SkillId id, string key, string value)
@@ -463,29 +479,32 @@ namespace Assets.scripts.Actor.MonsterClasses
 					throw new NullReferenceException("CustomAIType " + AiType + " doesnt exist!");
 
 				FieldInfo field;
-				foreach (KeyValuePair<string, string> e in AiParams)
+				foreach(AiParamInfo info in AiParams)
 				{
-					string key = e.Key;
-					string value = e.Value;
+					string module = info.module + "Module";
+					string key = info.param;
+					string value = info.value;
 
-					field = ai.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
+					AIAttackModule moduleClass = ai.GetAttackModule(module);
+
+					field = moduleClass.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
 					if (field != null)
 					{
 						if (field.FieldType == typeof (int))
 						{
-							field.SetValue(ai, Int32.Parse(value));
+							field.SetValue(moduleClass, Int32.Parse(value));
 						}
 						else if (field.FieldType == typeof(float))
 						{
-							field.SetValue(ai, float.Parse(value));
+							field.SetValue(moduleClass, float.Parse(value));
 						}
 						else if (field.FieldType == typeof (double))
 						{
-							field.SetValue(ai, Double.Parse(value));
+							field.SetValue(moduleClass, Double.Parse(value));
 						}
 						else if (field.FieldType == typeof (string))
 						{
-							field.SetValue(ai, value);
+							field.SetValue(moduleClass, value);
 						}
 						else
 						{
@@ -494,7 +513,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 					}
 					else
 					{
-						Debug.LogError("Cant write to property " + key + " in " + ai.GetType().Name + " (property is null)");
+						Debug.LogError("Cant write to property " + key + " in " + moduleClass.GetType().Name + " (property is null)");
 					}
 				}
 

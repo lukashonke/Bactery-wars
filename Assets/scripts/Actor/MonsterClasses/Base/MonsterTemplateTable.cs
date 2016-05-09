@@ -240,7 +240,36 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 							foreach (XmlNode statNode in mainParam.ChildNodes)
 							{
-								newTemplate.AddAiParam(statNode.Name, statNode.InnerText);
+								if (statNode.Name == "set")
+								{
+									string module = null;
+									string param = null;
+									string value = null;
+
+									if (statNode.Attributes != null)
+									{
+										foreach (XmlAttribute attrib in statNode.Attributes)
+										{
+											switch (attrib.Name)
+											{
+												case "module":
+													module = attrib.Value;
+													break;
+												case "param":
+													param = attrib.Value;
+													break;
+												case "value":
+													value = attrib.Value;
+													break;
+											}
+										}
+									}
+
+									if (module != null && param != null && value != null)
+									{
+										newTemplate.AddAiParam(module, param, value);
+									}
+								}
 							}
 
 							break;
