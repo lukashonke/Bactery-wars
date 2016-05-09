@@ -10,6 +10,9 @@ using Random = System.Random;
 
 namespace Assets.scripts.AI.Modules
 {
+	/// <summary>
+	/// set interval to >0 to activate this module
+	/// </summary>
 	public class FloatModule : AIAttackModule
 	{
 		public float maxRange = 10f;

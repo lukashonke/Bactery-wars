@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -15,32 +16,16 @@ namespace Assets.scripts.AI
 {
 	public class SupportMonsterAI : MonsterAI
 	{
-        // how often does he think about evading; -1 to disable
-	    public float evadeInterval = -1;
-
-        // -1 to make it always 100% 
-        public float evadeChance = -1;
-        private float lastEvadeTime;
-
-		// float around target
-		public float floatChance = -1;
-		public float floatInterval = -1;
-		public float floatSpeed = 4;
-		public int floatRange = 5;
-		public float lastFloatTime;
-
-		public bool shootWhileMoving = false;
-
 		public SupportMonsterAI(Character o) : base(o)
 		{
 		}
 
-		protected virtual bool IsLowHp(int hpPercent)
+		public override void CreateModules()
 		{
-			return (30 + UnityEngine.Random.Range(-10, 10) >= hpPercent);
+			AddAttackModule(new EvadeModule(this));
+			AddAttackModule(new FloatModule(this));
+			AddAttackModule(new AutoattackModule(this));
 		}
-
-		private int lastAngle = 0;
 
 		protected override void AttackTarget(Character target)
 		{
@@ -87,13 +72,6 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			/*if (IsLowHp(hpPercentage))
-			{
-				StartAction(RunAway(target, 5f, 20), 1f);
-				return;
-			}*/
-
-
 			Collider2D[] colls = Physics2D.OverlapCircleAll(Owner.GetData().transform.position, AggressionRange*3);
 			List<Character> targets = new List<Character>();
 
@@ -130,43 +108,16 @@ namespace Assets.scripts.AI
 					}
 				}
 
-				//TODO add buffdamage skills
+				//TODO add buffdamage skills support
 			}
 
-            if (evadeInterval > -1 && lastEvadeTime + evadeInterval < Time.time)
-		    {
-		        if (evadeChance < 0 || Random.Range(1, 100) < evadeChance)
-		        {
-		            Vector3 pos = Utils.GenerateRandomPositionAround(Owner.GetData().GetBody().transform.position, 4f, 3f);
-
-		            if (StartAction(MoveAction(pos, true), 3f))
-		            {
-						Debug.DrawLine(pos, Owner.GetData().transform.position, Color.blue, 4f);
-                        lastEvadeTime = Time.time;
-                        return;
-		            }
-		        }
-		    }
-
-			if (distSqr < 10*10 && floatInterval > -1 && lastFloatTime + floatInterval < Time.time)
+			foreach (AIAttackModule module in attackModules)
 			{
-				if (floatChance < 0 || Random.Range(1, 100) < floatChance)
+				if (module.Launch(target, distSqr))
 				{
-					// circulate target
-					Vector3 pos = Utils.GenerateRandomPositionOnCircle(target.GetData().GetBody().transform.position, floatRange, lastAngle);
-
-					if (StartAction(MoveAction(pos, true, floatSpeed), 2f, false))
-					{
-						lastAngle = lastAngle + Random.Range(-2, 2);
-						Debug.DrawLine(pos, Owner.GetData().transform.position, Color.green, 4f);
-						lastEvadeTime = Time.time;
-						return;
-					}
+					return;
 				}
 			}
-
-			if(HasMeleeSkill())
-				Owner.GetData().MeleeInterract(target.GetData().GetBody(), true);
 		}
 
 		private Character SelectSupportTarget(List<Character> targets)

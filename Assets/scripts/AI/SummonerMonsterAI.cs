@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
+	//TODO make modular
 	public class SummonerMonsterAI : MonsterAI
 	{
 		public float spawnMinInterval = 4f;

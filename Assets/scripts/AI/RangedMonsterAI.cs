@@ -31,9 +31,8 @@ namespace Assets.scripts.AI
 		{
 			AddAttackModule(new SpawnSkillModule(this));
 			AddAttackModule(new SelfBuffSkillModule(this));
-			AddAttackModule(new EvadeModule(this));
 
-			// disabled by default
+			AddAttackModule(new EvadeModule(this));
 			AddAttackModule(new FloatModule(this));
 
 			// set to 0 unless Monster Template changes it

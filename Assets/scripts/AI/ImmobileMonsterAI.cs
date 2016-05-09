@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -20,9 +21,10 @@ namespace Assets.scripts.AI
 		{
 		}
 
-		protected virtual bool IsLowHp(int hpPercent)
+		public override void CreateModules()
 		{
-			return (30 + UnityEngine.Random.Range(-10, 10) >= hpPercent);
+			AddAttackModule(new DamageSkillModule(this));
+			AddAttackModule(new AutoattackModule(this));
 		}
 
 		protected override void AttackTarget(Character target)
@@ -47,24 +49,13 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
-
-			// 1. get the most damage skill and cast if it is available
-			int topDamage = 0;
-			ActiveSkill topSkill = null;
-
-			foreach (Skill skill in skills)
+			foreach (AIAttackModule module in attackModules)
 			{
-				ActiveSkill sk = (ActiveSkill) skill;
-				if (sk.CanUse() && sk.GetTotalDamageOutput() > topDamage)
+				if (module.Launch(target, distSqr))
 				{
-					topDamage = sk.GetTotalDamageOutput();
-					topSkill = sk;
+					return;
 				}
 			}
-
-			if (topSkill != null)
-				StartAction(CastSkill(target, topSkill, distSqr, false, true, 0, 0), 10f);
 		}
 	}
 }

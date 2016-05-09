@@ -9,6 +9,9 @@ using Random = System.Random;
 
 namespace Assets.scripts.AI.Modules
 {
+	/// <summary>
+	/// set interval to >0 to activate this module
+	/// </summary>
 	public class EvadeModule : AIAttackModule
 	{
 		public float maxRange = 4f;
@@ -25,7 +28,7 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (interval > -1) // interval must be at least -1
+			if (interval > -1) // interval must be at least 0
 			{
 				Vector3 pos = Utils.GenerateRandomPositionAround(ai.Owner.GetData().GetBody().transform.position, maxRange, minRange);
 
