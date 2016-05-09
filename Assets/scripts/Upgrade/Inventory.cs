@@ -15,21 +15,23 @@ namespace Assets.scripts.Upgrade
 		public int ActiveCapacity { get; set; }
 		public int BasestatCapacity { get; set; }
 
+		public int DnaPoints { get; set; }
+
 		// these only affect base stats! not skills, etc
-		private List<AbstractUpgrade> basestatUpgrades;
-		public List<AbstractUpgrade> BasestatUpgrades
+		private List<EquippableItem> basestatUpgrades;
+		public List<EquippableItem> BasestatUpgrades
 		{
 			get { return basestatUpgrades; }
 		}
 
-		private List<AbstractUpgrade> upgrades;
-		public List<AbstractUpgrade> Upgrades
+		private List<InventoryItem> items;
+		public List<InventoryItem> Items
 		{
-			get { return upgrades; }
+			get { return items; }
 		}
 
-		private List<AbstractUpgrade> activeUpgrades;
-		public List<AbstractUpgrade> ActiveUpgrades
+		private List<EquippableItem> activeUpgrades;
+		public List<EquippableItem> ActiveUpgrades
 		{
 			get { return activeUpgrades; }
 		}
@@ -39,48 +41,51 @@ namespace Assets.scripts.Upgrade
 			this.Owner = owner;
 			this.Capacity = capacity;
 			this.ActiveCapacity = activeCapacity;
-			BasestatCapacity = 4;
+			BasestatCapacity = 5;
 
-			upgrades = new List<AbstractUpgrade>();
-			activeUpgrades = new List<AbstractUpgrade>();
-			basestatUpgrades = new List<AbstractUpgrade>(3);
+			items = new List<InventoryItem>();
+			activeUpgrades = new List<EquippableItem>();
+			basestatUpgrades = new List<EquippableItem>(5);
 		}
 
 		public void LoadUpgrades()
 		{
 			//load upgrades from file 
 
-			foreach (AbstractUpgrade u in activeUpgrades)
+			foreach (EquippableItem u in activeUpgrades)
 			{
 				u.Apply();
 			}
 		}
 
-		public bool HasInInventory(AbstractUpgrade u)
+		public bool HasInInventory(InventoryItem u)
 		{
-			return upgrades.Contains(u);
+			return items.Contains(u);
 		}
 
-		public bool CanAdd(AbstractUpgrade u)
+		public bool CanAdd(InventoryItem u)
 		{
-			if (upgrades.Count >= Capacity)
+			if (items.Count >= Capacity)
 				return false;
 
 			return true;
 		}
 
-		public bool CanEquip(AbstractUpgrade u)
+		public bool CanEquip(InventoryItem u)
 		{
-			if (activeUpgrades.Count >= ActiveCapacity)
-				return false;
+			if (u.IsUpgrade())
+			{
+				if (activeUpgrades.Count >= ActiveCapacity)
+					return false;
+			}
 
 			return true;
 		}
 
-		public void AddBasestatUpgrade(AbstractUpgrade u)
+		public void AddBasestatUpgrade(EquippableItem u)
 		{
 			bool contains = false;
-			foreach (AbstractUpgrade upg in BasestatUpgrades)
+			foreach (EquippableItem upg in BasestatUpgrades)
 			{
 				if (upg.GetType().Equals(u.GetType()))
 				{
@@ -96,37 +101,37 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public void AddUpgrade(AbstractUpgrade u)
+		public void AddItem(InventoryItem u)
 		{
 			if (!CanAdd(u))
 				return;
 
-			upgrades.Add(u);
+			items.Add(u);
 		}
 
-		public void RemoveUpgrade(AbstractUpgrade u)
+		public void RemoveItem(InventoryItem u)
 		{
-			if (IsEquipped(u))
+			if (u.IsUpgrade() && IsEquipped(u as EquippableItem))
 			{
-				UnequipUpgrade(u, true);
+				UnequipUpgrade(u as EquippableItem, true);
 			}
 
-			upgrades.Remove(u);
+			items.Remove(u);
 		}
 
-		public void RemoveUpgrade(int order)
+		public void RemoveActiveUpgrade(int orderSlot)
 		{
 			try
 			{
-				AbstractUpgrade u = activeUpgrades[order];
-				RemoveUpgrade(u);
+				EquippableItem u = activeUpgrades[orderSlot];
+				RemoveItem(u);
 			}
 			catch (Exception)
 			{
 			}
 		}
 
-		public void MoveUpgrade(AbstractUpgrade u, int fromSlot, int toSlot, int slot, AbstractUpgrade upgradeInSlot)
+		public void MoveUpgrade(EquippableItem u, int fromSlot, int toSlot, int slot, EquippableItem upgradeInSlot)
 		{
 			if (fromSlot == 1 && toSlot == 0)
 			{
@@ -148,9 +153,9 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public bool EquipUpgrade(AbstractUpgrade u)
+		public bool EquipUpgrade(EquippableItem u)
 		{
-			foreach (AbstractUpgrade upg in activeUpgrades)
+			foreach (EquippableItem upg in activeUpgrades)
 			{
 				if (u.GetType().Name.Equals(upg.GetType().Name))
 				{
@@ -166,48 +171,48 @@ namespace Assets.scripts.Upgrade
 				return false;
 
 			activeUpgrades.Add(u);
-			upgrades.Remove(u);
+			items.Remove(u);
 
 			u.Apply();
 			return true;
 		}
 
-		public bool IsEquipped(AbstractUpgrade u)
+		public bool IsEquipped(EquippableItem u)
 		{
 			return activeUpgrades.Contains(u);
 		}
 
-		public bool UnequipUpgrade(AbstractUpgrade u, bool force=false)
+		public bool UnequipUpgrade(EquippableItem u, bool force=false)
 		{
-			if (upgrades.Count >= Capacity && !force)
+			if (items.Count >= Capacity && !force)
 				return false;
 
 			// sundat vsechny upgrady od konce
 			for (int i = activeUpgrades.Count - 1; i >= 0; i--)
 			{
-				AbstractUpgrade upgr = activeUpgrades[i];
+				EquippableItem upgr = activeUpgrades[i];
 				upgr.Remove();
 			}
 
 			// smazat z listu ten ktery chceme unequipnout
 			activeUpgrades.Remove(u);
-			upgrades.Add(u);
+			items.Add(u);
 
 			// znovu aplikovat vsechny upgrady
 			for (int i = 0; i < activeUpgrades.Count; i++)
 			{
-				AbstractUpgrade upgr = activeUpgrades[i];
+				EquippableItem upgr = activeUpgrades[i];
 				upgr.Apply();
 			}
 
 			return true;
 		}
 
-		public AbstractUpgrade GetActiveUpgrade(int order)
+		public EquippableItem GetActiveUpgrade(int order)
 		{
 			try
 			{
-				AbstractUpgrade u = activeUpgrades[order];
+				EquippableItem u = activeUpgrades[order];
 				return u;
 			}
 			catch (Exception)
@@ -217,11 +222,11 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
-		public AbstractUpgrade GetUpgrade(int order)
+		public InventoryItem GetItem(int order)
 		{
 			try
 			{
-				AbstractUpgrade u = upgrades[order];
+				InventoryItem u = items[order];
 				return u;
 			}
 			catch (Exception)
@@ -231,11 +236,11 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
-		public AbstractUpgrade GetBasestatUpgrade(int order)
+		public EquippableItem GetBasestatUpgrade(int order)
 		{
 			try
 			{
-				AbstractUpgrade u = basestatUpgrades[order];
+				EquippableItem u = basestatUpgrades[order];
 				return u;
 			}
 			catch (Exception)
@@ -245,9 +250,9 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
-		public AbstractUpgrade GetUpgrade(Type type)
+		public InventoryItem GetUpgrade(Type type)
 		{
-			foreach (AbstractUpgrade u in upgrades)
+			foreach (InventoryItem u in items)
 			{
 				if (u.GetType().Equals(type))
 					return u;
@@ -255,5 +260,18 @@ namespace Assets.scripts.Upgrade
 			return null;
 		}
 
+		public void AddDna(int ammount)
+		{
+			DnaPoints += ammount;
+		}
+
+		public bool RemoveDna(int ammount)
+		{
+			if (DnaPoints < ammount)
+				return false;
+
+			DnaPoints -= ammount;
+			return true;
+		}
 	}
 }

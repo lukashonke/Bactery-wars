@@ -9,9 +9,10 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class DamageUpgrade : AbstractUpgrade
+	public class DamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public DamageUpgrade(int level)
 			: base(level)
@@ -21,14 +22,14 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ModifyDmgMul(ref float dmgMul)
 		{
-			dmgMul += 0.05f * (Level-1);
+			dmgMul += 0.05f * (Level);
 		}
 
 		protected override void InitInfo()
 		{
-			Name = "damage_upgrade";
-			VisibleName = "Damage Upgrade";
-			Description = "Increases all damage done by " + (0.05 * (Level-1) * 100) + "%.";
+			FileName = "damage_upgrade";
+			VisibleName = "Damage Module";
+			Description = "Increases all damage done by " + (0.05 * (Level) * 100) + "%.";
 		}
 	}
 }

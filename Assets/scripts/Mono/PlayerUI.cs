@@ -9,9 +9,11 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -44,15 +46,20 @@ namespace Assets.scripts.Mono
 		public GameObject settingsPanel = null;
 		public GameObject inventoryPanel = null;
 
-		public GameObject tooltipObject;
+		public Canvas levelsViewCanvas = null;
+
+		public GameObject inventoryTooltipObject;
+		public GameObject levelTooltipObject;
+		public GameObject levelLineDot;
 		public bool inventoryOpened = false;
 		public const int INVENTORY_SIZE = 20;
 		public const int ACTIVE_UPGRADES_SIZE = 5;
-		public const int BASESTAT_UPGRADES_SIZE = 4;
+		public const int BASESTAT_UPGRADES_SIZE = 5;
 		public GameObject[] inventorySlots;
 		public GameObject[] activeSlots;
 		public GameObject[] basestatSlots;
 		public GameObject trashBin;
+		public GameObject disposeValObj;
 		public Sprite iconEmptySprite;
 		public Sprite lockedIconSprite;
 
@@ -61,20 +68,20 @@ namespace Assets.scripts.Mono
 
 		public bool draggingIcon = false;
 		private GameObject draggedObject;
-		private AbstractUpgrade draggedUpgrade;
+		private InventoryItem draggedItem;
 		private int draggedUpgradeSlot;
 
 		public Text[] statsTexts;
 
 		private List<SpawnData> adminSpawnedData;
-		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingHelperCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.HelperCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, };
+		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.DurableMeleeCell, MonsterId.SwarmCell, MonsterId.PusherCell, MonsterId.HealerCell, MonsterId.SlowerCell, MonsterId.RogueCell, MonsterId.SniperCell, MonsterId.BigPassiveFloatingCell, MonsterId.BigPassiveCell, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingBasicCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.BasicCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, MonsterId.SwarmerBoss};
 		public GameObject adminPanel;
 		public Dropdown adminSpawnPanel;
 
 		private GameObject upgradesAdminPanel;
 		private Dropdown upgradesDropdownPanel;
 
-		public GameObject highlightedSlot;
+		public GameObject highlightedObject;
 
 		public GameObject currentTooltipObject;
 
@@ -308,7 +315,7 @@ namespace Assets.scripts.Mono
 			DamageMsg msg = new DamageMsg();
 			msg.dmg = damage;
 			msg.target = target.GetComponent<Collider2D>();
-			msg.shift = new Vector3();
+			msg.shift = new Vector3(Random.Range(-8, 8), Random.Range(-8, 8));
 			msg.time = Time.time;
 			msg.color = color;
 
@@ -495,6 +502,9 @@ namespace Assets.scripts.Mono
 
 			chatPosition = GameObject.Find("ChatPosition");
 
+			levelsViewCanvas = GameObject.Find("LevelsView").GetComponent<Canvas>();
+			levelsViewCanvas.enabled = false;
+
 			//msgStyle = new GUIStyle();
 			//msgStyle.fontSize = 20;
 			//msgStyle.alignment = TextAnchor.LowerCenter;
@@ -550,6 +560,7 @@ namespace Assets.scripts.Mono
 				basestatSlots = new GameObject[BASESTAT_UPGRADES_SIZE];
 
 				trashBin = GameObject.Find("Trashbin");
+				disposeValObj = GameObject.Find("DisposeValue");
 				ShowTrashBin(false);
 
 				GameObject iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
@@ -558,7 +569,9 @@ namespace Assets.scripts.Mono
 
 				GameObject.Find("InvScrollbar").GetComponent<Scrollbar>().value = 1f;
 
-				tooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
+				inventoryTooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
+				levelTooltipObject = Resources.Load("Sprite/inventory/LevelTooltip") as GameObject;
+				levelLineDot = Resources.Load("Sprite/inventory/LevelLineDot") as GameObject;
 
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
@@ -719,6 +732,466 @@ namespace Assets.scripts.Mono
 			{
 				Debug.LogError("error initializing admin panel");
 			}
+
+			levelIconTemplate = GameObject.Find("LevelIconTemplate");
+			shopButtonTemplate = GameObject.Find("LevelsViewShopButton");
+			levelsViewPanel = GameObject.Find("LevelsViewPanel");
+			levelsViewTitle = GameObject.Find("LevelsTitle");
+
+			showViewCanvas = GameObject.Find("ShopView").GetComponent<Canvas>();
+			shopContent = GameObject.Find("ShopContent");
+			shopStatsViewPanel = GameObject.Find("ShopStatsViewPanel");
+			shopItemTemplate = Resources.Load<GameObject>("Sprite/inventory/ShopItem");
+
+			consoleCanvas = GameObject.Find("ConsoleCanvas").GetComponent<Canvas>();
+			consoleCanvas.enabled = false;
+
+			dialogConfirmObject = GameObject.Find("ConfirmDialog");
+			dialogConfirmPanel = dialogConfirmObject.transform.FindChild("ConfirmCanvasPanel").gameObject;
+
+			HideLevelsView();
+		}
+
+		private GameObject levelIconTemplate;
+		private GameObject shopButtonTemplate;
+		private GameObject levelsViewPanel;
+
+		private GameObject levelsViewTitle;
+
+		private Dictionary<GameObject, LevelTree> levelsViewIcons = new Dictionary<GameObject, LevelTree>();
+
+		public void ShowLevelsView()
+		{
+			levelsViewCanvas.enabled = true;
+			shopButtonTemplate.SetActive(true);
+			SetMouseOverUi();
+
+			levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
+
+			float x = 0;
+			float y = 0;
+
+			LevelTree main = WorldHolder.instance.mapTree;
+
+			int depth;
+
+			const int maxNodesDown = 5;
+
+			int spacingY = Screen.height / maxNodesDown;
+			int spacingX = Math.Min(spacingY, Screen.width/6);
+			int rndHeight = spacingY/5;
+			int rndWidth = spacingX / 2;
+
+			List<LevelTree> mainNodes = main.GetAllMainNodes();
+			List<LevelTree> nodes = main.GetAllNodes();
+			bool done = false;
+
+			int temp = 0;
+
+			// draw all main nodes first
+			for (int i = 0; i < 100; i++)
+			{
+				temp = 0;
+
+				foreach (LevelTree t in mainNodes)
+				{
+					if (t.Depth == i)
+					{
+						temp++;
+						depth = t.Depth;
+
+						y = (Screen.height/2f) - (spacingY)*(depth + 1) + Random.Range(-rndHeight, rndHeight) + (spacingY/2f);
+						x = Random.Range(-rndWidth, rndWidth);
+
+						Debug.Log(y);
+
+						GameObject newImg = Instantiate(levelIconTemplate);
+						newImg.GetComponent<Image>().enabled = true;
+						newImg.name = "Main" + t.Name + "IconD" + t.Depth;
+						newImg.transform.parent = levelsViewPanel.transform;
+						RectTransform trans = newImg.GetComponent<RectTransform>();
+						trans.localPosition = new Vector3(x, y);
+
+						if (t.levelData != null && t.levelData.shopData != null)
+						{
+							GameObject textObj = Instantiate(shopButtonTemplate);
+							textObj.GetComponent<Image>().enabled = true;
+							textObj.GetComponent<Button>().enabled = true;
+							textObj.transform.parent = newImg.transform;
+							textObj.transform.localPosition = new Vector3(newImg.GetComponent<RectTransform>().sizeDelta.x, 0);
+
+							var t1 = t;
+							textObj.GetComponent<Button>().onClick.AddListener(delegate { OnShopButtonClick(t1); });
+						}
+
+						if (!t.Unlocked)
+						{
+							newImg.GetComponent<Image>().color = Color.gray;
+						}
+
+						if (t.CurrentlyActive)
+						{
+							newImg.GetComponent<Image>().color = Color.yellow;
+						}
+
+						AddLevelHoverAction(newImg);
+						levelsViewIcons.Add(newImg, t);
+
+						if (t.IsLastNode)
+							done = true;
+					}
+				}
+
+				if (done)
+					break;
+			}
+
+			shopButtonTemplate.SetActive(false);
+
+			done = false;
+
+			// draw the secondary nodes
+			for (int i = 0; i < 100; i++)
+			{
+				temp = 0;
+				foreach (LevelTree t in nodes)
+				{
+					if (t.Depth == i && t.LevelNodeType == LevelTree.LEVEL_EXTRA)
+					{
+						GameObject mainNodeObj = null;
+						LevelTree mainNode = null;
+
+						foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
+						{
+							if (e.Value.Depth == t.Depth && e.Value.LevelNodeType == LevelTree.LEVEL_MAIN)
+							{
+								mainNodeObj = e.Key;
+								mainNode = e.Value;
+							}
+						}
+
+						if (mainNodeObj == null)
+							continue;
+							
+						temp++;
+						depth = t.Depth;
+
+						float mainX = mainNodeObj.transform.localPosition.x;
+
+						x = 0;
+						y = mainNodeObj.transform.localPosition.y - Random.Range(rndHeight/2, rndHeight);
+
+						switch (temp)
+						{
+							case 1:
+								x = mainX + spacingX;
+								Debug.Log("1X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 2:
+								x = mainX - spacingX;
+								Debug.Log("2X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 3:
+								x = mainX + 2* spacingX;
+								Debug.Log("3X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 4:
+								x = mainX - 2* spacingX;
+								Debug.Log("4X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								break;
+							case 5:
+								x = mainX + 1.5f* spacingX;
+								y -= (spacingY/2f);
+								break;
+							case 6:
+								x = mainX + 1.5f* spacingX;
+								y -= (spacingY / 2f);
+								break;
+						}
+
+						GameObject newImg = Instantiate(levelIconTemplate);
+						newImg.GetComponent<Image>().enabled = true;
+						//newImg.GetComponent<Image>().color = Color.red;
+
+						if (t.CurrentlyActive)
+						{
+							newImg.GetComponent<Image>().color = Color.yellow;
+						}
+
+						newImg.name = "Extra" + t.Name + "IconD" + t.Depth;
+						newImg.transform.parent = levelsViewPanel.transform;
+						RectTransform trans = newImg.GetComponent<RectTransform>();
+						trans.localPosition = new Vector3(x, y);
+
+						if (!t.Unlocked)
+						{
+							newImg.GetComponent<Image>().color = Color.gray;
+						}
+
+						AddLevelHoverAction(newImg);
+						levelsViewIcons.Add(newImg, t);
+
+						if (t.IsLastNode)
+							done = true;
+					}
+				}
+
+				if (done)
+					break;
+			}
+
+			Utils.Timer.StartTimer("line");
+
+			foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
+			{
+				GameObject first = e.Key;
+				GameObject second;
+
+				foreach (LevelTree n in e.Value.Childs)
+				{
+					if (n.IsLastNode)
+					{
+						Debug.Log(e.Value.Name + " has last node");
+					}
+
+					foreach (KeyValuePair<GameObject, LevelTree> e1 in levelsViewIcons)
+					{
+						if (e1.Value.Id == n.Id)
+						{
+							if (e1.Value.IsLastNode)
+							{
+								Debug.Log("connecting to last node node " + e.Value.Name);
+							}
+
+							second = e1.Key;
+							ConnectIcons(first, second, n.Unlocked);
+							second = null;
+							break;
+						}
+					}
+				}
+
+				first = null;
+			}
+
+			Utils.Timer.EndTimer("line");
+		}
+
+		public void OnShopButtonClick(LevelTree node)
+		{
+			if (node.levelData != null && node.levelData.shopData != null)
+			{
+				ShowShopView(node.levelData.shopData);
+			}
+		}
+
+		private void ConnectIcons(GameObject first, GameObject second, bool secondUnlocked)
+		{
+			int x1 = (int) first.transform.localPosition.x;
+			int y1 = (int) first.transform.localPosition.y;
+
+			int x2 = (int) second.transform.localPosition.x;
+			int y2 = (int) second.transform.localPosition.y;
+
+			int d = 0;
+
+			int dx = Math.Abs(x2 - x1);
+			int dy = Math.Abs(y2 - y1);
+
+			int dy2 = (dy << 1);
+			int dx2 = (dx << 1);
+
+			int ix = x1 < x2 ? 1 : -1;
+			int iy = y1 < y2 ? 1 : -1;
+
+			if (dy <= dx)
+			{
+				for (;;)
+				{
+					PlantDot(x1, y1, secondUnlocked ? Color.white : Color.gray);
+
+					if (Math.Abs(x1 - x2) < Math.Abs(ix))
+						break;
+
+					x1 += ix;
+					d += dy2;
+
+					if (d > dx)
+					{
+						y1 += iy;
+						d -= dx2;
+					}
+				}
+			}
+			else
+			{
+				for (;;)
+				{
+					PlantDot(x1, y1, secondUnlocked ? Color.white : Color.gray);
+
+					if (Math.Abs(y1 - y2) < Math.Abs(iy))
+						break;
+
+					y1 += iy;
+					d += dx2;
+					if (d > dy)
+					{
+						x1 += ix;
+						d -= dy2;
+					}
+				}
+			}
+		}
+
+		private int counter = 0;
+		private List<GameObject> dots = new List<GameObject>(); 
+
+		private void PlantDot(float x, float y, Color color)
+		{
+			counter ++;
+			if (counter%20 == 0)
+			{
+				GameObject dot = Instantiate(levelLineDot);
+				dot.GetComponent<Image>().color = color;
+				dot.transform.parent = levelsViewPanel.transform;
+				dot.transform.localPosition = new Vector3(x, y);
+				dot.transform.SetAsFirstSibling();
+				dots.Add(dot);
+			}
+		}
+
+		private void AddLevelHoverAction(GameObject target)
+		{
+			EventTrigger trigger = target.AddComponent<EventTrigger>();
+
+			EventTrigger.Entry entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerDown;
+			entry.callback.AddListener(delegate { OnLevelIconClick(target); });
+			trigger.triggers.Add(entry);
+
+			entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerEnter;
+			entry.callback.AddListener(delegate { OnLevelIconHover(target, false); });
+			trigger.triggers.Add(entry);
+
+			entry = new EventTrigger.Entry();
+			entry.eventID = EventTriggerType.PointerExit;
+			entry.callback.AddListener(delegate { OnLevelIconHover(target, true); });
+			trigger.triggers.Add(entry);
+		}
+
+		public void HideLevelsView()
+		{
+			foreach (GameObject o in levelsViewIcons.Keys)
+			{
+				Destroy(o);
+			}
+
+			foreach (GameObject o in dots)
+			{
+				Destroy(o);
+			}
+
+			dots.Clear();
+
+			levelsViewIcons.Clear();
+
+			levelsViewCanvas.enabled = false;
+			SetMouseNotOverUi();
+		}
+
+		public void OnLevelIconClick(GameObject target)
+		{
+			LevelTree node;
+
+			if (!levelsViewIcons.TryGetValue(target, out node))
+				return;
+
+			if(WorldHolder.instance.OnLevelSelect(data, node))
+				HideLevelsView();
+		}
+
+		public void OnLevelIconHover(GameObject target, bool exit)
+		{
+			LevelTree node;
+
+			if (!levelsViewIcons.TryGetValue(target, out node))
+				return;
+
+			if (!exit)
+			{
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+
+				highlightedObject = target;
+				currentTooltipObject = Instantiate(levelTooltipObject);
+				currentTooltipObject.transform.parent = levelsViewPanel.transform;
+				currentTooltipObject.transform.position = Input.mousePosition;
+
+				Color titleColor = new Color();
+				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+				currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+
+				string additInfo = (node.Unlocked ? null : " [Locked]");
+
+				foreach (Transform child in currentTooltipObject.transform)
+				{
+					if (child.name.Equals("Title"))
+					{
+						child.GetComponent<Text>().text = "Level " + Enum.GetName(typeof (MapType), node.LevelParams.levelType);
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("Description"))
+					{
+						if(node.Description != null)
+							child.GetComponent<Text>().text = Utils.StringWrap(node.Description, 40);
+						continue;
+					}
+					else if (child.name.Equals("Difficulty"))
+					{
+						string difficulty = "Unknown";
+						switch (node.Difficulty)
+						{
+							case 1:
+								difficulty = "Easy";break;
+							case 2:
+								difficulty = "Medium"; break;
+							case 3:
+								difficulty = "Hard"; break;
+							case 4:
+								difficulty = "Very Hard"; break;
+						}
+						child.GetComponent<Text>().text = difficulty + " difficulty";
+						continue;
+					}
+					/*else if (child.name.Equals("Price") && price != null)
+					{
+						child.GetComponent<Text>().text = price;
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}*/
+					else if (child.name.Equals("Reward"))
+					{
+						child.GetComponent<Text>().text = node.RewardDescription;
+						continue;
+					}
+					else if (child.name.Equals("AdditionalInfo") && additInfo != null)
+					{
+						child.GetComponent<Text>().text = additInfo;
+						continue;
+					}
+					else
+					{
+						Destroy(child.gameObject);
+					}
+				}
+			}
+			else
+			{
+				//if (currentTooltipObject != null)
+				//	Destroy(currentTooltipObject);
+			}
 		}
 
 		public void AdminUpgradeChosen()
@@ -740,7 +1213,7 @@ namespace Assets.scripts.Mono
 
 				if (t != null)
 				{
-					AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
+					InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(t, 1);
 					UpgradeTable.Instance.DropItem(u, data.GetBody().transform.position);
 				}
 			}
@@ -799,7 +1272,7 @@ namespace Assets.scripts.Mono
 				{
 					StoppedDragging(mousePos);
 					draggingIcon = false;
-					draggedUpgrade = null;
+					draggedItem = null;
 					draggedUpgradeSlot = -1;
 					SetMouseNotOverUi();
 					Destroy(draggedObject);
@@ -816,7 +1289,7 @@ namespace Assets.scripts.Mono
 				bool stillAboveIcon = false;
 				foreach (RaycastResult r in hits)
 				{
-					if (r.gameObject.Equals(highlightedSlot))
+					if (r.gameObject.Equals(highlightedObject))
 					{
 						stillAboveIcon = true;
 						break;
@@ -961,16 +1434,16 @@ namespace Assets.scripts.Mono
 			return order;
 		}
 
-		public AbstractUpgrade GetUpgradeFromInventory(GameObject slot, int slotType)
+		public InventoryItem GetUpgradeFromInventory(GameObject slot, int slotType)
 		{
 			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
 
-			AbstractUpgrade u = null;
+			InventoryItem u = null;
 
 			if (slotType == 1)
 				u = data.GetOwner().Inventory.GetActiveUpgrade(order);
 			else if (slotType == 0)
-				u = data.GetOwner().Inventory.GetUpgrade(order);
+				u = data.GetOwner().Inventory.GetItem(order);
 			else if (slotType == 2) // base stat
 				u = data.GetOwner().Inventory.GetBasestatUpgrade(order);
 
@@ -979,10 +1452,49 @@ namespace Assets.scripts.Mono
 
 		public void OnUpgradeHover(GameObject slot, bool exit, int slotType)
 		{
-			AbstractUpgrade u = GetUpgradeFromInventory(slot, slotType);
+			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
 
 			if (u == null)
+			{
+				int order = Int32.Parse(slot.name.Split('_')[1]);
+				string description = GameProgressTable.GetDescriptionOnLockedSlot(order, slotType);
+
+				if (description == null || draggingIcon)
+					return;
+
+				if (currentTooltipObject != null)
+					Destroy(currentTooltipObject);
+
+				highlightedObject = slot;
+				currentTooltipObject = Instantiate(inventoryTooltipObject);
+				currentTooltipObject.transform.parent = inventoryPanel.transform;
+				currentTooltipObject.transform.position = Input.mousePosition;
+
+				Color titleColor = new Color();
+				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+				currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
+
+				foreach (Transform child in currentTooltipObject.transform)
+				{
+					if (child.name.Equals("Title"))
+					{
+						child.GetComponent<Text>().text = "Locked slot";
+						child.GetComponent<Text>().color = titleColor;
+						continue;
+					}
+					else if (child.name.Equals("Description"))
+					{
+						child.GetComponent<Text>().text = description;
+						continue;
+					}
+					else
+					{
+						Destroy(child.gameObject);
+					}
+				}
+
 				return;
+			}
 
 			if (!exit)
 			{
@@ -992,37 +1504,62 @@ namespace Assets.scripts.Mono
 				if (currentTooltipObject != null)
 					Destroy(currentTooltipObject);
 
-				highlightedSlot = slot;
-				currentTooltipObject = Instantiate(tooltipObject);
+				highlightedObject = slot;
+				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = inventoryPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
 
 				string name = u.VisibleName;
-				string description = u.Description;
+				string typeName = u.TypeName;
+				string description = Utils.StringWrap(u.Description, 40);
 				string price = u.Price;
 				string addInfo = u.AdditionalInfo;
 
-				int currentUpgradeProgress = u.CurrentProgress;
-				int needForNext = u.NeedForNextLevel;
+				if (u.Level == 0)
+				{
+					description = "No bonus effect yet.\nKill enemies to evolve this module.";
+				}
 
-				if (u.GoesIntoBasestatSlot)
-					addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
+				if (u.IsUpgrade())
+				{
+					EquippableItem upg = u as EquippableItem;
 
-				UpgradeType type = u.Type;
+					price = Enum.GetName(typeof(ItemType), ((EquippableItem)u).Type);
+
+					int currentUpgradeProgress = upg.CurrentProgress;
+					int needForNext = upg.NeedForNextLevel;
+
+					if (upg.GoesIntoBasestatSlot && needForNext > 1)
+						addInfo = "Level-up progress:\n " + currentUpgradeProgress + " / " + needForNext + " upgrade modules.";
+				}
+
+				if (addInfo == null)
+				{
+					if (u is EquippableItem && ((EquippableItem) u).GoesIntoBasestatSlot)
+					{
+						addInfo = "Cannot be disposed.";
+					}
+					else
+					{
+						addInfo = "Dispose value: " + u.DisposePrice + " DNA";
+					}
+				}
+				
+				ItemType type = u.Type;
 
 				Color titleColor = new Color();
 
 				switch (type)
 				{
-					case UpgradeType.CLASSIC:
+					case ItemType.CLASSIC_UPGRADE:
 						titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case UpgradeType.EPIC:
+					case ItemType.EPIC_UPGRADE:
 						titleColor = new Color(109 / 255f, 58 / 255f, 65 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(253 / 255f, 253 / 255f, 224 / 225f);
 						break;
-					case UpgradeType.RARE:
+					case ItemType.RARE_UPGRADE:
 						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
 						break;
@@ -1036,32 +1573,25 @@ namespace Assets.scripts.Mono
 						child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
+					else if (child.name.Equals("Type") && description != null)
+					{
+						child.GetComponent<Text>().text = "[" + typeName + " Upgrade] [" + price + "]";
+						continue;
+					}
 					else if (child.name.Equals("Description") && description != null)
 					{
 						child.GetComponent<Text>().text = description;
 						continue;
 					}
-					else if (child.name.Equals("Price") && price != null)
+					/*else if (child.name.Equals("Price") && price != null)
 					{
 						child.GetComponent<Text>().text = price;
 						child.GetComponent<Text>().color = titleColor;
 						continue;
-					}
-					else if (child.name.Equals("AdditionalInfo") && (addInfo != null || u.RequiredClass > 0))
+					}*/
+					else if (child.name.Equals("AdditionalInfo") && (addInfo != null))
 					{
-						string className = null;
-						ClassId cId = u.RequiredClass;
-						if (cId > 0)
-						{
-							className = Enum.GetName(typeof(ClassId), cId);
-						}
-
-						string info = "";
-						if (addInfo != null)
-							info = addInfo;
-
-						if (className != null)
-							info = addInfo + " Required class: " + className;
+						string info = addInfo;
 
 						child.GetComponent<Text>().text = info;
 						continue;
@@ -1070,15 +1600,18 @@ namespace Assets.scripts.Mono
 			}
 		}
 
-		public void ShowTrashBin(bool state)
+		public void ShowTrashBin(bool state, int price=0)
 		{
 			if (state)
 			{
 				trashBin.SetActive(true);
+				disposeValObj.GetComponent<Text>().text = "You will gain: " + price + " DNA";
+				disposeValObj.SetActive(true);
 			}
 			else
 			{
 				trashBin.SetActive(false);
+				disposeValObj.SetActive(false);
 			}
 		}
 
@@ -1119,9 +1652,12 @@ namespace Assets.scripts.Mono
 			if (trashBin)
 			{
 				if (draggedUpgradeSlot == 1) // is active, unequip first
-					data.GetOwner().UnequipUpgrade(draggedUpgrade, true);
+					data.GetOwner().UnequipItem(draggedItem, true);
 
-				data.GetOwner().RemoveUpgrade(draggedUpgrade);
+				data.player.AddDnaPoints(draggedItem.DisposePrice);
+				data.player.Message("You have received " + draggedItem.DisposePrice + " DNA.");
+
+				data.GetOwner().RemoveItem(draggedItem);
 				return;
 			}
 
@@ -1133,18 +1669,18 @@ namespace Assets.scripts.Mono
 
 			if (targetSlot != null)
 			{
-				AbstractUpgrade u = GetUpgradeFromInventory(targetSlot, targetSlotType);
+				InventoryItem u = GetUpgradeFromInventory(targetSlot, targetSlotType);
 				int number = GetSlotNumberFromObject(targetSlot);
 
 				// slot is not empty - swap
 				if (u != null)
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
-					Debug.Log("swapping for " + u.Name + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
+					data.GetOwner().SwapItem(draggedItem, u, number, draggedUpgradeSlot, targetSlotType);
+					Debug.Log("swapping for " + u.TypeName + " in slot " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 				else // slot is empty - simply move the upgrade there
 				{
-					data.GetOwner().SwapUpgrade(draggedUpgrade, u, number, draggedUpgradeSlot, targetSlotType);
+					data.GetOwner().SwapItem(draggedItem, u, number, draggedUpgradeSlot, targetSlotType);
 					Debug.Log("puttint into slot id " + number + " from active? " + draggedUpgradeSlot + " to active? " + (targetSlotType == 1));
 				}
 			}
@@ -1177,9 +1713,9 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			draggedUpgrade = GetUpgradeFromInventory(obj, slotType);
+			draggedItem = GetUpgradeFromInventory(obj, slotType);
 
-			if (draggedUpgrade == null)
+			if (draggedItem == null)
 				return;
 
 			draggedUpgradeSlot = slotType;
@@ -1188,7 +1724,16 @@ namespace Assets.scripts.Mono
 
 			if (doubleClick)
 			{
-				data.GetOwner().SwapUpgrade(draggedUpgrade, null, -1, draggedUpgradeSlot, targetSlot);
+				if (draggedItem is ActivableItem)
+				{
+					((ActivableItem) draggedItem).OnActivate();
+					if (((ActivableItem) draggedItem).ConsumeOnUse)
+					{
+						data.GetOwner().RemoveItem(draggedItem, false);
+					}
+				}
+				else
+					data.GetOwner().SwapItem(draggedItem, null, -1, draggedUpgradeSlot, targetSlot);
 			}
 			else
 			{
@@ -1206,7 +1751,45 @@ namespace Assets.scripts.Mono
 				preview.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
 
 				draggedObject = preview;
-				ShowTrashBin(true);
+				ShowTrashBin(true, draggedItem.DisposePrice);
+			}
+		}
+
+		public bool consoleActive = false;
+		private Canvas consoleCanvas;
+
+		public void SwitchConsole()
+		{
+			InputField inputField = consoleCanvas.transform.FindChild("InputField").GetComponent<InputField>();
+
+			if (consoleCanvas.enabled)
+			{
+				consoleCanvas.enabled = false;
+				consoleActive = false;
+
+				inputField.text = "";
+			}
+			else
+			{
+				consoleCanvas.enabled = true;
+				consoleActive = true;
+
+				EventSystem.current.SetSelectedGameObject(inputField.gameObject, null);
+				inputField.OnPointerClick(new PointerEventData(EventSystem.current));
+
+				inputField.text = "";
+			}
+		}
+
+		public void OnEnter()
+		{
+			if (consoleCanvas.enabled)
+			{
+				InputField field = consoleCanvas.transform.FindChild("InputField").GetComponent<InputField>();
+				string msg = field.text;
+
+				GameSystem.Instance.AdminCommand(msg);
+				SwitchConsole();
 			}
 		}
 
@@ -1240,8 +1823,8 @@ namespace Assets.scripts.Mono
 					case "Level":
 						t.text = "Level " + data.level;
 						break;
-					case "Class":
-						t.text = ((Player)data.GetOwner()).Template.GetClassId().ToString();
+					case "XP":
+						t.text = data.GetOwner().Status.XP + " / " + GameProgressTable.GetXpForLevel(data.level + 1) + " XP";
 						break;
 					case "HP":
 						t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;
@@ -1266,6 +1849,9 @@ namespace Assets.scripts.Mono
 						float shield = ((Player)data.GetOwner()).Status.Shield;
 						t.text = "Shield " + (int)(shield * 100 - 100) + "%";
 						break;
+					case "DNA": //TODO add to inventory
+						t.text = ((Player) data.GetOwner()).DnaPoints + "p";
+						break;
 				}
 			}
 		}
@@ -1277,9 +1863,9 @@ namespace Assets.scripts.Mono
 			int basestatCapacity = inv.BasestatUpgrades.Count;
 
 			int i = 0;
-			foreach (AbstractUpgrade u in inv.Upgrades)
+			foreach (InventoryItem u in inv.Items)
 			{
-				if (u == null || inv.IsEquipped(u))
+				if (u == null || (u.IsUpgrade() && inv.IsEquipped((EquippableItem) u)))
 					continue;
 
 				GameObject o = inventorySlots[i].transform.GetChild(0).gameObject;
@@ -1301,7 +1887,7 @@ namespace Assets.scripts.Mono
 			}
 
 			i = 0;
-			foreach (AbstractUpgrade u in inv.ActiveUpgrades)
+			foreach (EquippableItem u in inv.ActiveUpgrades)
 			{
 				GameObject o = activeSlots[i].transform.GetChild(0).gameObject;
 				Image img = o.GetComponent<Image>();
@@ -1322,7 +1908,7 @@ namespace Assets.scripts.Mono
 			}
 
 			i = 0;
-			foreach (AbstractUpgrade u in inv.BasestatUpgrades)
+			foreach (EquippableItem u in inv.BasestatUpgrades)
 			{
 				GameObject o = basestatSlots[i].transform.GetChild(0).gameObject;
 				Image img = o.GetComponent<Image>();
@@ -1417,7 +2003,7 @@ namespace Assets.scripts.Mono
 
 		public void TestSpawnMonsters()
 		{
-			MonsterId mId = MonsterId.TestMonster;
+			/*MonsterId mId = MonsterId.TestMonster;
 
 			switch (Random.Range(1, 2))
 			{
@@ -1429,13 +2015,13 @@ namespace Assets.scripts.Mono
 					break;
 			}
 
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);*/
 		}
 
 		public void TestSpawnMonsters2()
 		{
-			MonsterId mId = MonsterId.TestMonster;
-			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);
+			/*MonsterId mId = MonsterId.TestMonster;
+			GameSystem.Instance.SpawnMonster(mId, data.GetBody().transform.position + new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0), false, 1);*/
 		}
 
 		public void Skill(int order)
@@ -1493,7 +2079,7 @@ namespace Assets.scripts.Mono
 
 			if (mouseButton == 0)
 			{
-				Monster m = GameSystem.Instance.SpawnMonster((MonsterId)Enum.Parse(typeof(MonsterId), adminSpawnPanel.captionText.text), position, false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(adminSpawnPanel.captionText.text, position, false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 			}
 			else if (mouseButton == 1)
@@ -1512,12 +2098,13 @@ namespace Assets.scripts.Mono
 
 		struct SpawnData
 		{
-			public MonsterId id;
+			//public MonsterId id;
+			public string monsterTypeName;
 			public Vector3 pos;
 
-			public SpawnData(MonsterId id, Vector3 pos)
+			public SpawnData(string monsterTypeName, Vector3 pos)
 			{
-				this.id = id;
+				this.monsterTypeName = monsterTypeName;
 				this.pos = pos;
 			}
 		}
@@ -1532,7 +2119,7 @@ namespace Assets.scripts.Mono
 				{
 					if (o.GetData() != null && o.GetData() is EnemyData && !(o.GetChar() is Npc))
 					{
-						SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterId(), o.GetData().GetBody().transform.position);
+						SpawnData data = new SpawnData((o.GetChar() as Monster).Template.GetMonsterTypeName(), o.GetData().GetBody().transform.position);
 						adminSpawnedData.Add(data);
 					}
 				}
@@ -1543,7 +2130,7 @@ namespace Assets.scripts.Mono
 		{
 			foreach (SpawnData data in adminSpawnedData)
 			{
-				Monster m = GameSystem.Instance.SpawnMonster(data.id, data.pos, false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(data.monsterTypeName, data.pos, false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 			}
 		}
@@ -1579,6 +2166,159 @@ namespace Assets.scripts.Mono
 				adminPanel.SetActive(false);
 				//adminSpawnPanel.gameObject.SetActive(false);
 			}
+		}
+
+		private ShopData activeShopData;
+		private Canvas showViewCanvas;
+		private GameObject shopContent;
+		private GameObject shopItemTemplate;
+		private GameObject shopStatsViewPanel;
+
+		public void ShowShopView(ShopData shopData)
+		{
+			if (showViewCanvas.enabled)
+			{
+				HideShopView();
+				activeShopData = null;
+				return;
+			}
+
+			showViewCanvas.enabled = true;
+
+			activeShopData = shopData;
+
+			Text txt;
+
+			foreach (Transform child in shopStatsViewPanel.transform)
+			{
+				switch (child.name)
+				{
+					case "Money":
+						txt = child.GetComponent<Text>();
+						txt.text = ((Player) data.GetOwner()).DnaPoints + " DNA";
+						break;
+					case "Slots":
+						txt = child.GetComponent<Text>();
+						int taken = ((Player) data.GetOwner()).Inventory.Items.Count;
+						txt.text = "Inventory slots: " + taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
+						break;
+				}
+			}
+
+			foreach (ShopItem item in shopData.Items)
+			{
+				GameObject itemObject = Instantiate(shopItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
+				itemObject.transform.parent = shopContent.transform;
+				itemObject.transform.localPosition = new Vector3(0, 0);
+				itemObject.transform.localScale = new Vector3(1, 1);
+
+				foreach (Transform child in itemObject.transform)
+				{
+					switch (child.name)
+					{
+						case "ShopItemFrame":
+							Image img = child.GetChild(0).GetComponent<Image>();
+							img.sprite = item.item.MainSprite;
+							break;
+						case "ShopItemName":
+							txt = child.GetComponent<Text>();
+							txt.text = item.item.VisibleName;
+							break;
+						case "ShopItemDesc":
+							txt = child.GetComponent<Text>();
+							txt.text = item.item.Description;
+							break;
+						case "ShopItemPrice":
+							txt = child.GetComponent<Text>();
+
+							txt.text = item.price + " DNA";
+							child.GetChild(0).GetComponent<Text>().text = txt.text;
+							break;
+					}
+				}
+
+				EventTrigger trigger = itemObject.AddComponent<EventTrigger>();
+
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerClick;
+
+				var item1 = item;
+				entry.callback.AddListener(delegate { OnClickShopItem(itemObject, item1); });
+				trigger.triggers.Add(entry);
+			}
+		}
+
+		private GameObject dialogConfirmObject;
+		private GameObject dialogConfirmPanel;
+
+		private GameObject activePurchasingItemObject;
+		private ShopItem activePurchasingItem;
+
+		public void OnClickShopItem(GameObject obj, ShopItem item)
+		{
+			string text = "Are you sure you want to purchase " + item.item.VisibleName + "?";
+
+			if (dialogConfirmObject == null)
+			{
+				Debug.LogError("helpcanvaspanel is null, cant show help");
+				return;
+			}
+
+			activePurchasingItem = item;
+			activePurchasingItemObject = obj;
+
+			GameObject helpContent = dialogConfirmPanel.transform.FindChild("ConfirmDialogContent").gameObject;
+			foreach (Transform t in helpContent.transform)
+			{
+				if (t.name.Equals("ConfirmDialogText"))
+				{
+					t.gameObject.GetComponent<Text>().text = text;
+				}
+			}
+
+			dialogConfirmObject.GetComponent<Canvas>().enabled = true;
+		}
+
+		public void DoConfirm(bool value)
+		{
+			dialogConfirmObject.GetComponent<Canvas>().enabled = false;
+
+			if (value && activePurchasingItem != null)
+			{
+				DoPurchase();
+			}
+		}
+
+		private void DoPurchase()
+		{
+			Player p = data.player;
+
+			if (data.player.DnaPoints >= activePurchasingItem.price)
+			{
+				data.player.ReduceDnaPoints(activePurchasingItem.price);
+
+				activeShopData.DoPurchase(activePurchasingItem);
+
+				HideShopView();
+				ShowShopView(activeShopData);
+			}
+			else
+			{
+				data.player.Message("You dont have enought DNA.");
+			}
+
+			activePurchasingItem = null;
+			activePurchasingItemObject = null;
+		}
+
+		public void HideShopView()
+		{
+			foreach (Transform t in shopContent.transform)
+			{
+				Destroy(t.gameObject);
+			}
+
+			showViewCanvas.enabled = false;
 		}
 	}
 }

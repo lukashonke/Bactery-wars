@@ -9,9 +9,10 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class CriticalRateUpgrade : AbstractUpgrade
+	public class CriticalRateUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public CriticalRateUpgrade(int level)
 			: base(level)
@@ -26,13 +27,13 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "critrate_upgrade";
-			VisibleName = "Critical Rate Upgrade";
+			FileName = "critrate_upgrade";
+			VisibleName = "Critical Rate Module";
 			Description = "Increases Critical rate by " + 3 * Level + "%.";
 		}
 	}
 
-	public class CriticalDamageUpgrade : AbstractUpgrade
+	public class CriticalDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 
@@ -49,8 +50,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "critdmg_upgrade";
-			VisibleName = "Critical Damage Upgrade";
+			FileName = "critdmg_upgrade";
+			VisibleName = "Critical Damage Module";
 			Description = "Increases Critical damage by " + Level * 10 + "%.";
 		}
 	}

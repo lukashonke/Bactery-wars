@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -14,15 +15,17 @@ namespace Assets.scripts.AI
 {
 	public class ImmobileMonsterAI : MonsterAI
 	{
-		public bool loseInterestWhenOuttaRange = false;
-
 		public ImmobileMonsterAI(Character o) : base(o)
 		{
 		}
 
-		protected virtual bool IsLowHp(int hpPercent)
+		public override void CreateModules()
 		{
-			return (30 + UnityEngine.Random.Range(-10, 10) >= hpPercent);
+			AddAttackModule(new WeakAggroModule(this)).enabled = false;
+			AddAttackModule(new DamageSkillModule(this));
+			AddAttackModule(new AutoattackModule(this));
+
+			GetAttackModule<DamageSkillModule>().boostShootRange = 0.2f;
 		}
 
 		protected override void AttackTarget(Character target)
@@ -31,14 +34,8 @@ namespace Assets.scripts.AI
 
 			bool isCasting = Owner.GetData().IsCasting;
 			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-			float dist = Utils.DistancePwr(target.GetData().transform.position, Owner.GetData().transform.position);
+			float distSqr = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
-
-			if (loseInterestWhenOuttaRange && dist > AggressionRange*AggressionRange)
-			{
-				RemoveAggro(target);
-				return;
-			}
 
 			// already doing something
 			if (isCasting || Owner.Status.IsStunned())
@@ -47,24 +44,13 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			List<Skill> skills = GetAllSkillsWithTrait(SkillTraits.Damage);
-
-			// 1. get the most damage skill and cast if it is available
-			int topDamage = 0;
-			ActiveSkill topSkill = null;
-
-			foreach (Skill skill in skills)
+			foreach (AIAttackModule module in attackModules)
 			{
-				ActiveSkill sk = (ActiveSkill) skill;
-				if (sk.CanUse() && sk.GetTotalDamageOutput() > topDamage)
+				if (module.Launch(target, distSqr))
 				{
-					topDamage = sk.GetTotalDamageOutput();
-					topSkill = sk;
+					return;
 				}
 			}
-
-			if (topSkill != null)
-				StartAction(CastSkill(target, topSkill, dist, false, true, 0, 0), 10f);
 		}
 	}
 }

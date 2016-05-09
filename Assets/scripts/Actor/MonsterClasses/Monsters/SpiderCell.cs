@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 
@@ -9,16 +10,18 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public SpiderCell()
         {
-            MaxHp = 10;
+			Name = "Cell";
+			MaxHp = 10;
             MaxMp = 50;
             MaxSpeed = 8;
 
             IsAggressive = true;
             AggressionRange = 10;
             RambleAround = true;
-        }
+			XpReward = 2;
+		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
@@ -27,7 +30,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
-	        ai.dodgeRate = 75;
+		    ai.GetAttackModule<EvasiveMovementModule>().chanceEveryTick = 75;
+	        //ai.dodgeRate = 75;
             return ai;
         }
 

@@ -29,6 +29,13 @@ namespace Assets.scripts.Mono.MapGenerator
 		LevelThree,
 		LevelFour,
 		LevelFive,
+		BossRush,
+
+		SixRegions,
+		FourRegion,
+		FindBoss,
+
+		GenericMonster,
 	}
 
     /// <summary>
@@ -172,6 +179,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    private MapProcessor mapProcessor;
 		public AbstractLevelData levelData;
+		public LevelParams levelParams;
 		public Tile[,] SceneMap { get; set; }
 		public Dictionary<WorldHolder.Cords, MapRegion> regions;
 
@@ -183,7 +191,9 @@ namespace Assets.scripts.Mono.MapGenerator
 		private List<Monster> activeMonsters;
 		private List<Npc> activeNpcs;
 		private List<MonsterSpawnInfo> spawnableMonsters;
-		private List<MonsterSpawnInfo> spawnableNpcs; 
+		private List<MonsterSpawnInfo> spawnableNpcs;
+
+		private ShopData mapShop;
 
 		private int maxRegionsX = 3;
         private int maxRegionsY = 3;
@@ -203,7 +213,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return mapType; }
 		}
 
-		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight)
+		public MapHolder(WorldHolder world, string name, WorldHolder.Cords position, MapType mapType, int regionWidth, int regionHeight, LevelParams param, DropInfo rewards, int mapLevel=1)
 		{
 			this.World = world;
 
@@ -212,6 +222,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.mapType = mapType;
 		    this.regionWidth = regionWidth;
 		    this.regionHeight = regionHeight;
+			this.levelParams = param;
 
 			levelData = null;
 
@@ -241,9 +252,27 @@ namespace Assets.scripts.Mono.MapGenerator
 				case MapType.LevelFive:
 					levelData = new LevelFiveData(this);
 					break;
+				case MapType.SixRegions:
+					levelData = new SixRegionLevel(this, param);
+					break;
+				case MapType.FourRegion:
+					levelData = new FourRegionComplexLevel(this, param);
+					break;
+				case MapType.FindBoss:
+					levelData = new FindBossLevel(this, param);
+					break;
+				case MapType.BossRush:
+					levelData = new LevelBossRush(this, mapLevel);
+					break;
+				case MapType.GenericMonster:
+					levelData = new GenericMonsterLevel(this, param);
+					break;
 			}
 
-			if(levelData.GetRegionWidth() > 0)
+			levelData.LevelReward = rewards;
+			levelData.shopData = param.shop;
+
+			if (levelData.GetRegionWidth() > 0)
 				this.regionWidth = levelData.GetRegionWidth();
 
 			if (levelData.GetRegionHeight() > 0)
@@ -492,7 +521,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						break;
 					case MapType.Hardcoded:
 
-						GenerateHardcodedMap(0, 0, "Town", true);
+						GenerateHardcodedMap(0, 0, "TestMap", true);
 
 						break;
 
@@ -533,6 +562,36 @@ namespace Assets.scripts.Mono.MapGenerator
 			Utils.Timer.StartTimer("mapprocess");
 			ProcessSceneMap();
 			Utils.Timer.EndTimer("mapprocess");
+
+			PrintMapToTxt();
+		}
+
+		public void PrintMapToTxt()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < SceneMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < SceneMap.GetLength(1); j++)
+				{
+					Tile t = SceneMap[i, j];
+					if(t == null)
+						continue;
+
+					switch (t.tileType)
+					{
+						case 0:
+							sb.Append("#");
+							break;
+						case 1:
+							sb.Append(".");
+							break;
+					}
+				}
+				sb.AppendLine();
+			}
+
+			System.IO.File.WriteAllText("mapTxt.txt", sb.ToString());
 		}
 
 		private void CreateDarkPlanes() //TODO scale the objects to adjust lightning here
@@ -752,6 +811,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeleteMap()
 		{
+			levelData.OnDelete();
+
 			// destroy the map mesh
 			meshGen.Delete();
 			Object.Destroy(mesh);
@@ -805,18 +866,21 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				foreach (MonsterSpawnInfo info in spawnableNpcs)
 				{
-				    AddNpcToMap(info.MonsterId, info.SpawnPos, true);
+				    AddNpcToMap(info.MonsterTypeName, info.SpawnPos, true);
 				}
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("error");
+				Debug.LogError("error " + e.Message + "");
+				Debug.Log(e.StackTrace);
 			}
 
 			ConfigureMonstersAfterSpawn();
 
 			spawnableMonsters.Clear();
 			spawnableNpcs.Clear();
+
+			levelData.OnLoad();
 
 			GameSystem.Instance.UpdatePathfinding(GetTileWorldPosition(GetTile(0, 0)), regionWidth, regionHeight, maxRegionsX, maxRegionsY); // TODO set correct bounds
 			SetActive(true);
@@ -835,6 +899,8 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void DeloadMap()
 		{
+			levelData.OnDeload();
+
 			// destroy the map mesh
 			meshGen.Delete();
 			Object.Destroy(mesh);
@@ -862,7 +928,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (m != null && m.Data != null)
 				{
-					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterId(), m.GetData().GetBody().transform.position));
+					spawnableNpcs.Add(new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), m.GetData().GetBody().transform.position));
 					m.Data.DeleteMe();
 				}
 			}
@@ -1182,11 +1248,20 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 		}
 
-		public Npc AddNpcToMap(MonsterId monsterId, Vector3 position, bool forceSpawnNow=false)
+		public Npc AddShopToMap(string npcTypeName, Vector3 position, ShopData data, bool forceSpawnNow = false)
+		{
+			Npc npc = AddNpcToMap(npcTypeName, position, forceSpawnNow);
+
+			mapShop = data;
+
+			return npc;
+		}
+
+		public Npc AddNpcToMap(string monsterTypeName, Vector3 position, bool forceSpawnNow=false)
 		{
 			if (isActive || forceSpawnNow)
 			{
-                Npc npc = GameSystem.Instance.SpawnNpc(monsterId, position);
+                Npc npc = GameSystem.Instance.SpawnNpc(monsterTypeName, position);
 
                 RegisterNpcToMap(npc);
 
@@ -1194,7 +1269,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			// ulozit NPC do seznamu ke spawnuti (spawne se v momente kdy se tato mapa stane aktivni)
-			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterId, position));
+			spawnableNpcs.Add(new MonsterSpawnInfo(this, monsterTypeName, position));
 			return null;
 		}
 
@@ -1202,7 +1277,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	    {
 	        if (isActive || forceSpawnNow)
 	        {
-                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterId, info.SpawnPos, false, info.level);
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterTypeName, info.SpawnPos, false, info.level);
                 m.SetSpawnInfo(info);
 
                 RegisterMonsterToMap(m, info);
@@ -1220,7 +1295,7 @@ namespace Assets.scripts.Mono.MapGenerator
             if (info == null)
             {
                 Vector3 pos = m.GetData().GetBody().transform.position;
-                info = new MonsterSpawnInfo(this, m.Template.GetMonsterId(), pos);
+                info = new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), pos);
 
                 MapRegion reg = GetRegionFromWorldPosition(pos);
 
@@ -1263,21 +1338,27 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
             else if (ch is Monster)
             {
-                // this monster was added from editor and is not registered to the map - ignore its dead here
-                if (((Monster) ch).SpawnInfo == null)
-                    return;
+				// this monster was added from editor and is not registered to the map - ignore its dead here
+				if (((Monster)ch).SpawnInfo == null)
+					return;
 
-                for(int i = 0; i < activeMonsters.Count; i++)
-                {
-                    Monster temp = activeMonsters[i];
+				for (int i = 0; i < activeMonsters.Count; i++)
+				{
+					Monster temp = activeMonsters[i];
 
-                    if (temp.Equals(ch))
-                    {
-                        activeMonsters.Remove(temp);
-                        UpdateRegionStatus(temp.SpawnInfo.Region);
-                        break;
-                    }
-                }
+					if (temp.Equals(ch))
+					{
+						activeMonsters.Remove(temp);
+
+						if (levelData.IsUnderSiege())
+						{
+							levelData.siege.OnMonsterDied((Monster)ch);
+						}
+
+						UpdateRegionStatus(temp.SpawnInfo.Region);
+						break;
+					}
+				}
             }
 	    }
 
@@ -1313,8 +1394,6 @@ namespace Assets.scripts.Mono.MapGenerator
 		    }
 
 	        region.Status = MapRegion.STATUS_CONQUERED;
-
-		    levelData.OnConquered();
 
 			Queue<MapRegion> neighbours = new Queue<MapRegion>();
 			foreach (MapRegion reg in GetNeighbourRegions(region))
@@ -1367,6 +1446,12 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void OnTeleportIn(Player player)
 		{
 			levelData.OnPlayerTeleportIn(player);
+		}
+
+		public void OnShopOpen(Player player)
+		{
+			if (mapShop != null)
+				player.GetData().OpenShopUI(mapShop);
 		}
 
 		public int GetMonstersLeft(MapRegion reg)
@@ -1425,14 +1510,20 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    public bool CanTeleportToNext()
 	    {
+		    if (levelData.IsUnderSiege())
+			    return false;
+
 	        foreach (MapRegion reg in regions.Values)
 	        {
 	            if (reg.hasOutTeleporter)
 	            {
 	                UpdateRegionStatus(reg);
 
-                    if(reg.Status == MapRegion.STATUS_CONQUERED)
+		            if (reg.Status == MapRegion.STATUS_CONQUERED)
+		            {
+						levelData.OnConquered();
                         return true;
+		            }
 	            }
 	        }
 

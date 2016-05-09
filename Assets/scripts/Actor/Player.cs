@@ -19,6 +19,7 @@ namespace Assets.scripts.Actor
 	public class Player : Character
 	{
 		public ClassTemplate Template { get; set; }
+		public int DnaPoints { get; private set; }
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
@@ -32,6 +33,21 @@ namespace Assets.scripts.Actor
 			Data = dataObject;
 
 			Template = template;
+		}
+
+		public override void OnLevelChange()
+		{
+			if (Level >= 10)
+			{
+				Inventory.ActiveCapacity = 4;
+			}
+			else if (Level >= 5)
+			{
+				Inventory.ActiveCapacity = 3;
+			}
+
+			if(Inventory != null && GetData() != null && GetData().ui != null)
+				GetData().ui.UpdateInventory(Inventory);
 		}
 
 		public override void DoDie(Character killer = null, SkillId skillId = SkillId.SkillTemplate)
@@ -84,10 +100,11 @@ namespace Assets.scripts.Actor
 			Inventory.ActiveCapacity = Template.ActiveUpgradesCapacity;
 			Inventory.Capacity = Template.InventoryCapacity;
 
-			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new DamageUpgrade(1).Init().SetOwner(this));
-			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(1).Init().SetOwner(this));
+			Inventory.BasestatUpgrades.Add(new HpUpgradeAdd(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new SpeedUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new DamageUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new ShieldUpgrade(0).Init().SetOwner(this) as EquippableItem);
+			Inventory.BasestatUpgrades.Add(new CriticalRateUpgrade(0).Init().SetOwner(this) as EquippableItem);
 
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
@@ -118,8 +135,6 @@ namespace Assets.scripts.Actor
 
 		public override void UpdateStats()
 		{
-			Debug.Log("updating stats");
-
 			int tmpMaxHp = Template.MaxHp;
 			int tmpMaxMp = Template.MaxMp;
 			int tmpCritRate = Template.CriticalRate;
@@ -129,7 +144,7 @@ namespace Assets.scripts.Actor
 			float tmpDmgAdd = Template.DamageAdd;
 			float tmpShield = Template.Shield;
 
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.ModifyMaxHp(ref tmpMaxHp);
 				u.ModifyMaxMp(ref tmpMaxMp);
@@ -141,7 +156,7 @@ namespace Assets.scripts.Actor
 				u.ModifyShield(ref tmpShield);
 			}
 
-			foreach (AbstractUpgrade u in Inventory.BasestatUpgrades)
+			foreach (EquippableItem u in Inventory.BasestatUpgrades)
 			{
 				u.ModifyMaxHp(ref tmpMaxHp);
 				u.ModifyMaxMp(ref tmpMaxMp);
@@ -234,6 +249,21 @@ namespace Assets.scripts.Actor
 		public override void Message(string s, int level=1)
 		{
 			GetData().ui.ScreenMessage(s, level);
+		}
+
+		public void AddDnaPoints(int n)
+		{
+			DnaPoints += n;
+		}
+
+		public bool ReduceDnaPoints(int n)
+		{
+			if (DnaPoints >= n)
+			{
+				DnaPoints -= n;
+				return true;
+			}
+			return false;
 		}
 	}
 }

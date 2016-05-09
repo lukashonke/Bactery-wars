@@ -222,7 +222,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 					float wait = 0;
 					for (int i = 0; i < count; i++)
 					{
-						for (int j = 0; j < 4; j++)
+						for (int j = 0; j < (toAllDirections ? 4 : 1); j++)
 						{
 							Owner.StartTask(ShootDelayedProjectile(wait, GetOwnerData().GetForwardVector(j*90 + Random.Range(-deviationAngle, deviationAngle))*projectileForce));
 						}
@@ -235,7 +235,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 					int temp = 30/count;
 					for (int i = 0; i < count; i++)
 					{
-						for (int j = 0; j < 4; j++)
+						for (int j = 0; j < (toAllDirections ? 4 : 1); j++)
 						{
 							GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
 							if (activeProjectile != null)

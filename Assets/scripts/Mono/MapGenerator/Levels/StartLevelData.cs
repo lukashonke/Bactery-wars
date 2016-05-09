@@ -49,10 +49,10 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			                break;
 
 						if(count < 3)
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, false, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), t, false, 1);
 
 			            count ++;
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged.ToString(), t, false, 1);
 	                }
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -66,18 +66,18 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, leaderPos, false, 1);
+						MonsterSpawnInfo info = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol.ToString(), leaderPos, false, 1);
 
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, false, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), pos, false, 1);
 						}
 
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 4, 2);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged, pos, false, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_ranged.ToString(), pos, false, 1);
 						}
 					}
 
@@ -94,7 +94,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 						for (int i = 0; i < 2; i++)
 						{
 							Vector3 pos = Utils.GenerateRandomPositionAround(leaderPos, 5, 1);
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, pos, false, 1);
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), pos, false, 1);
 						}
 					}
 
@@ -109,7 +109,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 						Vector3 leaderPos = map.GetTileWorldPosition(t);
 
-						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged, leaderPos);
+						MonsterSpawnInfo info = new MonsterSpawnInfo(map, MonsterId.Lymfocyte_ranged.ToString(), leaderPos);
 						info.SetRegion(room.region.GetParentOrSelf());
 						map.AddMonsterToMap(info);
 					}

@@ -14,7 +14,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxSpeed = 10;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			// no skills
 		}
@@ -37,14 +37,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			    if (WorldHolder.instance.activeMap.CanTeleportToNext())
 			    {
-					WorldHolder.instance.activeMap.OnTeleportOut((Player) source);
+				    WorldHolder.instance.OnLevelFinished();
 
-                    WorldHolder.instance.LoadNextMap();
+					data.ui.ShowLevelsView();
+
+                    //WorldHolder.instance.LoadNextMap();
 
 					// teleport player to new start
-					data.transform.position = WorldHolder.instance.GetStartPosition();
+					//data.transform.position = WorldHolder.instance.GetStartPosition();
 
-					WorldHolder.instance.activeMap.OnTeleportIn((Player)source);
+					//WorldHolder.instance.activeMap.OnTeleportIn((Player)source);
 			    }
 			    else
 			    {

@@ -13,8 +13,11 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class CellFuryRangeUpgrade : AbstractUpgrade
+	public class CellFuryRangeUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int RANGE = 100;
 		public const float LEVEL_ADD = 10;
 
@@ -48,14 +51,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Range Upgrade";
-			Description = "Your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Range Module";
+			Description = "When Cell Fury is activated, your autoattack has range increased by " + AddValueByLevel(RANGE, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class CellFuryPushUpgrade : AbstractUpgrade
+	public class CellFuryPushUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int POWER = 25;
 		public const float LEVEL_ADD = 5;
 
@@ -85,14 +92,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Push Upgrade";
-			Description = "Your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Push Module";
+			Description = "When Cell Fury is activated, your autoattack will push enemies away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ".";
 		}
 	}
 
-	public class CellFuryReuseUpgrade : AbstractUpgrade
+	public class CellFuryReuseUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int REUSE = 25;
 		public const float LEVEL_ADD = 4;
 
@@ -126,14 +137,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Reuse Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Reuse Module";
 			Description = "The reuse of Cell Fury is decreased by " + AddValueByLevel(REUSE, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class CellFuryNullReuseUpgrade : AbstractUpgrade
+	public class CellFuryNullReuseUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int CHANCE = 10;
 		public const float LEVEL_ADD = 2;
 
@@ -167,16 +182,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Reuse Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Reuse Module";
 			Description = "There is a " + AddValueByLevel(CHANCE, LEVEL_ADD) + "% chance that Cell Fury skill will have no reuse (it will be available immediatelly after you cast it).";
 		}
 	}
 
-	public class CellFuryShieldUpgrade : AbstractUpgrade
+	public class CellFuryShieldUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 10;
+		public const float LEVEL_ADD = 5;
 
 		private float temp;
 
@@ -203,16 +222,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Shield Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Shield Module";
 			Description = "When Cell Fury is active, your shield will be " + AddValueByLevel(POWER, LEVEL_ADD) + "% stronger.";
 		}
 	}
 
-	public class CellFurySpeedUpgrade : AbstractUpgrade
+	public class CellFurySpeedUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 4;
+		public const float LEVEL_ADD = 5;
 
 		public CellFurySpeedUpgrade(int level)
 			: base(level)
@@ -237,15 +260,19 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Speed Upgrade";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Speed Module";
 			Description = "When Cell Fury is active, your movement speed is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class CellFuryDrainUpgrade : AbstractUpgrade
+	public class CellFuryDrainUpgrade : EquippableItem
 	{
-		public const int POWER = 50;
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
+		public const int POWER = 20;
 		public const float LEVEL_ADD = 4;
 
 		public CellFuryDrainUpgrade(int level)
@@ -269,9 +296,10 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "cellfury_upgrade";
-			VisibleName = "Cell Fury Speed Upgrade";
-			Description = "When Cell Fury is active, your movement speed is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
+			FileName = "cellfury_upgrade";
+			TypeName = "Cell Fury";
+			VisibleName = "Speed Module";
+			Description = "When Cell Fury is active, " + AddValueByLevel(POWER, LEVEL_ADD) + "% of damage you deal will be returned to you as HP.";
 		}
 	}
 }

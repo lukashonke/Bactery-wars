@@ -247,7 +247,19 @@ namespace Assets.scripts.Mono.MapGenerator
 			return room;
 		}
 
-	    public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count, bool exclude=true)
+		public Tile GetSubRoom(RoomType type, int preferredDirection, bool exclude = true)
+		{
+			try
+			{
+				return GetSubRooms(type, preferredDirection, 1, exclude)[0];
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		public Tile[] GetSubRooms(RoomType type, int preferredDirection, int count, bool exclude=true)
 	    {
 			foreach (Tile t in tiles)
 			{
@@ -292,6 +304,20 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int DIRECTION_CENTER = 5;
 		public const int DIRECTION_CENTER_LEFT = 6;
 		public const int DIRECTION_CENTER_RIGHT = 7;
+
+		public const int DIRECTION_LARGEST_ROOM = 10;
+
+		public Tile GetSubRoom(int minTiles, int maxRadius, int preferredDirection, bool exclude = false)
+		{
+			try
+			{
+				return GetSubRooms(minTiles, maxRadius, preferredDirection, 1, exclude)[0];
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
 
 	    public Tile[] GetSubRooms(int minTiles, int maxRadius, int preferredDirection, int count, bool exclude=false)
 	    {

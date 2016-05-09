@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Actor.MonsterClasses.Monsters
@@ -17,9 +18,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
+			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CreateCoverMob));
@@ -28,8 +30,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-		    a.evadeInterval = 2f;
-		    return a;
+			a.GetAttackModule<EvadeModule>().interval = 2f;
+			return a;
 		}
 
 		public override GroupTemplate GetGroupTemplate()

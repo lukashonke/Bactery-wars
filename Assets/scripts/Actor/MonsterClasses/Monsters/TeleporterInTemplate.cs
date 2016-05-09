@@ -14,7 +14,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			MaxSpeed = 10;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			// no skills
 		}
@@ -33,13 +33,21 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		{
 			if (source is Player)
 			{
+				if (WorldHolder.instance.activeMap.levelData.IsUnderSiege())
+				{
+					GameSystem.Instance.BroadcastMessage("Cant teleport when your base is under siege!");
+					return;
+				}
+
 				PlayerData data = ((Player) source).GetData();
 
-				WorldHolder.instance.LoadPreviousMap();
+				data.ui.ShowLevelsView();
+
+				/*WorldHolder.instance.LoadPreviousMap();
 
 				//TODO bug - it teleports anyway
 				// teleport player to new start
-				data.transform.position = WorldHolder.instance.GetStartPosition();
+				data.transform.position = WorldHolder.instance.GetStartPosition();*/
 			}
 		}
 

@@ -5,6 +5,8 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
+using Assets.scripts.Fort;
+using Assets.scripts.Upgrade;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,13 +15,33 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 	public abstract class AbstractLevelData
 	{
 		public MapType type;
+
+		public int mapLevel;
+
 		protected MapHolder map;
-
 		protected bool conquered = false;
+		protected bool canHaveBase = false;
 
-		public AbstractLevelData(MapHolder holder)
+		public PlayerBase playerBase = null;
+		public Siege siege = null;
+
+		public int DnaReward { get; protected set; } //TODO also add item reward
+		public DropInfo LevelReward { get; set; }
+
+		public ShopData shopData;
+
+		protected bool tutorialLevel;
+
+		public AbstractLevelData(MapHolder holder,  int mapLevel=1)
 		{
 			map = holder;
+			this.mapLevel = mapLevel;
+			tutorialLevel = false;
+			shopData = null;
+
+			LevelReward = new DropInfo();
+
+			DnaReward = 0;
 		}
 
 		public abstract void Generate();
@@ -35,7 +57,22 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			return roll < chance;
 		}
 
-		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, MonsterId id, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
+		public void AddLevelReward(Type upgradeType, int chance=100, int category=1, int level = 1)
+		{
+			LevelReward.drops.Add(new DropInfo.Drop(upgradeType, chance, level, category));
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int rarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
+		}
+
+		public void AddLevelRewardRandom(int chance, ItemType randomType, int minRarity, int maxRarity, int category, int level = 1)
+		{
+			LevelReward.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
+		}
+
+		public MonsterSpawnInfo SpawnMonstersToRoom(MapRoom room, string monsterTypeName, MapRoom.RoomType type, int direction, int countRooms, int countMobsPerRoom, bool randomOffset = false, int level = 1, int chance = 100, bool exclude=true)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -51,14 +88,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 				for (int i = 0; i < countMobsPerRoom; i++)
 				{
-					info = SpawnMonsterToRoom(room, id, t, randomOffset, level);
+					info = SpawnMonsterToRoom(room, monsterTypeName, t, randomOffset, level);
 				}
 			}
 
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Tile roomTile, bool randomOffset=false, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, string monsterTypeName, Tile roomTile, bool randomOffset=false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -67,7 +104,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			if (randomOffset)
 				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 
@@ -75,7 +112,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			return info;
 		}
 
-		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, MonsterId id, Vector3 pos, bool randomOffset = false, int level = 1, int chance = 100)
+		public MonsterSpawnInfo SpawnMonsterToRoom(MapRoom room, string monsterTypeName, Vector3 pos, bool randomOffset = false, int level = 1, int chance = 100)
 		{
 			if (chance < 100 && !ChanceCheck(chance))
 				return null;
@@ -83,7 +120,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			if (randomOffset)
 				pos = Utils.GenerateRandomPositionAround(pos, 5, 2);
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(room.region.GetParentOrSelf());
 
@@ -100,10 +137,74 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 
 		}
-
-		public void OnConquered()
+		
+		public void OnConquered() 
 		{
 			conquered = true;
+			LevelReward.DoDrop(null, GameSystem.Instance.CurrentPlayer, true);
+
+			if (DnaReward > 0)
+			{
+				GameSystem.Instance.CurrentPlayer.AddDnaPoints(DnaReward);
+				GameSystem.Instance.BroadcastMessage("You have obtained " + DnaReward + " DNA.");
+			}
+		}
+
+		public bool CanHaveBase()
+		{
+			return canHaveBase;
+		}
+
+		public void CreateBase()
+		{
+			Vector3 pos = GetBaseLocation();
+
+			playerBase = new PlayerBase(map, pos, null);
+			playerBase.LoadBase();
+		}
+
+		public bool HasBase()
+		{
+			return playerBase != null;
+		}
+
+		public void SetSiege(Siege s)
+		{
+			siege = s;
+		}
+
+		public bool IsUnderSiege()
+		{
+			return siege != null;
+		}
+
+		public virtual Vector3 GetBaseLocation()
+		{
+			return new Vector3();
+		}
+
+		public virtual void OnLoad()
+		{
+			if (HasBase())
+			{
+				playerBase.LoadBase();
+			}
+		}
+
+		public virtual void OnDeload()
+		{
+			if (HasBase())
+			{
+				playerBase.DeloadBase();
+			}
+		}
+
+		public virtual void OnDelete()
+		{
+			if (HasBase())
+			{
+				playerBase.DeloadBase();
+			}
 		}
 	}
 }

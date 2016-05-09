@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using Assets.scripts;
 using UnityEngine.SceneManagement;
@@ -46,10 +47,22 @@ public class MenuManager : MonoBehaviour
 		string gameType = gametypeDropdown.captionText.text;
 		string profile = "Lukas";
 
+		bool skipTutorial = false;
+
+		try
+		{
+			skipTutorial = GameObject.Find("SkipTutorialToggle").GetComponent<Toggle>().isOn;
+		}
+		catch (Exception)
+		{
+		}
+		
+
 		GameSession.className = selectedClass;
 		GameSession.difficulty = difficulty;
 		GameSession.gameType = gameType;
 		GameSession.profileName = profile;
+		GameSession.skipTutorial = skipTutorial;
 
 		SceneManager.UnloadScene(SceneManager.GetActiveScene().name);
 		SceneManager.LoadScene("gamewindow");

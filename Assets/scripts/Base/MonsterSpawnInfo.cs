@@ -14,7 +14,7 @@ namespace Assets.scripts.Base
     public class MonsterSpawnInfo
     {
 	    public MapHolder Map { get; set; }
-        public MonsterId MonsterId { get; private set; }
+        public string MonsterTypeName { get; private set; }
         public Vector3 SpawnPos { get; set; }
         public MapRegion Region { get; private set; }
 	    public int level;
@@ -25,10 +25,12 @@ namespace Assets.scripts.Base
 
 	    public MonsterSpawnInfo master;
 
-        public MonsterSpawnInfo(MapHolder map, MonsterId id, Vector3 spawnPos, MapRegion region=null)
+	    public int tempId;
+
+        public MonsterSpawnInfo(MapHolder map, string monsterTypeName, Vector3 spawnPos, MapRegion region=null)
         {
 	        Map = map;
-            MonsterId = id;
+			MonsterTypeName = monsterTypeName;
             SpawnPos = spawnPos;
             Region = region;
 	        level = 1;
@@ -37,19 +39,25 @@ namespace Assets.scripts.Base
 
 		public MonsterSpawnInfo AddHealDrop(int chance, int level=1)
 		{
-			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level));
+			Drop.drops.Add(new DropInfo.Drop(typeof(Heal), chance, level, -1));
 			return this;
 		}
 
-		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int level=1)
+		public MonsterSpawnInfo AddDrop(int chance, Type upgradeType, int category, int level=1)
 	    {
-			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level));
+			Drop.drops.Add(new DropInfo.Drop(upgradeType, chance, level, category));
 			return this;
 	    }
 
-	    public MonsterSpawnInfo AddDrop(int chance, UpgradeType randomType, int minRarity, int maxRarity, int level=1)
+		public MonsterSpawnInfo AddDrop(int chance, ItemType randomType, int rarity, int category, int level = 1)
+		{
+			Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, rarity, rarity, category));
+			return this;
+		}
+
+	    public MonsterSpawnInfo AddDrop(int chance, ItemType randomType, int minRarity, int maxRarity, int category, int level=1)
 	    {
-		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity));
+		    Drop.randomDrops.Add(new DropInfo.RandomDrop(randomType, chance, level, minRarity, maxRarity, category));
 		    return this;
 	    }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Base;
 using Assets.scripts.Skills.Base;
 
@@ -10,6 +11,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellBig()
 		{
+			Name = "Cell";
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -18,9 +20,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
+			XpReward = 5;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
 		}
@@ -28,13 +31,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-		    a.evadeInterval = 2f;
+		    a.GetAttackModule<EvadeModule>().interval = 2f;
 		    return a;
 		}
 
 		public override void OnDie(Monster m)
 		{
-			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellMedium, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellMedium.ToString(), m.Level, m.GetData().GetBody().transform.position);
 			child.AI.CopyAggroFrom(m.AI);
 		}
 
@@ -53,6 +56,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellMedium()
 		{
+			Name = "Cell";
 			MaxHp = 25;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -61,9 +65,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
+			XpReward = 3;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
 		}
@@ -71,13 +76,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-			a.evadeInterval = 2f;
+			a.GetAttackModule<EvadeModule>().interval = 2f;
 			return a;
 		}
 
 		public override void OnDie(Monster m)
 		{
-			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellSmall, m.Level, m.GetData().GetBody().transform.position);
+			Monster child = m.SpawnAssociatedMonster(MonsterId.MorphCellSmall.ToString(), m.Level, m.GetData().GetBody().transform.position);
 			child.AI.CopyAggroFrom(m.AI);
 		}
 
@@ -96,6 +101,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	{
 		public MorphCellSmall()
 		{
+			Name = "Cell";
 			MaxHp = 10;
 			MaxMp = 50;
 			MaxSpeed = 10;
@@ -104,9 +110,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			AggressionRange = 10;
 			RambleAround = true;
 			AlertsAllies = true;
+			XpReward = 1;
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.NeutrophileProjectile));
 		}
@@ -114,7 +121,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-			a.evadeInterval = 2f;
+			a.GetAttackModule<EvadeModule>().interval = 2f;
 			return a;
 		}
 

@@ -16,6 +16,7 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,6 +53,12 @@ namespace Assets.scripts.Actor
 		{
 			Level = level;
 			Data.SetVisibleLevel(level);
+			OnLevelChange();
+		}
+
+		public virtual void OnLevelChange()
+		{
+			
 		}
 
 		protected Character(string name) : base(name)
@@ -87,7 +94,7 @@ namespace Assets.scripts.Actor
 
 		public virtual void OnKill(Character target, SkillId skillId)
 		{
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.OnKill(target, skillId);
 			}
@@ -147,7 +154,7 @@ namespace Assets.scripts.Actor
 			Status = InitStatus();
 			Skills = InitSkillSet();
 			summons = new List<Monster>();
-			Inventory = new Inventory(this, 10, 3);
+			Inventory = new Inventory(this, 10, 2);
 
 			Knownlist.StartUpdating();
 
@@ -262,46 +269,96 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
-		public void HitUpgrade(UpgradeScript upg)
+		public void GiveItem(InventoryItem item)
 		{
-			if (upg.upgrade.CollectableByPlayer && !(this is Player))
+			if (item.CollectableByPlayer && !(this is Player))
 				return;
 
-			if (upg.upgrade == null)
+			if (item.OnPickup(this))
 			{
-				Debug.LogError("null upgrade for " + upg.gameObject.name);
-				return;
-			}
-
-			if (upg.upgrade.OnPickup(this))
-			{
-				upg.DeleteMe(true);
 				Data.UpdateInventory(Inventory);
 				UpdateStats();
 				return;
 			}
 
-			if (upg.upgrade.GoesIntoBasestatSlot)
+			EquippableItem upgrade = item as EquippableItem;
+
+			if (upgrade != null)
 			{
-				Message("You have absorbed " + upg.upgrade.VisibleName + "");
-				Inventory.AddBasestatUpgrade(upg.upgrade);
-				upg.DeleteMe(true);
-				Data.UpdateInventory(Inventory);
-				UpdateStats();
+				if (upgrade.GoesIntoBasestatSlot)
+				{
+					Message("You have absorbed " + item.VisibleName + "");
+					Inventory.AddBasestatUpgrade(upgrade);
+					Data.UpdateInventory(Inventory);
+					UpdateStats();
+				}
+				else if (AddItem(upgrade))
+				{
+					//EquipUpgrade(upg.upgrade);
+				}
 			}
-			else if (AddUpgrade(upg.upgrade))
+			else
 			{
-				upg.DeleteMe(true);
-				//EquipUpgrade(upg.upgrade);
+				if (AddItem(item))
+				{
+					//EquipUpgrade(upg.upgrade);
+				}
 			}
 		}
 
-		public bool AddUpgrade(AbstractUpgrade u)
+		public void HitItem(UpgradeScript upg)
+		{
+			if (upg.item.CollectableByPlayer && !(this is Player))
+				return;
+
+			if (upg.item == null)
+			{
+				Debug.LogError("null item for " + upg.gameObject.name);
+				return;
+			}
+
+			if (upg.item.OnPickup(this))
+			{
+				upg.DeleteMe(true);
+				Data.UpdateInventory(Inventory);
+				UpdateStats();
+				return;
+			}
+
+			EquippableItem upgrade = upg.item as EquippableItem;
+
+			if (upgrade != null)
+			{
+				if (upgrade.GoesIntoBasestatSlot)
+				{
+					Message("You have absorbed " + upg.item.VisibleName + "");
+					Inventory.AddBasestatUpgrade(upgrade);
+					upg.DeleteMe(true);
+					Data.UpdateInventory(Inventory);
+					UpdateStats();
+				}
+				else if (AddItem(upgrade))
+				{
+					upg.DeleteMe(true);
+					//EquipUpgrade(upg.upgrade);
+				}
+			}
+			else
+			{
+				if (AddItem(upg.item))
+				{
+					upg.DeleteMe(true);
+					//EquipUpgrade(upg.upgrade);
+				}
+			}
+		}
+
+		public bool AddItem(InventoryItem u)
 		{
 			if (Inventory.CanAdd(u))
 			{
 				u.SetOwner(this);
-				Inventory.AddUpgrade(u);
+				Inventory.AddItem(u);
 				Data.UpdateInventory(Inventory);
 				Message("You have picked up: " + u.VisibleName + "");
 				return true;
@@ -310,15 +367,17 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
-		public void RemoveUpgrade(AbstractUpgrade u)
+		public void RemoveItem(InventoryItem u, bool showMsg=true)
 		{
 			u.SetOwner(null);
-			Inventory.RemoveUpgrade(u);
+			Inventory.RemoveItem(u);
 			Data.UpdateInventory(Inventory);
-			Message("Deleted " + u.VisibleName);
+
+			if(showMsg)
+				Message("Deleted " + u.VisibleName);
 		}
 
-		public void EquipUpgrade(AbstractUpgrade u)
+		public void EquipUpgrade(EquippableItem u)
 		{
 			if (!Inventory.EquipUpgrade(u))
 				return;
@@ -329,20 +388,32 @@ namespace Assets.scripts.Actor
 			Message("Equiped " + u.VisibleName);
 		}
 
-		public void UnequipUpgrade(AbstractUpgrade u, bool force=false)
+		public void UnequipItem(InventoryItem u, bool force=false)
 		{
-			Inventory.UnequipUpgrade(u, force);
-			UpdateStats();
+			if (u.IsUpgrade())
+			{
+				EquippableItem upgr = (EquippableItem) u;
 
-			Data.UpdateInventory(Inventory);
-			Message("Unequiped " + u.VisibleName);
+				Inventory.UnequipUpgrade(upgr, force);
+				UpdateStats();
+
+				Data.UpdateInventory(Inventory);
+				Message("Unequiped " + u.VisibleName);
+			}
 		}
 
-		public void SwapUpgrade(AbstractUpgrade source, AbstractUpgrade target, int slot, int fromSlot, int toSlot)
+		public void SwapItem(InventoryItem source, InventoryItem target, int slot, int fromSlot, int toSlot)
 		{
-			Inventory.MoveUpgrade(source, fromSlot, toSlot, slot, target);
-			UpdateStats();
-			Data.UpdateInventory(Inventory);
+			// can only swap upgrades from active slots to inventory slots
+			if (source.IsUpgrade() && (target == null || target.IsUpgrade()))
+			{
+				EquippableItem sourceUpgr = (EquippableItem) source;
+				EquippableItem targetUpgr = (EquippableItem) target;
+
+				Inventory.MoveUpgrade(sourceUpgr, fromSlot, toSlot, slot, targetUpgr);
+				UpdateStats();
+				Data.UpdateInventory(Inventory);
+			}
 		}
 
 		public virtual void UpdateStats()
@@ -518,7 +589,7 @@ namespace Assets.scripts.Actor
 		/// Spusti kouzleni skillu
 		/// </summary>
 		/// <param name="skill"></param>
-		public void CastSkill(Skill skill)
+		public void CastSkill(Skill skill, GameObject setTarget=null)
 		{
 			if (!CanCastSkill(skill))
 				return;
@@ -535,7 +606,10 @@ namespace Assets.scripts.Actor
 			}
 
 			if(skill is ActiveSkill)
-				((ActiveSkill)skill).Start(GetData().Target);
+				if(setTarget == null)
+					((ActiveSkill)skill).Start(GetData().Target);
+				else
+					((ActiveSkill)skill).Start(setTarget);
 			else
 				skill.Start();
 		}
@@ -573,7 +647,7 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
-		public int CalculateDamage(int baseDamage, Character target, bool canCrit)
+		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit)
 		{
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
 			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
@@ -584,6 +658,8 @@ namespace Assets.scripts.Actor
 			{
 				baseDamage = (int) (baseDamage*Status.CriticalDamageMul);
 			}
+
+			wasCrit = crit;
 
 			return baseDamage;
 		}
@@ -614,7 +690,7 @@ namespace Assets.scripts.Actor
 			GetData().SetVisibleHp(Status.Hp);
 		}
 
-		public void ReceiveDamage(Character source, int damage, SkillId skillId=0)
+		public void ReceiveDamage(Character source, int damage, SkillId skillId=0, bool wasCrit=false)
 		{
 			if (Status.IsDead || damage <= 0)
 				return;
@@ -628,7 +704,7 @@ namespace Assets.scripts.Actor
 
 			if (source != null)
 			{
-				source.OnGiveDamage(this, damage, skillId);
+				source.OnGiveDamage(this, damage, skillId, wasCrit);
 			}
 
 			if (Status.IsDead)
@@ -638,17 +714,20 @@ namespace Assets.scripts.Actor
 
 			GetData().SetVisibleHp(Status.Hp);
 
-			AI.AddAggro(source, damage);
+			AI.AddAggro(source, damage*5);
 		}
 
-		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0)
+		public void OnGiveDamage(Character target, int damage, SkillId skillId = 0, bool wasCrit=false)
 		{
 			if (this is Player)
 			{
-				((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
+				if (wasCrit)
+					((Player)this).GetData().ui.ObjectMessage(target.GetData().GetBody(), "*crit* " + damage, Color.green);
+				else
+					((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
 			}
 
-			foreach (AbstractUpgrade u in Inventory.ActiveUpgrades)
+			foreach (EquippableItem u in Inventory.ActiveUpgrades)
 			{
 				u.OnGiveDamage(target, damage, skillId);
 			}
@@ -831,6 +910,23 @@ namespace Assets.scripts.Actor
 		public bool HasSummons()
 		{
 			return summons.Count > 0;
+		}
+
+		public void AddXp(int xp)
+		{
+			Status.AddXp(xp);
+
+			if (Status.XP >= GameProgressTable.GetXpForLevel(Level + 1))
+			{
+				LevelUp();
+			}
+		}
+
+		private void LevelUp()
+		{
+			Status.XP -= GameProgressTable.GetXpForLevel(Level + 1);
+			SetLevel(Level + 1);
+			Message("Level up! You are now level " + Level);
 		}
 
 		public virtual void Message(string s, int level=1)

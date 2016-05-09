@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.AI.Modules;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -17,40 +18,32 @@ namespace Assets.scripts.AI
 		{
 		}
 
+		public override void CreateModules()
+		{
+			AddAttackModule(new CoverAllyModule(this));
+			AddAttackModule(new AutoattackModule(this));
+		}
+
 		protected override void AttackTarget(Character target)
 		{
 			SetMainTarget(target);
 
-			Character closestAlly = null;
-
-			if (HasMaster())
-			{
-				closestAlly = GetMaster();
-			}
-			else if (protectingTarget != null)
-			{
-				closestAlly = protectingTarget;
-			}
-			
 			if (currentAction != null || Owner.Status.IsStunned())
 				return;
 
-			Vector3 targetPos;
-			if (closestAlly == null)
-			{
-				targetPos = target.GetData().transform.position;
-			}
-			else
-			{
-				Character masterTarget = closestAlly.AI.GetMainTarget();
+			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
+			Vector3 targetPos = target.GetData().GetBody().transform.position;
+			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
 
-				if (masterTarget == null)
+			foreach (AIAttackModule module in attackModules)
+			{
+				if (module.Launch(target, distSqr))
+				{
 					return;
-
-				Vector3 masterTargetPos = masterTarget.GetData().GetBody().transform.position;
-				targetPos = Vector3.Lerp(closestAlly.GetData().transform.position, masterTargetPos, 0.5f);
+				}
 			}
 
+			// default action
 			MoveTo(targetPos, false);
 		}
 	}

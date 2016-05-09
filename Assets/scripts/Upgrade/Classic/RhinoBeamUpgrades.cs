@@ -13,10 +13,13 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class RhinobeamDurationUpgrade : AbstractUpgrade
+	public class RhinobeamDurationUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 10;
 
 		private float temp;
 
@@ -48,14 +51,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Duration Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Duration Module";
 			Description = "Rhino Beam maximum active time is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class RhinobeamWidthUpgrade : AbstractUpgrade
+	public class RhinobeamWidthUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const float WIDTH = 2;
 		public const float LEVEL_ADD = 0.1f;
 
@@ -89,16 +96,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Width Upgrade";
-			Description = "Rhino Beam's ray width is set to " + AddValueByLevel(WIDTH, LEVEL_ADD) + ".";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Width Module";
+			Description = "Rhino Beam's ray width is set to " + AddValueByLevel(WIDTH, LEVEL_ADD) + " (without upgrade it is 1).";
 		}
 	}
 
-	public class RhinobeamReuseUpgrade : AbstractUpgrade
+	public class RhinobeamReuseUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int POWER = 25;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 2;
 
 		private float temp;
 
@@ -130,16 +141,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Reuse Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Reuse Module";
 			Description = "Rhino Beam reuse is decreased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class RhinobeamEpicReuseUpgrade : AbstractUpgrade
+	public class RhinobeamEpicReuseUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int POWER = 25;
-		public const float LEVEL_ADD = 5;
+		public const float LEVEL_ADD = 2;
 
 		private float temp;
 
@@ -171,15 +186,19 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Reuse Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Reuse Module";
 			Description = "Rhino Beam reuse is decreased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class RhinobeamDamageUpgrade : AbstractUpgrade
+	public class RhinobeamDamageUpgrade : EquippableItem
 	{
-		public const int POWER = 100;
+		public static int rarity = 2;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
+		public const int POWER = 50;
 		public const float LEVEL_ADD = 10;
 
 		public const int COOLDOWN_DOWN = 50;
@@ -218,16 +237,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Damage Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Damage Module";
 			Description = "Rhino Beam damage is increased by " + AddValueByLevel(POWER, LEVEL_ADD) + "%, the max. duration of the ray is decreased by " + COOLDOWN_DOWN + "%.";
 		}
 	}
 
-	public class RhinobeamStunUpgrade : AbstractUpgrade
+	public class RhinobeamStunUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const float DURATION = 4;
-		public const float LEVEL_ADD = 0.4f;
+		public const float LEVEL_ADD = 0.5f;
 
 		public RhinobeamStunUpgrade(int level)
 			: base(level)
@@ -251,14 +274,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Stun Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Stun Module";
 			Description = "Rhino Beam enemies hit will be stunned for " + AddValueByLevel(DURATION, LEVEL_ADD) + " seconds.";
 		}
 	}
 
-	public class RhinobeamPushUpgrade : AbstractUpgrade
+	public class RhinobeamPushUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const float POWER = 5;
 		public const float LEVEL_ADD = 1;
 
@@ -305,14 +332,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Push Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Push Module";
 			Description = "Rhino Beam enemies hit will be pushed away with force of " + AddValueByLevel(POWER, LEVEL_ADD) + ". Damage is increased to 400% (x4).";
 		}
 	}
 
-	public class RhinobeamRotationUpgrade : AbstractUpgrade
+	public class RhinobeamRotationUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		private float temp;
 
 		public RhinobeamRotationUpgrade(int level)
@@ -343,8 +374,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "rhinobeam_upgrade";
-			VisibleName = "Rhino Beam Rotation Upgrade";
+			FileName = "rhinobeam_upgrade";
+			TypeName = "Rhino Beam";
+			VisibleName = "Rotation Module";
 			Description = "Rhino Beam direction rotation/shift will be instant.";
 		}
 	}

@@ -30,7 +30,8 @@ namespace Assets.scripts.Skills.SkillEffects
 
 				if (d != null && source.CanAttack(d))
 				{
-					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), null, true);
+					bool crit;
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), null, true, out crit);
 					d.ReceiveDamage(source, damage);
 				}
 			}
@@ -38,11 +39,12 @@ namespace Assets.scripts.Skills.SkillEffects
 			{
 				if (source.CanAttack(targetCh))
 				{
-					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true);
+					bool crit;
+					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, true, out crit);
 
 					source.OnAttack(targetCh);
 
-					targetCh.ReceiveDamage(source, damage, SourceSkill);
+					targetCh.ReceiveDamage(source, damage, SourceSkill, crit);
 				}
 			}
 		}

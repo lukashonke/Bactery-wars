@@ -33,6 +33,7 @@ namespace Assets.scripts.Mono
 		public bool rotateTowardsMouse;
 		public string aiType;
 		public bool usesPathfinding;
+		public bool showObjectName;
 
 		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
 		public float minDistanceClickToMove = 0.2f;
@@ -118,6 +119,7 @@ namespace Assets.scripts.Mono
 		public bool allowMovePointChange;
 		public bool forcedVelocity;
 		public bool cancelForcedVelocityOnCollision;
+		public bool cancelMovementTargetOnCollision;
 
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
@@ -165,6 +167,8 @@ namespace Assets.scripts.Mono
 					healthBar.maxHp = visibleMaxHp;
 				}
 			}
+
+			//showObjectName = false;
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
@@ -310,7 +314,6 @@ namespace Assets.scripts.Mono
 					}
 					else
 					{
-						//Debug.Log("breaking movementEnabled!");
 						BreakMovement(true);
 						wasCloseTozero = false;
 					}
@@ -321,6 +324,15 @@ namespace Assets.scripts.Mono
 					wasCloseTozero = false;
 				}
 			}
+		}
+
+		public bool HasZeroVelocity()
+		{
+			if (Mathf.Abs(rb.velocity.x) < 0.1f && Mathf.Abs(rb.velocity.y) < 0.1f)
+			{
+				return true;
+			}
+			return false;
 		}
 
 		private Vector3 lastFoundWaypointPosition;
@@ -381,7 +393,7 @@ namespace Assets.scripts.Mono
 		{
 			rb.velocity += explosionForce;
 
-			if (explosionForce.x > 0 || explosionForce.y > 0)
+			if (Math.Abs(explosionForce.x) > 0 || Math.Abs(explosionForce.y) > 0)
 			{
 				float decrease = rb.mass;
 				float newX = explosionForce.x;
@@ -495,7 +507,7 @@ namespace Assets.scripts.Mono
 							//Debug.Log("current node index " + currentPathNode);
 							currentDestination = currentPath.vectorPath[currentPathNode];
 
-							if (Utils.DistancePwr(body.transform.position, currentDestination) < nextWaypointDistance*nextWaypointDistance)
+							if (Utils.DistanceSqr(body.transform.position, currentDestination) < nextWaypointDistance*nextWaypointDistance)
 							{
 								lastFoundWaypointPosition = body.transform.position;
 								lastFoundWaypointTime = Time.time;
@@ -589,15 +601,17 @@ namespace Assets.scripts.Mono
 			{
 				GetOwner().OnUpdate();
 			}
-			catch (NullReferenceException)
+			catch (Exception e)
 			{
+				Debug.Log(e.Message);
 				if (this is EnemyData)
 				{
-					Monster m = GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null);
+					//Monster m = GameSystem.Instance.RegisterNewMonster((EnemyData) this, "Monster", ((EnemyData) this).monsterId, 1, null);
+
+					Monster m = GameSystem.Instance.RegisterNewCustomMonster((EnemyData) this, ((EnemyData) this).monsterTypeName, false, 1, null);
 					SetOwner(m);
 					WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
-					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " +
-					                 ((Monster) GetOwner()).Template.GetType().Name);
+					Debug.LogWarning(name + " was not registered! Registering it implitely as Monster to template " + ((Monster) GetOwner()).Template.GetType().Name);
 				}
 			}
 		}
@@ -736,6 +750,16 @@ namespace Assets.scripts.Mono
 				if (GetOwner().MeleeSkill.IsActive())
 					GetOwner().MeleeSkill.OnMove();
 			}
+		}
+
+		public void Teleport(Vector3 position, float range)
+		{
+			MovementChanged();
+
+			SetRotation(position, true);
+			SetPosition(position, true);
+
+			HasTargetToMoveTo = false;
 		}
 
 		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
@@ -1058,7 +1082,9 @@ namespace Assets.scripts.Mono
 		{
 			GetOwner().DeleteMe();
 			DisableObjectData();
-			Destroy(gameObject);
+
+			if(gameObject != null)
+				Destroy(gameObject);
 
 			DisableChildObjects();
 		}
@@ -1118,19 +1144,28 @@ namespace Assets.scripts.Mono
 		public void SetMovementTarget(GameObject newTarget)
 		{
 			MovementChanged();
+
+			bool changed = !Utils.VectorEquals(targetPositionWorld, newTarget.transform.position);
+
 			targetPositionWorld = newTarget.transform.position;
 			targetMoveObject = newTarget;
 
-			CalculatePathfindingNodes();
+			if(changed)
+				CalculatePathfindingNodes();
 		}
 
 		public bool SetMovementTarget(Vector3 newTarget)
 		{
 			MovementChanged();
+
+			bool changed = !Utils.VectorEquals(targetPositionWorld, newTarget);
+
 			targetPositionWorld = newTarget;
 			targetMoveObject = null;
 
-			CalculatePathfindingNodes();
+			if (changed)
+				CalculatePathfindingNodes();
+
 			return true;
 		}
 
@@ -1205,14 +1240,19 @@ namespace Assets.scripts.Mono
 
 		public void MeleeInterract(GameObject target, bool repeat)
 		{
-			if (target == null || gameObject == null)
-				return;
+			try
+			{
+				if (target == null || this.gameObject == null)
+					return;
+			}
+			catch (Exception)
+			{
+			}
 
 			AbstractData data = target.GetComponent<AbstractData>();
 
 			if (data == null || data.Equals(this))
 				return;
-			Debug.Log(Utils.CanSee(GetBody(), target.gameObject));
 
 			bool doAttack = true;
 			if (data.GetOwner().IsInteractable())
@@ -1373,7 +1413,6 @@ namespace Assets.scripts.Mono
 
 					if (damage > 0)
 					{
-						Debug.Log(gameObject.name + "received " + damage + " wallhit damage");
 						GetOwner().ReceiveDamage(null, damage, 0);
 					}
 
@@ -1402,6 +1441,11 @@ namespace Assets.scripts.Mono
 			}
 
 			if (forcedVelocity && cancelForcedVelocityOnCollision)
+			{
+				BreakMovement(true);
+			}
+
+			if (cancelMovementTargetOnCollision)
 			{
 				BreakMovement(true);
 			}

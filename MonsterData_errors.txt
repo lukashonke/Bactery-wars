@@ -1,0 +1,18 @@
+'modify_skills' is expected file:///D:/Project/Bactery-wars/MonsterData.xml Line 27, position 14. 
+   at Mono.Xml2.XmlTextReader.Expect (System.String expected) [0x00000] in <filename unknown>:0 
+  at Mono.Xml2.XmlTextReader.ReadEndTag () [0x00000] in <filename unknown>:0 
+  at Mono.Xml2.XmlTextReader.ReadContent () [0x00000] in <filename unknown>:0 
+  at Mono.Xml2.XmlTextReader.Read () [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlTextReader.Read () [0x00000] in <filename unknown>:0 
+  at Mono.Xml.EntityResolvingXmlReader.Read () [0x00000] in <filename unknown>:0 
+  at Mono.Xml.Schema.XsdValidatingReader.Read () [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlValidatingReader.Read () [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.ReadNodeCore (System.Xml.XmlReader reader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.ReadNode (System.Xml.XmlReader reader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.Load (System.Xml.XmlReader xmlReader) [0x00000] in <filename unknown>:0 
+  at System.Xml.XmlDocument.Load (System.String filename) [0x00000] in <filename unknown>:0 
+  at Assets.scripts.Actor.MonsterClasses.Base.MonsterTemplateTable.LoadXml () [0x00011] in D:\Project\Bactery-wars\Assets\scripts\Actor\MonsterClasses\Base\MonsterTemplateTable.cs:143 
+  at Assets.scripts.Actor.MonsterClasses.Base.MonsterTemplateTable.Load () [0x00000] in D:\Project\Bactery-wars\Assets\scripts\Actor\MonsterClasses\Base\MonsterTemplateTable.cs:126 

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class HpUpgrade : AbstractUpgrade
+	public class HpUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
 
@@ -21,8 +21,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
-			VisibleName = "HP Upgrade";
+			FileName = "hp_upgrade";
+			VisibleName = "HP Module";
 			Description = "Increases maximum HP by " + (6 * Level) + "%.";
 		}
 
@@ -32,7 +32,7 @@ namespace Assets.scripts.Upgrade.Classic
 		}
 	}
 
-	public class Heal : AbstractUpgrade
+	public class Heal : InventoryItem
 	{
 		public static int rarity = 1;
 
@@ -49,15 +49,39 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
+			FileName = "hp_upgrade";
 			VisibleName = "Heal";
 			Description = "Heals you.";
 		}
 	}
 
-	public class HpUpgradeAdd : AbstractUpgrade
+	public class HpPotion : ActivableItem
 	{
 		public static int rarity = 1;
+
+		public HpPotion(int level) : base(level)
+		{
+		}
+
+		public override bool OnActivate()
+		{
+			owner.ReceiveHeal(owner, Level * 10);
+			GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(owner.GetData().GetBody(), "Heal +" + Level * 10, Color.green);
+			return true;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "hp_upgrade";
+			VisibleName = "Healing Potion";
+			Description = "Heals you.";
+		}
+	}
+
+	public class HpUpgradeAdd : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public HpUpgradeAdd(int level)
 			: base(level)
@@ -67,8 +91,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "hp_upgrade";
-			VisibleName = "HP Upgrade";
+			FileName = "hp_upgrade";
+			VisibleName = "HP Module";
 			Description = "Increases maximum HP by " + (5 * Level) + ".";
 		}
 

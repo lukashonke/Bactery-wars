@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.scripts;
 using Pathfinding;
 
 #if NETFX_CORE
@@ -2494,6 +2495,8 @@ AstarPath.RegisterSafeUpdate (delegate () {
 
 		Debug.LogError ("Error : This part should never be reached.");
 		astar.pathQueue.ReceiverTerminated ();
+
+		GameSystem.Instance.PathfindingError();
 	}
 
 	/** Main pathfinding method.

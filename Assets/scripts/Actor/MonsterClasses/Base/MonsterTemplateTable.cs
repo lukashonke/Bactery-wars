@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Xml;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.PlayerClasses.Base;
+using Assets.scripts.Skills;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses.Base
@@ -26,11 +29,17 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		private Dictionary<MonsterId, MonsterTemplate> types;
 
+		private List<MonsterTemplate> customTypes;  
+
 		public MonsterTemplateTable()
 		{
 			types = new Dictionary<MonsterId, MonsterTemplate>();
 
+			customTypes = new List<MonsterTemplate>();
+
 			Init();
+
+			Load();
 		}
 
 		// Initialize all possible classes here
@@ -70,11 +79,355 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 			}
 		}
 
+		public MonsterTemplate GetType(string typeName)
+		{
+			if (Enum.IsDefined(typeof (MonsterId), typeName))
+			{
+				MonsterId id = (MonsterId) Enum.Parse(typeof (MonsterId), typeName);
+				return GetType(id);
+			}
+			else
+			{
+				return GetCustomTemplate(typeName);
+			}
+		}
+
 		public MonsterTemplate GetType(MonsterId type)
 		{
+			if (type == MonsterId.CustomMonster)
+			{
+				throw new ArgumentException("nelze zavolat gettype na MonsterId.CustomMonster, pouzit metodu s parametrem pro string");
+			}
+
 			MonsterTemplate tObject;
             types.TryGetValue(type, out tObject);
 			return tObject;
+		}
+
+		public MonsterTemplate GetCustomTemplate(string name)
+		{
+			foreach(MonsterTemplate templ in customTypes)
+			{
+				if (templ is CustomMonsterTemplate)
+				{
+					if (((CustomMonsterTemplate) templ).TemplateName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+					{
+						return templ;
+					}
+				}
+			}
+			return null;
+		}
+
+		public void Load()
+		{
+			try
+			{
+				LoadXml();
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("chyba nacitani xml monsterdata - check monsterdata_errors.txt");
+				Debug.LogError(e.Message + ", " + e.StackTrace);
+				System.IO.StreamWriter file = new System.IO.StreamWriter("MonsterData_errors.txt");
+				file.WriteLine(e.Message + " \n " + e.StackTrace);
+				file.Close();
+			}
+		}
+
+		private void LoadXml()
+		{
+			customTypes.Clear();
+
+			XmlDocument doc = new XmlDocument();
+			doc.Load("MonsterData.xml");
+
+			int nextId = 0;
+
+			CustomMonsterTemplate newTemplate;
+
+			foreach (XmlNode monsterNode in doc.DocumentElement.ChildNodes)
+			{
+				if (!monsterNode.Name.Equals("monster")) continue;
+
+				newTemplate = new CustomMonsterTemplate();
+
+				if (monsterNode.Attributes != null)
+				{
+					foreach (XmlAttribute attr in monsterNode.Attributes)
+					{
+						if (attr.Name == "name")
+						{
+							newTemplate.TemplateName = attr.Value;
+						}
+					}
+				}
+
+				foreach (XmlNode mainParam in monsterNode.ChildNodes)
+				{
+					switch (mainParam.Name)
+					{
+						case "name":
+							newTemplate.TemplateName = mainParam.InnerText;
+							break;
+						case "visibleName":
+							newTemplate.Name = mainParam.InnerText;
+							break;
+						case "template":
+
+							MonsterId id = (MonsterId) Enum.Parse(typeof (MonsterId), mainParam.InnerText);
+							MonsterTemplate oldTemplate = GetType(id);
+
+							newTemplate.SetDefaultTemplate(oldTemplate);
+
+							break;
+						case "stats":
+
+							foreach (XmlNode statNode in mainParam.ChildNodes)
+							{
+								switch (statNode.Name)
+								{
+									case "MaxHp":
+										newTemplate.MaxHp = Int32.Parse(statNode.InnerText);
+										break;
+									case "MaxHp_scale":
+										newTemplate.HpLevelScale = Int32.Parse(statNode.InnerText);
+										break;
+									case "MaxSpeed":
+										newTemplate.MaxSpeed = Int32.Parse(statNode.InnerText);
+										break;
+									case "IsAggressive":
+										newTemplate.IsAggressive = statNode.InnerText.ToLower() == "true";
+										break;
+									case "AggressionRange":
+										newTemplate.AggressionRange = Int32.Parse(statNode.InnerText);
+										break;
+									case "RambleAround":
+										newTemplate.RambleAround = statNode.InnerText.ToLower() == "true";
+										break;
+									case "RambleAroundMaxDist":
+										newTemplate.RambleAroundMaxDist = Int32.Parse(statNode.InnerText);
+										break;
+									case "AlertsAllies":
+										newTemplate.AlertsAllies = statNode.InnerText.ToLower() == "true";
+										break;
+									case "XpReward":
+										newTemplate.XpReward = Int32.Parse(statNode.InnerText);
+										break;
+								}
+							}
+
+							break;
+						case "ai":
+
+							string aiType = null;
+
+							if (mainParam.Attributes != null)
+							{
+								foreach (XmlAttribute attr in mainParam.Attributes)
+								{
+									if (attr.Name == "type")
+									{
+										aiType = attr.Value;
+									}
+								}
+							}
+
+							if (aiType == null)
+								continue;
+
+							newTemplate.AiType = aiType + "MonsterAI";
+
+							foreach (XmlNode statNode in mainParam.ChildNodes)
+							{
+								if (statNode.Name == "set")
+								{
+									string module = null;
+									string param = null;
+									string value = null;
+
+									if (statNode.Attributes != null)
+									{
+										foreach (XmlAttribute attrib in statNode.Attributes)
+										{
+											switch (attrib.Name)
+											{
+												case "module":
+													module = attrib.Value;
+													break;
+												case "param":
+													param = attrib.Value;
+													break;
+												case "value":
+													value = attrib.Value;
+													break;
+											}
+										}
+									}
+
+									if (module != null && param != null && value != null)
+									{
+										newTemplate.AddAiParam(module, param, value);
+									}
+								}
+							}
+
+							break;
+						case "add_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId) Enum.Parse(typeof (SkillId), skillName);
+
+								newTemplate.NewSkills.Add(skillId);
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddAdditionalSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableSkillEffects(skillId);
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddSkillModifyInfo(skillId, paramName, val);
+									}
+								}
+							}
+
+							break;
+						case "modify_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddAdditionalSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableSkillEffects(skillId);
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddSkillModifyInfo(skillId, paramName, val);
+									}
+								}
+							}
+
+							break;
+						case "remove_skills":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								newTemplate.SkillsToRemove.Add(skillId);
+							}
+
+							break;
+						case "add_autoattack":
+
+							foreach (XmlNode skillNode in mainParam.ChildNodes)
+							{
+								string skillName = skillNode.Name;
+								SkillId skillId = (SkillId)Enum.Parse(typeof(SkillId), skillName);
+
+								newTemplate.NewAutoattack = skillId;
+
+								foreach (XmlNode skillParamNode in skillNode.ChildNodes)
+								{
+									if (skillParamNode.Name == "add_effect")
+									{
+										string effectName = null;
+										Dictionary<string, string> parameters = new Dictionary<string, string>();
+										foreach (XmlAttribute attr in skillParamNode.Attributes)
+										{
+											if (attr.Name == "name")
+											{
+												effectName = attr.Value;
+											}
+											else
+											{
+												parameters.Add(attr.Name, attr.Value);
+											}
+										}
+
+										newTemplate.AddMeleeSkillEffects(skillId, effectName, parameters);
+									}
+									else if (skillParamNode.Name == "remove_effects")
+									{
+										newTemplate.DisableMeleeEffects();
+									}
+									else
+									{
+										string paramName = skillParamNode.Name;
+										string val = skillParamNode.InnerText;
+
+										newTemplate.AddAutoattackModifyInfo(skillId, paramName, val);
+									}
+								}
+
+								break;
+							}
+
+							break;
+						case "remove_autoattack":
+
+							newTemplate.NewAutoattack = SkillId.CustomRemove;
+
+							break;
+					}
+				}
+
+				newTemplate.InitCustomSkillsOnTemplate();
+
+				customTypes.Add(newTemplate);
+			}
 		}
 	}
 }

@@ -10,16 +10,19 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class CCAADamageUpgrade : AbstractUpgrade
+	public class CCAADamageUpgrade : EquippableItem
 	{
-		public const int DAMAGE = 2;
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
+		public const int DAMAGE = 5;
 		public const float LEVEL_MUL = 1f;
 
 		public CCAADamageUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 4;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -42,22 +45,26 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Damage Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Damage Module";
 			Description = "Increase your autoattack damage by " + AddValueByLevel(DAMAGE, LEVEL_MUL) + ".";
 		}
 	}
 
-	public class CCAARangeUpgrade : AbstractUpgrade
+	public class CCAARangeUpgrade : EquippableItem
 	{
-		public const int VALUE = 3;
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
+		public const int VALUE = 5;
 		public const float LEVEL_MUL = 1f;
 
 		public CCAARangeUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 4;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -80,22 +87,27 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Range Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Range Module";
 			Description = "Increase your autoattack range by " + AddValueByLevel(VALUE, LEVEL_MUL) + ".";
 		}
 	}
 
-	public class CCAAReuseUpgrade : AbstractUpgrade
+	public class CCAAReuseUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int ANGLE = 10;
+		public const int ANGLE_LEVEL_ADD = -1;
 		private float val;
 
 		public CCAAReuseUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -106,7 +118,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 			val = skill.reuse/2;
 			skill.reuse -= val;
-			skill.deviationAngle = ANGLE;
+			skill.deviationAngle = (int) AddValueByLevel(ANGLE, ANGLE_LEVEL_ADD, true);
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -121,22 +133,26 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Reuse Upgrade";
-			Description = "Decreases your autoattack reuse by 50%, but adds a random angle (up to " + ANGLE + " degrees) to shooting.";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Reuse Module";
+			Description = "Decreases your autoattack reuse by 50%, but adds a random angle (up to " + AddValueByLevel(ANGLE, ANGLE_LEVEL_ADD, true) + " degrees) to shooting.";
 		}
 	}
 
-	public class CCAADoubleattackChanceUpgrade : AbstractUpgrade
+	public class CCAADoubleattackChanceUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int CHANCE = 30;
-		public const int LEVEL_ADD = 5;
+		public const int LEVEL_ADD = 6;
 
 		public CCAADoubleattackChanceUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 6;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -161,14 +177,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Doubleattack Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Doubleattack Module";
 			Description = "Adds a chance of " + AddValueByLevel(CHANCE, LEVEL_ADD) + " that your autoattack will fire 2 projectiles.";
 		}
 	}
 
-	public class CCAADoubleattackUpgrade : AbstractUpgrade
+	public class CCAADoubleattackUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int REUSE_INCREASE = 50;
 		public const int LEVEL_ADD = -4;
 
@@ -207,16 +227,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Doubleattack Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Doubleattack Module";
 			Description = "Autoattack fires two projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
 
-	public class CCAATripleshotUpgrade : AbstractUpgrade
+	public class CCAATripleshotUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int REUSE_INCREASE = 75;
-		public const int LEVEL_ADD = -4;
+		public const int LEVEL_ADD = -5;
 
 		private float temp;
 
@@ -253,16 +277,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Tripleshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Tripleshot Module";
 			Description = "Autoattack fires 3 projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
 
-	public class CCAAQuatroshotUpgrade : AbstractUpgrade
+	public class CCAAQuatroshotUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int REUSE_INCREASE = 100;
-		public const int LEVEL_ADD = -4;
+		public const int LEVEL_ADD = -5;
 
 		private float temp;
 
@@ -299,14 +327,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Quatroshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Quatroshot Module";
 			Description = "Autoattack fires 4 projectiles, but also increases reuse by " + AddValueByLevel(REUSE_INCREASE, LEVEL_ADD, true) + " percent.";
 		}
 	}
 
-	public class CCAAShotgunUpgrade : AbstractUpgrade
+	public class CCAAShotgunUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int PROJECTILE_COUNT = 3;
 
 		public CCAAShotgunUpgrade(int level)
@@ -338,14 +370,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Shotgun Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Shotgun Module";
 			Description = "Every autoattack will fire " + PROJECTILE_COUNT + " projectiles in shotgun-like style.";
 		}
 	}
 
-	public class CCAAShotgunChanceUpgrade : AbstractUpgrade
+	public class CCAAShotgunChanceUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int CONSECUTIVE_COUNTER = 3;
 		public const int PROJECTILE_COUNT = 3;
 
@@ -378,14 +414,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Shotgun Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Shotgun Module";
 			Description = "Every " + CONSECUTIVE_COUNTER + "th autoattack will fire " + PROJECTILE_COUNT + " projectiles in shotgun-like style.";
 		}
 	}
 
-	public class CCAASpreadshootUpgrade : AbstractUpgrade
+	public class CCAASpreadshootUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public CCAASpreadshootUpgrade(int level)
 			: base(level)
 		{
@@ -413,14 +453,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Spreadshot Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Spreadshot Module";
 			Description = "Fires projectiles into all four directions (forward, right, left and backwards)";
 		}
 	}
 
-	public class CCAAThunderUpgrade : AbstractUpgrade
+	public class CCAAThunderUpgrade : EquippableItem
 	{
+		public static int rarity = 3;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public CCAAThunderUpgrade(int level)
 			: base(level)
 		{
@@ -448,22 +492,28 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Thunder Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Thunder Module";
 			Description = "Fires projectiles into all four directions (forward, right, left and backwards)";
 		}
 	}
 
-	public class CCAADamageForRangeUpgrade : AbstractUpgrade
+	public class CCAADamageForRangeUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int VALUE = 50;
+		public const int VALUE_LEVEL_ADD = 4;
+
 		private float temp1, temp2;
 
 		public CCAADamageForRangeUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -473,7 +523,7 @@ namespace Assets.scripts.Upgrade.Classic
 				return;
 
 			temp1 = skill.range/2f;
-			temp2 = skill.baseDamage/2f;
+			temp2 = skill.baseDamage*(AddValueByLevel(VALUE, VALUE_LEVEL_ADD)/100f);
 
 			skill.range -= (int)temp1;
 			skill.baseDamage += (int)temp2;
@@ -491,14 +541,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Damage Upgrade";
-			Description = "Decreases autoattack range by 50% and increases damage by 50%.";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Damage Module";
+			Description = "Decreases autoattack range by 50% and increases damage by " + AddValueByLevel(VALUE, VALUE_LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class CCAAForceUpgrade : AbstractUpgrade
+	public class CCAAForceUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		private int temp;
 		private float temp2;
 
@@ -534,14 +588,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Force Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Force Module";
 			Description = "Doubles the speed of autoattack projectiles.";
 		}
 	}
 
-	public class CCAASlowUpgrade : AbstractUpgrade //TODO bugged - doesnt refresh counter
+	public class CCAASlowUpgrade : EquippableItem //TODO bugged - doesnt refresh counter
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 5;
 		//public const float DURATION = 2.5f;
@@ -572,8 +630,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "ccaa_upgrade";
-			VisibleName = "Autoattack Slow Upgrade";
+			FileName = "ccaa_upgrade";
+			TypeName = "Autoattack";
+			VisibleName = "Slow Module";
 			Description = "Every hit projectile slows down your enemy by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}

@@ -9,12 +9,16 @@ using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class SneezeShotThreeProjectiles : AbstractUpgrade
+	public class SneezeShotThreeProjectiles : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public SneezeShotThreeProjectiles(int level)
 			: base(level)
 		{
@@ -42,16 +46,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Projectile Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Projectile Module";
 			Description = "Sneeze Shot fires one extra projectile.";
 		}
 	}
 
-	public class SneezeShotDamageUpgrade : AbstractUpgrade
+	public class SneezeShotDamageUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int DAMAGE = 10;
-		public const float LEVEL_ADD = 1f;
+		public const float LEVEL_ADD = 2;
 
 		public SneezeShotDamageUpgrade(int level)
 			: base(level)
@@ -80,14 +88,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Damage Upgrade";
-			Description = "Sneeze Shot deals " + (int)AddValueByLevel(DAMAGE, LEVEL_ADD) + " extra damage.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Damage Module";
+			Description = "Sneeze Shot projectile deals " + (int)AddValueByLevel(DAMAGE, LEVEL_ADD) + " extra damage.";
 		}
 	}
 
-	public class SneezeShotAimedProjectiles : AbstractUpgrade
+	public class SneezeShotAimedProjectiles : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public SneezeShotAimedProjectiles(int level)
 			: base(level)
 		{
@@ -117,14 +129,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Aim Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Aim Module";
 			Description = "Projectiles automatically scan area in front of them to adjust their path to hit enemies.";
 		}
 	}
 
-	public class SneezeShotHomingMissile : AbstractUpgrade
+	public class SneezeShotHomingMissile : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		private int temp;
 		private int temp2;
 
@@ -163,19 +179,23 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Missile Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Missile Module";
 			Description = "Sneeze Shot fires one projectile that is guided to its target. Range is tripled.";
 		}
 	}
 
-	public class SneezeShotPoisonUpgrade : AbstractUpgrade
+	public class SneezeShotPoisonUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int DAMAGE = 5;
 		public const float LEVEL_ADD = 1f;
 
-		public const int SLOW_AMMOUNT_PERCENT = 90;
-		public const float SLOW_LEVEL_ADD = 1f;
+		public const int SLOW_AMMOUNT_PERCENT = 30;
+		public const float SLOW_LEVEL_ADD = 6f;
 
 		public SneezeShotPoisonUpgrade(int level)
 			: base(level)
@@ -202,14 +222,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Poison Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Poison Module";
 			Description = "Sneeze Shot gives your target additional " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " dmg/sec for 5 seconds and slows him by " + AddValueByLevel(SLOW_AMMOUNT_PERCENT, SLOW_LEVEL_ADD) + "% for 5 seconds.";
 		}
 	}
 
-	public class SneezeShotPenetrateUpgrade : AbstractUpgrade
+	public class SneezeShotPenetrateUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public SneezeShotPenetrateUpgrade(int level)
 			: base(level)
 		{
@@ -237,14 +261,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetration Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetration Module";
 			Description = "Sneeze Shot penetrates through your targets to hit multiple enemies.";
 		}
 	}
 
-	public class SneezeShotPushUpgrade : AbstractUpgrade
+	public class SneezeShotPushUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public SneezeShotPushUpgrade(int level)
 			: base(level)
 		{
@@ -270,16 +298,23 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Push Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Push Module";
 			Description = "Enemies hit by Sneeze Shot will be pushed away by the projectile.";
 		}
 	}
 
-	public class SneezeShotExplodeUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotExplodeUpgrade : EquippableItem //TODO effect 
 	{
-		public const float RADIUS = 3;
-		public const float RADIUS_LEVEL_ADD = 0.3f;
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
+		public const float RADIUS = 5;
+		public const float RADIUS_LEVEL_ADD = 0.6f;
+
+		public const float DAMAGE = 20;
+		public const float DAMAGE_LEVEL_ADD = 3;
 
 		private int temp;
 
@@ -287,7 +322,7 @@ namespace Assets.scripts.Upgrade.Classic
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 10;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -317,10 +352,8 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			if (sk.GetSkillId() == SkillId.SneezeShot)
 			{
-				SneezeShot skill = sk as SneezeShot;
-
 				SkillEffect[] newEffects = new SkillEffect[1];
-				newEffects[0] = new EffectAreaDamage(skill.baseDamage, 0, AddValueByLevel(RADIUS, RADIUS_LEVEL_ADD));
+				newEffects[0] = new EffectAreaDamage((int) AddValueByLevel(DAMAGE, DAMAGE_LEVEL_ADD), 0, AddValueByLevel(RADIUS, RADIUS_LEVEL_ADD));
 
 				return newEffects;
 			}
@@ -330,16 +363,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Push Upgrade";
-			Description = "Sneeze Shot fires only one projectile which explodes on impact and deals area damage.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Push Module";
+			Description = "Sneeze Shot fires only one projectile which explodes on impact and deals " + AddValueByLevel(DAMAGE, DAMAGE_LEVEL_ADD) + " area damage in radius of " + AddValueByLevel(RADIUS, RADIUS_LEVEL_ADD) + ".";
 		}
 	}
 
-	public class SneezeShotDoubleExploderUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotDoubleExploderUpgrade : EquippableItem //TODO effect 
 	{
-		public const float RADIUS = 3;
-		public const float RADIUS_LEVEL_ADD = 0.3f;
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
+		public const float RADIUS = 5;
+		public const float RADIUS_LEVEL_ADD = 0.6f;
 
 		private int temp;
 
@@ -347,7 +384,7 @@ namespace Assets.scripts.Upgrade.Classic
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 10;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -392,16 +429,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explode Upgrade";
-			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explode Module";
+			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage of same strength as the skill damage.";
 		}
 	}
 
-	public class SneezeShotTripleExploderUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotTripleExploderUpgrade : EquippableItem //TODO effect 
 	{
-		public const float RADIUS = 3;
-		public const float RADIUS_LEVEL_ADD = 0.3f;
+		public static int rarity = 2;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
+		public const float RADIUS = 5;
+		public const float RADIUS_LEVEL_ADD = 0.6f;
 
 		private int temp;
 
@@ -409,7 +450,7 @@ namespace Assets.scripts.Upgrade.Classic
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 10;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -454,16 +495,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explode Upgrade";
-			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explode Module";
+			Description = "Sneeze Shot fires 2 projectiles in random direction in front of you, projectiles explode on contact and deal area damage with strength same as the skill damage.";
 		}
 	}
 
-	public class SneezeShotMissilesUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotMissilesUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int COUNT = 6;
-		public const float COUNT_ADD = 0.5f;
+		public const float COUNT_ADD = 1f;
 
 		public const int DAMAGE = 10;
 
@@ -505,16 +550,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Missile Volley Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Missile Volley Module";
 			Description = "Sneeze Shot fires " + AddValueByLevel(COUNT, COUNT_ADD) + " projectiles at random angle that guide themselves to targets. Damage is set to 10.";
 		}
 	}
 
-	public class SneezeShotPenetrateAimUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotPenetrateAimUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int AFTER_DMG_AMOUNT = 50;
-		public const int AFTER_DMG_LEVEL_ADD = 5;
+		public const int AFTER_DMG_LEVEL_ADD = 10;
 
 		private int temp, temp2;
 		private float temp3;
@@ -523,7 +572,7 @@ namespace Assets.scripts.Upgrade.Classic
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 10;
+			MaxLevel = 5;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -560,14 +609,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetrate Upgrade";
-			Description = "Sneeze Shot projectiles will penetrate the first target they hit and then choose another target and guide themselves to them. Second target hit will receive 50% of the skill damage.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetrate Module";
+			Description = "Sneeze Shot projectiles will penetrate the first target they hit and then choose another target and guide themselves to them. Second target hit will receive " + AddValueByLevel(AFTER_DMG_AMOUNT, AFTER_DMG_LEVEL_ADD) + "% of the skill damage.";
 		}
 	}
 
-	public class SneezeShotPenetrateMissilePenetratorUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotPenetrateMissilePenetratorUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		private int temp, temp2, temp4;
 		private float temp3;
 
@@ -615,16 +668,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Penetrate Upgrade";
-			Description = "Sneeze Shot will fire only projectile that will penetrate through up to 4 targets. The projectile will guide itself to a new target after hitting something. Skill range is doubled.";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetrate Module";
+			Description = "Sneeze Shot will fire only 1 projectile that will penetrate through up to 4 targets. The projectile will guide itself to a new target after hitting something. Skill range is doubled.";
 		}
 	}
 
-	public class SneezeShotZeroReuseUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotZeroReuseUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int CHANCE = 25;
-		public const int CHANCE_LEVEL_ADD = 3;
+		public const int CHANCE_LEVEL_ADD = 2;
 
 		public SneezeShotZeroReuseUpgrade(int level)
 			: base(level)
@@ -653,16 +710,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Reuse Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Reuse Module";
 			Description = "Sneeze Shot will have a " + AddValueByLevel(CHANCE, CHANCE_LEVEL_ADD) + "% chance that the skill will be immediately available for use after casting (= chance for zero reuse).";
 		}
 	}
 
-	public class SneezeShotWeakenUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotWeakenUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const float DURATION = 5;
-		public const float AMOUNT_LEVEL_ADD = 0.5f;
+		public const float AMOUNT_LEVEL_ADD = 1f;
 
 		public SneezeShotWeakenUpgrade(int level)
 			: base(level)
@@ -686,18 +747,23 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Reuse Upgrade";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Reuse Module";
 			Description = "Sneeze Shot will reduce the shield protection of hit enemies by 50% for " + AddValueByLevel(DURATION, AMOUNT_LEVEL_ADD) + " seconds.";
 		}
 	}
 
-	public class SneezeShotDieExplodeUpgrade : AbstractUpgrade //TODO effect 
+	public class SneezeShotDieExplodeUpgrade : EquippableItem //TODO effect 
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const float DAMAGE = 30;
 		public const float AMOUNT_LEVEL_ADD = 5;
 
 		public const float RANGE = 5;
+		public const float RANGE_LEVEL_ADD = 0.5f;
 
 		public SneezeShotDieExplodeUpgrade(int level)
 			: base(level)
@@ -716,7 +782,7 @@ namespace Assets.scripts.Upgrade.Classic
 				explosion.GetComponent<ParticleSystem>().Play();
 				Object.Destroy(explosion, 2f);
 
-				EffectAuraDamage ef = new EffectAuraDamage((int) AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD), 0, RANGE);
+				EffectAuraDamage ef = new EffectAuraDamage((int) AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD), 0, AddValueByLevel(RANGE, RANGE_LEVEL_ADD));
 				ef.Source = Owner;
 				ef.attackTeam = target.Team;
 
@@ -726,9 +792,10 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "sneezeshot_upgrade";
-			VisibleName = "Sneeze Shot Explosion Upgrade";
-			Description = "All enemies killed using Sneeze Shot will explode, dealing " + AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD) + " damage to all nearby enemies in range " + RANGE + ".";
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Explosion Module";
+			Description = "All enemies killed using Sneeze Shot will explode, dealing " + AddValueByLevel(DAMAGE, AMOUNT_LEVEL_ADD) + " damage to all nearby enemies in range of " + AddValueByLevel(RANGE, RANGE_LEVEL_ADD) + ".";
 		}
 	}
 }

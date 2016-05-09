@@ -13,10 +13,13 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class ColdPushForceUpgrade : AbstractUpgrade
+	public class ColdPushForceUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 4;
+		public const float LEVEL_ADD = 5;
 
 		private int temp;
 
@@ -48,16 +51,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push pushes enemies further because it has increased force by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class ColdPushRangeUpgrade : AbstractUpgrade
+	public class ColdPushRangeUpgrade : EquippableItem
 	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.RARE_UPGRADE;
+
 		public const int POWER = 50;
-		public const float LEVEL_ADD = 4;
+		public const float LEVEL_ADD = 5;
 
 		private int temp;
 
@@ -89,21 +96,25 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push has increased range by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
 		}
 	}
 
-	public class ColdPushAngleUpgrade : AbstractUpgrade
+	public class ColdPushAngleUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		private int temp;
 
 		public ColdPushAngleUpgrade(int level)
 			: base(level)
 		{
 			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 5;
+			MaxLevel = 1;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -127,16 +138,20 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Force Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
 			Description = "Cold Push effect angle is set to 180 degrees from in front of you.";
 		}
 	}
 
-	public class ColdPushSlowUpgrade : AbstractUpgrade
+	public class ColdPushSlowUpgrade : EquippableItem
 	{
+		public static int rarity = 2;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+
 		public const float DURATION = 5f;
-		public const float DURATION_LEVEL_ADD = 0.4f;
+		public const float DURATION_LEVEL_ADD = 1f;
 
 		private float temp;
 		private float temp2;
@@ -173,14 +188,18 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Stun Upgrade";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Stun Module";
 			Description = "Targets hit by Cold Push will be stunned for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds, but the reuse of the skill is doubled.";
 		}
 	}
 
-	public class ColdPushStunUpgrade : AbstractUpgrade
+	public class ColdPushStunUpgrade : EquippableItem //TODO not done
 	{
+		public static int rarity = 10;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+
 		public const int SLOWAMMOUNT = 50;
 		public const int LEVEL_ADD = 4;
 
@@ -211,9 +230,10 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "coldpush_upgrade";
-			VisibleName = "Cold Push Slow Upgrade";
-			Description = "Targets hit with Cold Push skill will be slowed down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = " Slow Module";
+			Description = "UNFINISHED Targets hit with Cold Push skill will be stunned down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}
 }

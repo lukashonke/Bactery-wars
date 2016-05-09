@@ -8,9 +8,11 @@ namespace Assets.scripts.Skills.Base
 	public enum SkillId
 	{
 		SkillTemplate,
-		SkillTestProjectile,
-		SkillTestProjectileAllAround,
-		SkillTestProjectileTriple,
+		CustomRemove,
+
+		Projectile,
+		ProjectileAllAround,
+		ProjectileTriple,
 
 		SkillAreaExplode,
 		MissileProjectile,
@@ -32,6 +34,14 @@ namespace Assets.scripts.Skills.Base
 
 		MeleeAttack,
 		CollisionDamageAttack,
-		CreateCoverMob
+		CreateCoverMob,
+		SwarmerSpawnSkill,
+
+		SlowBeam,
+		Teleport,
+		HealBeam,
+		PushBeam,
+
+		SwarmSkill,
 	}
 }

@@ -7,6 +7,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -35,10 +36,17 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public LevelOneData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelOne;
+			tutorialLevel = true;
 		}
 
 		public override void Generate()
 		{
+			shopData = new ShopData();
+
+			shopData.AddItem(new HpPotion(1), 1);
+			shopData.AddItem(new CCAADoubleattackChanceUpgrade(1), 10);
+			shopData.AddItem(new Heal(5), 10);
+
 			start = map.GenerateDungeonRegion(0, 0, 40, true, false, false, levelOneSeeds); // 0 0
 			mid = map.GenerateDungeonRegion(1, 0, 43, false, true, false, levelTwoSeeds); // 0, 2
 			end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, levelThree, 1, 2); // 0, 2
@@ -56,7 +64,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, false, 1);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(mid))
@@ -65,14 +73,14 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, false, 1);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_CENTER, 2))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, 2);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, false, 2);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -81,21 +89,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.HelperCell, t, false, 1).AddHealDrop(100);
+						SpawnMonsterToRoom(room, MonsterId.BasicCell.ToString(), t, false, 1).AddHealDrop(100);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 2))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, false, 1);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), t, false, 1);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_UP, 4))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, false, Random.Range(1, 3));
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, false, Random.Range(1, 3));
 					}
 				}
 		    }

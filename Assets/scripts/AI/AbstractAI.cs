@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI.Base;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace Assets.scripts.AI
 		protected Coroutine currentAction;
 	    protected bool currentActionCancelable;
 
+		public bool alwaysActive;
+
 		private Character MainTarget { get; set; }
 		protected List<Character> Targets { get; private set; }
 
@@ -38,6 +41,8 @@ namespace Assets.scripts.AI
 
 			State = AIState.IDLE;
 			ThinkInterval = 1f;
+
+			alwaysActive = false;
 
 			Targets = new List<Character>();
 		}
@@ -68,7 +73,7 @@ namespace Assets.scripts.AI
 			homeLocation = Owner.GetData().GetBody().transform.position;
 		}
 
-		protected bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
+		public bool StartAction(IEnumerator task, float timeLimit, bool canBeCancelled=false, bool forceReplace=false)
 		{
 		    if (currentAction == null || currentActionCancelable || forceReplace)
 		    {
@@ -94,7 +99,7 @@ namespace Assets.scripts.AI
 			BreakCurrentAction();
 		}
 
-		protected void BreakCurrentAction()
+		public void BreakCurrentAction()
 		{
 			if (currentAction != null)
 			{
@@ -103,6 +108,15 @@ namespace Assets.scripts.AI
 				currentAction = null;
 			    currentActionCancelable = true;
 			}
+		}
+
+		public virtual void InitModules()
+		{
+		}
+
+		public virtual void CreateModules()
+		{
+			
 		}
 
 		public virtual void AnalyzeSkills()
@@ -293,22 +307,22 @@ namespace Assets.scripts.AI
 			return skills;
 		}
 
-		protected void RotateToTarget(Character target)
+		public void RotateToTarget(Character target)
 		{
 			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);
 		}
 
-		protected void RotateToTarget(Vector3 target)
+		public void RotateToTarget(Vector3 target)
 		{
 			Owner.GetData().SetRotation(target, true);
 		}
 
-		protected void MoveTo(Character target)
+		public void MoveTo(Character target)
 		{
 			Owner.GetData().MoveTo(target.GetData().GetBody());
 		}
 
-		protected bool MoveTo(Vector3 target, bool fixedRotation=false, float fixedSpeed=-1)
+		public bool MoveTo(Vector3 target, bool fixedRotation=false, float fixedSpeed=-1)
 		{
 			return Owner.GetData().MoveTo(target, fixedRotation, fixedSpeed);
 		}

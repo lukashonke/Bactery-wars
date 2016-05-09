@@ -18,7 +18,6 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		private static int[] room2Seeds = { -323, -378, -856, 432, 352, 54, -111, 214, 964, -48, 606, -232, 765 };
 		private static int[] minibossSeeds = { 998, -454, 940, 547, -372, 462, -771, -327, -878, 764, 852, -575 };
 
-
 		public SecondLevelData(MapHolder holder) : base(holder)
 		{
 			type = MapType.SecondLevel;
@@ -52,35 +51,35 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		    {
 		        if (room.region.GetParentOrSelf().Equals(start))
 		        {
-			        SpawnMonstersToRoom(room, MonsterId.FloatingHelperCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 1, 1);
-					SpawnMonstersToRoom(room, MonsterId.PassiveHelperCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 2, 1);
+			        SpawnMonstersToRoom(room, MonsterId.FloatingBasicCell.ToString(), MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 1, 1);
+					SpawnMonstersToRoom(room, MonsterId.PassiveHelperCell.ToString(), MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 2, 1);
 		        }
 		        else if (room.region.GetParentOrSelf().Equals(room1))
 		        {
-			        SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER, 6, 1);
+			        SpawnMonstersToRoom(room, MonsterId.BasicCell.ToString(), MapRoom.RoomType.SMALL, MapRoom.DIRECTION_CENTER, 6, 1);
 		        }
 				else if (room.region.GetParentOrSelf().Equals(room2))
 				{
 					//SpawnMonstersToRoom(room, MonsterId.HelperCell, MapRoom.RoomType.TINY, MapRoom.DIRECTION_LEFT, 5, 1, 1, 100, false);
 
-					SpawnMonstersToRoom(room, MonsterId.TurretCell, MapRoom.RoomType.VERYLARGE, MapRoom.DIRECTION_CENTER, 1, 1);
-					SpawnMonstersToRoom(room, MonsterId.FourDiagShooterCell, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_LEFT, 2, 1);
+					SpawnMonstersToRoom(room, MonsterId.TurretCell.ToString(), MapRoom.RoomType.VERYLARGE, MapRoom.DIRECTION_CENTER, 1, 1);
+					SpawnMonstersToRoom(room, MonsterId.FourDiagShooterCell.ToString(), MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_LEFT, 2, 1);
 
 					Tile t = room.GetTileWithSpaceAround(5, MapRoom.DIRECTION_RIGHT);
-					MonsterSpawnInfo patrol = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol, t);
+					MonsterSpawnInfo patrol = SpawnMonsterToRoom(room, MonsterId.Neutrophyle_Patrol.ToString(), t);
 					//MonsterSpawnInfo patrol = SpawnMonstersToRoom(room, MonsterId.Neutrophyle_Patrol, MapRoom.RoomType.MEDIUM, MapRoom.DIRECTION_RIGHT, 1, 1);
 					if (patrol != null)
 					{
 						try
 						{
-							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
-							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
-							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
+							SpawnMonsterToRoom(room, MonsterId.PassiveHelperCell.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3)).master = patrol;
 
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
-							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
+							SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), Utils.GenerateRandomPositionAround(patrol.SpawnPos, 5, 3));
 						}
 						catch (Exception)
 						{

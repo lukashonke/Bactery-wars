@@ -11,6 +11,7 @@ namespace Assets.scripts.Skills.Base
 		AreaDamage,
 		Escape,
 		Jump,
+		Teleport,
 		Missile,
 		BuffDamage,
 		BuffDefense,

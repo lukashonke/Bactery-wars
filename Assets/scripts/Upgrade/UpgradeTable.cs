@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -28,10 +29,10 @@ namespace Assets.scripts.Upgrade
 		public class UpgradeInfo
 		{
 			public Type upgrade;
-			public UpgradeType upgradeType;
+			public ItemType upgradeType;
 			public int rarity;
 
-			public UpgradeInfo(Type u, UpgradeType type, int rarity)
+			public UpgradeInfo(Type u, ItemType type, int rarity)
 			{
 				this.upgrade = u;
 				this.upgradeType = type;
@@ -44,15 +45,15 @@ namespace Assets.scripts.Upgrade
 			Load();
 		}
 
-		public CombinedUpgrade CombineUpgrades(AbstractUpgrade first, AbstractUpgrade second)
+		public CombinedUpgrade CombineUpgrades(EquippableItem first, EquippableItem second)
 		{
 			CombinedUpgrade upg = new CombinedUpgrade(1, first, second);
 			return upg;
 		}
 
-		public AbstractUpgrade[] DismantleCombinedUpgrade(CombinedUpgrade upg)
+		public EquippableItem[] DismantleCombinedUpgrade(CombinedUpgrade upg)
 		{
-			AbstractUpgrade[] upgrades = new AbstractUpgrade[2];
+			EquippableItem[] upgrades = new EquippableItem[2];
 			upgrades[0] = upg.first;
 			upgrades[1] = upg.second;
 
@@ -61,49 +62,51 @@ namespace Assets.scripts.Upgrade
 
 		private void Load()
 		{
-			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.CLASSIC);
+			List<Type> types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Classic", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.CLASSIC_UPGRADE);
 
-			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.RARE);
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Rare", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.RARE_UPGRADE);
 
-			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(AbstractUpgrade));
-			LoadTypes(types, UpgradeType.EPIC);
+			types = Utils.GetTypesInNamespace("Assets.scripts.Upgrade.Epic", true, typeof(EquippableItem));
+			LoadTypes(types, ItemType.EPIC_UPGRADE);
 
 			dropBg = Resources.Load<Sprite>("Sprite/inventory/drop_background");
 		}
 
-		private void LoadTypes(List<Type> types, UpgradeType type)
+		private void LoadTypes(List<Type> types, ItemType type)
 		{
 			foreach (Type t in types)
 			{
 				int rarity = 1;
+				ItemType uType = ItemType.CLASSIC_UPGRADE;
 				try
 				{
 					rarity = (int)t.GetField("rarity").GetValue(null);
+					uType = (ItemType) t.GetField("type").GetValue(null);
 				}
 				catch (Exception)
 				{
-					Debug.LogError("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
+					Debug.LogWarning("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
 				}
 
-				UpgradeInfo info = new UpgradeInfo(t, type, rarity);
+				UpgradeInfo info = new UpgradeInfo(t, uType, rarity);
 				upgrades.Add(info);
 			}
 		}
 
-		public AbstractUpgrade GenerateUpgrade(Type type, int level)
+		public InventoryItem GenerateUpgrade(Type type, int level)
 		{
-			AbstractUpgrade u = Activator.CreateInstance(type, level) as AbstractUpgrade;
+			InventoryItem u = Activator.CreateInstance(type, level) as InventoryItem;
 			return u;
 		}
 
-		public AbstractUpgrade GenerateUpgrade(UpgradeType type, int minRarity, int maxRarity, int level)
+		public InventoryItem GenerateUpgrade(ItemType type, int minRarity, int maxRarity, int level)
 		{
 			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
 			{
-				if (info.upgradeType == type && (info.rarity >= minRarity || info.rarity <= maxRarity))
+				if (info.upgradeType == type && (info.rarity >= minRarity && info.rarity <= maxRarity))
 				{
 					possible.Add(info);
 				}
@@ -113,11 +116,18 @@ namespace Assets.scripts.Upgrade
 			return GenerateUpgrade(final.upgrade, level);
 		}
 
-		public void DropItem(AbstractUpgrade upgrade, Vector3 position, int radius=1)
+		public void DropItem(InventoryItem upgrade, Vector3 position, int radius=1)
 		{
-			Debug.Log("dropped" + upgrade.Name);
+			Debug.Log("dropped" + upgrade.FileName);
 			upgrade.Init();
 			upgrade.SpawnGameObject(Utils.GenerateRandomPositionAround(position, radius));
+		}
+
+		public void GiveItem(InventoryItem upgrade, Character target)
+		{
+			upgrade.Init();
+			GameSystem.Instance.BroadcastMessage("Received " + upgrade.VisibleName);
+			target.GiveItem(upgrade);
 		}
 	}
 }

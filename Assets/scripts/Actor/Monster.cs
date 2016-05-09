@@ -12,6 +12,7 @@ using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
+using UnityEngine.WSA;
 using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Actor
@@ -26,6 +27,8 @@ namespace Assets.scripts.Actor
 
 		private bool hasMaster;
 		public bool isMinion;
+
+		public bool isSiegeMob;
 
 		public Monster(string name, EnemyData dataObject, MonsterTemplate template) : base(name)
 		{
@@ -92,6 +95,11 @@ namespace Assets.scripts.Actor
 
 		public override void DoDie(Character killer=null, SkillId skillId=0)
 		{
+			if (killer != null && killer is Player)
+			{
+				((Player)killer).AddXp(Template.GetXp(this));
+			}
+
 			base.DoDie(killer, skillId);
 
 			if (SpawnInfo != null)
@@ -153,6 +161,8 @@ namespace Assets.scripts.Actor
 
 			Template.InitMonsterStats(this, Level);
 
+			Template.InitAppearanceData(this, GetData());
+
 			HealMe();
 
 			GroupTemplate gt = Template.GetGroupTemplate();
@@ -172,25 +182,31 @@ namespace Assets.scripts.Actor
 				}
 			}
 
+			AI.InitModules();
 			AI.AnalyzeSkills();
+
+			if (Template.ShowNameInGame)
+			{
+				GetData().showObjectName = true;
+			}
 		}
 
-		public void SpawnAssociatedMonster(MonsterId id, int level)
+		public void SpawnAssociatedMonster(string monsterTypeName, int level)
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, SpawnInfo.SpawnPos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, SpawnInfo.SpawnPos);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 
 			map.AddMonsterToMap(info);
 		}
 
-		public Monster SpawnAssociatedMonster(MonsterId id, int level, Vector3 pos)
+		public Monster SpawnAssociatedMonster(string monsterTypeName, int level, Vector3 pos)
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, id, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 

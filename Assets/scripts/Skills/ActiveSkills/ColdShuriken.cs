@@ -160,7 +160,7 @@ namespace Assets.scripts.Skills.ActiveSkills
             foreach (Collider2D c in possibleHits)
                 possibleHitsList.Add(c);
 
-            possibleHitsList.Sort((x, y) => Utils.DistancePwr(x.transform.position, GetOwnerData().GetBody().transform.position).CompareTo(Utils.DistancePwr(y.transform.position, GetOwnerData().GetBody().transform.position)));
+            possibleHitsList.Sort((x, y) => Utils.DistanceSqr(x.transform.position, GetOwnerData().GetBody().transform.position).CompareTo(Utils.DistanceSqr(y.transform.position, GetOwnerData().GetBody().transform.position)));
 
             bool targetFound = false;
 

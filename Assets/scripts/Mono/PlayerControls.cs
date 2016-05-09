@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
 using Assets.scripts.Actor;
+using Assets.scripts.Fort;
+using Assets.scripts.Mono.MapGenerator;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
-using Assets.scripts.Upgrade.Rare;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono
 {
@@ -56,114 +59,164 @@ namespace Assets.scripts.Mono
 
 		private void HandleSkillControls()
 		{
-			if (Input.GetKeyDown(KeyCode.Q))
+			if (Input.GetKeyDown(KeyCode.Tab))
 			{
-				data.StartMeleeTargeting(false);
+				ui.SwitchConsole();
 			}
 
-			if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0) && !ui.MouseOverUI)
+			if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
 			{
-				data.StartMeleeTargeting(true);
+				ui.OnEnter();
 			}
 
-			if (Input.GetKeyDown(KeyCode.W))
+			if (!ui.consoleActive)
 			{
-				AbstractUpgrade u = new HpUpgradeAdd(1);
-				u.Init();
-				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
-				//data.GetOwner().AddUpgrade(u);
-				//data.GetOwner().EquipUpgrade(u);
-			}
+				if (Input.GetKeyDown(KeyCode.Q))
+				{
+					data.StartMeleeTargeting(false);
+				}
 
-			if (Input.GetKeyDown(KeyCode.I))
-			{
-				ui.SwitchInventory();
-			}
+				if (data.ActiveConfirmationSkill == null && Input.GetMouseButtonDown(0) && !ui.MouseOverUI)
+				{
+					data.StartMeleeTargeting(true);
+				}
 
-			if (Input.GetKeyDown(KeyCode.U))
-			{
-				Player p = data.GetOwner() as Player;
-				p.UnlockSkill(temp++, true);
+				if (Input.GetKeyDown(KeyCode.W))
+				{
+					EquippableItem u = new HpUpgradeAdd(1);
+					u.Init();
+					u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+					//data.GetOwner().AddUpgrade(u);
+					//data.GetOwner().EquipUpgrade(u);
+				}
 
-				//ui.DamageMessage(data.GetBody(), 10, Color.cyan);
+				if (Input.GetKeyDown(KeyCode.I))
+				{
+					ui.SwitchInventory();
+				}
 
-				//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
-				//data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
-			}
+				if (Input.GetKeyDown(KeyCode.U))
+				{
+					Player p = data.GetOwner() as Player;
+					p.UnlockSkill(temp++, true);
 
-			if (Input.GetKeyDown(KeyCode.E))
-			{
-				AbstractUpgrade u = new Heal(1);
-				u.Init();
-				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
-			}
+					//ui.DamageMessage(data.GetBody(), 10, Color.cyan);
 
-			if (Input.GetKeyDown(KeyCode.R))
-			{
-				AbstractUpgrade u = UpgradeTable.Instance.GenerateUpgrade(UpgradeType.CLASSIC, 0, 10, 1);
-				u.Init();
-				u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
-			}
+					//ui.ScreenMessage("Ahoasdddddddddddddddddddsssssssssddddddddddddoj" + (temp++), 1);
+					//data.AddPhysicsPush(new Vector2(0, 100), ForceMode2D.Impulse);
+				}
 
-			/*if (Input.GetKeyDown(KeyCode.R))
-			{
-				AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
-				data.GetOwner().UnequipUpgrade(u);
-				data.GetOwner().RemoveUpgrade(u);
+				if (Input.GetKeyDown(KeyCode.E))
+				{
+					InventoryItem u = new DnaItem(Random.Range(10, 20));
+					u.Init();
+					u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
 
-				u = data.GetOwner().Inventory.GetUpgrade(typeof(TemplateUpgrade));
-				data.GetOwner().UnequipUpgrade(u);
-				data.GetOwner().RemoveUpgrade(u);
-			}*/
+					InventoryItem p = new HpPotion(1);
+					p.Init();
+					p.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha1))
-			{
-				data.LaunchSkill(1);
-			}
+				if (Input.GetKeyDown(KeyCode.B))
+				{
+					AbstractLevelData levelData = WorldHolder.instance.activeMap.levelData;
 
-			if (Input.GetKeyDown(KeyCode.Alpha2))
-			{
-				data.LaunchSkill(2);
-			}
+					if (levelData.CanHaveBase())
+					{
+						levelData.CreateBase();
+					}
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha3))
-			{
-				data.LaunchSkill(3);
-			}
+				if (Input.GetKeyDown(KeyCode.L))
+				{
+					ui.ShowLevelsView();
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha4))
-			{
-				data.LaunchSkill(4);
-			}
+				if (Input.GetKeyDown(KeyCode.M))
+				{
+					ui.HideLevelsView();
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha5))
-			{
-				data.LaunchSkill(5);
-			}
+				if (Input.GetKeyDown(KeyCode.V))
+				{
+					AbstractLevelData levelData = WorldHolder.instance.activeMap.levelData;
 
-			if (Input.GetKeyDown(KeyCode.Alpha6))
-			{
-				data.LaunchSkill(6);
-			}
+					if (levelData.HasBase())
+					{
+						if (SiegeManager.IsSiegeActive() == false)
+							SiegeManager.StartSiege(WorldHolder.instance.activeMap);
+						else
+							SiegeManager.CancelSiege();
+					}
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha7))
-			{
-				data.LaunchSkill(7);
-			}
+				if (Input.GetKeyDown(KeyCode.R))
+				{
+					InventoryItem u = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC_UPGRADE, 1, 2, 1);
+					u.Init();
+					u.SpawnGameObject(Utils.GenerateRandomPositionAround(data.GetBody().transform.position, 3));
+				}
 
-			if (Input.GetKeyDown(KeyCode.Alpha8))
-			{
-				data.LaunchSkill(8);
-			}
+				/*if (Input.GetKeyDown(KeyCode.R))
+				{
+					AbstractUpgrade u = data.GetOwner().Inventory.GetUpgrade(typeof (TemplateUpgrade));
+					data.GetOwner().UnequipUpgrade(u);
+					data.GetOwner().RemoveUpgrade(u);
 
-			if (Input.GetKeyDown(KeyCode.Alpha9))
-			{
-				data.LaunchSkill(9);
-			}
+					u = data.GetOwner().Inventory.GetUpgrade(typeof(TemplateUpgrade));
+					data.GetOwner().UnequipUpgrade(u);
+					data.GetOwner().RemoveUpgrade(u);
+				}*/
 
-			if (Input.GetKeyDown(KeyCode.Alpha0))
-			{
-				data.LaunchSkill(10);
+				if (Input.GetKeyDown(KeyCode.Alpha1))
+				{
+					data.LaunchSkill(1);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha2))
+				{
+					data.LaunchSkill(2);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha3))
+				{
+					data.LaunchSkill(3);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha4))
+				{
+					data.LaunchSkill(4);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha5))
+				{
+					data.LaunchSkill(5);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha6))
+				{
+					data.LaunchSkill(6);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha7))
+				{
+					data.LaunchSkill(7);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha8))
+				{
+					data.LaunchSkill(8);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha9))
+				{
+					data.LaunchSkill(9);
+				}
+
+				if (Input.GetKeyDown(KeyCode.Alpha0))
+				{
+					data.LaunchSkill(10);
+				}
 			}
 		}
 

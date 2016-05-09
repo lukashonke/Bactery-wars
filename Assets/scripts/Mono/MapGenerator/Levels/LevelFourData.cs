@@ -29,12 +29,12 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		private int[] levelThreeSeeds =
 		{
 			494, -287, -756, -556, -784, -242, -850, 635,
-
 		};
 
 		public LevelFourData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelFour;
+			tutorialLevel = true;
 		}
 
 		public override void Generate()
@@ -56,9 +56,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
                 else if (room.region.GetParentOrSelf().Equals(mid))
                 {
 					Tile t = room.GetLargestSubRoom(true);
-	                SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter, t, false, 1)
-		                .AddHealDrop(100, 10)
-		                .AddDrop(100, typeof (ShieldUpgrade));
+	                SpawnMonsterToRoom(room, MonsterId.TankSpreadshooter.ToString(), t, false, 1)
+		                .AddHealDrop(100, 10);
                 }
                 else if (room.region.GetParentOrSelf().Equals(end))
                 {

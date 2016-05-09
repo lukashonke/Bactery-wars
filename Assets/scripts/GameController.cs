@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -51,6 +52,20 @@ namespace Assets.scripts
 			GameSystem.Instance.Start(this);
 		}
 
+		public void WaitForPathfindingError()
+		{
+			//InvokeRepeating("WaitForError", 2f, 2f);
+		}
+
+		private void WaitForError()
+		{
+			if (GameSystem.Instance.pathfindingError)
+			{
+				GameSystem.Instance.pathfindingError = false;
+				WorldHolder.instance.RegenMap();
+			}
+		}
+
 		void Update()
 		{
 			//if (System.Environment.TickCount%600 == 0)
@@ -81,6 +96,11 @@ namespace Assets.scripts
 		public void Restart()
 		{
 			Application.LoadLevel(Application.loadedLevel);
+		}
+
+		public GameObject Instantiate(GameObject template, Vector3 position)
+		{
+			return Instantiate(template, position, Quaternion.identity) as GameObject;
 		}
 	}
 }

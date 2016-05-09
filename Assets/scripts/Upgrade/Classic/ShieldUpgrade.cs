@@ -9,9 +9,10 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class ShieldUpgrade : AbstractUpgrade
+	public class ShieldUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public ShieldUpgrade(int level)
 			: base(level)
@@ -21,14 +22,14 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ModifyShield(ref float shield)
 		{
-			shield += 0.05f * (Level - 1);			
+			shield += 0.05f * (Level);			
 		}
 
 		protected override void InitInfo()
 		{
-			Name = "shield_upgrade";
-			VisibleName = "Shield Upgrade";
-			Description = "Increases your shield by " + (0.05f * (Level-1) * 100) + "%.";
+			FileName = "shield_upgrade";
+			VisibleName = "Shield Module";
+			Description = "Increases your shield by " + (0.05f * (Level) * 100) + "%.";
 		}
 	}
 }

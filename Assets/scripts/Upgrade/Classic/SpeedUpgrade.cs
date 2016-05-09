@@ -9,9 +9,10 @@ using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
-	public class SpeedUpgrade : AbstractUpgrade
+	public class SpeedUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public SpeedUpgrade(int level)
 			: base(level)
@@ -26,8 +27,8 @@ namespace Assets.scripts.Upgrade.Classic
 
 		protected override void InitInfo()
 		{
-			Name = "speed_upgrade";
-			VisibleName = "Speed Upgrade";
+			FileName = "speed_upgrade";
+			VisibleName = "Speed Module";
 			Description = "Increases move speed by " + 0.5f * Level + ".";
 		}
 	}

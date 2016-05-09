@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Assets.scripts;
+using Assets.scripts.Actor;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills;
 
@@ -16,6 +18,8 @@ public class Healthbar : MonoBehaviour
 	public int currentPercent;
 	public int currentPercentCooldown;
 
+	public bool showObjectName;
+
 	public float distance = 1.5f;
 
 	private GameObject center;
@@ -26,6 +30,11 @@ public class Healthbar : MonoBehaviour
 	void Start()
 	{
 		ownerData = transform.parent.gameObject.GetData();
+
+		labelStyle = null;
+
+		if (ownerData != null)
+			showObjectName = ownerData.showObjectName;
 
 		foreach (Transform child in transform.parent.transform)
 		{
@@ -57,6 +66,39 @@ public class Healthbar : MonoBehaviour
 	}
 
 	private Material mat;
+	public GUIStyle labelStyle;
+
+	void OnGUI()
+	{
+		if (showObjectName == false)
+			return;
+
+		if (center != null)
+		{
+			if (labelStyle == null)
+			{
+				labelStyle = new GUIStyle(GUI.skin.label);
+				labelStyle.alignment = TextAnchor.UpperCenter;
+				labelStyle.normal.textColor = Color.white;
+				labelStyle.fontSize = 15;
+			}
+
+			Vector3 position = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, 1, 0));
+
+			float x = position.x - 30;
+			float y = Screen.height - position.y;
+
+			string name = ownerData.GetOwner().Name;
+
+			if (ownerData.GetOwner() is Monster)
+			{
+				MonsterTemplate template = ((Monster) ownerData.GetOwner()).Template;
+				name = template.Name;
+			}
+
+			GUI.Label(new Rect(x, y, 60, 20), name, labelStyle);
+		}
+	}
 
 	// Update is called once per frame
 	void Update ()
@@ -70,7 +112,6 @@ public class Healthbar : MonoBehaviour
 
 		if (hp == 0 && maxHp == 0)
 			return;
-
 
 		percent = (int) (hp/(float) maxHp*100);
 		percent = 100 - percent;

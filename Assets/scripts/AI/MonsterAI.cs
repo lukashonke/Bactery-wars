@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Mono;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -16,6 +17,8 @@ namespace Assets.scripts.AI
 {
 	public abstract class MonsterAI : AbstractAI
 	{
+		protected List<AIAttackModule> attackModules; 
+
 		protected Dictionary<Character, int> aggro;
 
 		public bool IsAggressive { get; set; }
@@ -31,15 +34,58 @@ namespace Assets.scripts.AI
 
 		protected MonsterAI(Character o) : base(o)
 		{
+			attackModules = new List<AIAttackModule>();
 			aggro = new Dictionary<Character, int>();
 
 			useTimers = false;
 
 			IsAggressive = GetTemplate().IsAggressive;
 			AggressionRange = GetTemplate().AggressionRange;
+
+			CreateModules();
 		}
 
-		protected void UseTimers()
+		/// <summary>
+		/// modules added earlier have higher priority !!!
+		/// </summary>
+		/// <returns></returns>
+		public AIAttackModule AddAttackModule(AIAttackModule mod)
+		{
+			attackModules.Add(mod);
+			return mod;
+		}
+
+		public AIAttackModule GetAttackModule(Type type)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.GetType() == type)
+					return mod;
+			}
+			return null;
+		}
+
+		public T GetAttackModule<T>() where T : AIAttackModule
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod is T)
+					return mod as T;
+			}
+			return null;
+		}
+
+		public AIAttackModule GetAttackModule(string typeName)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.GetType().Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase))
+					return mod;
+			}
+			return null;
+		}
+
+		public void UseTimers()
 		{
 			useTimers = true;
 			timers = new Dictionary<string, float>();
@@ -73,6 +119,14 @@ namespace Assets.scripts.AI
 			return time + minTimeToPass <= Time.time;
 		}
 
+		public override void InitModules()
+		{
+			foreach (AIAttackModule module in attackModules)
+			{
+				module.Init();
+			}
+		}
+
 		public override void Think()
 		{
 			if (Owner == null || Owner.GetData() == null)
@@ -80,7 +134,7 @@ namespace Assets.scripts.AI
 
 			if (GetStatus().IsDead)
 			{
-				if (State == AIState.IDLE)
+				if (State != AIState.IDLE)
 					SetAIState(AIState.IDLE);
 			}
 
@@ -117,6 +171,12 @@ namespace Assets.scripts.AI
 		{
 			if (GetStatus().IsDead)
 				return;
+
+			if (alwaysActive && !GetStatus().IsDead)
+			{
+				SetAIState(AIState.ACTIVE);
+				return;
+			}
 
 			// pokud ma mastera, musi byt vzdy v aktivnim stavu (pro sledovani pohybu mastera, atd.)
 			if (HasMaster())
@@ -217,7 +277,7 @@ namespace Assets.scripts.AI
 			if (!stillActive && GetMaster() != null)
 				stillActive = true;
 
-			if (!stillActive)
+			if (!stillActive && !alwaysActive)
 			{
 				SetAIState(AIState.IDLE);
 				return;
@@ -265,7 +325,6 @@ namespace Assets.scripts.AI
 
 						if (monster.AI.State != AIState.ATTACKING)
 						{
-							Debug.Log("notified " + monster.Name);
 							monster.AI.AddAggro(target, 1);
 							continue;
 						}
@@ -289,7 +348,7 @@ namespace Assets.scripts.AI
 		{
 			if (HasMaster())
 			{
-				float dist = Utils.DistancePwr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
+				float dist = Utils.DistanceSqr(Owner.Data.GetBody().transform.position, GetMaster().GetData().GetBody().transform.position);
 				int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
 				if (dist > distToFollow*distToFollow + 30*30)
@@ -299,6 +358,8 @@ namespace Assets.scripts.AI
 			}
 			return false;
 		}
+
+		private int tempAggroCounter = 0;
 
 		protected virtual void ThinkAttack()
 		{
@@ -329,10 +390,13 @@ namespace Assets.scripts.AI
 			NotifyNearbyAggroAdded(possibleTarget);
 			NotifySummonsAboutAttack(possibleTarget);
 
+			tempAggroCounter++;
+
 			// target is too far (> attackdistance*2) - abandone attacking
-			if (Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
+			if (tempAggroCounter >= 3 && Vector3.Distance(Owner.GetData().GetBody().transform.position, possibleTarget.GetData().GetBody().transform.position) > AggressionRange * 2)
 			{
 				RemoveAggro(possibleTarget, 1);
+				tempAggroCounter = 0;
 			}
 
 			AttackTarget(possibleTarget);
@@ -351,7 +415,7 @@ namespace Assets.scripts.AI
 
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(moveDestination, leaderPos) > (distToFollow*distToFollow))
+					if (Utils.DistanceSqr(moveDestination, leaderPos) > (distToFollow*distToFollow))
 					{
 						retargetMove = true;
 					}
@@ -371,7 +435,7 @@ namespace Assets.scripts.AI
 					Vector3 leaderPos = master.Data.GetBody().transform.position;
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
+					if (Utils.DistanceSqr(Owner.Data.GetBody().transform.position, leaderPos) > (distToFollow * distToFollow))
 					{
 						Vector3 rnd = Owner.Data.GetBody().transform.position;
 
@@ -403,7 +467,7 @@ namespace Assets.scripts.AI
 
 					int distToFollow = ((EnemyData)Owner.GetData()).distanceToFollowLeader;
 
-					if (Utils.DistancePwr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
+					if (Utils.DistanceSqr(Owner.Data.GetBody().transform.position, leaderPos) > distToFollow * distToFollow)
 					{
 						Vector3 rnd = Utils.GenerateRandomPositionAround(leaderPos, distToFollow - 1);
 						rnd.z = 0;
@@ -426,7 +490,7 @@ namespace Assets.scripts.AI
 
 			if (!Owner.GetData().HasTargetToMoveTo && (!IsInGroup() || IsGroupLeader))
 			{
-				if (Utils.DistancePwr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
+				if (Utils.DistanceSqr(homeLocation, Owner.GetData().GetBody().transform.position) > GetTemplate().RambleAroundMaxDist * GetTemplate().RambleAroundMaxDist)
 				{
 					SetIsWalking(false);
 					MoveTo(homeLocation);
@@ -608,7 +672,7 @@ namespace Assets.scripts.AI
 
 		protected abstract void AttackTarget(Character target);
 
-		protected virtual IEnumerator RunAway(Character target, float distance, int randomAngleAdd)
+		public virtual IEnumerator RunAway(Character target, float distance, int randomAngleAdd)
 		{
 			Vector3 dirVector = -Utils.GetDirectionVector(target.GetData().GetBody().transform.position, Owner.GetData().transform.position).normalized * distance;
 
@@ -637,7 +701,7 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-        protected virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, float fixedSpeed=-1)
+        public virtual IEnumerator MoveAction(Vector3 target, bool fixedRotation, float fixedSpeed=-1)
         {
             MoveTo(target, fixedRotation, fixedSpeed);
 
@@ -651,7 +715,7 @@ namespace Assets.scripts.AI
             currentAction = null;
         }
 
-		protected virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{
@@ -661,7 +725,7 @@ namespace Assets.scripts.AI
 
 					if (moveTowardsIfRequired)
 					{
-						MoveTo(target);
+						MoveTo(target); //TODO not working with pathnodes - replace with setmovementtarget
 						yield return null;
 					}
 					else // too far, cant move closer - break the action
@@ -680,13 +744,13 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
-		protected virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
 			if (target != null && !noRangeCheck && sk.range != 0)
 			{
-				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f+skillRangeAdd) < distSqrToTarget)
 				{
-					dist = Vector3.Distance(target.GetData().transform.position, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 
 					if (moveTowardsIfRequired)
 					{

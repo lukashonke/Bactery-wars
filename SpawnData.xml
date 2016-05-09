@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Umisteni v danem tagu xxx_room (main_room, side_room, bonus_room, atd.) udava, v jakych mistnostech se skupina muze spawnout
+	Kazdy dungeon obsahuje 1-4 main roomy, 1 start_room (= mistnost kam se hrac teleportuje pri startu), 1 end_room (= mistnost odkud hrac opusti danou mapu), nekdy obsahuje 1-2 side roomy, vyjimecne bonus_room nebo boss_room
+
+	Kazdy group obsahuje data o monsterech, ktere se pri zvoleni dane skupiny spawnou do dane mistnosti v dungeonu. Kazdy dungeon ma cca 5-8 mistnosti. Vycisteni celeho dungeonu by melo trvat cca 15-40 minut. (kazdy svet je slozen z cca 10 ruzne slozitych dungeonu, za dohrani hry se da povazovat kdyz hrac dokonci 4. svet)
+
+	===========
+	Format napsani skupiny <group>: 
+
+	!! - parametry v hranatych zavorkach jsou dobrovolne 
+
+	<group [id="1"] [min_level="2"] [max_level="99"] [min_world="1"] [max_world="99"] [frequency="5"]>
+
+	- ID je treba udat, kdyz se ma skupina otestovat ve hre vyvojarem pomoci prikazu "spawn [ID]" (napsat do konzole, ktera se otevre tlac. TAB)
+
+	Popis parametru:
+	id : ID skupiny, pokud neni dane, je automaticky vygenerovane
+	min_level; max_level : min;max level hrace aby se skupina mohla objevovat [defaultni hodnota 1;99]
+	min_world; max_world : min;max cislo sveta, ve kterem se skupina muze objevit (prvni svet ma cislo 1, tutorialovy svet ma cislo 0) [default 1;99]
+	frequency : cetnost ku 10ti = jak casto se skupina bude spawnovat v porovnani s ostatnimi - napr. 5 = objevi se zhruba v 5ti mistnostech z 10ti; 2 = objevi se zhruba v 2 mistnostech z 10ti [default 5]
+
+	==========
+	Format napsani jednoho monstera do skupiny <mob>:
+
+	<mob type="LeukocyteMelee" [count="1"] [level="1"] [chance="100] location="center/left/right/up/down/largest" [room_size="tiny/small/medium/large/verylarge/huge/epic"] [exclude="false/true"] >
+
+	Popis parametru:
+	type : typ monstera, viz nize
+	count : pocet monsteru, ktere se na dane misto spawnou [default 1]
+	level : level monstera, obvykle staci 1 [default 1]
+	chance : sance, ze se dane monstrum spawne, v % [default 100]
+	location : pozice, kam se hra bude snazit monstrum v dane mistnosti spawnout, mozne hodnoty:
+		- center (=dostredu), left, right, up, down, largest (=najde nejvetsi otevrenou oblast v mistnosti)
+	room_size : kolik mista okolo sebe monstrum potrebuje = jak velky musi byt otevreny prostor v dane mistnosti, aby se do nej mohlo monstrum spawnout; [default small]; dostupne hodnoty:
+		- tiny (potrebuje uplne minimum mista - vhodne ke spawnuti monster i do uzkych chodeb, atd.), small (obvykle nejvhodnejsi), medium, large, verylarge, huge, epic
+	exclude : kdyz true, tak pokud se na dane misto spawne tento mob, uz se na to stejne misto v mistnosti NEMUZE spawnout jiny mob [default true]
+
+
+	==========
+	Dostupne typy monster: - pokud je treba nejake upravit, neni problem :D
+
+		BasicCell = zakladni bunka, strili na kratkou vzdalenost, chvili trva nez vystreli
+		BasicMeleeCell = zakladni bunka, ma melee utok na kratkou vzdalenost (da se tomu uhnout)
+		FloatingBasicCell = silnejsi verze BasicCell - kolem hrace nepravidelne krouzi
+		NonaggressiveBasicCell = stejne jako BasicCell, ale sama od sebe neutoci na hrace (neni agresivni, da se zkombinovat napr. s neutrophyle patrol)
+
+		Neutrophyle_Patrol = silnejsi a vetsi, utok na dalku, upozorni okolni nepratele na tebe, zpozoruje hrace z velke vzdalenosti
+		
+		PassiveHelperCell = pokud ma mastera (lze priradit pres XML) tak se pozicuje tak, aby hrac zasahl jí a ne mastera; jinak naskace na hrace a snazi se ho odtlacit pryc :D
+		ObstacleCell = obri verze PassiveHelperCell - lze nahazet hromadne do mapy aby mel hrac tezkej pohyb :D
+		IdleObstacleCell = to stejny jako nad tim, ale kompletne bez AI
+
+		SpiderCell = kontaktni damage, jde k hraci trochu klikate aby bylo obtiznejsi ho zasahnout
+		DementCell = pokud je hrac pobliz, chyti amok a lita nahodne do vsech smeru, pri kontaktu s hracem vybuchne
+		TankCell = tezka bunka (nelze ji odpalit pryc ani jinak zastavit), kontaktni damage, hodne HP, jde rovnou na hrace kterej musi zdrhat 
+		SmallTankCell = mensi verze TankCell
+		
+		TurretCell = staticka bunka, strili na hrace z vetsi vzdalenosti
+		MissileTurretCell = podobne jako TurretCell, jeji naboje se automaticky naviguji na hrace
+
+		ChargerCell = z velke dalky se pripravi ke skoku a pak vyskoci smerem k hraci, kontaktni damage
+		JumpCell = podobne jako ChargerCell, ale skace rychleji a pouze na mensi vzdalenosti
+
+		SuiciderCell = jde na hrace, pri kontaktu vybouchne, kamikadze
+
+		FourDiagShooterCell = pomaly, strili projektily do 4 smeru
+		
+		ArmoredCell = tezka bunka, kontaktni damage, nese pred sebou stit, ktery je obtizny znicit, ale otaci se pomalu takze ji hrac muze obehnout a zautocit zezadu
+		
+
+		MorphCellBig = pokud zemre, stane se z ni MorphCellMedium; strili na dalku
+		MorphCellMedium = -||- MorpgCellSmall
+		MorphCellSmall = 
+
+
+		Lymfocyte_melee = utok zblizka (ne kontaktni damage, tahle prijde k hraci a zacne ho bouchat, da se tomu uhnout)
+		DurableMeleeCell = odolnejsi verze toho nad timhle
+        Lymfocyte_ranged = utok z dalky, chvili zameruje, kdyz vystreli, tlakem se sama odpali dozadu 
+		SwarmerMeleeCell = utok zblizka (ne kontaktni damage), mala a ve velkych poctech nebezpecna
+
+		BigPassiveFloatingCell = obri, nahodne lita po mape, kontaktni damage
+		BigPassiveCell = obri, staticka, kontaktni damage (jako velka mina)
+
+		SniperCell = strili z hodne velky dalky a presne na hrace
+
+		SlowerCell = strili proud na hrace, ktery ho o 90% zpomali v pohybu
+		RogueCell = utok zblizka (ne kontaktni damage - utoku zblizka se da uhnout), nahodne se teleportuje na misto okolo hrace
+		HealerCell = vystreluje proud kterym leci okolni nepratele
+		PusherCell = vystreluje proud ktery tlakem odpali hrace pryc a casto ho zrani o steny
+		SwarmCell = vystreluje mensi bunky ktery se vrhaj na hrace 
+
+	========== 
+	Dole jsou nejaky priklady skupin co jsou predvytvoreny
+
+-->
+<data>
+	<main_room>
+
+
+		<group id="1" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="JumpCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+				
+		</group>
+
+		<group id="2" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="TankCell" count="5" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+				
+		</group>
+
+		<group id="3" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="Neutrophyle_Patrol" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob id="2" id_parent="1" type="PassiveHelperCell" count="4" level="1" chance="100" room_size="small" exclude="true" location="largest"/>	
+
+		</group>
+
+
+
+	</main_room>
+
+	<side_room>
+
+		<group min_level="2" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="TankCell" count="1" level="2" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob id="2" type="TankCell" count="1" level="2" chance="100" room_size="small" exclude="true" location="center"/>
+				
+		</group>
+
+	</side_room>
+
+	<bonus_room>
+
+	</bonus_room>
+
+	<boss_room>
+
+	</boss_room>
+
+	<end_room>
+
+	</end_room>
+
+	<start_room>
+
+	</start_room>
+</data>

@@ -11,16 +11,18 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
     {
 		public SuiciderCell()
         {
-            MaxHp = 25;
+			Name = "Cell";
+			MaxHp = 25;
             MaxMp = 50;
             MaxSpeed = 6;
 
             IsAggressive = true;
             AggressionRange = 10;
             RambleAround = true;
-        }
+			XpReward = 1;
+		}
 
-        protected override void AddSkillsToTemplate()
+	    public override void AddSkillsToTemplate()
         {
             TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CollisionDamageAttack));
         }
@@ -28,9 +30,13 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
 			CollisionDamageAttack skill = set.GetSkill(SkillId.CollisionDamageAttack) as CollisionDamageAttack;
-			skill.DisableOriginalEffects();
-			skill.AddAdditionalEffect(new EffectKillSelf());
-			skill.AddAdditionalEffect(new EffectAuraDamage(20, 5, 10f));
+
+			if (skill != null)
+			{
+				skill.DisableOriginalEffects();
+				skill.AddAdditionalEffect(new EffectKillSelf());
+				skill.AddAdditionalEffect(new EffectAuraDamage(20, 5, 10f));
+			}
 		}
 
 	    public override MonsterAI CreateAI(Character ch)

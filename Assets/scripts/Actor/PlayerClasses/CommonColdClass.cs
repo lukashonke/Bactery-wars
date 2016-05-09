@@ -20,6 +20,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 		protected override void AddSkillsToTemplate()
 		{
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
+																				 
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Dodge));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ColdPush));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));

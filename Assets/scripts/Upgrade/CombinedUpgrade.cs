@@ -9,19 +9,19 @@ using UnityEngine;
 
 namespace Assets.scripts.Upgrade
 {
-	public class CombinedUpgrade : AbstractUpgrade
+	public class CombinedUpgrade : EquippableItem
 	{
-		public AbstractUpgrade first;
-		public AbstractUpgrade second;
+		public EquippableItem first;
+		public EquippableItem second;
 
-		public CombinedUpgrade(int level, AbstractUpgrade u1, AbstractUpgrade u2, bool collectableByPlayer = true) : base(level, collectableByPlayer)
+		public CombinedUpgrade(int level, EquippableItem u1, EquippableItem u2, bool collectableByPlayer = true) : base(level, collectableByPlayer)
 		{
 			first = u1;
 			second = u2;
-			Name = "";
+			FileName = "";
 		}
 
-		public override AbstractUpgrade Init()
+		public override InventoryItem Init()
 		{
 			try
 			{

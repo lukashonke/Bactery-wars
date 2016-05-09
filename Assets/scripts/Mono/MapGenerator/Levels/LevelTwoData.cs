@@ -33,6 +33,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		public LevelTwoData(MapHolder holder) : base(holder)
 		{
 			type = MapType.LevelTwo;
+			tutorialLevel = true;
 		}
 
 		public override void Generate()
@@ -54,9 +55,9 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1).AddHealDrop(50);
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1, 50);
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1, 50);
+						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell.ToString(), t, false, 1).AddHealDrop(50);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, true, 1, 50);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, true, 1, 50);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(mid))
@@ -65,21 +66,21 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.ChargerCell, t, false, 1).AddHealDrop(50);
+						SpawnMonsterToRoom(room, MonsterId.ChargerCell.ToString(), t, false, 1).AddHealDrop(50);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_CENTER, 6))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee, t, true, 1, 50);
+						SpawnMonsterToRoom(room, MonsterId.Lymfocyte_melee.ToString(), t, true, 1, 50);
 					}
 
 					foreach (Tile t in room.GetSubRooms(MapRoom.RoomType.LARGE, MapRoom.DIRECTION_CENTER, 4))
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.NonaggressiveHelperCell, t, true, 1, 50);
+						SpawnMonsterToRoom(room, MonsterId.NonaggressiveBasicCell.ToString(), t, true, 1, 50);
 					}
 				}
                 else if (room.region.GetParentOrSelf().Equals(end))
@@ -88,7 +89,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						if (t == null) break;
 
-						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell, t, false, 1).AddHealDrop(50);
+						SpawnMonsterToRoom(room, MonsterId.DurableMeleeCell.ToString(), t, false, 1).AddHealDrop(50);
 					}
 				}
 		    }

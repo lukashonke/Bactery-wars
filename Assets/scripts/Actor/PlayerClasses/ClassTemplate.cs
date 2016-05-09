@@ -46,7 +46,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			DamageAdd = 0;
 
 			InventoryCapacity = 10;
-			ActiveUpgradesCapacity = 3;
+			ActiveUpgradesCapacity = 2;
 		}
 
 		protected virtual void Init()

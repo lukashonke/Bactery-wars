@@ -24,6 +24,11 @@ namespace Assets.scripts
 			return Physics2D.BoxCastAll(obj.transform.position, new Vector2(width, width), angle, direction, distance);
 		}
 
+		public static bool VectorEquals(Vector3 a, Vector3 b, float precision=0.5f)
+		{
+			return Vector3.SqrMagnitude(a - b) < precision;
+		}
+
 		public static bool IsInCone(GameObject source, Vector3 direction, GameObject target, int angle, int range)
 		{
 			Vector3 rayDirection = target.transform.position - source.transform.position;
@@ -46,6 +51,26 @@ namespace Assets.scripts
 			if (Physics2D.Linecast(obj.transform.position, target.transform.position, 1 << OBSTACLES_LAYER))
 				return false;
 			return true;
+		}
+
+		public static bool CanSee(GameObject obj, Vector3 target)
+		{
+			if (Physics2D.Linecast(obj.transform.position, target, 1 << OBSTACLES_LAYER))
+				return false;
+			return true;
+		}
+
+		public static bool CanSee(Vector3 source, Vector3 target)
+		{
+			if (Physics2D.Linecast(source, target, 1 << OBSTACLES_LAYER))
+				return false;
+			return true;
+		}
+
+		public static bool ChanceCheck(int chance)
+		{
+			int roll = Random.Range(0, 100);
+			return roll < chance;
 		}
 
 		public static RaycastHit2D[] DoubleRaycast(Vector3 origin, Vector3 direction, int range, float width, bool includeCenter=false)
@@ -105,6 +130,16 @@ namespace Assets.scripts
 			mousePos.z = 0;
 
 			Vector3 target = mousePos - t.position;
+			Quaternion r = Quaternion.LookRotation(target);
+			return r;
+		}
+
+		public static Quaternion GetRotationToTarget(Transform t, GameObject obj)
+		{
+			Vector3 pos = obj.transform.position;
+			pos.z = 0;
+
+			Vector3 target = pos - t.position;
 			Quaternion r = Quaternion.LookRotation(target);
 			return r;
 		}
@@ -299,8 +334,9 @@ namespace Assets.scripts
 
 		public static void RegisterAsMonster(this GameObject o)
 		{
+			Debug.LogError("reg mon");
 			EnemyData d = o.GetData() as EnemyData;
-			GameSystem.Instance.RegisterNewMonster(d, d.name, d.monsterId, 1, null);
+			GameSystem.Instance.RegisterNewCustomMonster(d, d.monsterTypeName, false, 1, null);
 		}
 
 		public static void RegisterAsNpc(this GameObject o)
@@ -310,9 +346,44 @@ namespace Assets.scripts
 			GameSystem.Instance.RegisterNewNpc(d, mId);
 		}
 
-		public static float DistancePwr(Vector3 v1, Vector3 v2)
+		public static float DistanceSqr(Vector3 v1, Vector3 v2)
 		{
 			return (v1 - v2).sqrMagnitude;
+		}
+
+		public static float Distance(Vector3 v1, Vector3 v2)
+		{
+			return (v1 - v2).magnitude;
+		}
+
+		public static float DistanceObjectsSqr(GameObject source, GameObject target)
+		{
+			Collider2D coll = target.GetComponent<Collider2D>();
+			float size = 0;
+
+			if (coll is CircleCollider2D)
+				size = ((CircleCollider2D)coll).radius;
+			else if (coll is BoxCollider2D)
+				size = ((BoxCollider2D)coll).size.x / 2f;
+
+			float dist = DistanceSqr(source.transform.position, target.transform.position) - (size * size);
+
+			return dist;
+		}
+
+		public static float DistanceObjects(GameObject source, GameObject target)
+		{
+			Collider2D coll = target.GetComponent<Collider2D>();
+			float size = 0;
+
+			if (coll is CircleCollider2D)
+				size = ((CircleCollider2D)coll).radius;
+			else if (coll is BoxCollider2D)
+				size = ((BoxCollider2D)coll).size.x / 2f;
+
+			float dist = Distance(source.transform.position, target.transform.position) - (size);
+
+			return dist;
 		}
 
 		public static List<Type> GetTypesInNamespace(string ns, bool onlyClasses, Type baseClass)
@@ -336,6 +407,82 @@ namespace Assets.scripts
 			}
 
 			return types;
+		}
+
+		static char[] splitChars = new char[] { ' ', '-', '\t' };
+
+		public static string StringWrap(string str, int width)
+		{
+			string[] words = Explode(str, splitChars);
+
+			int curLineLength = 0;
+			StringBuilder strBuilder = new StringBuilder();
+			for (int i = 0; i < words.Length; i += 1)
+			{
+				string word = words[i];
+				// If adding the new word to the current line would be too long,
+				// then put it on a new line (and split it up if it's too long).
+				if (curLineLength + word.Length > width)
+				{
+					// Only move down to a new line if we have text on the current line.
+					// Avoids situation where wrapped whitespace causes emptylines in text.
+					if (curLineLength > 0)
+					{
+						strBuilder.Append(Environment.NewLine);
+						curLineLength = 0;
+					}
+
+					// If the current word is too long to fit on a line even on it's own then
+					// split the word up.
+					while (word.Length > width)
+					{
+						strBuilder.Append(word.Substring(0, width - 1) + "-");
+						word = word.Substring(width - 1);
+
+						strBuilder.Append(Environment.NewLine);
+					}
+
+					// Remove leading whitespace from the word so the new line starts flush to the left.
+					word = word.TrimStart();
+				}
+				strBuilder.Append(word);
+				curLineLength += word.Length;
+			}
+
+			return strBuilder.ToString();
+		}
+
+		private static string[] Explode(string str, char[] splitChars)
+		{
+			List<string> parts = new List<string>();
+			int startIndex = 0;
+			while (true)
+			{
+				if (splitChars == null) parts.ToArray();
+
+				int index = str.IndexOfAny(splitChars, startIndex);
+
+				if (index == -1)
+				{
+					parts.Add(str.Substring(startIndex));
+					return parts.ToArray();
+				}
+
+				string word = str.Substring(startIndex, index - startIndex);
+				char nextChar = str.Substring(index, 1)[0];
+				// Dashes and the likes should stick to the word occuring before it. Whitespace doesn't have to.
+				if (char.IsWhiteSpace(nextChar))
+				{
+					parts.Add(word);
+					parts.Add(nextChar.ToString());
+				}
+				else
+				{
+					parts.Add(word + nextChar);
+				}
+
+				startIndex = index + 1;
+			}
 		}
 
 		public class Timer

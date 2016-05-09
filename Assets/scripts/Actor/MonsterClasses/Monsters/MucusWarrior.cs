@@ -19,11 +19,14 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 		{
-			meleeSkill.baseDamage = 5;
-			meleeSkill.reuse = 1f;
+			if (meleeSkill != null)
+			{
+				meleeSkill.baseDamage = 5;
+				meleeSkill.reuse = 1f;
+			}
 		}
 
-		protected override void AddSkillsToTemplate()
+		public override void AddSkillsToTemplate()
 		{
 			// no skills
 			SetMeleeAttackSkill((ActiveSkill) SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
