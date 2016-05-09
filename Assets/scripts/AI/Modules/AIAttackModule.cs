@@ -9,15 +9,18 @@ namespace Assets.scripts.AI.Modules
 {
 	public abstract class AIAttackModule
 	{
-		protected bool available;
-		protected float interval;
-		protected float chance;
-		protected float lastActionTime;
+		public bool enabled;
+		public bool available;
+		public float interval;
+		public int chance;
+		public float lastActionTime;
 
 		protected MonsterAI ai;
 		public AIAttackModule(MonsterAI ai)
 		{
 			this.ai = ai;
+
+			enabled = true;
 
 			available = false;
 			interval = -1;
@@ -45,7 +48,7 @@ namespace Assets.scripts.AI.Modules
 
 		public bool CanTrigger()
 		{
-			if (!available)
+			if (!available || !enabled)
 				return false;
 
 			if (interval < 0 || lastActionTime + interval < Time.time)

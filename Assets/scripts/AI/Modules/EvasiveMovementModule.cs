@@ -16,8 +16,9 @@ namespace Assets.scripts.AI.Modules
 
 		public float minRange = 3f;
 
-		public EvasiveMovementModule(MonsterAI ai) : base(ai)
+		public EvasiveMovementModule(MonsterAI ai, float chanceEveryTick=0) : base(ai)
 		{
+			this.chanceEveryTick = chanceEveryTick;
 		}
 
 		public override void Init()
@@ -34,8 +35,7 @@ namespace Assets.scripts.AI.Modules
 
 				if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
 				{
-					Vector3 nextTarget;
-					nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
+					Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
 
 					Debug.DrawRay(ownerPos, nextTarget, Color.cyan, 1f);
 

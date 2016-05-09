@@ -871,7 +871,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("error " + e.Message);
+				Debug.LogError("error " + e.Message + "");
 				Debug.Log(e.StackTrace);
 			}
 

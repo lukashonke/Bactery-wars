@@ -13,8 +13,9 @@ namespace Assets.scripts.AI.Modules
 	{
 		public int minHpPercent = -1;
 
-		public SelfBuffSkillModule(MonsterAI ai) : base(ai)
+		public SelfBuffSkillModule(MonsterAI ai, int minHpPercent=-1) : base(ai)
 		{
+			this.minHpPercent = minHpPercent;
 		}
 
 		public override void Init()

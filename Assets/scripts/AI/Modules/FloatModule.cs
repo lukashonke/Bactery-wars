@@ -12,9 +12,9 @@ namespace Assets.scripts.AI.Modules
 {
 	public class FloatModule : AIAttackModule
 	{
-		public float maxRange = 10;
-		public float floatRange = 5;
-		public float floatSpeed = 4;
+		public float maxRange = 10f;
+		public float floatRange = 5f;
+		public float floatSpeed = 4f;
 
 		private int lastAngle;
 
@@ -29,16 +29,19 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (distSqr < Math.Pow(maxRange, 2))
+			if (interval > -1) // interval must be at least -1
 			{
-				// circulate target
-				Vector3 pos = Utils.GenerateRandomPositionOnCircle(target.GetData().GetBody().transform.position, floatRange, lastAngle);
-
-				if (ai.StartAction(ai.MoveAction(pos, true, floatSpeed), 2f, false))
+				if (distSqr < Math.Pow(maxRange, 2))
 				{
-					lastAngle = lastAngle + UnityEngine.Random.Range(-2, 2);
-					Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.green, 4f);
-					return true;
+					// circulate target
+					Vector3 pos = Utils.GenerateRandomPositionOnCircle(target.GetData().GetBody().transform.position, floatRange, lastAngle);
+
+					if (ai.StartAction(ai.MoveAction(pos, true, floatSpeed), 2f, false))
+					{
+						lastAngle = lastAngle + UnityEngine.Random.Range(-2, 2);
+						Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.green, 4f);
+						return true;
+					}
 				}
 			}
 

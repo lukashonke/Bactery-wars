@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
@@ -43,9 +44,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			RangedMonsterAI ai = new RangedMonsterAI(ch);
-		    ai.evadeChance = 50;
-		    ai.evadeInterval = 1f;
-            return ai;
+		    ai.GetAttackModule<EvadeModule>().chance = 50;
+			ai.GetAttackModule<EvadeModule>().interval = 2f;
+			return ai;
         }
 
         public override GroupTemplate GetGroupTemplate()

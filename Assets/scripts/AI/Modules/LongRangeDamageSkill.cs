@@ -10,8 +10,12 @@ namespace Assets.scripts.AI.Modules
 {
 	public class LongRangeDamageModule : AIAttackModule
 	{
-		public LongRangeDamageModule(MonsterAI ai) : base(ai)
+		// -1 to not check
+		public float minRange = -1f;
+
+		public LongRangeDamageModule(MonsterAI ai, float minRange=-1f) : base(ai)
 		{
+			this.minRange = minRange;
 		}
 
 		public override void Init()
@@ -21,12 +25,15 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			ActiveSkill dmg = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
-			if (dmg != null && dmg.CanUse() && !ai.Owner.GetData().forcedVelocity)
+			if (distSqr >= (minRange*minRange))
 			{
-				if (ai.StartAction(ai.CastSkill(target, dmg, distSqr, true, false, 0f, 0f), 0.5f))
+				ActiveSkill dmg = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Damage, SkillTraits.LongRange);
+				if (dmg != null && dmg.CanUse() && !ai.Owner.GetData().forcedVelocity)
 				{
-					return true;
+					if (ai.StartAction(ai.CastSkill(target, dmg, distSqr, true, false, 0f, 0f), 0.5f))
+					{
+						return true;
+					}
 				}
 			}
 

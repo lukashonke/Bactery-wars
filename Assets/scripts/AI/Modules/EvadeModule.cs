@@ -11,8 +11,8 @@ namespace Assets.scripts.AI.Modules
 {
 	public class EvadeModule : AIAttackModule
 	{
-		public float maxRange = 4;
-		public float minRange = 3;
+		public float maxRange = 4f;
+		public float minRange = 3f;
 
 		public EvadeModule(MonsterAI ai) : base(ai)
 		{
@@ -25,12 +25,15 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			Vector3 pos = Utils.GenerateRandomPositionAround(ai.Owner.GetData().GetBody().transform.position, maxRange, minRange);
-
-			if (ai.StartAction(ai.MoveAction(pos, true), 3f))
+			if (interval > -1) // interval must be at least -1
 			{
-				Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.blue, 4f);
-				return true;
+				Vector3 pos = Utils.GenerateRandomPositionAround(ai.Owner.GetData().GetBody().transform.position, maxRange, minRange);
+
+				if (ai.StartAction(ai.MoveAction(pos, true), 3f))
+				{
+					Debug.DrawLine(pos, ai.Owner.GetData().transform.position, Color.blue, 4f);
+					return true;
+				}
 			}
 
 			return false;

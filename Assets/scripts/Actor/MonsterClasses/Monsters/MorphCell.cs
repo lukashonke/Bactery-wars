@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Base;
 using Assets.scripts.Skills.Base;
 
@@ -30,7 +31,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-		    a.evadeInterval = 2f;
+		    a.GetAttackModule<EvadeModule>().interval = 2f;
 		    return a;
 		}
 
@@ -75,7 +76,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-			a.evadeInterval = 2f;
+			a.GetAttackModule<EvadeModule>().interval = 2f;
 			return a;
 		}
 
@@ -120,7 +121,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
-			a.evadeInterval = 2f;
+			a.GetAttackModule<EvadeModule>().interval = 2f;
 			return a;
 		}
 

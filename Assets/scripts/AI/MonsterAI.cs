@@ -41,11 +41,38 @@ namespace Assets.scripts.AI
 
 			IsAggressive = GetTemplate().IsAggressive;
 			AggressionRange = GetTemplate().AggressionRange;
+
+			CreateModules();
 		}
 
-		public void AddAttackModule(AIAttackModule mod)
+		/// <summary>
+		/// modules added earlier have higher priority !!!
+		/// </summary>
+		/// <returns></returns>
+		public AIAttackModule AddAttackModule(AIAttackModule mod)
 		{
 			attackModules.Add(mod);
+			return mod;
+		}
+
+		public AIAttackModule GetAttackModule(Type type)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.GetType() == type)
+					return mod;
+			}
+			return null;
+		}
+
+		public T GetAttackModule<T>() where T : AIAttackModule
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod is T)
+					return mod as T;
+			}
+			return null;
 		}
 
 		protected void UseTimers()
@@ -360,14 +387,6 @@ namespace Assets.scripts.AI
 			{
 				RemoveAggro(possibleTarget, 1);
 				tempAggroCounter = 0;
-			}
-
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch()) //TODO set and get target here
-				{
-					return;
-				}
 			}
 
 			AttackTarget(possibleTarget);

@@ -114,6 +114,11 @@ namespace Assets.scripts.AI
 		{
 		}
 
+		public virtual void CreateModules()
+		{
+			
+		}
+
 		public virtual void AnalyzeSkills()
 		{
 

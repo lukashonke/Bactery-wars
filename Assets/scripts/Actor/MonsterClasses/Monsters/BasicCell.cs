@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -250,18 +251,16 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			Name = "Cell";
 			RangedMonsterAI ai = new RangedMonsterAI(ch);
-			//ai.IsAggressive = false;
-			ai.evadeInterval = -1;
-			ai.evadeChance = -1;
+			//ai.GetAttackModule<EvadeModule>().interval = -1;
+			//ai.GetAttackModule<EvadeModule>().chance = -1;
 
-			ai.floatInterval = 0.5f;
-			ai.floatChance = 100;
-			ai.floatSpeed = 4;
-			ai.floatRange = 10;
+			ai.GetAttackModule<FloatModule>().interval = 0.5f;
+			ai.GetAttackModule<FloatModule>().chance = 100;
+			ai.GetAttackModule<FloatModule>().floatSpeed = 5;
+			ai.GetAttackModule<FloatModule>().floatRange = 10;
 
-			ai.shootWhileMoving = true;
+			ai.GetAttackModule<DamageSkillModule>().shootWhileMoving = true;
 			return ai;
 		}
 
