@@ -589,7 +589,7 @@ namespace Assets.scripts.Actor
 		/// Spusti kouzleni skillu
 		/// </summary>
 		/// <param name="skill"></param>
-		public void CastSkill(Skill skill, GameObject setTarget=null)
+		public void CastSkill(Skill skill, GameObject setTarget=null, bool noTarget=false)
 		{
 			if (!CanCastSkill(skill))
 				return;
@@ -605,11 +605,18 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			if(skill is ActiveSkill)
-				if(setTarget == null)
-					((ActiveSkill)skill).Start(GetData().Target);
+			if (skill is ActiveSkill)
+			{
+				if (noTarget)
+					((ActiveSkill) skill).Start();
 				else
-					((ActiveSkill)skill).Start(setTarget);
+				{
+					if (setTarget == null)
+						((ActiveSkill)skill).Start(GetData().Target);
+					else
+						((ActiveSkill)skill).Start(setTarget);
+				}
+			}
 			else
 				skill.Start();
 		}

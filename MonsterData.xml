@@ -74,4 +74,29 @@
 			</CollisionDamageAttack>
 		</add_skills>
 	</monster>
+
+	<monster name="Hopak">
+		<visibleName>Hopsan</visibleName>
+		<template>SpiderCell</template>
+		<stats> 
+			<MaxSpeed>0</MaxSpeed>
+		</stats>
+
+		<ai type="Melee">
+			<set module="EvasiveMovement" param="chanceEveryTick" value="0"/>
+
+			<set module="JumpMovement" param="chanceEveryTick" value="100"/>
+			<set module="JumpMovement" param="interval" value="2"/>
+			<set module="JumpMovement" param="minRange" value="5"/>
+
+			<set module="JumpSkill" param="enabled" value="false"/>
+		</ai>
+
+		<add_skills>
+			<JumpShort>
+				<reuse>0</reuse>
+				<range>5</range>
+			</JumpShort>
+		</add_skills>
+	</monster>
 </data>

@@ -38,9 +38,10 @@ namespace Assets.scripts.AI.Modules
 
 				if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
 				{
-					Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
+					Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, (Mathf.Sqrt(distSqr) / 2f), (Mathf.Sqrt(distSqr) / 2f));
+					//Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
 
-					Debug.DrawRay(ownerPos, nextTarget, Color.cyan, 1f);
+					Debug.DrawLine(ownerPos, nextTarget, Color.cyan, 1f);
 
 					if(ai.StartAction(ai.MoveAction(nextTarget, false), 1f))
 						return true;

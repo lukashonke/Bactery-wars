@@ -223,6 +223,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 					{
 						field.SetValue(sk, Double.Parse(value));
 					}
+					else if (field.FieldType == typeof(bool))
+					{
+						field.SetValue(sk, Boolean.Parse(value));
+					}
 					else if (field.FieldType == typeof(string))
 					{
 						field.SetValue(sk, value);
@@ -259,6 +263,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 					else if (field.FieldType == typeof(double))
 					{
 						field.SetValue(meleeSkill, Double.Parse(value));
+					}
+					else if (field.FieldType == typeof(bool))
+					{
+						field.SetValue(meleeSkill, Boolean.Parse(value));
 					}
 					else if (field.FieldType == typeof(string))
 					{
@@ -333,6 +341,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 										else if (pi.ParameterType == typeof(double))
 										{
 											parameters[i] = Double.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(bool))
+										{
+											parameters[i] = Boolean.Parse(val);
 										}
 										else if (pi.ParameterType == typeof(string))
 										{
@@ -412,6 +424,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 										else if (pi.ParameterType == typeof(double))
 										{
 											parameters[i] = Double.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(bool))
+										{
+											parameters[i] = Boolean.Parse(val);
 										}
 										else if (pi.ParameterType == typeof(string))
 										{
@@ -501,6 +517,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 						else if (field.FieldType == typeof (double))
 						{
 							field.SetValue(moduleClass, Double.Parse(value));
+						}
+						else if (field.FieldType == typeof(bool))
+						{
+							field.SetValue(moduleClass, Boolean.Parse(value));
 						}
 						else if (field.FieldType == typeof (string))
 						{

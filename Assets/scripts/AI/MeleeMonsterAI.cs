@@ -27,6 +27,7 @@ namespace Assets.scripts.AI
 			AddAttackModule(new TeleportSkillModule(this));
 			AddAttackModule(new LongRangeDamageModule(this));
 			AddAttackModule(new EvasiveMovementModule(this, 0)); // set to 0 unless Monster Template changes it
+			AddAttackModule(new JumpMovementModule(this, 0));
 			AddAttackModule(new AutoattackModule(this));
 		}
 

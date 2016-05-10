@@ -715,13 +715,14 @@ namespace Assets.scripts.AI
             currentAction = null;
         }
 
-		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{
-				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
 				{
-					dist = Vector3.Distance(target, Owner.GetData().transform.position);
+					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
 
 					if (moveTowardsIfRequired)
 					{
@@ -740,7 +741,7 @@ namespace Assets.scripts.AI
 
 			RotateToTarget(target);
 
-			Owner.CastSkill(sk);
+			Owner.CastSkill(sk, null, true);
 			currentAction = null;
 		}
 
