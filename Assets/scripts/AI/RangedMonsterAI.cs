@@ -37,6 +37,7 @@ namespace Assets.scripts.AI
 
 			// set to 0 unless Monster Template changes it
 			AddAttackModule(new EvasiveMovementModule(this, 0));
+			AddAttackModule(new JumpMovementModule(this, 0));
 			AddAttackModule(new DamageSkillModule(this));
 			AddAttackModule(new AutoattackModule(this));
 		}
