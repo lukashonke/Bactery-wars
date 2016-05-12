@@ -55,6 +55,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
+			a.AddPriorityAttackModule(new WeakAggroModule(a));
 			a.GetAttackModule<WeakAggroModule>().enabled = true;
 			return a;
 		}
@@ -103,6 +104,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			ImmobileMonsterAI a = new ImmobileMonsterAI(ch);
+			a.AddPriorityAttackModule(new WeakAggroModule(a));
 			a.GetAttackModule<WeakAggroModule>().enabled = true;
 			return a;
 		}

@@ -13,18 +13,20 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
-	public class ImmobileMonsterAI : MonsterAI
+	/// <summary>
+	/// </summary>
+	public class BlankMonsterAI : MonsterAI
 	{
-		public ImmobileMonsterAI(Character o) : base(o)
+		public BlankMonsterAI(Character o) : base(o)
 		{
 		}
 
 		public override void CreateModules()
 		{
-			AddAttackModule(new DamageSkillModule(this));
-			AddAttackModule(new AutoattackModule(this));
+		}
 
-			GetAttackModule<DamageSkillModule>().boostShootRange = 0.2f;
+		public override void AnalyzeSkills()
+		{
 		}
 
 		protected override void AttackTarget(Character target)
@@ -32,8 +34,9 @@ namespace Assets.scripts.AI
 			SetMainTarget(target);
 
 			bool isCasting = Owner.GetData().IsCasting;
-			bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
-			float distSqr = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
+			//bool isMeleeAttacking = Owner.GetData().IsMeleeAttacking();
+			//float distSqr = Utils.DistanceObjectsSqr(Owner.GetData().GetBody(), target.GetData().GetBody());
+			float distSqr = Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, target.GetData().GetBody().transform.position);
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
@@ -45,6 +48,8 @@ namespace Assets.scripts.AI
 
 			if (LaunchAttackModule(target, distSqr, hpPercentage))
 				return;
+
+			MoveTo(target);
 		}
 	}
 }

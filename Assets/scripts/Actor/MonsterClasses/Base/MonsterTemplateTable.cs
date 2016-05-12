@@ -220,7 +220,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 							break;
 						case "ai":
 
-							string aiType = null;
+							string aiType = "Blank";
 
 							if (mainParam.Attributes != null)
 							{
@@ -242,6 +242,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 							{
 								if (statNode.Name == "set")
 								{
+									string idString = null;
 									string module = null;
 									string param = null;
 									string value = null;
@@ -252,6 +253,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 										{
 											switch (attrib.Name)
 											{
+												case "id_module":
+													idString = attrib.Value;
+													break;
 												case "module":
 													module = attrib.Value;
 													break;
@@ -265,9 +269,59 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 										}
 									}
 
-									if (module != null && param != null && value != null)
+									if ((module != null || idString != null) && param != null && value != null)
 									{
-										newTemplate.AddAiParam(module, param, value);
+										int idVal = -1;
+										if(idString != null)
+										{
+											idVal = Int32.Parse(idString);
+										}
+
+										newTemplate.AddAiParam(idVal, module, param, value);
+									}
+								}
+								else if (statNode.Name == "add")
+								{
+									string idString = null;
+									string module = null;
+									string param = null;
+									string value = null;
+									string priority = "high";
+
+									if (statNode.Attributes != null)
+									{
+										foreach (XmlAttribute attrib in statNode.Attributes)
+										{
+											switch (attrib.Name)
+											{
+												case "id_module":
+													idString = attrib.Value;
+													break;
+												case "priority": // "low", "high" 
+													priority = attrib.Value;
+													break;
+												case "module":
+													module = attrib.Value;
+													break;
+												case "param":
+													param = attrib.Value;
+													break;
+												case "value":
+													value = attrib.Value;
+													break;
+											}
+										}
+									}
+
+									if (module != null)
+									{
+										int idNumber = -1;
+										if (idString != null)
+										{
+											idNumber = Int32.Parse(idString);
+										}
+
+										newTemplate.AddAIModule(idNumber, module, priority, param, value);
 									}
 								}
 							}

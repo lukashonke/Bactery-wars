@@ -75,21 +75,26 @@
 		</add_skills>
 	</monster>
 
-	<monster name="Hopak">
+	<monster name="Hop">
 		<visibleName>Hopsan</visibleName>
-		<template>SpiderCell</template>
+		<template>CustomCell</template>
 		<stats> 
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>10</MaxHp_scale>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>15</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>true</AlertsAllies>
+
 			<MaxSpeed>0</MaxSpeed>
 		</stats>
 
-		<ai type="Melee">
-			<set module="EvasiveMovement" param="chanceEveryTick" value="0"/>
+		<ai type="Ranged">
+			<add id_module="1" priority="low" module="JumpMovement" param="interval" value="1"/>
+			<set id_module="1" param="jumpAtEnemy" value="false"/>
 
-			<set module="JumpMovement" param="chanceEveryTick" value="100"/>
-			<set module="JumpMovement" param="interval" value="2"/>
-			<set module="JumpMovement" param="minRange" value="5"/>
-
-			<set module="JumpSkill" param="enabled" value="false"/>
+			<set module="DamageSkill" param="onlyIfWithinRange" value="true"/>
 		</ai>
 
 		<add_skills>
@@ -97,6 +102,50 @@
 				<reuse>0</reuse>
 				<range>5</range>
 			</JumpShort>
+
+			<Projectile>
+				<range>8</range>
+				<add_effect name="Pushaway" force="150"/>
+			</Projectile>
+		</add_skills>
+	</monster>
+
+	<MaxHp>100</MaxHp> 
+
+	<monster name="Test">
+		<visibleName>Hopsan</visibleName>
+		<template>CustomCell</template>
+		<stats> 
+			<MaxSpeed>0</MaxSpeed>
+		</stats>
+
+		<ai>
+			<add id_module="1" module="JumpMovement"/>
+			<add id_module="2" module="DamageSkill"/>
+			<add id_module="3" module="DamageSkill"/>
+
+			<set id_module="1" param="interval" value="2"/>
+			<set id_module="1" param="minRange" value="5"/>
+			<set id_module="1" param="jumpAtEnemy" value="false"/>
+
+			<set id_module="2" param="skill" value="ProjectileStrong"/>
+			<set id_module="2" param="chance" value="25"/>
+			<set id_module="2" param="onlyIfWithinRange" value="true"/>
+
+			<set id_module="3" param="skill" value="Projectile"/>
+			<set id_module="3" param="onlyIfWithinRange" value="true"/>
+		</ai>
+
+		<add_skills>
+			<JumpShort>
+				<reuse>0</reuse>
+				<range>5</range>
+			</JumpShort>
+
+			<Projectile>
+				<range>8</range>
+				<add_effect name="Pushaway" force="150"/>
+			</Projectile>
 		</add_skills>
 	</monster>
 </data>

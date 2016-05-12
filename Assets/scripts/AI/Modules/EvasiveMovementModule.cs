@@ -19,14 +19,13 @@ namespace Assets.scripts.AI.Modules
 
 		public float minRange = 3f;
 
-		public EvasiveMovementModule(MonsterAI ai, float chanceEveryTick=0) : base(ai)
+		public EvasiveMovementModule(MonsterAI ai) : base(ai)
 		{
-			this.chanceEveryTick = chanceEveryTick;
 		}
 
 		public override void Init()
 		{
-			canTrigger = true;
+			canTrigger = ai.GetStatus().MoveSpeed > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)

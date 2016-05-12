@@ -30,6 +30,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public override MonsterAI CreateAI(Character ch)
 		{
 			RangedMonsterAI a = new RangedMonsterAI(ch);
+			a.AddAttackModule(new EvadeModule(a));
 			a.GetAttackModule<EvadeModule>().interval = 2f;
 			return a;
 		}

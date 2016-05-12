@@ -17,11 +17,13 @@ namespace Assets.scripts.AI.Modules
 	{
 		public float chanceEveryTick = 100;
 
+		// true if the player will jump directly at player when distance is <minRange
+		public bool jumpAtEnemy = true;
+
 		public float minRange = 5f;
 
-		public JumpMovementModule(MonsterAI ai, float chanceEveryTick=0) : base(ai)
+		public JumpMovementModule(MonsterAI ai) : base(ai)
 		{
-			this.chanceEveryTick = chanceEveryTick;
 		}
 
 		public override void Init()
@@ -51,7 +53,7 @@ namespace Assets.scripts.AI.Modules
 							if (ai.StartAction(ai.CastSkill(nextTarget, jump, distSqr, true, false, 0f, 0f), 0.5f))
 								return true;
 						}
-						else
+						else if(jumpAtEnemy)
 						{
 							if (ai.StartAction(ai.CastSkill(targetPos, jump, distSqr, true, false, 0f, 0f), 0.5f))
 								return true;

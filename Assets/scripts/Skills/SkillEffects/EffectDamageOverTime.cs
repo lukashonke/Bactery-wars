@@ -15,7 +15,7 @@ namespace Assets.scripts.Skills.SkillEffects
 		private int damage;
 		private bool crit;
 
-		public EffectDamageOverTime(int damage, int count, float period, bool crit)
+		public EffectDamageOverTime(int damage, int count, float period, bool crit=false)
 		{
 			this.damage = damage;
 			this.count = count;

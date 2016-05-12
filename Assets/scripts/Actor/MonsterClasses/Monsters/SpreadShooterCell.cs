@@ -44,6 +44,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			RangedMonsterAI ai = new RangedMonsterAI(ch);
+		    ai.AddAttackModule(new EvadeModule(ai));
 		    ai.GetAttackModule<EvadeModule>().chance = 50;
 			ai.GetAttackModule<EvadeModule>().interval = 2f;
 			return ai;

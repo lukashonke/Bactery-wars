@@ -80,7 +80,7 @@ namespace Assets.scripts.AI
                 //TODO cancel the previous action?
 		        if (currentAction != null)
 		        {
-					Debug.Log("breaking");
+					//Debug.Log("breaking");
 		            BreakCurrentAction();
 		        }
 

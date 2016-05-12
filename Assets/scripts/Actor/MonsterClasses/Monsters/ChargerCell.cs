@@ -1,5 +1,6 @@
 ﻿using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
@@ -51,6 +52,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
+		    ai.AddAttackModule(new JumpSkillModule(ai));
             return ai;
         }
 

@@ -28,6 +28,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.JumpShort));
         }
 
+	    private const int jumpRange = 15;
+
 	    public override void InitSkillsOnMonster(SkillSet set, ActiveSkill meleeSkill, int level)
 	    {
 		    JumpShort skill = set.GetSkill(SkillId.JumpShort) as JumpShort;
@@ -35,7 +37,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			if (skill != null)
 			{
 				skill.jumpSpeed = 75;
-				skill.range = 15;
+				skill.range = jumpRange;
 				skill.reuse = 4f;
 				skill.castTime = 1f;
 			}
@@ -44,8 +46,11 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
-		    ai.GetAttackModule<EvasiveMovementModule>().chanceEveryTick = 75;
-	        //ai.dodgeRate = 75;
+		    ai.AddAttackModule(new JumpMovementModule(ai));
+			ai.AddAttackModule(new JumpSkillModule(ai));
+
+		    ai.GetAttackModule<JumpMovementModule>().minRange = jumpRange;
+			ai.GetAttackModule<JumpMovementModule>().chanceEveryTick = 100;
             return ai;
         }
 

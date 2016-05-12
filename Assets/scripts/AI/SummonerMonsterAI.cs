@@ -25,7 +25,6 @@ namespace Assets.scripts.AI
 		public override void CreateModules()
 		{
 			AddAttackModule(new SpawnMinionModule(this));
-			AddAttackModule(new RambleAroundModule(this));
 		}
 
 		public override void AnalyzeSkills()
@@ -54,16 +53,13 @@ namespace Assets.scripts.AI
 			if (isCasting || Owner.Status.IsStunned())
 				return;
 
+			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
+
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 		}
 	}
 }
