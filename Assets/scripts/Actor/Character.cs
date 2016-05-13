@@ -729,6 +729,11 @@ namespace Assets.scripts.Actor
 
 			Status.ReceiveHeal(ammount);
 
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(GetData().GetBody(), ammount, Color.green);
+			}
+
 			GetData().SetVisibleHp(Status.Hp);
 		}
 

@@ -105,43 +105,12 @@
 
 			<Projectile>
 				<range>8</range>
-
+				<add_effect name="HealSelfOverTime" heal="2" count="3" period="1"/>
 			</Projectile>
 		</add_skills>
 	</monster>
 
-	<monster name="Tt">
-		<visibleName>Hopsan</visibleName>
-		<template>CustomCell</template>
-		<stats> 
-			<MaxHp>15</MaxHp>
-			<MaxHp_scale>10</MaxHp_scale>
-			<IsAggressive>true</IsAggressive>
-			<AggressionRange>15</AggressionRange>
-			<RambleAround>true</RambleAround>
-			<RambleAroundMaxDist>4</RambleAroundMaxDist>
-			<AlertsAllies>true</AlertsAllies>
-
-			<MaxSpeed>10</MaxSpeed>
-		</stats>
-
-		<ai type="Blank">
-			<add id_module="1" priority="high" module="RunRandomDirection"/>
-			<set id_module="1" param="maxHp" value="50"/>
-			<set id_module="1" param="maxDistance" value="10"/>
-
-			<add id_module="2" priority="low" module="DamageSkill"/>
-		</ai>
-
-		<add_skills>
-			<Projectile>
-				<range>20</range>
-			</Projectile>
-			<JumpShort>
-				<range>10</range>
-			</JumpShort>
-		</add_skills>
-	</monster>
+	<MaxHp>100</MaxHp> 
 
 	<monster name="Test">
 		<visibleName>Hopsan</visibleName>
