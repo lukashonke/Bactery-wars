@@ -761,7 +761,37 @@ namespace Assets.scripts.AI
             currentAction = null;
         }
 
-		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkillWithTargetSet(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd = 0, float randomSkilLRangeAdd = 0)
+		{
+			if (!noRangeCheck && sk.range != 0)
+			{
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
+				{
+					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
+
+					if (moveTowardsIfRequired)
+					{
+						MoveTo(target); //TODO not working with pathnodes - replace with setmovementtarget
+						yield return null;
+					}
+					else // too far, cant move closer - break the action
+					{
+						currentAction = null;
+						yield break;
+					}
+				}
+			}
+
+			Owner.GetData().BreakMovement(true);
+
+			RotateToTarget(target);
+
+			Owner.CastSkill(sk, target);
+			currentAction = null;
+		}
+
+		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{

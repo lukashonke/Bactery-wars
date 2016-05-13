@@ -15,7 +15,8 @@ namespace Assets.scripts.AI.Modules
 	/// </summary>
 	public class EvasiveMovementModule : AIAttackModule
 	{
-		public float chanceEveryTick = 75;
+		// if this chance fails, he will move directly at target
+		public float chanceToEvade = 75;
 
 		public float minRange = 3f;
 
@@ -30,12 +31,12 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (chanceEveryTick > 0 && distSqr > (minRange*minRange))
+			if (chanceToEvade > 0 && distSqr > (minRange*minRange))
 			{
 				Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
 				Vector3 targetPos = target.GetData().GetBody().transform.position;
 
-				if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
+				if (UnityEngine.Random.Range(0, 100) < chanceToEvade)
 				{
 					Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, (Mathf.Sqrt(distSqr) / 2f), (Mathf.Sqrt(distSqr) / 2f));
 					//Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));

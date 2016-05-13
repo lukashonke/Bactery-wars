@@ -35,6 +35,8 @@ namespace Assets.scripts.Actor.Status
 
 		public bool IsWalking = false;
 
+		public bool CanCastSkills { get; set; }
+
 		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
 		{
 			IsDead = isDead;
@@ -53,7 +55,8 @@ namespace Assets.scripts.Actor.Status
 			CriticalDamageMul = criticalDamageMul;
 
 			ActiveSkills = new List<Skill>();
-        }
+			CanCastSkills = true;
+		}
 
 		public void AddXp(int xp)
 		{

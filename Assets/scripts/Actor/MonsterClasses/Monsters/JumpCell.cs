@@ -50,7 +50,6 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			ai.AddAttackModule(new JumpSkillModule(ai));
 
 		    ai.GetAttackModule<JumpMovementModule>().minRange = jumpRange;
-			ai.GetAttackModule<JumpMovementModule>().chanceEveryTick = 100;
             return ai;
         }
 

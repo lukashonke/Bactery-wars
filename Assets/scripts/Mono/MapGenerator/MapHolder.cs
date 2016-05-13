@@ -21,6 +21,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		DungeonCentralClosed,
 		Hardcoded,
 
+		Arena,
+
 		StartClassic,
 		SecondLevel,
 
@@ -233,6 +235,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.Test:
 					levelData = new TestLevelData(this);
+					break;
+				case MapType.Arena:
+					levelData = new ArenaLevelData(this);
 					break;
 				case MapType.SecondLevel:
 					levelData = new SecondLevelData(this);

@@ -60,6 +60,16 @@ namespace Assets.scripts.Skills.SkillEffects
 			
 		}
 
+		public virtual void ModifyCharDamage(ref int damage)
+		{
+			
+		}
+
+		public virtual void ModifyCritRate(ref int critRate)
+		{
+			
+		}
+
 		protected bool IsOffensive()
 		{
 			return isOffensive;

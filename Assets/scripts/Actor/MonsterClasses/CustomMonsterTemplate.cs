@@ -163,7 +163,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 				isHighPriority = false;
 
 			NewModules.Add(new AddModuleInfo(id, module, isHighPriority));
-			AddAiParam(id, module, param, value);
+
+			if(param != null)
+				AddAiParam(id, module, param, value);
 		}
 
 		public void DisableSkillEffects(SkillId id)

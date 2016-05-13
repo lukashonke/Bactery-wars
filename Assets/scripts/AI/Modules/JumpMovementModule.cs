@@ -15,11 +15,10 @@ namespace Assets.scripts.AI.Modules
 	/// </summary>
 	public class JumpMovementModule : AIAttackModule
 	{
-		public float chanceEveryTick = 100;
-
 		// true if the player will jump directly at player when distance is <minRange
 		public bool jumpAtEnemy = true;
 
+		// pokud je bliz nez tato vzdalenost, pouzije tento pohyb aby se dostal bliz
 		public float minRange = 5f;
 
 		public JumpMovementModule(MonsterAI ai) : base(ai)
@@ -33,32 +32,26 @@ namespace Assets.scripts.AI.Modules
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (chanceEveryTick > 0)
+			ActiveSkill jump = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Jump);
+
+			if (jump != null && jump.CanUse() && !ai.Owner.GetData().forcedVelocity)
 			{
-				ActiveSkill jump = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Jump);
+				Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
+				Vector3 targetPos = target.GetData().GetBody().transform.position;
 
-				if (jump != null && jump.CanUse() && !ai.Owner.GetData().forcedVelocity)
+				if (distSqr > (minRange*minRange))
 				{
-					Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
-					Vector3 targetPos = target.GetData().GetBody().transform.position;
+					Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, 2, 6);
+					//Debug.DrawLine(ownerPos, nextTarget, Color.cyan, 1f);
 
-					if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
-					{
-						if (distSqr > (minRange*minRange))
-						{
-							Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, 2, 6);
-							//Debug.DrawLine(ownerPos, nextTarget, Color.cyan, 1f);
-
-							//if (ai.StartAction(ai.CastSkill(target, jump, distSqr, true, false, 0f, 0f), 0.5f))
-							if (ai.StartAction(ai.CastSkill(nextTarget, jump, distSqr, true, false, 0f, 0f), 0.5f))
-								return true;
-						}
-						else if(jumpAtEnemy)
-						{
-							if (ai.StartAction(ai.CastSkill(targetPos, jump, distSqr, true, false, 0f, 0f), 0.5f))
-								return true;
-						}
-					}
+					//if (ai.StartAction(ai.CastSkill(target, jump, distSqr, true, false, 0f, 0f), 0.5f))
+					if (ai.StartAction(ai.CastSkill(nextTarget, jump, distSqr, true, false, 0f, 0f), 0.5f))
+						return true;
+				}
+				else if(jumpAtEnemy)
+				{
+					if (ai.StartAction(ai.CastSkill(targetPos, jump, distSqr, true, false, 0f, 0f), 0.5f))
+						return true;
 				}
 			}
 

@@ -25,5 +25,7 @@ namespace Assets.scripts.Skills.Base
 		LongCastingTime,
 		LongReuse,
 		ShortReuse,
+
+		None,
 	}
 }

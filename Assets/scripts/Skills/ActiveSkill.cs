@@ -56,6 +56,7 @@ namespace Assets.scripts.Skills
 		public bool breaksMouseMovement;
 
 		protected GameObject initTarget;
+		protected Vector3 fixedTarget;
 		public GameObject InitTarget { get { return initTarget; } }
 
 		/// not used currently
@@ -324,6 +325,7 @@ namespace Assets.scripts.Skills
 		{
 			initTarget = null;
 			mouseDirection = inputPosition - GetOwnerData().GetBody().transform.position;
+			fixedTarget = inputPosition;
 			Start();
 		}
 

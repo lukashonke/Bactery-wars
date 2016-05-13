@@ -89,17 +89,26 @@ namespace Assets.scripts.Mono.MapGenerator
 			LevelParams param = new LevelParams(MapType.LevelOne);
 			param.worldLevel = worldLevel;
 
-			if (worldLevel > 0)
+			if (GameSession.arenaMode)
 			{
-				param.levelType = MapType.GenericMonster; //TODO
+				param.levelType = MapType.Arena;
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 			}
 			else
 			{
-				param.levelType = MapType.LevelOne;
-				//param.levelType = MapType.Test;
-				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
+				if (worldLevel > 0)
+				{
+					param.levelType = MapType.GenericMonster; //TODO
+					mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
+				}
+				else
+				{
+					param.levelType = MapType.LevelOne;
+					//param.levelType = MapType.Test;
+					mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_EASY, 0, param, "First Tutorial", "Unknown");
+				}
 			}
+
 
 			mapTree.AddLevelReward(typeof(HpPotion), 50);
 			mapTree.AddLevelReward(typeof(Heal));

@@ -40,7 +40,7 @@ namespace Assets.scripts.AI
 			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
 			// already doing something
-			if (isCasting || Owner.Status.IsStunned())
+			if (isCasting || Owner.Status.IsStunned() || currentAction != null)
 				return;
 
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
@@ -49,7 +49,7 @@ namespace Assets.scripts.AI
 			if (LaunchAttackModule(target, distSqr, hpPercentage))
 				return;
 
-			MoveTo(target);
+			//MoveTo(target);
 		}
 	}
 }

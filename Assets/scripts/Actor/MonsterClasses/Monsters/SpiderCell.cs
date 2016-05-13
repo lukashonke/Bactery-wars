@@ -31,7 +31,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
 		    ai.AddPriorityAttackModule(new EvasiveMovementModule(ai));
-		    ai.GetAttackModule<EvasiveMovementModule>().chanceEveryTick = 75;
+		    ai.GetAttackModule<EvasiveMovementModule>().chanceToEvade = 75;
 	        //ai.dodgeRate = 75;
             return ai;
         }

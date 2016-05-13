@@ -377,7 +377,10 @@ namespace Assets.scripts.Mono
 
 		private Vector2 explosionForce = Vector2.zero;
 
-		private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
+		private GameObject pullingObject = null;
+		private int pullDamage = 0;
+
+		//private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
 		public void AddPhysicsPush(Vector2 force, ForceMode2D mode, Character source)
 		{
 			explosionForce += force/rb.mass;
@@ -387,6 +390,11 @@ namespace Assets.scripts.Mono
 				Monster m = GetOwner() as Monster;
 				m.AI.AddAggro(source, 2);
 			}
+		}
+
+		public void AddPull(Character ch, int pullDamage)
+		{
+			pullingObject = ch.GetData().GetBody();
 		}
 
 		public virtual void FixedUpdate()
@@ -1427,6 +1435,17 @@ namespace Assets.scripts.Mono
 				if (sk is ActiveSkill)
 				{
 					((ActiveSkill)sk).OnCollision(false, coll, coll.collider);
+				}
+			}
+
+			if (pullingObject != null)
+			{
+				if (pullingObject.Equals(coll.gameObject))
+				{
+					if (pullDamage > 0)
+						GetOwner().ReceiveDamage(null, pullDamage, 0);
+
+					explosionForce = new Vector2();
 				}
 			}
 

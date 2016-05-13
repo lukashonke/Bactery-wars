@@ -58,7 +58,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			SkillEffect[] effects = new SkillEffect[count];
 			int index = 0;
 
-			effects[index++] = new EffectMeleeReuse(1, 0.1f, duration, SkillTraits.Melee);
+			effects[index++] = new EffectSkillReuse(1, 0.1f, duration, SkillTraits.Melee);
 			if(rangeBoost > 1 || rangeBoost < 1)
 				effects[index++] = new EffectSkillRange(rangeBoost, duration, SkillTraits.Melee);
 
