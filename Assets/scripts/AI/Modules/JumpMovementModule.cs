@@ -19,7 +19,7 @@ namespace Assets.scripts.AI.Modules
 		public bool jumpAtEnemy = true;
 
 		// pokud je bliz nez tato vzdalenost, pouzije tento pohyb aby se dostal bliz
-		public float minRange = 5f;
+		public float minRangeToJump = 5f;
 
 		public JumpMovementModule(MonsterAI ai) : base(ai)
 		{
@@ -39,7 +39,7 @@ namespace Assets.scripts.AI.Modules
 				Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
 				Vector3 targetPos = target.GetData().GetBody().transform.position;
 
-				if (distSqr > (minRange*minRange))
+				if (distSqr > (minRangeToJump*minRangeToJump))
 				{
 					Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, 2, 6);
 					//Debug.DrawLine(ownerPos, nextTarget, Color.cyan, 1f);

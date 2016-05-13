@@ -49,7 +49,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		    ai.AddAttackModule(new JumpMovementModule(ai));
 			ai.AddAttackModule(new JumpSkillModule(ai));
 
-		    ai.GetAttackModule<JumpMovementModule>().minRange = jumpRange;
+		    ai.GetAttackModule<JumpMovementModule>().minRangeToJump = jumpRange;
             return ai;
         }
 

@@ -125,7 +125,7 @@
 			<add id_module="3" module="DamageSkill"/>
 
 			<set id_module="1" param="interval" value="2"/>
-			<set id_module="1" param="minRange" value="5"/>
+			<set id_module="1" param="minRangeToJump" value="5"/>
 			<set id_module="1" param="jumpAtEnemy" value="false"/>
 
 			<set id_module="2" param="skill" value="ProjectileStrong"/>
