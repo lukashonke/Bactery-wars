@@ -14,8 +14,8 @@ namespace Assets.scripts.AI.Modules
 	/// </summary>
 	public class RunAwayModule : AIAttackModule
 	{
-		public float maxRange = 8f;
-		public float minRange = 6f;
+		public float runRange = 8f;
+		public float runRangeRandomAdd = 2;
 
 		public float maxRunDistance = 15f;
 
@@ -50,9 +50,9 @@ namespace Assets.scripts.AI.Modules
 				Vector3 nextTarget;
 
 				if (panic)
-					nextTarget = Utils.GeneratePerpendicularPositionAround(thisPos, thisPos + runDirection, 3f, 7f);
+					nextTarget = Utils.GeneratePerpendicularPositionAround(thisPos, thisPos + (runDirection * runRange), 3f, 7f);
 				else
-					nextTarget = Utils.GeneratePerpendicularPositionAround(thisPos, (thisPos + (runDirection * UnityEngine.Random.Range(minRange, maxRange))), 0f, 2f);
+					nextTarget = Utils.GeneratePerpendicularPositionAround(thisPos, (thisPos + (runDirection * (runRange + UnityEngine.Random.Range(-runRangeRandomAdd, runRangeRandomAdd)))), 0f, 2f);
 
 				Debug.DrawLine(thisPos, nextTarget, Color.cyan, 1f);
 				if (ai.StartAction(ai.MoveAction(nextTarget, false), 1f))

@@ -38,7 +38,6 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void Update()
 		{
-			Debug.Log("healing");
 			ApplyHeal();
 		}
 

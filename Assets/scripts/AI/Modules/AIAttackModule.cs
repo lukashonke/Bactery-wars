@@ -32,10 +32,13 @@ namespace Assets.scripts.AI.Modules
 
 		public float keepActiveFor;
 		public float keepActiveForInterval; // pokud je aktivovan pres parametr keepActiveFor, pouzije se keepActiveForInterval jako casovac misto prom. interval
-		public float moduleReuse;
+		public float tryInterval;
 		public float activateAfterTime;
+		public float chanceCheckReuse;
 
+		private float lastTryTime;
 		private float lastActionTime;
+		private float lastChanceTryTime;
 		protected MonsterAI ai;
 
 		public AIAttackModule(MonsterAI ai)
@@ -56,7 +59,8 @@ namespace Assets.scripts.AI.Modules
 
 			keepActiveFor = -1;
 			keepActiveForInterval = -1;
-			moduleReuse = -1;
+			tryInterval = -1;
+			chanceCheckReuse = -1;
 
 			activateAfterTime = -1;
 		}
@@ -99,9 +103,11 @@ namespace Assets.scripts.AI.Modules
 			if (!canTrigger || !enabled)
 				return false;
 
-			if (interval < 0 || lastActionTime + interval < Time.time)
+			if (tryInterval < 0 || (lastTryTime + tryInterval <= Time.time))
 			{
-				if (chance < 0 || UnityEngine.Random.Range(1, 100) < chance)
+				lastTryTime = Time.time;
+
+				if (interval < 0 || lastActionTime + interval < Time.time)
 				{
 					if (minHp < 0 || hpPercentage >= minHp)
 					{
@@ -111,11 +117,21 @@ namespace Assets.scripts.AI.Modules
 							{
 								if (maxDistance < 0 || distSqr <= Mathf.Pow(maxDistance, 2))
 								{
-									if (moduleReuse < 0 || (lastActionTime + moduleReuse <= Time.time))
+									if (activateAfterTime < 0 || (attackStartedTime + activateAfterTime <= Time.time))
 									{
-										if (activateAfterTime < 0 || (attackStartedTime + activateAfterTime <= Time.time))
+										// vsechny podminky splnene, cas zkontrolovat sanci
+										if (chanceCheckReuse < 0 || lastChanceTryTime + chanceCheckReuse < Time.time)
 										{
-											return true;
+											if (chance < 0 || UnityEngine.Random.Range(1, 100) < chance)
+											{
+												lastChanceTryTime = Time.time;
+												return true;
+											}
+											// neproslo pres kontrolu sance
+											else if (chance > 0)
+											{
+												lastChanceTryTime = Time.time;
+											}
 										}
 									}
 								}
