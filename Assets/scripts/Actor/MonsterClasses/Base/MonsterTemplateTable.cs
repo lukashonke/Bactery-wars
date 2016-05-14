@@ -173,6 +173,15 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 						case "visibleName":
 							newTemplate.Name = mainParam.InnerText;
 							break;
+						case "sprite":
+							newTemplate.Sprite = mainParam.InnerText;
+							break;
+						case "size":
+							newTemplate.SpriteSize = float.Parse(mainParam.InnerText);
+							break;
+						case "mass":
+							newTemplate.Mass = float.Parse(mainParam.InnerText);
+							break;
 						case "template":
 
 							MonsterId id = (MonsterId) Enum.Parse(typeof (MonsterId), mainParam.InnerText);

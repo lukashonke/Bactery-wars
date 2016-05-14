@@ -80,6 +80,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public string TemplateName { get; set; }
 
+		public string Sprite { get; set; }
+		public float SpriteSize { get; set; }
+		public float Mass { get; set; }
+
 		public string AiType { get; set; }
 		public List<AiParamInfo> AiParams { get; set; }
 		public List<AddModuleInfo> NewModules { get; set; } 
@@ -108,6 +112,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 			SkillAddEffects = new List<SkillEffectInfo>();
 			MeleeAddEffects = new List<SkillEffectInfo>();
 			NewAutoattack = SkillId.SkillTemplate;
+
+			Sprite = null;
+			SpriteSize = -1;
+			Mass = -1;
 
 			Name = "Custom Cell";
 			MaxHp = 20;
@@ -623,6 +631,16 @@ namespace Assets.scripts.Actor.MonsterClasses
 			if (OldTemplate != null)
 			{
 				OldTemplate.InitAppearanceData(m, data);
+			}
+
+			if (Sprite != null)
+			{
+				data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
+			}
+
+			if (Mass > 0)
+			{
+				data.SetMass(Mass);
 			}
 		}
 

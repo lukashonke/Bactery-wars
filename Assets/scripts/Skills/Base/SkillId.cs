@@ -13,6 +13,7 @@ namespace Assets.scripts.Skills.Base
 		Projectile,
 		ProjectileAllAround,
 		ProjectileTriple,
+		ProjectileStrong,
 
 		SkillAreaExplode,
 		MissileProjectile,

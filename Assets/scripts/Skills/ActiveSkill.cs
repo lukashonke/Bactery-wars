@@ -70,6 +70,9 @@ namespace Assets.scripts.Skills
 		public int currentConsecutiveCharges;
 		public float consecutiveTimelimit;
 
+		// custom image for projectile
+		public string image;
+
 		private float firstUsedCharge;
 		private bool isWaitingForConsecutiveCharges;
 		private Coroutine startReuseTask;
@@ -104,6 +107,8 @@ namespace Assets.scripts.Skills
 			consecutiveTimelimit = 3f;
 			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
+
+			image = null;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}
@@ -651,7 +656,12 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, GetOwnerData().GetShootingPosition().transform.position);
+			else
+				o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -663,7 +673,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, GetOwnerData().GetShootingPosition().transform.position);
+			else
+				o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -675,7 +690,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, spawnPosition.position);
+			else
+				o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -687,7 +707,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, spawnPosition.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, spawnPosition.position);
+			else
+				o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);

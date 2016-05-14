@@ -77,6 +77,8 @@
 
 	<monster name="Hop">
 		<visibleName>Hopsan</visibleName>
+		<sprite>hovno</sprite>
+		<size>1</size>
 		<template>CustomCell</template>
 		<stats> 
 			<MaxHp>50</MaxHp>
