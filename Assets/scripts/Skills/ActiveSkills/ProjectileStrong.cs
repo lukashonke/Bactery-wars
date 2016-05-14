@@ -28,7 +28,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.Projectile;
+			return SkillId.ProjectileStrong;
 		}
 
 		public override string GetVisibleName()

@@ -333,7 +333,8 @@ namespace Assets.scripts.Mono.MapGenerator
 				}
 			}
 
-			WorldHolder.instance.activeMap.ConfigureMonstersAfterSpawn();
+			if(forcedId > 0)
+				WorldHolder.instance.activeMap.ConfigureMonstersAfterSpawn();
 		}
 	}
 

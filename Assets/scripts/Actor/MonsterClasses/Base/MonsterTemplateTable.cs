@@ -50,8 +50,15 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 			foreach (Type type in types)
 			{
-				t = Activator.CreateInstance(type) as MonsterTemplate;
-				AddType(t);
+				try
+				{
+					t = Activator.CreateInstance(type) as MonsterTemplate;
+					AddType(t);
+				}
+				catch (Exception)
+				{
+					Debug.LogError("error when initing template " + type.Name);
+				}
 			}
 
 			Debug.Log("Loaded " + types.Count + " monster classes.");
