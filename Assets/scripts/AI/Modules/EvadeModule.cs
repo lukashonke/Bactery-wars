@@ -10,7 +10,7 @@ using Random = System.Random;
 namespace Assets.scripts.AI.Modules
 {
 	/// <summary>
-	/// set interval to >0 to activate this module
+	/// nahodne se posune kolem sve pozice o par bodu
 	/// </summary>
 	public class EvadeModule : AIAttackModule
 	{

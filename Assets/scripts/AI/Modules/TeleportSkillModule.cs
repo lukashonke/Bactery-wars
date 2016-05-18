@@ -14,6 +14,8 @@ namespace Assets.scripts.AI.Modules
 		public float minRangeToTeleport = -1;
 		public float maxRangeToTeleport = -1;
 
+		public bool checkTeleportSkillRange = true;
+
 		public TeleportSkillModule(MonsterAI ai) : base(ai)
 		{
 		}
@@ -31,7 +33,7 @@ namespace Assets.scripts.AI.Modules
 				{
 					ActiveSkill teleport = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Teleport);
 					// if range too high, teleport
-					if (teleport.CanUse() && !ai.Owner.GetData().forcedVelocity && distSqr >= (teleport.range * teleport.range) / 3f && distSqr <= (teleport.range * teleport.range))
+					if (teleport.CanUse() && !ai.Owner.GetData().forcedVelocity && (!checkTeleportSkillRange || (distSqr >= ((teleport.range * teleport.range) / 4f) && distSqr <= (teleport.range * teleport.range))))
 					{
 						if (ai.StartAction(ai.CastSkill(target, teleport, distSqr, true, false, 0f, 0f), 0.5f))
 						{

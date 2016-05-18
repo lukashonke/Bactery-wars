@@ -21,12 +21,6 @@ namespace Assets.scripts.AI
 
 		public override void CreateModules()
 		{
-			AddAttackModule(new SpawnSkillModule(this));
-			AddAttackModule(new SelfBuffSkillModule(this));
-			AddAttackModule(new JumpSkillModule(this));
-			AddAttackModule(new TeleportSkillModule(this));
-			AddAttackModule(new LongRangeDamageModule(this));
-			AddAttackModule(new EvasiveMovementModule(this, 0)); // set to 0 unless Monster Template changes it
 			AddAttackModule(new AutoattackModule(this));
 		}
 
@@ -54,13 +48,8 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 
 			MoveTo(target);
 		}

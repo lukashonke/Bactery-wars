@@ -9,6 +9,7 @@ namespace Assets.scripts.Skills.Base
 	{
 		Damage,
 		AreaDamage,
+		AuraDamage,
 		Escape,
 		Jump,
 		Teleport,
@@ -17,7 +18,16 @@ namespace Assets.scripts.Skills.Base
 		BuffDefense,
 		SpawnMinion,
 
+		Pull,
+		Push,
+		Kamikadze,
+		Immobilize,
+
 		Melee,
+
+		Heal,
+		HealSelf,
+
 
 		ShortRange,
 		LongRange,
@@ -25,5 +35,7 @@ namespace Assets.scripts.Skills.Base
 		LongCastingTime,
 		LongReuse,
 		ShortReuse,
+
+		None,
 	}
 }

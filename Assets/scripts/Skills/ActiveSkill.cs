@@ -56,6 +56,7 @@ namespace Assets.scripts.Skills
 		public bool breaksMouseMovement;
 
 		protected GameObject initTarget;
+		protected Vector3 fixedTarget;
 		public GameObject InitTarget { get { return initTarget; } }
 
 		/// not used currently
@@ -68,6 +69,9 @@ namespace Assets.scripts.Skills
 		public int maxConsecutiveCharges;
 		public int currentConsecutiveCharges;
 		public float consecutiveTimelimit;
+
+		// custom image for projectile
+		public string image;
 
 		private float firstUsedCharge;
 		private bool isWaitingForConsecutiveCharges;
@@ -103,6 +107,8 @@ namespace Assets.scripts.Skills
 			consecutiveTimelimit = 3f;
 			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
+
+			image = null;
 
 			RangeChecks = new Dictionary<GameObject, Vector3>(); 
 		}
@@ -324,6 +330,7 @@ namespace Assets.scripts.Skills
 		{
 			initTarget = null;
 			mouseDirection = inputPosition - GetOwnerData().GetBody().transform.position;
+			fixedTarget = inputPosition;
 			Start();
 		}
 
@@ -649,7 +656,12 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, GetOwnerData().GetShootingPosition().transform.position);
+			else
+				o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -661,7 +673,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, GetOwnerData().GetShootingPosition().transform.position);
+			else
+				o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, GetOwnerData().GetShootingPosition().transform.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -673,7 +690,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, spawnPosition.position);
+			else
+				o = GetOwnerData().CreateSkillResource(GetName(), projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -685,7 +707,12 @@ namespace Assets.scripts.Skills
 
 		protected GameObject CreateSkillProjectile(string folderName, string projectileObjectName, bool addMonoReceiver, Transform spawnPosition)
 		{
-			GameObject o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, spawnPosition.position);
+			GameObject o;
+
+			if (image != null)
+				o = GetOwnerData().CreateSkillResource("CustomSkill", image, false, spawnPosition.position);
+			else
+				o = GetOwnerData().CreateSkillResource(folderName, projectileObjectName, false, spawnPosition.position);
 
 			if (addMonoReceiver)
 				AddMonoReceiver(o);
@@ -1033,6 +1060,40 @@ namespace Assets.scripts.Skills
 		public float GetSkillActiveDuration()
 		{
 			return castTime + coolDown;
+		}
+
+		public void AnalyzeEffectsForTrais()
+		{
+			SkillEffect[] efs = CreateEffects(0);
+
+			if (efs != null && !originalEffectsDisabled)
+			{
+				foreach (SkillEffect eff in efs)
+				{
+					foreach (SkillTraits t in eff.GetTraits())
+					{
+						if (!HasTrait(t))
+							AddTrait(t);
+					}
+				}
+			}
+
+			if (additionalEffects != null)
+			{
+				foreach (SkillEffect eff in additionalEffects)
+				{
+					foreach (SkillTraits t in eff.GetTraits())
+					{
+						if (!HasTrait(t))
+							AddTrait(t);
+					}
+				}
+			}
+		}
+
+		public float GetProjectileLifetime(float speed)
+		{
+			return range/(speed) + 0.5f;
 		}
 
 		//TODO finish this for other params too

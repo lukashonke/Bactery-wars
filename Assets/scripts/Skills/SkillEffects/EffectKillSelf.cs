@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Mono;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -29,6 +30,11 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void OnRemove()
 		{
+		}
+
+		public override SkillTraits[] GetTraits()
+		{
+			return new SkillTraits[] { SkillTraits.Kamikadze, };
 		}
 	}
 }

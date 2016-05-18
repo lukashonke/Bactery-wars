@@ -21,7 +21,6 @@ namespace Assets.scripts.AI
 
 		public override void CreateModules()
 		{
-			AddAttackModule(new WeakAggroModule(this)).enabled = false;
 			AddAttackModule(new DamageSkillModule(this));
 			AddAttackModule(new AutoattackModule(this));
 
@@ -44,13 +43,8 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 		}
 	}
 }

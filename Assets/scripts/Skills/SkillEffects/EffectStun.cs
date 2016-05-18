@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Skills.Base;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
@@ -29,6 +30,11 @@ namespace Assets.scripts.Skills.SkillEffects
 				return;
 
 			target.Status.Stunned = false;
+		}
+
+		public override SkillTraits[] GetTraits()
+		{
+			return new SkillTraits[] { SkillTraits.Immobilize, };
 		}
 	}
 }

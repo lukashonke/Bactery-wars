@@ -82,10 +82,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			ray = CreateParticleEffect("ray", true, GetOwnerData().GetShootingPosition().transform.position);
 			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
 
-			/*SerializedObject so = new SerializedObject(ps);
-			so.FindProperty("ShapeModule.radius").floatValue = width/2f;
-			so.ApplyModifiedProperties();
-			*/
+			ParticleSystem.ShapeModule shape = ps.shape;
+			shape.radius = width / 2f;
 
 			StartParticleEffect(ray);
 

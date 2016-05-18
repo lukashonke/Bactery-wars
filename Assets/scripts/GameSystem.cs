@@ -92,6 +92,11 @@ namespace Assets.scripts
 				//BroadcastMessage("spawn [type] [group-ID]   - spawne grupu mobu z SpawnData.xml (za type se pise \"main\" \"side\" \"bonus\" \"boss\" \"end\" \"start\" a to da kategorii ze ktery se groupa bere)");
 			}
 
+			if (msg.ToLower().StartsWith("heal"))
+			{
+				CurrentPlayer.HealMe();
+			}
+
 			if (msg.ToLower().StartsWith("spawn "))
 			{
 				MonsterTemplateTable.Instance.Load();

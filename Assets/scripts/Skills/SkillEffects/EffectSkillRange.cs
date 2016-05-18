@@ -21,6 +21,15 @@ namespace Assets.scripts.Skills.SkillEffects
 			isOffensive = false;
 		}
 
+		public EffectSkillRange(float mul, float duration)
+			: base(duration)
+		{
+			this.multiplier = mul;
+			this.traitToAffect = SkillTraits.None;
+
+			isOffensive = false;
+		}
+
 		protected override void ApplyEffect()
 		{
 		}
@@ -31,10 +40,15 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void ModifySkillRange(ActiveSkill sk, ref int range)
 		{
-			if (sk.HasTrait(traitToAffect))
+			if (traitToAffect == SkillTraits.None || sk.HasTrait(traitToAffect))
 			{
 				range = (int) (range * multiplier);
 			}
+		}
+
+		public override SkillTraits[] GetTraits()
+		{
+			return new SkillTraits[] { SkillTraits.BuffDamage, };
 		}
 	}
 }

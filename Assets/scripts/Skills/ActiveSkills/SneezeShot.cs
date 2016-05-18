@@ -63,7 +63,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if(param == 1) // damage dealt to targets after first penetration
 				return new SkillEffect[] { new EffectDamage(secondDamage, 0) };
-			return new SkillEffect[] { new EffectDamage(baseDamage, 0) };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0)  };
 		}
 
 		public override void InitTraits()

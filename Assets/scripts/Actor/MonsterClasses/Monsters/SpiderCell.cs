@@ -30,7 +30,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 	    public override MonsterAI CreateAI(Character ch)
         {
 			MeleeMonsterAI ai = new MeleeMonsterAI(ch);
-		    ai.GetAttackModule<EvasiveMovementModule>().chanceEveryTick = 75;
+		    ai.AddPriorityAttackModule(new EvasiveMovementModule(ai));
+		    ai.GetAttackModule<EvasiveMovementModule>().chanceToEvade = 75;
 	        //ai.dodgeRate = 75;
             return ai;
         }

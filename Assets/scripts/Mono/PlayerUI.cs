@@ -74,7 +74,7 @@ namespace Assets.scripts.Mono
 		public Text[] statsTexts;
 
 		private List<SpawnData> adminSpawnedData;
-		private static MonsterId[] adminSpawnableList = { MonsterId.Neutrophyle_Patrol, MonsterId.DurableMeleeCell, MonsterId.SwarmCell, MonsterId.PusherCell, MonsterId.HealerCell, MonsterId.SlowerCell, MonsterId.RogueCell, MonsterId.SniperCell, MonsterId.BigPassiveFloatingCell, MonsterId.BigPassiveCell, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingBasicCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.BasicCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, MonsterId.SwarmerBoss};
+		private static MonsterId[] adminSpawnableList = { MonsterId.IdleObstacleCell, MonsterId.Neutrophyle_Patrol, MonsterId.DurableMeleeCell, MonsterId.SwarmCell, MonsterId.PusherCell, MonsterId.HealerCell, MonsterId.SlowerCell, MonsterId.RogueCell, MonsterId.SniperCell, MonsterId.BigPassiveFloatingCell, MonsterId.BigPassiveCell, MonsterId.Lymfocyte_melee, MonsterId.ChargerCell, MonsterId.TurretCell, MonsterId.MorphCellBig, MonsterId.FloatingBasicCell, MonsterId.ArmoredCell, MonsterId.DementCell, MonsterId.FourDiagShooterCell, MonsterId.JumpCell, MonsterId.SuiciderCell, MonsterId.TankCell, MonsterId.SmallTankCell, MonsterId.Lymfocyte_ranged, MonsterId.SpiderCell, MonsterId.BasicCell, MonsterId.PassiveHelperCell, MonsterId.ObstacleCell, MonsterId.TankSpreadshooter, MonsterId.SwarmerBoss};
 		public GameObject adminPanel;
 		public Dropdown adminSpawnPanel;
 

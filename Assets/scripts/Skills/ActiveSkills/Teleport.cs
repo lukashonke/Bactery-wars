@@ -91,6 +91,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				if (initTarget != null)
 				{
+					bool found = false;
+
 					Vector3 targetPos = initTarget.transform.position;
 					float targetRange = Utils.DistanceSqr(GetOwnerData().GetBody().transform.position, targetPos);
 
@@ -101,6 +103,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 						Vector3 direction = Utils.GetDirectionVector(targetPos, GetOwnerData().GetBody().transform.position).normalized;
 						target = GetOwnerData().GetBody().transform.position + direction * range;
 
+						found = true;
+
 						if (Utils.IsNotAccessible(GetOwnerData().GetBody().transform.position, target))
 						{
 							AbortCast();
@@ -110,7 +114,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 					else
 					{
 						int limit = 15;
-
 						while (limit > 0)
 						{
 							target = Utils.GenerateRandomPositionAround(targetPos, 3f, 1f);
@@ -120,11 +123,40 @@ namespace Assets.scripts.Skills.ActiveSkills
 								continue;
 							}
 							else
+							{
+								found = true;
 								break;
+							}
 						}
 					}
 
-					GetOwnerData().Teleport(target, range);
+					if(found)
+						GetOwnerData().Teleport(target, range);
+				}
+				else
+				{
+					Vector3 targetPos = fixedTarget;
+					targetPos.z = 0;
+
+					if (Utils.DistanceSqr(GetOwnerData().GetBody().transform.position, targetPos) > range * range)
+					{
+						Vector3 direction = Utils.GetDirectionVector(targetPos, GetOwnerData().GetBody().transform.position).normalized;
+						targetPos = GetOwnerData().GetBody().transform.position + direction * range;
+					}
+
+					/*if (!Utils.CanSee(GetOwnerData().GetBody().transform.position, targetPos))
+					{
+						AbortCast();
+						return;
+					}*/
+
+					if (Utils.IsNotAccessible(GetOwnerData().GetBody().transform.position, targetPos))
+					{
+						AbortCast();
+						return;
+					}
+
+					GetOwnerData().Teleport(targetPos, range);
 				}
 			}
 		}

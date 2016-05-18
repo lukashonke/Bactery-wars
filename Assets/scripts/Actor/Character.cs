@@ -563,7 +563,7 @@ namespace Assets.scripts.Actor
 
 		public bool CanCastSkill(Skill skill)
 		{
-			if (Status.IsDead || Status.IsStunned()) 
+			if (Status.IsDead || Status.IsStunned() || !Status.CanCastSkills) 
 				return false;
 
 			if (skill is ActiveSkill)
@@ -589,7 +589,7 @@ namespace Assets.scripts.Actor
 		/// Spusti kouzleni skillu
 		/// </summary>
 		/// <param name="skill"></param>
-		public void CastSkill(Skill skill, GameObject setTarget=null)
+		public void CastSkill(Skill skill, GameObject setTarget=null, bool noTarget=false)
 		{
 			if (!CanCastSkill(skill))
 				return;
@@ -605,11 +605,42 @@ namespace Assets.scripts.Actor
 				return;
 			}
 
-			if(skill is ActiveSkill)
-				if(setTarget == null)
-					((ActiveSkill)skill).Start(GetData().Target);
+			if (skill is ActiveSkill)
+			{
+				if (noTarget)
+					((ActiveSkill) skill).Start();
 				else
-					((ActiveSkill)skill).Start(setTarget);
+				{
+					if (setTarget == null)
+						((ActiveSkill)skill).Start(GetData().Target);
+					else
+						((ActiveSkill)skill).Start(setTarget);
+				}
+			}
+			else
+				skill.Start();
+		}
+
+		public void CastSkill(Skill skill, Vector3 target)
+		{
+			if (!CanCastSkill(skill))
+				return;
+
+			// skill is passive - cant cast it
+			if (skill is PassiveSkill)
+				return;
+
+			// reuse check
+			if (!skill.CanUse())
+			{
+				Message("Skill is not yet available for use.", 2);
+				return;
+			}
+
+			if (skill is ActiveSkill)
+			{
+				((ActiveSkill)skill).Start(target);
+			}
 			else
 				skill.Start();
 		}
@@ -652,7 +683,18 @@ namespace Assets.scripts.Actor
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
 			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
 
-			bool crit = canCrit && Random.Range(1, 1000) <= Status.CriticalRate;
+			int critRate = Status.CriticalRate;
+
+			if (ActiveEffects.Count > 0)
+			{
+				foreach (SkillEffect ef in ActiveEffects)
+				{
+					ef.ModifyCharDamage(ref baseDamage);
+					ef.ModifyCritRate(ref critRate);
+				}
+			}
+
+			bool crit = canCrit && Random.Range(1, 1000) <= critRate;
 
 			if (crit)
 			{
@@ -686,6 +728,11 @@ namespace Assets.scripts.Actor
 				return;
 
 			Status.ReceiveHeal(ammount);
+
+			if (this is Player)
+			{
+				((Player)this).GetData().ui.DamageMessage(GetData().GetBody(), ammount, Color.green);
+			}
 
 			GetData().SetVisibleHp(Status.Hp);
 		}
@@ -927,6 +974,12 @@ namespace Assets.scripts.Actor
 			Status.XP -= GameProgressTable.GetXpForLevel(Level + 1);
 			SetLevel(Level + 1);
 			Message("Level up! You are now level " + Level);
+		}
+
+		public void SetCanCastSkills(bool val)
+		{
+			//TODO add effects
+			Status.CanCastSkills = val;
 		}
 
 		public virtual void Message(string s, int level=1)

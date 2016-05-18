@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.AI.Modules;
+using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
@@ -45,15 +46,31 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 	public struct AiParamInfo
 	{
+		public int id;
 		public string module;
 		public string param;
 		public string value;
 
-		public AiParamInfo(string module, string param, string value)
+		public AiParamInfo(int id, string module, string param, string value)
 		{
+			this.id = id;
 			this.module = module;
 			this.param = param;
 			this.value = value;
+		}
+	}
+
+	public struct AddModuleInfo
+	{
+		public int id;
+		public string module;
+		public bool atHighPriority;
+
+		public AddModuleInfo(int id, string module, bool highPriority)
+		{
+			this.id = id;
+			this.module = module;
+			this.atHighPriority = highPriority;
 		}
 	}
 
@@ -63,8 +80,13 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public string TemplateName { get; set; }
 
+		public string Sprite { get; set; }
+		public float SpriteSize { get; set; }
+		public float Mass { get; set; }
+
 		public string AiType { get; set; }
 		public List<AiParamInfo> AiParams { get; set; }
+		public List<AddModuleInfo> NewModules { get; set; } 
 
 		public List<SkillId> NewSkills { get; private set; } 
 		public List<SkillId> SkillsToRemove { get; private set; }
@@ -81,6 +103,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		{
 			AiType = null;
 			AiParams = new List<AiParamInfo>();
+			NewModules = new List<AddModuleInfo>();
 			NewSkills = new List<SkillId>();
 			SkillsToRemove = new List<SkillId>();
 			DisabledEffects = new List<SkillId>();
@@ -89,6 +112,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 			SkillAddEffects = new List<SkillEffectInfo>();
 			MeleeAddEffects = new List<SkillEffectInfo>();
 			NewAutoattack = SkillId.SkillTemplate;
+
+			Sprite = null;
+			SpriteSize = -1;
+			Mass = -1;
 
 			Name = "Custom Cell";
 			MaxHp = 20;
@@ -102,9 +129,9 @@ namespace Assets.scripts.Actor.MonsterClasses
 			XpReward = 3;
 		}
 
-		public void AddAiParam(string module, string key, string value)
+		public void AddAiParam(int id, string module, string key, string value)
 		{
-			AiParamInfo info = new AiParamInfo(module, key, value);
+			AiParamInfo info = new AiParamInfo(id, module, key, value);
 			AiParams.Add(info);
 		}
 
@@ -123,7 +150,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public void AddAdditionalSkillEffects(SkillId id, string effectName, Dictionary<string, string> parameters)
 		{
 			// disable the original effects
-			DisableSkillEffects(id);
+			//DisableSkillEffects(id);
 
 			SkillEffectInfo info = new SkillEffectInfo(id, effectName, parameters);
 			SkillAddEffects.Add(info);
@@ -131,10 +158,22 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public void AddMeleeSkillEffects(SkillId id, string effectName, Dictionary<string, string> parameters)
 		{
-			DisableMeleeEffects();
+			//DisableMeleeEffects();
 
 			SkillEffectInfo info = new SkillEffectInfo(id, effectName, parameters);
 			MeleeAddEffects.Add(info);
+		}
+
+		public void AddAIModule(int id, string module, string priority, string param, string value)
+		{
+			bool isHighPriority = true;
+			if (priority.Equals("low", StringComparison.InvariantCultureIgnoreCase))
+				isHighPriority = false;
+
+			NewModules.Add(new AddModuleInfo(id, module, isHighPriority));
+
+			if(param != null)
+				AddAiParam(id, module, param, value);
 		}
 
 		public void DisableSkillEffects(SkillId id)
@@ -223,6 +262,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 					{
 						field.SetValue(sk, Double.Parse(value));
 					}
+					else if (field.FieldType == typeof(bool))
+					{
+						field.SetValue(sk, Boolean.Parse(value));
+					}
 					else if (field.FieldType == typeof(string))
 					{
 						field.SetValue(sk, value);
@@ -259,6 +302,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 					else if (field.FieldType == typeof(double))
 					{
 						field.SetValue(meleeSkill, Double.Parse(value));
+					}
+					else if (field.FieldType == typeof(bool))
+					{
+						field.SetValue(meleeSkill, Boolean.Parse(value));
 					}
 					else if (field.FieldType == typeof(string))
 					{
@@ -333,6 +380,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 										else if (pi.ParameterType == typeof(double))
 										{
 											parameters[i] = Double.Parse(val);
+										}
+										else if (pi.ParameterType == typeof(bool))
+										{
+											parameters[i] = Boolean.Parse(val);
 										}
 										else if (pi.ParameterType == typeof(string))
 										{
@@ -413,6 +464,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 										{
 											parameters[i] = Double.Parse(val);
 										}
+										else if (pi.ParameterType == typeof(bool))
+										{
+											parameters[i] = Boolean.Parse(val);
+										}
 										else if (pi.ParameterType == typeof(string))
 										{
 											parameters[i] = val;
@@ -478,14 +533,53 @@ namespace Assets.scripts.Actor.MonsterClasses
 				if (ai == null)
 					throw new NullReferenceException("CustomAIType " + AiType + " doesnt exist!");
 
+				foreach (AddModuleInfo info in NewModules)
+				{
+					int id = info.id;
+					string module = info.module + "Module";
+					bool highPrior = info.atHighPriority;
+
+					List<Type> moduleTypes = Utils.GetTypesInNamespace("Assets.scripts.AI.Modules", true, typeof(AIAttackModule));
+					AIAttackModule newModule = null;
+
+					foreach (Type type in moduleTypes)
+					{
+						if (type.Name.Equals(module, StringComparison.InvariantCultureIgnoreCase))
+						{
+							newModule = Activator.CreateInstance(type, ai) as AIAttackModule;
+							break;
+						}
+					}
+
+					if (newModule != null)
+					{
+						newModule.id = id;
+
+						Debug.Log("added new module " + newModule.id + " name " + module);
+
+						ai.AddPriorityAttackModule(newModule, highPrior);
+					}
+					else
+					{
+						Debug.LogError("unknown module: " + module);
+					}
+				}
+
 				FieldInfo field;
 				foreach(AiParamInfo info in AiParams)
 				{
+					int id = info.id;
 					string module = info.module + "Module";
 					string key = info.param;
 					string value = info.value;
 
-					AIAttackModule moduleClass = ai.GetAttackModule(module);
+					AIAttackModule moduleClass;
+
+					// find by ID
+					if(id > 0)
+						moduleClass = ai.GetAttackModule(id);
+					else // find by module name
+						moduleClass = ai.GetAttackModule(module);
 
 					field = moduleClass.GetType().GetField(key, BindingFlags.Public | BindingFlags.Instance);
 					if (field != null)
@@ -501,6 +595,10 @@ namespace Assets.scripts.Actor.MonsterClasses
 						else if (field.FieldType == typeof (double))
 						{
 							field.SetValue(moduleClass, Double.Parse(value));
+						}
+						else if (field.FieldType == typeof(bool))
+						{
+							field.SetValue(moduleClass, Boolean.Parse(value));
 						}
 						else if (field.FieldType == typeof (string))
 						{
@@ -533,6 +631,16 @@ namespace Assets.scripts.Actor.MonsterClasses
 			if (OldTemplate != null)
 			{
 				OldTemplate.InitAppearanceData(m, data);
+			}
+
+			if (Sprite != null)
+			{
+				data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
+			}
+
+			if (Mass > 0)
+			{
+				data.SetMass(Mass);
 			}
 		}
 

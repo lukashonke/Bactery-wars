@@ -15,5 +15,7 @@ namespace Assets.scripts
 
 
 		public static bool repairMap = true;
+
+		public static bool arenaMode = true;
 	}
 }

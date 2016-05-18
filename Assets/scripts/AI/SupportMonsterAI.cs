@@ -23,9 +23,7 @@ namespace Assets.scripts.AI
 
 		public override void CreateModules()
 		{
-			AddAttackModule(new EvadeModule(this));
-			AddAttackModule(new FloatModule(this));
-			AddAttackModule(new AutoattackModule(this));
+			//AddAttackModule(new AutoattackModule(this));
 		}
 
 		protected override void AttackTarget(Character target)
@@ -95,9 +93,8 @@ namespace Assets.scripts.AI
 
 			if (supportTarget != null)
 			{
-				Debug.Log(supportTarget.Name);
 				// try spawn skills
-				List<Skill> supportSkills = GetAllSkillsWithTrait(SkillTraits.BuffDefense);
+				List<Skill> supportSkills = GetAllSkillsWithTrait(SkillTraits.BuffDefense, SkillTraits.BuffDamage);
 				foreach (Skill s in supportSkills)
 				{
 					if (s.CanUse())
@@ -112,13 +109,8 @@ namespace Assets.scripts.AI
 				//TODO add buffdamage skills support
 			}
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 		}
 
 		private Character SelectSupportTarget(List<Character> targets)

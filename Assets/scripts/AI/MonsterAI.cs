@@ -17,7 +17,10 @@ namespace Assets.scripts.AI
 {
 	public abstract class MonsterAI : AbstractAI
 	{
-		protected List<AIAttackModule> attackModules; 
+		protected List<AIAttackModule> attackModules;
+		protected AIAttackModule currentPrioridyModule;
+		private float currentPrioridyModuleTime;
+		private float attackStartedTime;
 
 		protected Dictionary<Character, int> aggro;
 
@@ -36,6 +39,9 @@ namespace Assets.scripts.AI
 		{
 			attackModules = new List<AIAttackModule>();
 			aggro = new Dictionary<Character, int>();
+			currentPrioridyModule = null;
+
+			attackStartedTime = 0;
 
 			useTimers = false;
 
@@ -52,6 +58,16 @@ namespace Assets.scripts.AI
 		public AIAttackModule AddAttackModule(AIAttackModule mod)
 		{
 			attackModules.Add(mod);
+			return mod;
+		}
+
+		public AIAttackModule AddPriorityAttackModule(AIAttackModule mod, bool atStart=true)
+		{
+			if(atStart)
+				attackModules.Insert(0, mod);
+			else
+				attackModules.Add(mod);
+
 			return mod;
 		}
 
@@ -75,11 +91,41 @@ namespace Assets.scripts.AI
 			return null;
 		}
 
+		public T GetAttackModule<T>(int id) where T : AIAttackModule
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod is T && mod.id == id)
+					return mod as T;
+			}
+			return null;
+		}
+
+		public AIAttackModule GetAttackModule(int id)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.id == id)
+					return mod;
+			}
+			return null;
+		}
+
 		public AIAttackModule GetAttackModule(string typeName)
 		{
 			foreach (AIAttackModule mod in attackModules)
 			{
 				if (mod.GetType().Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase))
+					return mod;
+			}
+			return null;
+		}
+
+		public AIAttackModule GetAttackModule(string typeName, int id)
+		{
+			foreach (AIAttackModule mod in attackModules)
+			{
+				if (mod.GetType().Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase) && mod.id == id)
 					return mod;
 			}
 			return null;
@@ -715,13 +761,14 @@ namespace Assets.scripts.AI
             currentAction = null;
         }
 
-		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float dist, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd, float randomSkilLRangeAdd)
+		public virtual IEnumerator CastSkillWithTargetSet(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd = 0, float randomSkilLRangeAdd = 0)
 		{
 			if (!noRangeCheck && sk.range != 0)
 			{
-				while ((sk.range + skillRangeAdd + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)) < dist)
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
 				{
-					dist = Vector3.Distance(target, Owner.GetData().transform.position);
+					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
 
 					if (moveTowardsIfRequired)
 					{
@@ -740,7 +787,37 @@ namespace Assets.scripts.AI
 
 			RotateToTarget(target);
 
-			Owner.CastSkill(sk);
+			Owner.CastSkill(sk, target);
+			currentAction = null;
+		}
+
+		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
+		{
+			if (!noRangeCheck && sk.range != 0)
+			{
+				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
+				{
+					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
+					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
+
+					if (moveTowardsIfRequired)
+					{
+						MoveTo(target); //TODO not working with pathnodes - replace with setmovementtarget
+						yield return null;
+					}
+					else // too far, cant move closer - break the action
+					{
+						currentAction = null;
+						yield break;
+					}
+				}
+			}
+
+			Owner.GetData().BreakMovement(true);
+
+			RotateToTarget(target);
+
+			Owner.CastSkill(sk, null, true);
 			currentAction = null;
 		}
 
@@ -774,6 +851,38 @@ namespace Assets.scripts.AI
 			currentAction = null;
 		}
 
+		public bool LaunchAttackModule(Character target, float distSqr, float hpPercentage)
+		{
+			if (currentPrioridyModule != null)
+			{
+				if (currentPrioridyModuleTime + currentPrioridyModule.keepActiveFor >= Time.time)
+				{
+					if (currentPrioridyModule.ForceLaunch(target, distSqr, hpPercentage))
+						return true;
+				}
+				else
+				{
+					currentPrioridyModule = null;
+				}
+			}
+
+			foreach (AIAttackModule module in attackModules)
+			{
+				if (module.Launch(target, distSqr, hpPercentage, attackStartedTime))
+				{
+					if (module.keepActiveFor > 0)
+					{
+						currentPrioridyModule = module;
+						currentPrioridyModuleTime = Time.time;
+					}
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		protected override void OnSwitchIdle()
 		{
 			ThinkInterval = 3f;
@@ -782,11 +891,13 @@ namespace Assets.scripts.AI
 		protected override void OnSwitchActive()
 		{
 			ThinkInterval = 0.25f;
+			attackStartedTime = 0;
 		}
 
 		protected override void OnSwitchAttacking()
 		{
 			ThinkInterval = 0.2f;
+			attackStartedTime = Time.time;
 		}
 
 		public MonsterTemplate GetTemplate()

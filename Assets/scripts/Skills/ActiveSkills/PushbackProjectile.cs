@@ -1,4 +1,5 @@
-﻿using Assets.scripts.Base;
+﻿using Assets.scripts.Actor;
+using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
@@ -96,6 +97,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
 			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
+			Character ch = coll.gameObject.GetChar();
+			if (ch == null)
+			{
+				Destroyable des = coll.gameObject.GetComponent<Destroyable>();
+				if (des != null && !Owner.CanAttack(des))
+					return;
+			}
+			else if (!Owner.CanAttack(ch))
 				return;
 
 			// the only possible collisions are the projectile with target

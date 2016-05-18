@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
+using Assets.scripts.Skills.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.SkillEffects
@@ -50,6 +51,11 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public override void OnRemove()
 		{
+		}
+
+		public override SkillTraits[] GetTraits()
+		{
+			return new SkillTraits[] { SkillTraits.Heal, };
 		}
 	}
 }

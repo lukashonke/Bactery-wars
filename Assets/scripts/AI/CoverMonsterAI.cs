@@ -34,14 +34,10 @@ namespace Assets.scripts.AI
 			Vector3 ownerPos = Owner.GetData().GetBody().transform.position;
 			Vector3 targetPos = target.GetData().GetBody().transform.position;
 			float distSqr = Utils.DistanceSqr(ownerPos, targetPos);
+			int hpPercentage = (int)((GetStatus().Hp / (float)GetStatus().MaxHp) * 100);
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 
 			// default action
 			MoveTo(targetPos, false);

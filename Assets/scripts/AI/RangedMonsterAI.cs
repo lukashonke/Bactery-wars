@@ -14,12 +14,6 @@ using Random = UnityEngine.Random;
 namespace Assets.scripts.AI
 {
 	/// <summary>
-	/// important parameters: evadeInterval, floatInterval, shootWhileMoving
-	/// other parameters: evadeChance, floatChance
-	/// 
-	/// can have any number of Damage skills
-	/// can have SpawnMinion skill
-	/// can have Self-Support skills
 	/// </summary>
 	public class RangedMonsterAI : MonsterAI
 	{
@@ -29,14 +23,6 @@ namespace Assets.scripts.AI
 
 		public override void CreateModules()
 		{
-			AddAttackModule(new SpawnSkillModule(this));
-			AddAttackModule(new SelfBuffSkillModule(this));
-
-			AddAttackModule(new EvadeModule(this));
-			AddAttackModule(new FloatModule(this));
-
-			// set to 0 unless Monster Template changes it
-			AddAttackModule(new EvasiveMovementModule(this, 0));
 			AddAttackModule(new DamageSkillModule(this));
 			AddAttackModule(new AutoattackModule(this));
 		}
@@ -67,13 +53,8 @@ namespace Assets.scripts.AI
 			if (Owner.GetData().Target == null || Owner.GetData().Target.Equals(target.GetData().GetBody()))
 				Owner.GetData().Target = target.GetData().GetBody();
 
-			foreach (AIAttackModule module in attackModules)
-			{
-				if (module.Launch(target, distSqr))
-				{
-					return;
-				}
-			}
+			if (LaunchAttackModule(target, distSqr, hpPercentage))
+				return;
 
 			//else stand idle
 

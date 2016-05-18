@@ -15,32 +15,33 @@ namespace Assets.scripts.AI.Modules
 	/// </summary>
 	public class EvasiveMovementModule : AIAttackModule
 	{
-		public float chanceEveryTick = 75;
+		// if this chance fails, he will move directly at target
+		public float chanceToEvade = 75;
 
 		public float minRange = 3f;
 
-		public EvasiveMovementModule(MonsterAI ai, float chanceEveryTick=0) : base(ai)
+		public EvasiveMovementModule(MonsterAI ai) : base(ai)
 		{
-			this.chanceEveryTick = chanceEveryTick;
 		}
 
 		public override void Init()
 		{
-			canTrigger = true;
+			canTrigger = ai.GetStatus().MoveSpeed > 0;
 		}
 
 		public override bool Trigger(Character target, float distSqr)
 		{
-			if (chanceEveryTick > 0 && distSqr > (minRange*minRange))
+			if (chanceToEvade > 0 && distSqr > (minRange*minRange))
 			{
 				Vector3 ownerPos = ai.Owner.GetData().GetBody().transform.position;
 				Vector3 targetPos = target.GetData().GetBody().transform.position;
 
-				if (UnityEngine.Random.Range(0, 100) < chanceEveryTick)
+				if (UnityEngine.Random.Range(0, 100) < chanceToEvade)
 				{
-					Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
+					Vector3 nextTarget = Utils.GeneratePerpendicularPositionAround(ownerPos, targetPos, (Mathf.Sqrt(distSqr) / 2f), (Mathf.Sqrt(distSqr) / 2f));
+					//Vector3 nextTarget = Utils.GenerateRandomPositionOnCircle(targetPos, (Mathf.Sqrt(distSqr) / 2f));
 
-					Debug.DrawRay(ownerPos, nextTarget, Color.cyan, 1f);
+					Debug.DrawLine(ownerPos, nextTarget, Color.cyan, 1f);
 
 					if(ai.StartAction(ai.MoveAction(nextTarget, false), 1f))
 						return true;

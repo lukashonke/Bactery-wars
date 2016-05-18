@@ -144,6 +144,45 @@ namespace Assets.scripts
 			return r;
 		}
 
+		public static Vector3 GetPerpendicularVector(Vector3 from, Vector3 target)
+		{
+			Vector3 temp = from - target;
+			Vector3 perpend = new Vector3(-temp.y, temp.x).normalized;
+			return perpend;
+		}
+
+		public static Vector3 GetPerpendicalVectorFromDirection(Vector3 from, Vector3 dir)
+		{
+			return GetPerpendicularVector(from, from + dir);
+		}
+
+		public static Vector3 GeneratePerpendicularPositionAround(Vector3 from, Vector3 target, float minDist, float maxDist)
+		{
+			Vector3 temp = from - target;
+			Vector3 perpend = new Vector3(-temp.y, temp.x).normalized;
+
+			Debug.DrawRay(target, perpend*10, Color.blue, 3f);
+
+			int limit = 12;
+			while (--limit > 0)
+			{
+				float dist = Random.Range(minDist, maxDist);
+				if (Random.Range(0, 2) == 0)
+					dist *= -1;
+
+				Vector3 result = target + perpend*dist;
+
+				Debug.DrawLine(from, result, Color.yellow, 3f);
+
+				if (IsNotAccessible(result))
+					continue;
+
+				return result;
+			}
+
+			return target;
+		}
+
 		public static Vector3 GenerateFixedPositionAroundObject(GameObject o, float circleRadius, int fixedAngle)
 		{
 			AbstractData data = o.GetData();

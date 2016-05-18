@@ -15,6 +15,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private GameObject meleeCasting, meleeHit, meleeExplosion;
 		private GameObject target;
 
+		public bool checkAngleToo = true;
+
 		private float meleeMaxRangeAdd = 1f;
 
 		//TODO melee utok nebere damage od hrace
@@ -103,21 +105,28 @@ namespace Assets.scripts.Skills.ActiveSkills
 				// TODO check angle!!! 
 				if (Vector3.Distance(GetOwnerData().GetBody().transform.position, initTarget.transform.position) < range + meleeMaxRangeAdd)
 				{
-					//RaycastHit2D[] hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), range, range);
-
-					RaycastHit2D[] hits = Utils.DoubleRaycast(GetOwnerData().GetBody().transform.position,
-						GetOwnerData().GetForwardVector(),
-						(int)(range + meleeMaxRangeAdd), 1.5f, true);
-
-					foreach (RaycastHit2D hit in hits)
+					if (checkAngleToo)
 					{
-						if (hit.collider != null && hit.collider.gameObject != null)
+						RaycastHit2D[] hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), 2.5f, range + meleeMaxRangeAdd);
+
+						/*RaycastHit2D[] hits = Utils.DoubleRaycast(GetOwnerData().GetBody().transform.position,
+							GetOwnerData().GetForwardVector(),
+							(int)(range + meleeMaxRangeAdd + 1), 1.5f, true);*/
+
+						foreach (RaycastHit2D hit in hits)
 						{
-							if (hit.collider.gameObject.Equals(initTarget))
+							if (hit.collider != null && hit.collider.gameObject != null)
 							{
-								ApplyEffects(Owner, initTarget);
+								if (hit.collider.gameObject.Equals(initTarget))
+								{
+									ApplyEffects(Owner, initTarget);
+								}
 							}
 						}
+					}
+					else
+					{
+						ApplyEffects(Owner, initTarget);
 					}
 
 					//RotatePlayerTowardsTarget(initTarget);

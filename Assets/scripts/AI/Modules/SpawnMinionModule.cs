@@ -83,7 +83,7 @@ namespace Assets.scripts.AI.Modules
 				}
 			}
 
-			if (count < 20 && ai.GetTimer("spawn", nextSpawnInterval))
+			if (count < maxMinions && ai.GetTimer("spawn", nextSpawnInterval))
 			{
 				if (ai.StartAction(ai.CastSkill(null, spawnSkill, 0, true, false, 0f, 0f), 0.5f))
 				{

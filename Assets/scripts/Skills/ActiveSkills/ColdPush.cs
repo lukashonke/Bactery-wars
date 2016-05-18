@@ -51,7 +51,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(stunDuration) };
+			return new SkillEffect[] { new EffectPull(pushbackForce), new EffectStun(stunDuration) };
 		}
 
 		public override void InitTraits()

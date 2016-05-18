@@ -153,8 +153,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 105476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.8333042, y: -5.0442896, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalPosition: {x: -10.44, y: -2.09, z: 0}
+  m_LocalScale: {x: 1.3883362, y: 1.3883362, z: 0.34708405}
   m_Children:
   - {fileID: 427884}
   - {fileID: 455256}
@@ -336,7 +336,67 @@ MonoBehaviour:
   percent: 0
   currentPercent: 0
   currentPercentCooldown: 0
+  showObjectName: 0
   distance: 3.44
+  labelStyle:
+    m_Name: 
+    m_Normal:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Hover:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Active:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Focused:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnNormal:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnHover:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnActive:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnFocused:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Border:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Margin:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Padding:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Overflow:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Font: {fileID: 0}
+    m_FontSize: 0
+    m_FontStyle: 0
+    m_Alignment: 0
+    m_WordWrap: 0
+    m_RichText: 1
+    m_TextClipping: 0
+    m_ImagePosition: 0
+    m_ContentOffset: {x: 0, y: 0}
+    m_FixedWidth: 0
+    m_FixedHeight: 0
+    m_StretchWidth: 1
+    m_StretchHeight: 0
 --- !u!114 &11439252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -374,6 +434,7 @@ MonoBehaviour:
   rotateTowardsMouse: 0
   aiType: 
   usesPathfinding: 1
+  showObjectName: 0
   minDistanceClickToMove: 0.2
   nextWaypointDistance: 3
   body: {fileID: 105476}
@@ -391,11 +452,13 @@ MonoBehaviour:
   allowMovePointChange: 0
   forcedVelocity: 0
   cancelForcedVelocityOnCollision: 0
+  cancelMovementTargetOnCollision: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
   repathRate: 0.25
   monsterId: 20
+  monsterTypeName: 
   distanceToFollowLeader: 8
 --- !u!198 &19864474
 ParticleSystem:

@@ -28,7 +28,6 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
         public override MonsterAI CreateAI(Character ch)
         {
             MonsterAI ai = new RangedMonsterAI(ch);
-            //ai.IsAggressive = false;
             return ai;
         }
 
