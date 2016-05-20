@@ -24,7 +24,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.4032922, y: -0.8717026, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -368,8 +368,8 @@ ParticleSystem:
     angle: 25
     length: 5
     boxX: 20
-    boxY: 0.01
-    boxZ: 20
+    boxY: 20
+    boxZ: 0.01
     arc: 360
     placementMode: 0
     m_Mesh: {fileID: 0}
@@ -1499,7 +1499,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_RenderMode: 2
+  m_RenderMode: 3
   m_SortMode: 1
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
