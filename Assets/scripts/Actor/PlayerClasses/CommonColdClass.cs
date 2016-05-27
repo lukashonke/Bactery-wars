@@ -11,7 +11,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 		{
 			MaxHp = 100;
 			MaxMp = 50;
-			MaxSpeed = 10;
+			MaxSpeed = 40;
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;

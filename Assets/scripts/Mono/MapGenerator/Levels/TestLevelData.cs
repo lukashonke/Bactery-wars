@@ -16,16 +16,19 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			type = MapType.Test;
 
-			canHaveBase = true;
+			canHaveBase = false;
 		}
 
 		public override void Generate()
 		{
-			start = map.GenerateDungeonRegion(0, 0, 49, true, new int[] { 5}, 2, 1); // 0 0
+			start = map.GenerateDungeonRegion(0, 2, 46, true, false, false, null, 1, 1);
+			map.GenerateDungeonRegion(1, 2, 46, false, true, false, null, 1, 1);
+			map.GenerateDungeonRegion(2, 2, 46, false, true, false, null, 2, 1);
+			map.GenerateDungeonRegion(1, 0, 46, false, true, false, null, 1, 2);
 
-			theBase = map.GenerateDungeonRegion(2, 0, 40, false, true, false, new int[] { 5 }, 1, 1); // 0, 2
+			map.GenerateDungeonRegion(0, 0, 39, false, true, false, null, 1, 1);
 
-			end = map.GenerateDungeonRegion(3, 0, 49, false, true, true, new int[] { 5 }, 2, 1); // 0 0
+			map.GenerateDungeonRegion(2, 0, 46, false, true, true, null, 2, 2);
 		}
 
 		public override void SpawnMonsters()
@@ -37,12 +40,12 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override int GetRegionWidth()
 		{
-			return 100;
+			return 40;
 		}
 
 		public override int GetRegionHeight()
 		{
-			return 100;
+			return 40;
 		}
 
 		public override int GetMaxRegionsX()
@@ -52,19 +55,19 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 	    public override int GetMaxRegionsY()
 	    {
-	        return 1;
+	        return 5;
 	    }
 
 		public override Vector3 GetBaseLocation()
 		{
-			foreach (MapRoom room in map.GetMapRooms())
+			/*foreach (MapRoom room in map.GetMapRooms())
 			{
 				if (room.region.GetParentOrSelf().Equals(theBase))
 				{
 					Tile t = room.GetLargestSubRoom(false);
 					return map.GetTileWorldPosition(t);
 				}
-			}
+			}*/
 			return new Vector3();
 		}
 	}

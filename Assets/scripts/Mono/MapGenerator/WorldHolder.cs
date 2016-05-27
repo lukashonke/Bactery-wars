@@ -89,7 +89,12 @@ namespace Assets.scripts.Mono.MapGenerator
 			LevelParams param = new LevelParams(MapType.LevelOne);
 			param.worldLevel = worldLevel;
 
-			if (GameSession.arenaMode)
+			if (GameSession.testMode)
+			{
+				param.levelType = MapType.Test;
+				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
+			}
+			else if (GameSession.arenaMode)
 			{
 				param.levelType = MapType.Arena;
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");

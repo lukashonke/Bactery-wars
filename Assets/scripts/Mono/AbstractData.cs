@@ -1463,8 +1463,7 @@ namespace Assets.scripts.Mono
 			{
 				BreakMovement(true);
 			}
-
-			if (cancelMovementTargetOnCollision)
+			else if (cancelMovementTargetOnCollision)
 			{
 				BreakMovement(true);
 			}
