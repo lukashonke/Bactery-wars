@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
+	/// <summary>
+	/// Represents an effect of a skill
+	/// </summary>
 	public abstract class SkillEffect
 	{
 		public SkillId SourceSkill { get; set; }

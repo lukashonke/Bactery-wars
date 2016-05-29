@@ -10,6 +10,7 @@ using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Upgrade;
+using JetBrains.Annotations;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -18,13 +19,8 @@ using Object = UnityEngine.Object;
 namespace Assets.scripts.Mono
 {
 	/// <summary>
-	/// The class for all graphical/physical objects in Unity
-	/// 
-	/// kazdy nosic tohoto objektu musi mit pod sebou objekty:
-	/// "body" pro reprezentaci fyzickeho tela
-	/// body musi mit Animator
-	/// "Shooting position" pro reprezentaci pozice ze ktere vychazeji projektily a efekty
-	/// "ParticleSystems" pro efekty
+	/// Slouzi jako prostrednik mezi tridou Character a hernim objektem reprezentovanym touto tridou.
+	/// Pomoci teto tridy se manipuluje s hernim objektem z vizualniho hlediska
 	/// </summary>
 	public abstract class AbstractData : MonoBehaviour, ICollidable
 	{
@@ -35,7 +31,9 @@ namespace Assets.scripts.Mono
 		public bool usesPathfinding;
 		public bool showObjectName;
 
-		// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
+		/// <summary>
+		/// ovlivnuje presnost ovladani zejmena hrace (pokud je objekt blize ke svemu cili nez je tato vzdalenost, pohyb se zastavi)
+		/// </summary>
 		public float minDistanceClickToMove = 0.2f;
 		public int nextWaypointDistance = 3;
 
@@ -45,6 +43,7 @@ namespace Assets.scripts.Mono
 		/// <summary>GameObjecty reprezentujici fyzicke a graficke telo objektu </summary>
 		public GameObject body;
 
+		[NotNull]
 		public Rigidbody2D rb;
 		protected Animator anim;
 		public GameObject particleSystems;
@@ -340,6 +339,10 @@ namespace Assets.scripts.Mono
 
 		private bool currentlyVisible;
 
+		/// <summary>
+		/// nastavi jestli je dany objekt viditelny pro hrace hrajiciho hru
+		/// </summary>
+		/// <param name="b"></param>
 		public void SetVisibility(bool b)
 		{
 			if (!GameSystem.Instance.Controller.fogOfWar)
@@ -648,6 +651,16 @@ namespace Assets.scripts.Mono
 		public GameObject LoadResource(string type, string resourceFolderName, string fileName)
 		{
 			GameObject go = Resources.Load("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName) as GameObject;
+
+			if (go == null)
+				throw new NullReferenceException("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName + " !");
+
+			return go;
+		}
+
+		public Sprite LoadResourceSprite(string type, string resourceFolderName, string fileName)
+		{
+			Sprite go = Resources.Load<Sprite>("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName);
 
 			if (go == null)
 				throw new NullReferenceException("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName + " !");

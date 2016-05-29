@@ -45,6 +45,11 @@ namespace Assets.scripts.Skills
 		{
 		}
 
+		public override string GetBaseInfo()
+		{
+			return null;
+		}
+
 		public override void AbortCast()
 		{
 		}

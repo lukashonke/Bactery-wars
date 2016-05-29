@@ -73,6 +73,7 @@ namespace Assets.scripts.Skills.Base
 			foreach (Type type in types)
 			{
 				skill = Activator.CreateInstance(type) as Skill;
+				skill.Init();
 				AddSkill(skill);
 			}
 
@@ -82,6 +83,7 @@ namespace Assets.scripts.Skills.Base
 			foreach (Type type in types)
 			{
 				skill = Activator.CreateInstance(type) as Skill;
+				skill.Init();
 				AddSkill(skill);
 			}
 

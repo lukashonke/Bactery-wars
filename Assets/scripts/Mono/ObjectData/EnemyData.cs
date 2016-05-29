@@ -8,6 +8,9 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.ObjectData
 {
+	/// <summary>
+	/// rozsiruje funkcionalitu AbstractData pro monstra a jine nepratele hrace
+	/// </summary>
 	public class EnemyData : AbstractData
 	{
 		private Monster owner;

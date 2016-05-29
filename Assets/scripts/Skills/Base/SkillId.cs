@@ -10,15 +10,17 @@ namespace Assets.scripts.Skills.Base
 		SkillTemplate,
 		CustomRemove,
 
+		// generic skills
 		Beam,
-		BlankProjectile,
 		Jump,
 		Selfbuff,
 		ProjectileShower,
 		Aura,
 		AuraAllies,
-
 		Projectile,
+		BlankProjectile,
+
+		// concrete skills
 		ProjectileAllAround,
 		ProjectileTriple,
 		ProjectileStrong,

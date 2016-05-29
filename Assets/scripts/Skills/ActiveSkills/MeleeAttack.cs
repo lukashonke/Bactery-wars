@@ -30,6 +30,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			resetMoveTarget = false; 
 
 			range = 4;
+			AvailableToPlayerAsAutoattack = true;
 		}
 
 		public override SkillId GetSkillId()
@@ -61,14 +62,20 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override bool OnCastStart()
 		{
 			if (initTarget == null)
+			{
+				AbortCast();
 				return false;
+			}
 
 			target = initTarget;
 
 			Character chTarget = GetCharacterFromObject(initTarget);
 
 			if (chTarget == null || chTarget.Status.IsDead)
+			{
+				AbortCast();
 				return false;
+			}
 
 			RotatePlayerTowardsTarget(initTarget);
 
@@ -80,6 +87,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				return true;
 			}
 
+			AbortCast();
 			// dont melee, too far
 			return false;
 		}

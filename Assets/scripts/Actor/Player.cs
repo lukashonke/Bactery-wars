@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
@@ -14,12 +17,15 @@ using UnityEngine;
 namespace Assets.scripts.Actor
 {
 	/// <summary>
-	/// Datova trida reprezentujici informace o jednom hraci (jeho skilly, classu, stav (pocet HP, atd.))
+	/// Class that holds information about the player (skills, class, stats, status - hp, speed, etc.)
 	/// </summary>
 	public class Player : Character
 	{
 		public ClassTemplate Template { get; set; }
 		public int DnaPoints { get; private set; }
+
+		public List<Skill> AvailableSkills { get; private set; }
+		public List<Skill> AvailableAutoattacks { get; private set; } 
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
@@ -72,6 +78,22 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public void InitTemplate()
 		{
+			AvailableSkills = new List<Skill>();
+			AvailableAutoattacks = new List<Skill>();
+
+			//TODO temp reseni, prida vsechny skilly
+			foreach (SkillId id in Enum.GetValues(typeof(SkillId)))
+			{
+				Skill sk = SkillTable.Instance.GetSkill(id);
+				if (sk == null)
+					continue;
+				if(sk.AvailableToPlayer)
+					AvailableSkills.Add(sk);
+
+				if(sk.AvailableToPlayerAsAutoattack)
+					AvailableAutoattacks.Add(sk);
+			}
+
 			int i = 0;
 			foreach(Skill templateSkill in Template.TemplateSkills)
 			{
@@ -109,6 +131,73 @@ namespace Assets.scripts.Actor
 			Data.UpdateInventory(Inventory);
 			Inventory.LoadUpgrades();
 			UpdateStats();
+		}
+
+		public void SwapSkills(Skill firstSkill, string targetSkillName)
+		{
+			int fromIndex = DeactivateSkill(firstSkill.GetName());
+			int toIndex = DeactivateSkill(targetSkillName);
+
+			ActivateSkill(firstSkill, toIndex);
+			Skill sk = SkillTable.Instance.GetSkill((SkillId) Enum.Parse(typeof (SkillId), targetSkillName));
+
+			ActivateSkill(sk, fromIndex);
+		}
+
+		public int DeactivateSkill(string skillName)
+		{
+			int index = 0;
+			foreach (Skill sk in Skills.Skills.ToArray())
+			{
+				if (sk.GetName() == skillName)
+				{
+					Skills.Skills.RemoveAt(index);
+					break;
+				}
+				index++;
+			}
+
+			return index;
+		}
+
+		public void SelectAutoattack(Skill skill)
+		{
+			if (skill is ActiveSkill)
+			{
+				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
+				newSkill.SetOwner(this);
+
+				MeleeSkill = (ActiveSkill)newSkill;
+			}
+		}
+
+		public void ActivateSkill(Skill skill, int targetSlot)
+		{
+			if (Skills.HasSkill(skill.GetSkillId()))
+				return;
+
+			if (targetSlot <= 5 && targetSlot >= 0)
+			{
+				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
+				newSkill.SetOwner(this);
+				newSkill.IsLocked = false;
+
+				bool set = false;
+				for (int i = 0; i < Skills.Skills.Count; i++)
+				{
+					if (i == targetSlot)
+					{
+						Skills.Skills.Insert(i, newSkill);
+						set = true;
+						break;
+					}
+				}
+
+				if (!set)
+				{
+					Skills.Skills.Add(newSkill);
+				}
+			}
 		}
 
 		public void UnlockSkill(int order, bool msg)

@@ -10,18 +10,24 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills
 {
-	/*
-		Sablona pro skill
-	*/
+	/// <summary>
+	/// Represents a skill that can either be passive or active
+	/// </summary>
 	public abstract class Skill
 	{
 		private string name;
 
 		public bool IsLocked { get; set; }
+		public bool AvailableToPlayer { get; set; }
+		public bool AvailableToPlayerAsAutoattack { get; set; }
+
+		public int RequiredSlotLevel { get; set; }
 
 		public Character Owner { get; private set; }
 
 		public List<SkillTraits> Traits { get; private set; }
+
+		public Sprite Icon { get; set; }
 
 		protected List<SkillEffect> additionalEffects;
 		protected bool originalEffectsDisabled = false;
@@ -63,6 +69,20 @@ namespace Assets.scripts.Skills
 			MaxLevel = 1;
 
 			Traits = new List<SkillTraits>();
+
+			AvailableToPlayer = false;
+			AvailableToPlayerAsAutoattack = false;
+
+			RequiredSlotLevel = 1;
+
+			try
+			{
+				Icon = GetOwnerData().LoadResourceSprite("skill", GetName(), "Icon");
+			}
+			catch (Exception)
+			{
+				Icon = Resources.Load<Sprite>("Sprite/ui/icons/default_skill");
+			}
 		}
 
 		public void Init()
@@ -269,5 +289,7 @@ namespace Assets.scripts.Skills
 		public abstract void Start();
 		public abstract void AbortCast();
 		public abstract void End();
+
+		public abstract string GetBaseInfo();
 	}
 }

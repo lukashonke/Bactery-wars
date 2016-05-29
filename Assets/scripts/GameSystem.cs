@@ -19,8 +19,7 @@ using Object = UnityEngine.Object;
 namespace Assets.scripts
 {
 	/// <summary>
-	/// Singleton trida
-	/// Pridava hrace do hry
+	/// Poskytuje operace nad celkovou hrou - umistovani monster, ziskani objektu hrace, vypsani zpravy, pauznuti hry, atd.
 	/// </summary>
 	public class GameSystem
 	{
@@ -78,12 +77,21 @@ namespace Assets.scripts
 			
 		}
 
+		/// <summary>
+		/// Vypise zpravu kterou hrac uvidi
+		/// </summary>
+		/// <param name="msg"></param>
+		/// <param name="level"></param>
 		public void BroadcastMessage(string msg, int level = 1)
 		{
 			if(CurrentPlayer != null)
 				CurrentPlayer.Message(msg, level);
 		}
 
+		/// <summary>
+		/// Zpracuje prikaz z konzole
+		/// </summary>
+		/// <param name="msg"></param>
 		public void AdminCommand(string msg)
 		{
 			if (msg.ToLower().StartsWith("help"))
@@ -211,6 +219,9 @@ namespace Assets.scripts
 			pathfindingError = true;
 		}
 
+		/// <summary>
+		/// Nastavi graf pro pathfinding tak aby pokryval celou vygenerovanou mapu
+		/// </summary>
 		public void UpdatePathfinding(Vector3 center, int tilesPerRegionX, int tilesPerRegionY, int mapWidth, int mapHeight)
 		{
 			AstarPath ap = Controller.GetComponent<AstarPath>();
@@ -292,6 +303,9 @@ namespace Assets.scripts
 			
 		}
 
+		/// <summary>
+		/// Registruje hrace do hry
+		/// </summary>
 		public Player RegisterNewPlayer(PlayerData data, String name)
 		{
 			ClassId cId = (ClassId) Enum.Parse(typeof (ClassId), GameSession.className);
@@ -359,6 +373,9 @@ namespace Assets.scripts
 		}*/
 
 		//TODO make use of parameters dictionary to pass level, etc
+		/// <summary>
+		/// Registruje monstrum do hry podle MonsterID
+		/// </summary>
 		private Monster RegisterNewMonster(EnemyData data, MonsterId id, bool isMinion, int level, Dictionary<string, string> parameters=null)
 		{
 			Monster monster;
@@ -383,6 +400,9 @@ namespace Assets.scripts
 			return monster;
 		}
 
+		/// <summary>
+		/// Registruje monstrum do hry, pokud je jiz znama MonsterTemplate
+		/// </summary>
 		public Monster RegisterNewCustomMonster(EnemyData data, MonsterTemplate mt, bool isMinion, int level, Dictionary<string, string> parameters = null)
 		{
 			Monster monster;
@@ -406,6 +426,9 @@ namespace Assets.scripts
 			return monster;
 		}
 
+		/// <summary>
+		/// Registruje monstrum do hry pokud je zname jmeno typu monstra
+		/// </summary>
 		public Monster RegisterNewCustomMonster(EnemyData data, string monsterTypeName, bool isMinion, int level, Dictionary<string, string> parameters = null)
 		{
 			Monster monster;
@@ -430,6 +453,9 @@ namespace Assets.scripts
 			return monster;
 		}
 
+		/// <summary>
+		/// Registruje NPC do hry
+		/// </summary>
 		public Npc RegisterNewNpc(EnemyData data, MonsterId id)
 		{
 			Npc npc;
@@ -462,7 +488,7 @@ namespace Assets.scripts
 			return RegisterNewNpc(data, id);
 		}
 
-		// deprecated
+		[Obsolete]
 		public Monster SpawnMonster(MonsterId id, Vector3 position, bool isMinion, int level, int team=0)
 		{
 			GameObject go = Resources.Load("Prefabs/entity/" + id.ToString() + "/" + id.ToString()) as GameObject;
@@ -479,6 +505,9 @@ namespace Assets.scripts
 			return m;
 		}
 
+		/// <summary>
+		/// Spawn monster do hry dle jmena jeho typu
+		/// </summary>
 		public Monster SpawnMonster(string monsterTypeName, Vector3 position, bool isMinion, int level, int team = 0)
 		{
 			MonsterTemplate template = MonsterTemplateTable.Instance.GetType(monsterTypeName);
@@ -503,6 +532,9 @@ namespace Assets.scripts
 			return m;
 		}
 
+		/// <summary>
+		/// Spawne bosse do hry dle jmena jeho typu
+		/// </summary>
 		public Boss SpawnBoss(string monsterTypeName, Vector3 position, int level)
 		{
 			MonsterTemplate template = MonsterTemplateTable.Instance.GetType(monsterTypeName);

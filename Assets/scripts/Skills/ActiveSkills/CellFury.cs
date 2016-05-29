@@ -27,6 +27,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			canBeCastSimultaneously = true;
 			baseDamage = 10;
 			resetMoveTarget = false;
+
+			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()

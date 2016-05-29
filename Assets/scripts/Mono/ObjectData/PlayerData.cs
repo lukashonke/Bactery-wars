@@ -12,9 +12,9 @@ using UnityEngine.Networking;
 
 namespace Assets.scripts.Mono.ObjectData
 {
-	/*
-		Unity Engine delegate for Player objects
-	*/
+	/// <summary>
+	/// rozsiruje funkcionalitu AbstractData pro hrace
+	/// </summary>
 	public class PlayerData : AbstractData
 	{
 		/// <summary>Datova trida hrace</summary>
@@ -77,7 +77,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 			if(noTutorial)
 			{
-				for (int i = 1; i < 5; i++)
+				for (int i = 1; i < player.Skills.Skills.Count; i++)
 				{
 					player.UnlockSkill(i, false);
 				}

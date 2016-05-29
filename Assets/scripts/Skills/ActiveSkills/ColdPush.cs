@@ -27,6 +27,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			stunDuration = 1.5f;
 
 			range = 10;
+
+			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()

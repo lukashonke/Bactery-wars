@@ -474,6 +474,11 @@ namespace Assets.scripts.Skills
 				Owner.StartTask(NotifyReuseEnd());
 		}
 
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec";
+		}
+
 		private IEnumerator NotifyReuseEnd()
 		{
 			yield return new WaitForSeconds(GetReuse());

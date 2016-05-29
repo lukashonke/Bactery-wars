@@ -22,6 +22,9 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Actor
 {
+	/// <summary>
+	/// Class that represents the player, monsters and other entities with AI
+	/// </summary>
 	public abstract class Character : Entity
 	{
 		/// <summary>
@@ -145,7 +148,7 @@ namespace Assets.scripts.Actor
 		}
 
 		/// <summary>
-		/// zavolano hned po vytvoreni Characteru (hned po zavolani konstruktorů)
+		/// Called right after creating this character (after the constructor is called)
 		/// </summary>
 		public void Init()
 		{
@@ -170,6 +173,7 @@ namespace Assets.scripts.Actor
 
 		private Coroutine wallCheck;
 
+		
 		private IEnumerator WallCheckTask()
 		{
 			while (GetData().GetBody() != null)
@@ -192,6 +196,9 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		/// <summary>
+		/// Checks if this character is stuck within the walls, if yes, it will pull him out and teleport him to the closest place that is not within the walls
+		/// </summary>
 		public bool CheckWalls()
 		{
 			int iteration = 0;
@@ -269,6 +276,9 @@ namespace Assets.scripts.Actor
 			return Data;
 		}
 
+		/// <summary>
+		/// Gives this char an item to his inventory
+		/// </summary>
 		public void GiveItem(InventoryItem item)
 		{
 			if (item.CollectableByPlayer && !(this is Player))
@@ -306,6 +316,9 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		/// <summary>
+		/// Called when this character collides with a gameobject that represents item (= picking up an item)
+		/// </summary>
 		public void HitItem(UpgradeScript upg)
 		{
 			if (upg.item.CollectableByPlayer && !(this is Player))
@@ -353,7 +366,7 @@ namespace Assets.scripts.Actor
 			}
 		}
 
-		public bool AddItem(InventoryItem u)
+		private bool AddItem(InventoryItem u)
 		{
 			if (Inventory.CanAdd(u))
 			{
@@ -367,6 +380,9 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
+		/// <summary>
+		/// Removes an item from characters inventory
+		/// </summary>
 		public void RemoveItem(InventoryItem u, bool showMsg=true)
 		{
 			u.SetOwner(null);
@@ -377,6 +393,9 @@ namespace Assets.scripts.Actor
 				Message("Deleted " + u.VisibleName);
 		}
 
+		/// <summary>
+		/// Equips an item to this character's inventory (only if the item is in the inventory already) - places the item into active slot
+		/// </summary>
 		public void EquipUpgrade(EquippableItem u)
 		{
 			if (!Inventory.EquipUpgrade(u))
@@ -388,6 +407,9 @@ namespace Assets.scripts.Actor
 			Message("Equiped " + u.VisibleName);
 		}
 
+		/// <summary>
+		/// Unequips an item in characters inventory
+		/// </summary>
 		public void UnequipItem(InventoryItem u, bool force=false)
 		{
 			if (u.IsUpgrade())
@@ -402,6 +424,9 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		/// <summary>
+		/// Swaps two items in their slots in the inventory
+		/// </summary>
 		public void SwapItem(InventoryItem source, InventoryItem target, int slot, int fromSlot, int toSlot)
 		{
 			// can only swap upgrades from active slots to inventory slots
@@ -416,6 +441,9 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		/// <summary>
+		/// Called after equiping or unequiping items to recaltulcate their bonuses
+		/// </summary>
 		public virtual void UpdateStats()
 		{
 			//TODO add support for this to monsters
@@ -430,6 +458,9 @@ namespace Assets.scripts.Actor
 			
 		}
 
+		/// <summary>
+		/// Gives a SkillEffect to this character
+		/// </summary>
 		public void AddEffect(SkillEffect ef, float duration)
 		{
 			if(ActiveEffects.Count > 5)
@@ -445,9 +476,12 @@ namespace Assets.scripts.Actor
 
 		public void ProlongeEffectDuration(SkillEffect ef)
 		{
-			
+			//TODO - prodlouzit trvani efektu
 		}
 
+		/// <summary>
+		/// Returns true if this character already has a skilleffect of the parameter type
+		/// </summary>
 		public bool HasEffectAlready(SkillEffect ef)
 		{
 			if (ef.Source == null)
@@ -462,6 +496,9 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
+		/// <summary>
+		/// Returns true if the parameter skill has any skilleffects active on this character
+		/// </summary>
 		public bool HasEffectOfSkill(SkillId sk)
 		{
 			foreach (SkillEffect e in ActiveEffects)
@@ -484,6 +521,9 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
+		/// <summary>
+		/// Removes a skilleffect from this character
+		/// </summary>
 		public void RemoveEffect(SkillEffect ef)
 		{
 			ef.OnRemove();
@@ -561,6 +601,9 @@ namespace Assets.scripts.Actor
 				RemoveEffect(ef);
 		}
 
+		/// <summary>
+		/// Returns true if this character can cast the parameter skill
+		/// </summary>
 		public bool CanCastSkill(Skill skill)
 		{
 			if (Status.IsDead || Status.IsStunned() || !Status.CanCastSkills) 
@@ -586,9 +629,8 @@ namespace Assets.scripts.Actor
 		}
 
 		/// <summary>
-		/// Spusti kouzleni skillu
+		/// Launches skill casting to a fixed gameobject target
 		/// </summary>
-		/// <param name="skill"></param>
 		public void CastSkill(Skill skill, GameObject setTarget=null, bool noTarget=false)
 		{
 			if (!CanCastSkill(skill))
@@ -621,6 +663,9 @@ namespace Assets.scripts.Actor
 				skill.Start();
 		}
 
+		/// <summary>
+		/// Launches skill casting to a fixed position target
+		/// </summary>
 		public void CastSkill(Skill skill, Vector3 target)
 		{
 			if (!CanCastSkill(skill))
@@ -651,7 +696,7 @@ namespace Assets.scripts.Actor
 		}
 
 		/// <summary>
-		/// Prerusi kouzleni vsech aktivnich skillů
+		/// Breaks casting of all currently active skills that are being casted
 		/// </summary>
 		public void BreakCasting()
 		{
@@ -678,6 +723,9 @@ namespace Assets.scripts.Actor
 			Debug.Log("break done");
 		}
 
+		/// <summary>
+		/// Calculate damage done to the target 
+		/// </summary>
 		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit)
 		{
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);

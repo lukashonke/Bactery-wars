@@ -11,7 +11,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 		{
 			MaxHp = 100;
 			MaxMp = 50;
-			MaxSpeed = 40;
+			MaxSpeed = 30;
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
@@ -19,8 +19,8 @@ namespace Assets.scripts.Actor.PlayerClasses
 
 		protected override void AddSkillsToTemplate()
 		{
-			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Aura)); // the projectile test skill
+			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.SneezeShot)); // the projectile test skill
+			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Aura)); // the projectile test skill
 
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Dodge));
 			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.ColdPush));

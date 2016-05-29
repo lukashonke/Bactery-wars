@@ -36,6 +36,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			triggersOwnerCollision = true;
 
 			range = 10;
+
+			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()

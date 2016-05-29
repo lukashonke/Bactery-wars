@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Assets.scripts.Skills.Base
 {
@@ -39,6 +40,29 @@ namespace Assets.scripts.Skills.Base
 			}
 
 			return null;
+		}
+
+		public int GetSkillSlot(string name)
+		{
+			int i = 0;
+			foreach (Skill s in Skills)
+			{
+				if (s.GetName().Equals(name, StringComparison.InvariantCultureIgnoreCase))
+					return i;
+				i++;
+			}
+			return 0;
+		}
+
+		public bool HasSkill(SkillId id)
+		{
+			foreach (Skill s in Skills)
+			{
+				if (s.GetSkillId() == id)
+					return true;
+			}
+
+			return false;
 		}
 	}
 }
