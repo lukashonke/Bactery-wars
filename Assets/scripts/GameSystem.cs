@@ -105,6 +105,49 @@ namespace Assets.scripts
 				CurrentPlayer.HealMe();
 			}
 
+			if (msg.ToLower().StartsWith("speed "))
+			{
+				string[] args = msg.Split(' ');
+				int val = -1;
+
+				try
+				{
+					val = Int32.Parse(args[1]);
+				}
+				catch (Exception)
+				{
+					BroadcastMessage("spatne parametry - zadejte cislo");
+					return;
+				}
+
+				CurrentPlayer.SetMoveSpeed(val);
+			}
+
+			if (msg.ToLower().StartsWith("maxhp "))
+			{
+				string[] args = msg.Split(' ');
+				int val = -1;
+
+				try
+				{
+					val = Int32.Parse(args[1]);
+				}
+				catch (Exception)
+				{
+					BroadcastMessage("spatne parametry - zadejte cislo");
+					return;
+				}
+
+				CurrentPlayer.UpdateMaxHp(val);
+				CurrentPlayer.HealMe();
+			}
+
+			if (msg.ToLower().Equals("invis"))
+			{
+				CurrentPlayer.UpdateMaxHp(99999);
+				CurrentPlayer.HealMe();
+			}
+
 			if (msg.ToLower().StartsWith("spawn "))
 			{
 				MonsterTemplateTable.Instance.Load();
