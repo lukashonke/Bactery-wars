@@ -217,7 +217,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	    public enum RoomType
 	    {
-			EPIC,HUGE,VERYLARGE,LARGE,MEDIUM,SMALL,TINY
+			EPIC,HUGE,VERYLARGE,LARGE,MEDIUM,SMALL,TINY,MINI
 	    }
 
 		public Tile GetLargestSubRoom(bool exclude=true)
@@ -271,6 +271,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        switch (type)
 	        {
+				case RoomType.MINI:
+					return GetSubRooms(10, 2, preferredDirection, count, exclude);
+					break;
 	            case RoomType.TINY:
 	                return GetSubRooms(40, 3, preferredDirection, count, exclude);
 	                break;

@@ -8,6 +8,7 @@ using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator.Levels;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Mono.MapGenerator
 {
@@ -242,12 +243,58 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			int world = WorldHolder.instance.worldLevel;
 
-			// TODO add frequency
+			int selectedId = forcedId;
+
+			if (forcedId < 0)
+			{
+				int soucet = 0;
+				foreach (MobGroup group in mobGroups)
+				{
+					if (roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel &&
+					    group.maxWorld >= world && group.minWorld <= world)
+					{
+						soucet += group.frequency;
+					}
+				}
+
+				int[] sum = new int[soucet];
+				soucet = 0;
+
+				foreach (MobGroup group in mobGroups)
+				{
+					if (roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel &&
+						 group.maxWorld >= world && group.minWorld <= world)
+					{
+						for (int i = 0; i < group.frequency; i++)
+						{
+							sum[soucet + i] = group.id;
+						}
+
+						soucet += group.frequency;
+					}
+				}
+
+				if (sum.Length == 0)
+					return;
+
+				int rnd = Random.Range(0, sum.Length);
+				selectedId = sum[rnd];
+			}
+
+			if (selectedId < 0)
+			{
+				Debug.LogError("chyba - nenalezena spravna groupa ");
+				return;
+			}
+
 			foreach (MobGroup group in mobGroups)
 			{
-				if ((roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel && group.maxWorld >= world && group.minWorld <= world && forcedId < 0) || (forcedId > 0 && group.id == forcedId))
+				if(group.id == selectedId)
+				//if ((roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel && group.maxWorld >= world && group.minWorld <= world && forcedId < 0) || (forcedId > 0 && group.id == forcedId))
 				{
 					List<MonsterSpawnInfo> infos = new List<MonsterSpawnInfo>();
+
+					int count = 0;
 
 					foreach (MobData mob in group.mobs)
 					{
@@ -271,6 +318,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 								if (monsterInfo != null)
 								{
+									count++;
 									monsterInfo.tempId = mob.mobId;
 
 									if (mob.idParent > 0)
@@ -304,6 +352,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 							if (monsterInfo != null)
 							{
+								count++;
 								monsterInfo.tempId = mob.mobId;
 
 								if (mob.idParent > 0)
@@ -331,6 +380,8 @@ namespace Assets.scripts.Mono.MapGenerator
 							}
 						}
 					}
+
+					Debug.Log("spawnuto " + count + " ze skup. " + selectedId);
 					
 					break;
 				}

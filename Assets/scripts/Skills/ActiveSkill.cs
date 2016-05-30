@@ -537,6 +537,9 @@ namespace Assets.scripts.Skills
 				yield return new WaitForSeconds(castTime);
 			}
 
+			if (GetOwnerData() == null)
+				yield break;
+
 			// nastavit stav - active
 			state = SkillState.SKILL_ACTIVE;
 
@@ -552,6 +555,9 @@ namespace Assets.scripts.Skills
 			{
 				yield return new WaitForSeconds(coolDown);
 			}
+
+			if (GetOwnerData() == null)
+				yield break;
 
 			// nastavit stav - idle
 			state = SkillState.SKILL_IDLE;

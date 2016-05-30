@@ -20,7 +20,17 @@ namespace Assets.scripts.Skills.Base
 		Projectile,
 		BlankProjectile,
 
-		// concrete skills
+		// player skills
+		CommonColdAutoattack,
+		SneezeShot,
+		Dodge,
+		CellFury,
+		MucusWarrior,
+		RhinoBeam,
+		ColdShuriken,
+		ColdPush,
+
+		// other, obsolete skills
 		ProjectileAllAround,
 		ProjectileTriple,
 		ProjectileStrong,
@@ -33,15 +43,6 @@ namespace Assets.scripts.Skills.Base
 
 		NeutrophileProjectile,
 	    PushbackProjectile,
-
-		CommonColdAutoattack,
-		SneezeShot,
-		Dodge,
-		CellFury,
-		MucusWarrior,
-		RhinoBeam,
-		ColdShuriken,
-		ColdPush,
 
 		MeleeAttack,
 		CollisionDamageAttack,
