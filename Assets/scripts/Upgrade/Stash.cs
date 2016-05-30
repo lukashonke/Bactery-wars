@@ -43,9 +43,9 @@ namespace Assets.scripts.Upgrade
 			return true;
 		}
 
-		public void AddItem(InventoryItem u)
+		public void AddItem(InventoryItem u, bool force=false)
 		{
-			if (!CanAdd(u))
+			if (!CanAdd(u) && !force)
 				return;
 
 			items.Add(u);

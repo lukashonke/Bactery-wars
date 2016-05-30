@@ -1257,6 +1257,11 @@ namespace Assets.scripts.Mono
 
 		public void HideClassOverview()
 		{
+			if (stashOpened)
+			{
+				SwitchStash();
+			}
+
 			classOverviewEnabled = false;
 
 			foreach (Transform g in classViewStatsUpgrades.transform)
@@ -2354,16 +2359,43 @@ namespace Assets.scripts.Mono
 			return u;
 		}
 
-		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null, bool stash=false)
+		public InventoryItem GetItemFromStash(GameObject slot)
+		{
+			int order = Int32.Parse(slot.name.Split('_')[1]) - 1;
+
+			InventoryItem u = ((Player) data.GetOwner()).ItemStash.GetItem(order);
+			return u;
+		}
+
+		public InventoryItem GetUpgradeFromInventory(int slotIndex, int slotType)
+		{
+			InventoryItem u = null;
+
+			if (slotType == 1)
+				u = data.GetOwner().Inventory.GetActiveUpgrade(slotIndex);
+			else if (slotType == 0)
+				u = data.GetOwner().Inventory.GetItem(slotIndex);
+			else if (slotType == 2) // base stat
+				u = data.GetOwner().Inventory.GetBasestatUpgrade(slotIndex);
+
+			return u;
+		}
+
+		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null, bool stashMode=false, bool itemInStash=false)
 		{
 			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
+
+			if (itemInStash)
+			{
+				u = GetItemFromStash(slot);
+			}
 
 			if (u == null)
 			{
 				int order = Int32.Parse(slot.name.Split('_')[1]);
 				string description = GameProgressTable.GetDescriptionOnLockedSlot(order, slotType);
 
-				if (stash)
+				if (stashMode)
 					description = "This slot is empty.";
 
 				if (description == null || draggingIcon)
@@ -2544,6 +2576,10 @@ namespace Assets.scripts.Mono
 			int targetSlotId = -1;
 			bool swappingAutoattack = false;
 
+			bool stashMode = false;
+			// 1 = inventory, 2 = stash
+			int stashTarget = -1; 
+
 			bool selectedAny = false;
 			
 			bool trashBin = false;
@@ -2602,12 +2638,119 @@ namespace Assets.scripts.Mono
 					selectedAny = true;
 					break;
 				}
+				else if (r.gameObject.name.StartsWith("StashSlot_"))
+				{
+					stashMode = true;
+					targetSlotId = Int32.Parse(r.gameObject.name.Split('_')[1]);
+					stashTarget = STASHSLOT_STASH;
+
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("StashItemsPanel"))
+				{
+					stashMode = true;
+					stashTarget = STASHSLOT_STASH;
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("StashTrashbin"))
+				{
+					targetSlot = r.gameObject;
+					trashBin = true;
+					stashMode = true;
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("ShashInventoryPanel"))
+				{
+					stashMode = true;
+					stashTarget = STASHSLOT_INVENTORY;
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("InvSlot_"))
+				{
+					stashMode = true;
+					targetSlotId = Int32.Parse(r.gameObject.name.Split('_')[1]);
+					stashTarget = STASHSLOT_INVENTORY;
+
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("StashActiveSlot_"))
+				{
+					stashMode = true;
+					targetSlotId = Int32.Parse(r.gameObject.name.Split('_')[1]);
+					stashTarget = STASHSLOT_ACTIVE;
+
+					selectedAny = true;
+					break;
+				}
+				else if (r.gameObject.name.StartsWith("StashActiveItemsPanel"))
+				{
+					stashMode = true;
+					stashTarget = STASHSLOT_ACTIVE;
+					selectedAny = true;
+					break;
+				}
 			}
 
 			if (!selectedAny && draggedSkill != null)
 			{
 				draggingSkill = true;
 				toActiveSkillSlot = false;
+			}
+
+			if (stashMode)
+			{
+				if (trashBin)
+				{
+					if (data.GetOwner().Inventory.HasInInventory(draggedItem))
+					{
+						data.player.AddDnaPoints(draggedItem.DisposePrice);
+						data.player.Message("You have received " + draggedItem.DisposePrice + " DNA.");
+
+						data.GetOwner().RemoveItem(draggedItem);
+						UpdateStash();
+						return;
+					}
+					else
+					{
+						data.player.AddDnaPoints(draggedItem.DisposePrice);
+						data.player.Message("You have received " + draggedItem.DisposePrice + " DNA.");
+
+						draggedItem.SetOwner(null);
+						((Player)data.GetOwner()).ItemStash.RemoveItem(draggedItem);
+						UpdateStash();
+						return;
+					}
+					
+				}
+
+				if (stashTarget == STASHSLOT_STASH)
+				{
+					if (draggedStashSlotType == STASHSLOT_INVENTORY || draggedStashSlotType == STASHSLOT_ACTIVE)
+					{
+						PutToStash(draggedItem);
+					}
+				}
+				else if (stashTarget == STASHSLOT_INVENTORY)
+				{
+					if (draggedStashSlotType == STASHSLOT_STASH || draggedStashSlotType == STASHSLOT_ACTIVE)
+					{
+						PutToInventory(draggedItem);
+					}
+				}
+				else if (stashTarget == STASHSLOT_ACTIVE)
+				{
+					if (draggedStashSlotType == STASHSLOT_INVENTORY || draggedStashSlotType == STASHSLOT_STASH)
+					{
+						PutToActiveSlot(draggedItem, targetSlotId);
+					}
+				}
+
+				ShowStashTrashBin(false);
 			}
 
 			if (!draggingSkill)
@@ -2824,20 +2967,52 @@ namespace Assets.scripts.Mono
 		private GameObject stashMainPanel = null;
 		private GameObject stashItemsPanel = null;
 		private GameObject stashInventoryPanel = null;
+		private GameObject stashActiveItemsPanel = null;
+
+		private Text stashStashLabel = null;
+		private Text stashInventoryLabel = null;
 		private const int STASH_CAPACITY = 50;
+		private const int STASHSLOT_INVENTORY = 1;
+		private const int STASHSLOT_STASH = 2;
+		private const int STASHSLOT_ACTIVE = 3;
+
+		public GameObject stashTrashbin;
+		public GameObject stashDisposeValObj;
+
+		private int draggedStashSlotType;
+
+		private GameObject[] stashSlots;
+		private GameObject[] stashInventorySlots;
+		private GameObject[] stashActiveSlots;
 
 		private void InitStash()
 		{
+			GameObject.Find("StashScrollbar").GetComponent<Scrollbar>().value = 1f;
+			GameObject.Find("StashScrollbar2").GetComponent<Scrollbar>().value = 1f;
+
+			stashSlots = new GameObject[STASH_CAPACITY];
+			stashInventorySlots = new GameObject[INVENTORY_SIZE];
+			stashActiveSlots = new GameObject[ACTIVE_UPGRADES_SIZE];
+
 			stashMainPanel = GameObject.Find("StashMainPanel");
 			stashItemsPanel = GameObject.Find("StashItemsPanel");
 			stashInventoryPanel = GameObject.Find("StashInventoryPanel");
+			stashActiveItemsPanel = GameObject.Find("StashActiveItemsPanel");
+
+			stashStashLabel = GameObject.Find("StashStashLabel").GetComponent<Text>();
+			stashInventoryLabel = GameObject.Find("StashInventoryLabel").GetComponent<Text>();
+
+			stashTrashbin = GameObject.Find("StashTrashbin");
+			stashDisposeValObj = GameObject.Find("DisposeValue_Stash");
+
+			ShowStashTrashBin(false);
 
 			stashMainPanel.SetActive(false);
 			stashOpened = false;
 
 			for (int i = 0; i < STASH_CAPACITY; i++)
 			{
-				GameObject newIcon = Instantiate(iconTemplate);
+				GameObject newIcon = Instantiate(this.iconTemplate);
 				newIcon.name = "StashSlot_" + (i + 1);
 				newIcon.transform.parent = stashItemsPanel.transform.GetChild(0);
 				newIcon.transform.localScale = new Vector3(1, 1, 1);
@@ -2846,27 +3021,29 @@ namespace Assets.scripts.Mono
 
 				EventTrigger trigger = child.AddComponent<EventTrigger>();
 
+				int tempI = i;
+
 				EventTrigger.Entry entry = new EventTrigger.Entry();
 				entry.eventID = EventTriggerType.PointerDown;
-				entry.callback.AddListener(delegate { OnStashItemClick(0, i, newIcon); });
+				entry.callback.AddListener(delegate { OnStashItemClick(2, tempI, newIcon); });
 				trigger.triggers.Add(entry);
 
 				entry = new EventTrigger.Entry();
 				entry.eventID = EventTriggerType.PointerEnter;
-				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 0, stashMainPanel, true); });
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 0, stashMainPanel, true, true); });
 				trigger.triggers.Add(entry);
 
 				entry = new EventTrigger.Entry();
 				entry.eventID = EventTriggerType.PointerExit;
-				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0, stashMainPanel, true); });
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0, stashMainPanel, true, true); });
 				trigger.triggers.Add(entry);
 
-				//inventorySlots[i] = newIcon;
+				stashSlots[i] = newIcon;
 			}
 
 			for (int i = 0; i < INVENTORY_SIZE; i++)
 			{
-				GameObject newIcon = Instantiate(iconTemplate);
+				GameObject newIcon = Instantiate(this.iconTemplate);
 				newIcon.name = "InvSlot_" + (i + 1);
 				newIcon.transform.parent = stashInventoryPanel.transform.GetChild(0);
 				newIcon.transform.localScale = new Vector3(1, 1, 1);
@@ -2875,9 +3052,11 @@ namespace Assets.scripts.Mono
 
 				EventTrigger trigger = child.AddComponent<EventTrigger>();
 
+				int tempI = i;
+
 				EventTrigger.Entry entry = new EventTrigger.Entry();
 				entry.eventID = EventTriggerType.PointerDown;
-				entry.callback.AddListener(delegate { OnStashItemClick(1, i, newIcon); });
+				entry.callback.AddListener(delegate { OnStashItemClick(1, tempI, newIcon); });
 				trigger.triggers.Add(entry);
 
 				entry = new EventTrigger.Entry();
@@ -2890,16 +3069,129 @@ namespace Assets.scripts.Mono
 				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0, stashMainPanel, true); });
 				trigger.triggers.Add(entry);
 
-				//inventorySlots[i] = newIcon;
+				stashInventorySlots[i] = newIcon;
+			}
+
+			GameObject iconTemplate = Resources.Load("Sprite/inventory/ActiveSlot") as GameObject;
+
+			for (int i = 0; i < ACTIVE_UPGRADES_SIZE; i++)
+			{
+				GameObject newIcon = Instantiate(iconTemplate);
+				newIcon.name = "StashActiveSlot_" + (i + 1);
+				newIcon.transform.parent = stashActiveItemsPanel.transform;
+				newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+				GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+				EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+				int tempI = i;
+
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerDown;
+				entry.callback.AddListener(delegate { OnStashItemClick(3, tempI, newIcon); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerEnter;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 1, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerExit;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 1, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				stashActiveSlots[i] = newIcon;
+			}
+
+			UpdateStash();
+		}
+
+		public void PutToStash(InventoryItem item)
+		{
+			Player player = data.GetOwner() as Player;
+
+			if (player.ItemStash.CanAdd(item))
+			{
+				player.Inventory.RemoveItem(item);
+				player.ItemStash.AddItem(item);
+
+				UpdateStash();
 			}
 		}
 
-		// 1=inventory, 2=stash
+		public void PutToInventory(InventoryItem item)
+		{
+			Player player = data.GetOwner() as Player;
+
+			bool equipped = false;
+
+			if (item is EquippableItem && player.Inventory.IsEquipped((EquippableItem) item))
+			{
+				equipped = true;
+				player.UnequipItem(item, true);
+			}
+
+			if (!equipped && player.Inventory.CanAdd(item))
+			{
+				player.ItemStash.RemoveItem(item);
+				player.Inventory.AddItem(item);
+
+			}
+
+			UpdateStash();
+		}
+
+		public void PutToActiveSlot(InventoryItem item, int targetSlotId)
+		{
+			Player player = data.GetOwner() as Player;
+
+			if (!(item is EquippableItem))
+			{
+				player.Message("This item cannot be equipped.");
+				return;
+			}
+
+/*			InventoryItem itemInSlot = GetUpgradeFromInventory(targetSlotId, 1);
+			if (targetSlotId >= 0 && itemInSlot != null)
+			{
+				player.Inventory.RemoveItem(itemInSlot);
+
+				// moomentalni item je ve stashi - pridat tam prohazovany
+				if (player.ItemStash.Items.Contains(item))
+				{
+					player.ItemStash.AddItem(itemInSlot, true);
+					player.ItemStash.RemoveItem(item);
+				}
+				// moomentalni item je v inventari - pridat tam prohazovany
+				else
+				{
+					player.Inventory.AddItem(itemInSlot, true);
+					player.Inventory.RemoveItem(item);
+				}
+
+				player.Inventory.ForceEquipUpgrade((EquippableItem) item);
+			}
+			else
+			{*/
+				if (player.ItemStash.Items.Contains(item))
+				{
+					player.ItemStash.RemoveItem(item);
+				}
+
+			if (!player.Inventory.ForceEquipUpgrade((EquippableItem) item))
+			{
+				player.Message("All active slots are occupied.");
+			}
+			//}
+
+			UpdateStash();
+		}
+
+		// 1=inventory, 2=stash, 3=activeitems
 		public void OnStashItemClick(int slotType, int slotId, GameObject slotObject)
 		{
-			/*if (slotType == 2)
-				return;
-
 			bool doubleClick = false;
 
 			if (!firstClickDone)
@@ -2922,27 +3214,43 @@ namespace Assets.scripts.Mono
 				}
 			}
 
-			draggedItem = GetUpgradeFromInventory(obj, slotType);
+			Player player = data.GetOwner() as Player;
+
+			if (slotType == STASHSLOT_INVENTORY)
+			{
+				draggedItem = GetUpgradeFromInventory(slotId, 0);
+				draggedStashSlotType = STASHSLOT_INVENTORY;
+			}
+			else if(slotType == STASHSLOT_STASH)
+			{
+				draggedItem = player.ItemStash.GetItem(slotId);
+				draggedStashSlotType = STASHSLOT_STASH;
+			}
+			else if (slotType == STASHSLOT_ACTIVE)
+			{
+				draggedItem = GetUpgradeFromInventory(slotId, 1);
+				draggedStashSlotType = STASHSLOT_ACTIVE;
+			}
 
 			if (draggedItem == null)
 				return;
 
-			draggedUpgradeSlot = slotType;
-
-			int targetSlot = draggedUpgradeSlot == 1 ? 0 : 1;
+			//draggedUpgradeSlot = slotType;
 
 			if (doubleClick)
 			{
-				if (draggedItem is ActivableItem)
+				if (slotType == STASHSLOT_INVENTORY)
 				{
-					((ActivableItem)draggedItem).OnActivate();
-					if (((ActivableItem)draggedItem).ConsumeOnUse)
-					{
-						data.GetOwner().RemoveItem(draggedItem, false);
-					}
+					PutToStash(draggedItem);
 				}
-				else
-					data.GetOwner().SwapItem(draggedItem, null, -1, draggedUpgradeSlot, targetSlot);
+				else if (slotType == STASHSLOT_STASH)
+				{
+					PutToInventory(draggedItem);
+				}
+				else if (slotType == STASHSLOT_ACTIVE)
+				{
+					PutToStash(draggedItem);
+				}
 			}
 			else
 			{
@@ -2954,14 +3262,29 @@ namespace Assets.scripts.Mono
 
 				GameObject preview = new GameObject("Dragged Icon");
 				Image ren = preview.AddComponent<Image>();
-				ren.sprite = obj.transform.GetChild(0).GetComponent<Image>().sprite;
-				preview.transform.parent = inventoryPanel.transform;
+				ren.sprite = slotObject.transform.GetChild(0).GetComponent<Image>().sprite;
+				preview.transform.parent = stashMainPanel.transform;
 				//preview.transform.position = mousePos;
 				preview.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
 
 				draggedObject = preview;
-				ShowTrashBin(true, draggedItem.DisposePrice);
-			}*/
+				ShowStashTrashBin(true, draggedItem.DisposePrice);
+			}
+		}
+
+		public void ShowStashTrashBin(bool state, int price = 0)
+		{
+			if (state)
+			{
+				stashTrashbin.SetActive(true);
+				stashDisposeValObj.GetComponent<Text>().text = "You will gain: " + price + " DNA";
+				stashDisposeValObj.SetActive(true);
+			}
+			else
+			{
+				stashTrashbin.SetActive(false);
+				stashDisposeValObj.SetActive(false);
+			}
 		}
 
 		public void SwitchStash()
@@ -2970,17 +3293,102 @@ namespace Assets.scripts.Mono
 			{
 				stashOpened = true;
 				stashMainPanel.SetActive(true);
+
+				UpdateStash();
 			}
 			else
 			{
 				stashOpened = false;
 				stashMainPanel.SetActive(false);
+
+				UpdateInventory(data.GetOwner().Inventory);
 			}
 		}
 
 		public void UpdateStash()
 		{
-			
+			Player player = data.GetOwner() as Player;
+			Inventory inv = player.Inventory;
+
+			int activeCapacity = inv.ActiveCapacity;
+			int capacity = inv.Capacity;
+			int stashCapacity = STASH_CAPACITY;
+
+			// inventory
+			int i = 0;
+			foreach (InventoryItem u in inv.Items)
+			{
+				if (u == null || (u.IsUpgrade() && inv.IsEquipped((EquippableItem)u)))
+					continue;
+
+				GameObject o = stashInventorySlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < stashInventorySlots.Length; j++)
+			{
+				GameObject o = stashInventorySlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < capacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+
+			// stash
+			i = 0;
+			foreach (InventoryItem u in player.ItemStash.Items)
+			{
+				if (u == null)
+					continue;
+
+				GameObject o = stashSlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < stashSlots.Length; j++)
+			{
+				GameObject o = stashSlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < stashCapacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+			// active items
+			i = 0;
+			foreach (EquippableItem u in inv.ActiveUpgrades)
+			{
+				GameObject o = stashActiveSlots[i].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+				img.sprite = u.MainSprite;
+
+				i++;
+			}
+
+			for (int j = i; j < stashActiveSlots.Length; j++)
+			{
+				GameObject o = stashActiveSlots[j].transform.GetChild(0).gameObject;
+				Image img = o.GetComponent<Image>();
+
+				if (j < activeCapacity)
+					img.sprite = iconEmptySprite;
+				else
+					img.sprite = lockedIconSprite;
+			}
+
+			stashStashLabel.text = "Stash (" + player.ItemStash.Items.Count + " / " + stashCapacity + ")";
+			stashInventoryLabel.text = "Player Inventory (" + inv.Items.Count + " / " + capacity + ")";
+
+			UpdateStatsInfo();
 		}
 
 		public void UpdateStatsInfo()

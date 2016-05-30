@@ -101,9 +101,9 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public void AddItem(InventoryItem u)
+		public void AddItem(InventoryItem u, bool force=false)
 		{
-			if (!CanAdd(u))
+			if (!CanAdd(u) && !force)
 				return;
 
 			items.Add(u);
@@ -172,6 +172,29 @@ namespace Assets.scripts.Upgrade
 
 			activeUpgrades.Add(u);
 			items.Remove(u);
+
+			u.Apply();
+			return true;
+		}
+
+		public bool ForceEquipUpgrade(EquippableItem u)
+		{
+			foreach (EquippableItem upg in activeUpgrades)
+			{
+				if (u.GetType().Name.Equals(upg.GetType().Name))
+				{
+					Owner.Message("You cannot equip two upgrades of the same type.");
+					return false;
+				}
+			}
+
+			if (!CanEquip(u))
+				return false;
+
+			activeUpgrades.Add(u);
+
+			if(HasInInventory(u))
+				items.Remove(u);
 
 			u.Apply();
 			return true;
