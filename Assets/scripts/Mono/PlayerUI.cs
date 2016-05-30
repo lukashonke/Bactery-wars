@@ -19,6 +19,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+#pragma warning disable 1591
 
 namespace Assets.scripts.Mono
 {
@@ -838,6 +839,8 @@ namespace Assets.scripts.Mono
 			switchActiveSkillsPanelButton.interactable = false;
 
 			HideLevelsView();
+
+			InitStash();
 		}
 
 		private bool classOverviewEnabled;
@@ -2351,7 +2354,7 @@ namespace Assets.scripts.Mono
 			return u;
 		}
 
-		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null)
+		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null, bool stash=false)
 		{
 			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
 
@@ -2360,15 +2363,21 @@ namespace Assets.scripts.Mono
 				int order = Int32.Parse(slot.name.Split('_')[1]);
 				string description = GameProgressTable.GetDescriptionOnLockedSlot(order, slotType);
 
+				if (stash)
+					description = "This slot is empty.";
+
 				if (description == null || draggingIcon)
 					return;
 
 				if (currentTooltipObject != null)
 					Destroy(currentTooltipObject);
 
+				if (targetPanel == null)
+					targetPanel = inventoryPanel;
+
 				highlightedObject = slot;
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
-				currentTooltipObject.transform.parent = inventoryPanel.transform;
+				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
 
 				Color titleColor = new Color();
@@ -2809,6 +2818,169 @@ namespace Assets.scripts.Mono
 					UpdateStatsInfo();
 				}
 			}
+		}
+
+		private bool stashOpened = false;
+		private GameObject stashMainPanel = null;
+		private GameObject stashItemsPanel = null;
+		private GameObject stashInventoryPanel = null;
+		private const int STASH_CAPACITY = 50;
+
+		private void InitStash()
+		{
+			stashMainPanel = GameObject.Find("StashMainPanel");
+			stashItemsPanel = GameObject.Find("StashItemsPanel");
+			stashInventoryPanel = GameObject.Find("StashInventoryPanel");
+
+			stashMainPanel.SetActive(false);
+			stashOpened = false;
+
+			for (int i = 0; i < STASH_CAPACITY; i++)
+			{
+				GameObject newIcon = Instantiate(iconTemplate);
+				newIcon.name = "StashSlot_" + (i + 1);
+				newIcon.transform.parent = stashItemsPanel.transform.GetChild(0);
+				newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+				GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+				EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerDown;
+				entry.callback.AddListener(delegate { OnStashItemClick(0, i, newIcon); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerEnter;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 0, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerExit;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				//inventorySlots[i] = newIcon;
+			}
+
+			for (int i = 0; i < INVENTORY_SIZE; i++)
+			{
+				GameObject newIcon = Instantiate(iconTemplate);
+				newIcon.name = "InvSlot_" + (i + 1);
+				newIcon.transform.parent = stashInventoryPanel.transform.GetChild(0);
+				newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+				GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+				EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+				EventTrigger.Entry entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerDown;
+				entry.callback.AddListener(delegate { OnStashItemClick(1, i, newIcon); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerEnter;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 0, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				entry = new EventTrigger.Entry();
+				entry.eventID = EventTriggerType.PointerExit;
+				entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 0, stashMainPanel, true); });
+				trigger.triggers.Add(entry);
+
+				//inventorySlots[i] = newIcon;
+			}
+		}
+
+		// 1=inventory, 2=stash
+		public void OnStashItemClick(int slotType, int slotId, GameObject slotObject)
+		{
+			/*if (slotType == 2)
+				return;
+
+			bool doubleClick = false;
+
+			if (!firstClickDone)
+			{
+				lastClick = Time.time;
+				firstClickDone = true;
+			}
+			else
+			{
+				float diff = Time.time - lastClick;
+				if (diff < doubleClickTimeMax && diff > doubleClickTimeMin)
+				{
+					doubleClick = true;
+					firstClickDone = false;
+				}
+				else
+				{
+					firstClickDone = true;
+					lastClick = Time.time;
+				}
+			}
+
+			draggedItem = GetUpgradeFromInventory(obj, slotType);
+
+			if (draggedItem == null)
+				return;
+
+			draggedUpgradeSlot = slotType;
+
+			int targetSlot = draggedUpgradeSlot == 1 ? 0 : 1;
+
+			if (doubleClick)
+			{
+				if (draggedItem is ActivableItem)
+				{
+					((ActivableItem)draggedItem).OnActivate();
+					if (((ActivableItem)draggedItem).ConsumeOnUse)
+					{
+						data.GetOwner().RemoveItem(draggedItem, false);
+					}
+				}
+				else
+					data.GetOwner().SwapItem(draggedItem, null, -1, draggedUpgradeSlot, targetSlot);
+			}
+			else
+			{
+				draggingIcon = true;
+				SetMouseOverUi();
+
+				Vector3 mousePos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+				mousePos.z = 0;
+
+				GameObject preview = new GameObject("Dragged Icon");
+				Image ren = preview.AddComponent<Image>();
+				ren.sprite = obj.transform.GetChild(0).GetComponent<Image>().sprite;
+				preview.transform.parent = inventoryPanel.transform;
+				//preview.transform.position = mousePos;
+				preview.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 80);
+
+				draggedObject = preview;
+				ShowTrashBin(true, draggedItem.DisposePrice);
+			}*/
+		}
+
+		public void SwitchStash()
+		{
+			if (!stashOpened)
+			{
+				stashOpened = true;
+				stashMainPanel.SetActive(true);
+			}
+			else
+			{
+				stashOpened = false;
+				stashMainPanel.SetActive(false);
+			}
+		}
+
+		public void UpdateStash()
+		{
+			
 		}
 
 		public void UpdateStatsInfo()

@@ -28,7 +28,9 @@ namespace Assets.scripts.Actor
 		public List<Skill> AvailableSkills { get; private set; }
 		public List<Skill> AvailableAutoattacks { get; private set; }
 
-		public Dictionary<int, int> SkillSlotLevels { get; private set; } 
+		public Dictionary<int, int> SkillSlotLevels { get; private set; }
+
+		public Stash ItemStash { get; private set; }
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
@@ -81,6 +83,8 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public void InitTemplate()
 		{
+			ItemStash = new Stash(this, 50);
+
 			AvailableSkills = new List<Skill>();
 			AvailableAutoattacks = new List<Skill>();
 			SkillSlotLevels = new Dictionary<int, int>();
