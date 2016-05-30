@@ -140,7 +140,6 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 			if (skill != null)
 			{
-				skill.range = 8;
 				skill.castTime = 1f;
 			}
 		}

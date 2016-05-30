@@ -273,6 +273,20 @@ namespace Assets.scripts.Mono.ObjectData
 				//sr.material.SetColor("_Emission", Color.black);
 				sr.material.color = Color.white;
 			}
+
+			Character targetCh = target.GetChar();
+
+			if (targetCh != null && !targetCh.IsInteractable())
+			{
+				if (enable && !targetCh.GetData().showObjectName)
+				{
+					targetCh.GetData().showObjectName = true;
+				}
+				else
+				{
+					targetCh.GetData().showObjectName = false;
+				}
+			}
 		}
 
 		public void StartMeleeTargeting(bool rightClick)

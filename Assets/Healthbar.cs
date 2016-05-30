@@ -18,7 +18,7 @@ public class Healthbar : MonoBehaviour
 	public int currentPercent;
 	public int currentPercentCooldown;
 
-	public bool showObjectName;
+	//public bool showObjectName;
 
 	public float distance = 1.5f;
 
@@ -33,8 +33,8 @@ public class Healthbar : MonoBehaviour
 
 		labelStyle = null;
 
-		if (ownerData != null)
-			showObjectName = ownerData.showObjectName;
+		//if (ownerData != null)
+		//	showObjectName = ownerData.showObjectName;
 
 		foreach (Transform child in transform.parent.transform)
 		{
@@ -70,7 +70,7 @@ public class Healthbar : MonoBehaviour
 
 	void OnGUI()
 	{
-		if (showObjectName == false)
+		if (ownerData == null || ownerData.showObjectName == false)
 			return;
 
 		if (center != null)
@@ -85,7 +85,7 @@ public class Healthbar : MonoBehaviour
 
 			Vector3 position = Camera.main.WorldToScreenPoint(transform.position + new Vector3(0, 1, 0));
 
-			float x = position.x - 30;
+			float x = position.x - 45;
 			float y = Screen.height - position.y;
 
 			string name = ownerData.GetOwner().Name;
@@ -96,7 +96,7 @@ public class Healthbar : MonoBehaviour
 				name = template.Name;
 			}
 
-			GUI.Label(new Rect(x, y, 60, 20), name, labelStyle);
+			GUI.Label(new Rect(x, y, 90, 20), name, labelStyle);
 		}
 	}
 

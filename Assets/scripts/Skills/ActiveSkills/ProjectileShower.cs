@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Actor;
 using Assets.scripts.AI;
+using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
@@ -43,6 +45,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			updateFrequency = 0.01f;
 			requireConfirm = true;
+			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()
@@ -67,7 +70,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(10),  };
+			return new SkillEffect[] { new EffectDamage(10), new EffectPushaway(50),   };
 		}
 
 		public override void InitTraits()
@@ -207,6 +210,26 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				rb.velocity = currentVelocity * 15;
 			}
+		}
+
+		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
+		{
+			if (coll.gameObject.Equals(GetOwnerData().GetBody()))
+				return;
+
+			Character ch = coll.gameObject.GetChar();
+
+			if (ch == null)
+			{
+				Destroyable des = coll.gameObject.GetComponent<Destroyable>();
+				if (des != null && !Owner.CanAttack(des))
+					return;
+			}
+			else if (!Owner.CanAttack(ch))
+				return;
+
+			ApplyEffects(Owner, coll.gameObject);
+			DestroyProjectile(gameObject);
 		}
 
 		public override bool CanMove()

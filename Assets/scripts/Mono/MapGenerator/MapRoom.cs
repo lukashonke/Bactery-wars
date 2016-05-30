@@ -505,5 +505,13 @@ namespace Assets.scripts.Mono.MapGenerator
 
 	        return false;
 	    }
+
+		public void Unexclude()
+		{
+			foreach (Tile t in tiles)
+			{
+				t.Uncheck();
+			}
+		}
 	}
 }

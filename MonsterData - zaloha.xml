@@ -1,59 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
-	<monster name="Picocell">
-		<visibleName>Pico Cell</visibleName>
-		<template>BasicCell</template>
-		<stats> 
-			<MaxHp>20</MaxHp>
-			<MaxHp_scale>5</MaxHp_scale>
-			<MaxSpeed>12</MaxSpeed>
-			<IsAggressive>true</IsAggressive>
-			<AggressionRange>10</AggressionRange>
-			<RambleAround>true</RambleAround>
-			<RambleAroundMaxDist>4</RambleAroundMaxDist>
-			<AlertsAllies>false</AlertsAllies>
-
-			<XpReward>1</XpReward>
-		</stats>
-
-		<modify_skills>
-			<Projectile> 
-			 	<baseDamage>10</baseDamage>
-			</Projectile>
-		</modify_skills>
-	</monster>
-
-	<monster name="Micocell">
-		<visibleName>Mico Cell</visibleName>
-		<template>BasicMeleeCell</template>
-		<stats> 
-			<MaxHp>20</MaxHp>
-			<MaxHp_scale>5</MaxHp_scale>
-			<MaxSpeed>12</MaxSpeed>
-			<IsAggressive>true</IsAggressive>
-			<AggressionRange>10</AggressionRange>
-			<RambleAround>true</RambleAround>
-			<RambleAroundMaxDist>4</RambleAroundMaxDist>
-			<AlertsAllies>false</AlertsAllies>
-
-			<XpReward>1</XpReward>
-		</stats>
-
-		<add_autoattack>
-			<MeleeAttack>
-				<baseDamage>10</baseDamage>
-				<range>3</range>
-			</MeleeAttack>
-		</add_autoattack>
-	</monster>
-
-
-
-
-
-
-
-
 	<monster name="Nicitel">
 		<visibleName>Nicitel</visibleName>
 		<template>BasicMeleeCell</template>
@@ -69,10 +15,6 @@
 
 			<XpReward>3</XpReward>
 		</stats>
-
-		<ai>
-			<set module="SpawnSkill" param="interval" value="5.4"/>
-		</ai>
 
 		<add_autoattack>
 			<MeleeAttack>

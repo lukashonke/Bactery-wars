@@ -227,6 +227,8 @@ namespace Assets.scripts
 				MapRoom room = t.region.GetParentOrSelf().GetMapRoom();
 
 				MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, WorldHolder.instance.activeMap.levelData, currentRoomType, 2, id);
+
+				room.Unexclude();
 				BroadcastMessage("Spawned group ID " + id + " (roomtype " + currentRoomType + ")");
 			}
 		}

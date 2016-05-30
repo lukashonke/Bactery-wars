@@ -258,6 +258,9 @@ namespace Assets.scripts.Mono.MapGenerator
 						else
 							tile = room.GetSubRoom(mob.roomSize, mob.location, mob.exclude);
 
+						if (tile == null)
+							continue;
+
 						MonsterSpawnInfo monsterInfo;
 
 						if (mob.count > 1)
