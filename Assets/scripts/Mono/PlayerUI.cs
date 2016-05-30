@@ -59,7 +59,14 @@ namespace Assets.scripts.Mono
 		private GameObject selectedSkillsPanel = null;
 		private GameObject selectedAutoattackPanel = null;
 		private GameObject skillItemTemplate = null;
+		private Button switchActiveSkillsPanelButton = null;
+		private Button switchAutottackPanelButton = null;
 		private Text classOverviewLabel = null;
+		private Text upgradeHintLabel = null;
+		private GameObject skillSlotLabelTemplate = null;
+		private Text upgradePointsLabel = null;
+		private GameObject classViewStatsUpgrades = null;
+		private List<Text> classViewStats = null;
 
 		public GameObject inventoryTooltipObject;
 		public GameObject skillTooltipObject;
@@ -76,6 +83,9 @@ namespace Assets.scripts.Mono
 		public GameObject disposeValObj;
 		public Sprite iconEmptySprite;
 		public Sprite lockedIconSprite;
+		private GameObject iconTemplate;
+
+		private GameObject basestatUpgradesContent;
 
 		public GameObject helpCanvas;
 		public GameObject helpCanvasPanel;
@@ -119,6 +129,7 @@ namespace Assets.scripts.Mono
 		public GUIStyle msgStyle;
 		public GUIStyle boxStyle;
 		public GUIStyle skillHoverStyle;
+		public GUIStyle skillUpgradeLabelStyle;
 
 		public class ScreenMsg
 		{
@@ -423,6 +434,34 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			/*if (classOverviewEnabled)
+			{
+				Player player = data.GetOwner() as Player;
+
+				for (int i = 0; i < selectedSkillsPanel.transform.childCount; i++)
+				{
+					GameObject obj = selectedSkillsPanel.transform.GetChild(i).gameObject;
+
+					float x = obj.transform.position.x;
+					float y = obj.transform.position.y + 40;
+
+					int slotLevel = player.SkillSlotLevels[i];
+
+					Rect r = new Rect(x, y, 25, 14);
+
+					Color b = Color.black;
+					GUI.color = b;
+					GUI.Label(r, "Level " + slotLevel, skillHoverStyle);
+
+					Color c = Color.white;
+					GUI.color = c;
+
+					r.x -= 1;
+					r.y -= 1;
+					GUI.Label(r, "Level + " + slotLevel, skillHoverStyle);
+				}
+			}*/
+
 			if (screenMessages.Any())
 			{
 				const int w = 500;
@@ -587,7 +626,7 @@ namespace Assets.scripts.Mono
 				disposeValObj = GameObject.Find("DisposeValue");
 				ShowTrashBin(false);
 
-				GameObject iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
+				iconTemplate = Resources.Load("Sprite/inventory/Slot") as GameObject;
 				GameObject inventoryContentPanel = GameObject.Find("InventoryContent");
 				GameObject activeStatsPanel = GameObject.Find("ActiveStatsPanel");
 
@@ -601,7 +640,7 @@ namespace Assets.scripts.Mono
 				iconEmptySprite = Resources.Load<Sprite>("Sprite/inventory/icon_empty");
 				lockedIconSprite = Resources.Load<Sprite>("Sprite/inventory/icon_locked");
 
-				GameObject basestatUpgradesContent = GameObject.Find("BasestatUpgradesContent");
+				basestatUpgradesContent = GameObject.Find("BasestatUpgradesContent");
 
 				for (int i = 0; i < BASESTAT_UPGRADES_SIZE; i++)
 				{
@@ -781,10 +820,33 @@ namespace Assets.scripts.Mono
 			availableSkillsPanelContent = availableSkillsPanel.transform.GetChild(0).gameObject;
 			skillItemTemplate = Resources.Load<GameObject>("Sprite/inventory/SkillSlot");
 			classOverviewLabel = GameObject.Find("ClassOverviewLabel").GetComponent<Text>();
+			upgradeHintLabel = GameObject.Find("UpgradeHintLabel").GetComponent<Text>();
+			skillSlotLabelTemplate = Resources.Load<GameObject>("Sprite/inventory/SkillLabel");
+			upgradePointsLabel = GameObject.Find("UpgradePointsLabel").GetComponent<Text>();
+			classViewStatsUpgrades = GameObject.Find("ClassViewStatsUpgrades");
+
+			classViewStats = new List<Text>();
+			foreach (Transform t in GameObject.Find("ClassViewStats").transform)
+			{
+				classViewStats.Add(t.gameObject.GetComponent<Text>());
+			}
+
+			switchActiveSkillsPanelButton = GameObject.Find("SwitchActiveSkillsPanelButton").GetComponent<Button>();
+			switchAutottackPanelButton = GameObject.Find("SwitchAutoattackPanelButton").GetComponent<Button>();
 
 			selectedAutoattackPanel.SetActive(false);
+			switchActiveSkillsPanelButton.interactable = false;
 
 			HideLevelsView();
+		}
+
+		private bool classOverviewEnabled;
+		private bool skillUpgradeMode = false;
+
+		public void SwitchUpgradeMode()
+		{
+			skillUpgradeMode = !skillUpgradeMode;
+			UpdateClassOverview(true, true);
 		}
 
 		public void ShowClassOverview()
@@ -795,13 +857,157 @@ namespace Assets.scripts.Mono
 				return;
 			}
 
+			classOverviewEnabled = true;
 			classOverviewCanvas.enabled = true;
 
-			UpdateClassOverview();
+			UpdateClassOverview(true, true);
 		}
 
-		public void UpdateClassOverview(bool updateSkills=true)
+		public void UpdateClassOverview(bool updateSkills=true, bool updateStats=false)
 		{
+			upgradePointsLabel.text = "Upgrade Points: " + ((Player) data.GetOwner()).UpgradePoints;
+
+			if (skillUpgradeMode)
+			{
+				classOverviewLabel.text = "";
+				upgradeHintLabel.text = "Click any icon to upgrade it.";
+			}
+			else if (currentSkillsView == 1)
+				classOverviewLabel.text = "Selected Skills:";
+
+			if (!skillUpgradeMode)
+			{
+				upgradeHintLabel.text = "";
+			}
+
+			if (updateStats)
+			{
+				foreach (Text t in classViewStats)
+				{
+					switch (t.gameObject.name)
+					{
+						case "Level":
+							t.text = "Level " + data.level;
+							break;
+						case "XP":
+							t.text = data.GetOwner().Status.XP + " / " + GameProgressTable.GetXpForLevel(data.level + 1) + " XP";
+							break;
+						case "HP":
+							t.text = "HP " + data.visibleHp + " / " + data.visibleMaxHp;
+							break;
+						case "MoveSpeed":
+							t.text = "Move Speed " + data.moveSpeed;
+							break;
+						case "Critical Rate":
+							int rate = ((Player)data.GetOwner()).Status.CriticalRate;
+							t.text = "Critical rate: " + rate / 10 + "%";
+							break;
+						case "Critical Damage":
+							float dmg = ((Player)data.GetOwner()).Status.CriticalDamageMul;
+							t.text = "Critical damage: x" + dmg;
+							break;
+						case "Damage Output":
+							float mul = ((Player)data.GetOwner()).Status.DamageOutputMul;
+							float add = ((Player)data.GetOwner()).Status.DamageOutputAdd;
+							t.text = "Damage: x" + mul + " +" + add + "";
+							break;
+						case "Shield":
+							float shield = ((Player)data.GetOwner()).Status.Shield;
+							t.text = "Shield " + (int)(shield * 100 - 100) + "%";
+							break;
+						case "DNA": //TODO add to inventory
+							t.text = ((Player)data.GetOwner()).DnaPoints + "p";
+							break;
+					}
+				}
+
+				UpdateStatsInfo();
+
+				foreach (Transform g in classViewStatsUpgrades.transform)
+				{
+					Destroy(g.gameObject);
+				}
+
+				Inventory inv = data.GetOwner().Inventory;
+
+				for (int i = 0; i < BASESTAT_UPGRADES_SIZE; i++)
+				{
+					GameObject newIcon = Instantiate(iconTemplate);
+					newIcon.name = "BaseSlot_" + (i + 1);
+					newIcon.transform.parent = classViewStatsUpgrades.transform;
+					newIcon.transform.localScale = new Vector3(1, 1, 1);
+
+					GameObject child = newIcon.transform.GetChild(0).gameObject;
+
+					EventTrigger trigger = child.AddComponent<EventTrigger>();
+
+					int tempI = i;
+
+					EventTrigger.Entry entry;
+
+					if (skillUpgradeMode)
+					{
+						entry = new EventTrigger.Entry();
+						entry.eventID = EventTriggerType.PointerDown;
+						entry.callback.AddListener(delegate { OnClassViewUpgradeClick(tempI, newIcon); });
+						trigger.triggers.Add(entry);
+					}
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerEnter;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, false, 2, classOverviewCanvas.gameObject); });
+					trigger.triggers.Add(entry);
+
+					entry = new EventTrigger.Entry();
+					entry.eventID = EventTriggerType.PointerExit;
+					entry.callback.AddListener(delegate { OnUpgradeHover(newIcon, true, 2, classOverviewCanvas.gameObject); });
+					trigger.triggers.Add(entry);
+
+					Image img = newIcon.transform.GetChild(0).GetComponent<Image>();
+
+					EquippableItem item = null;
+
+					try
+					{
+						item = inv.BasestatUpgrades[i];
+						img.sprite = item.MainSprite;
+					}
+					catch (Exception)
+					{
+						img.sprite = iconEmptySprite;
+						return;
+					}
+
+					if (skillUpgradeMode)
+					{
+						GameObject label = Instantiate(skillSlotLabelTemplate);
+						label.transform.parent = newIcon.transform;
+						label.transform.localPosition = new Vector3(0, -50, 0);
+						label.transform.localScale = new Vector3(1, 1, 1);
+
+						int price = ((Player) data.GetOwner()).GetStatUpgradePrice(item.Level);
+						if (((Player) data.GetOwner()).UpgradePoints >= price)
+						{
+							label.GetComponent<Text>().color = Color.green;
+						}
+						else
+						{
+							label.GetComponent<Text>().color = Color.red;
+						}
+
+						label.GetComponent<Text>().text = "Price " + price;
+
+						label = Instantiate(skillSlotLabelTemplate);
+						label.transform.parent = newIcon.transform;
+						label.transform.localPosition = new Vector3(0, 47, 0);
+						label.transform.localScale = new Vector3(1, 1, 1);
+
+						label.GetComponent<Text>().color = Color.yellow;
+						label.GetComponent<Text>().text = "Level " + item.Level;
+					}
+				}
+			}
+
 			if (updateSkills)
 			{
 				foreach (Transform g in selectedSkillsPanel.transform)
@@ -814,60 +1020,97 @@ namespace Assets.scripts.Mono
 					Destroy(g.gameObject);
 				}
 
+				foreach (Transform g in selectedSkillsPanel.transform.parent.transform)
+				{
+					if(g.name.StartsWith("SkillLabel"))
+						Destroy(g.gameObject);
+				}
+
+				List<GameObject> temp = new List<GameObject>();
+
 				if (currentSkillsView == 1)
 				{
 					SkillSet playerSkills = data.GetOwner().Skills;
 
 					int count = 0;
 
-					foreach (Skill sk in playerSkills.Skills)
+					if (skillUpgradeMode)
 					{
-						if (sk == null)
-							continue;
+						for (int i = count; i < 5; i++)
+						{
+							GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
+							itemObject.name = "EmptySkillSlot_" + i;
+							itemObject.transform.parent = selectedSkillsPanel.transform;
+							itemObject.transform.localPosition = new Vector3(0, 0);
+							itemObject.transform.localScale = new Vector3(1, 1);
 
-						Skill skTemp = sk;
+							EventTrigger trigger = itemObject.AddComponent<EventTrigger>();
 
-						count++;
+							int tt = i;
 
-						GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
-						itemObject.name = "ActiveSkillSlot_" + sk.GetName();
-						itemObject.transform.parent = selectedSkillsPanel.transform;
-						itemObject.transform.localPosition = new Vector3(0, 0);
-						itemObject.transform.localScale = new Vector3(1, 1);
+							EventTrigger.Entry entry = new EventTrigger.Entry();
+							entry.eventID = EventTriggerType.PointerDown;
+							entry.callback.AddListener(delegate { TrySlotUpgrade(tt); });
+							trigger.triggers.Add(entry);
 
-						Image img = itemObject.GetComponent<Image>();
-						img.sprite = sk.Icon;
-
-						EventTrigger trigger = itemObject.AddComponent<EventTrigger>();
-
-						EventTrigger.Entry entry = new EventTrigger.Entry();
-						entry.eventID = EventTriggerType.PointerDown;
-						entry.callback.AddListener(delegate { OnSkillClick(itemObject, skTemp); });
-						trigger.triggers.Add(entry);
-
-						entry = new EventTrigger.Entry();
-						entry.eventID = EventTriggerType.PointerEnter;
-						entry.callback.AddListener(delegate { OnSkillHover(itemObject, false, skTemp); });
-						trigger.triggers.Add(entry);
-
-						entry = new EventTrigger.Entry();
-						entry.eventID = EventTriggerType.PointerExit;
-						entry.callback.AddListener(delegate { OnSkillHover(itemObject, true, skTemp); });
-						trigger.triggers.Add(entry);
+							temp.Add(itemObject);
+						}
 					}
-
-					for (int i = count; i < 5; i++)
+					else
 					{
-						GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
-						itemObject.name = "EmptySkillSlot_" + i;
-						itemObject.transform.parent = selectedSkillsPanel.transform;
-						itemObject.transform.localPosition = new Vector3(0, 0);
-						itemObject.transform.localScale = new Vector3(1, 1);
+						foreach (Skill sk in playerSkills.Skills)
+						{
+							if (sk == null)
+								continue;
+
+							Skill skTemp = sk;
+
+							count++;
+
+							GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
+							itemObject.name = "ActiveSkillSlot_" + sk.GetName();
+							itemObject.transform.parent = selectedSkillsPanel.transform;
+							itemObject.transform.localPosition = new Vector3(0, 0);
+							itemObject.transform.localScale = new Vector3(1, 1);
+
+							Image img = itemObject.GetComponent<Image>();
+							img.sprite = sk.Icon;
+
+							EventTrigger trigger = itemObject.AddComponent<EventTrigger>();
+
+							EventTrigger.Entry entry = new EventTrigger.Entry();
+							entry.eventID = EventTriggerType.PointerDown;
+							entry.callback.AddListener(delegate { OnSkillClick(itemObject, skTemp); });
+							trigger.triggers.Add(entry);
+
+							entry = new EventTrigger.Entry();
+							entry.eventID = EventTriggerType.PointerEnter;
+							entry.callback.AddListener(delegate { OnSkillHover(itemObject, false, skTemp); });
+							trigger.triggers.Add(entry);
+
+							entry = new EventTrigger.Entry();
+							entry.eventID = EventTriggerType.PointerExit;
+							entry.callback.AddListener(delegate { OnSkillHover(itemObject, true, skTemp); });
+							trigger.triggers.Add(entry);
+
+							temp.Add(itemObject);
+						}
+
+						for (int i = count; i < 5; i++)
+						{
+							GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;
+							itemObject.name = "EmptySkillSlot_" + i;
+							itemObject.transform.parent = selectedSkillsPanel.transform;
+							itemObject.transform.localPosition = new Vector3(0, 0);
+							itemObject.transform.localScale = new Vector3(1, 1);
+
+							temp.Add(itemObject);
+						}
 					}
 				}
 				else if (currentSkillsView == 2)
 				{
-					ActiveSkill currentAutoattack = ((Player) data.GetOwner()).MeleeSkill;
+					ActiveSkill currentAutoattack = ((Player)data.GetOwner()).MeleeSkill;
 					GameObject mainPanel = selectedAutoattackPanel.transform.GetChild(0).gameObject;
 					foreach (Transform child in mainPanel.transform)
 					{
@@ -897,11 +1140,11 @@ namespace Assets.scripts.Mono
 
 				if (currentSkillsView == 1)
 				{
-					skillData = ((Player) data.GetOwner()).AvailableSkills;
+					skillData = ((Player)data.GetOwner()).AvailableSkills;
 				}
 				else if (currentSkillsView == 2)
 				{
-					skillData = ((Player) data.GetOwner()).AvailableAutoattacks;
+					skillData = ((Player)data.GetOwner()).AvailableAutoattacks;
 				}
 				else return;
 
@@ -942,11 +1185,82 @@ namespace Assets.scripts.Mono
 					entry.callback.AddListener(delegate { OnSkillHover(itemObject, true, skTemp); });
 					trigger.triggers.Add(entry);
 				}
+
+				if (currentSkillsView == 1)
+				{
+					Player player = data.GetOwner() as Player;
+
+					int i = 0;
+					foreach(GameObject obj in temp)
+					{
+						GameObject label = Instantiate(skillSlotLabelTemplate);
+						label.transform.parent = obj.transform;
+						label.transform.localPosition = new Vector3(0, -50, 0);
+						label.transform.localScale = new Vector3(1, 1, 1);
+
+						if (skillUpgradeMode)
+						{
+							int price = player.GetSlotUpgradePrice(i, player.SkillSlotLevels[i] + 1);
+
+							if (((Player)data.GetOwner()).UpgradePoints >= price)
+							{
+								label.GetComponent<Text>().color = Color.green;
+							}
+							else
+							{
+								label.GetComponent<Text>().color = Color.red;
+							}
+
+							label.GetComponent<Text>().text = "Price " + price;
+
+							GameObject label2 = Instantiate(skillSlotLabelTemplate);
+							label2.transform.parent = obj.transform;
+							label2.transform.localPosition = new Vector3(0, 47, 0);
+							label2.transform.localScale = new Vector3(1, 1, 1);
+
+							label2.GetComponent<Text>().color = Color.yellow;
+							label2.GetComponent<Text>().text = "Level " + player.SkillSlotLevels[i];
+						}
+						else
+						{
+							label.GetComponent<Text>().text = "Slot Lv" + player.SkillSlotLevels[i];
+						}
+
+						i++;
+					}
+				}
+			}
+		}
+
+		public void OnClassViewUpgradeClick(int slotId, GameObject slotObject)
+		{
+			Player player = ((Player) data.GetOwner());
+
+			Inventory inv = player.Inventory;
+
+			EquippableItem item = inv.BasestatUpgrades[slotId];
+
+			int price = player.GetStatUpgradePrice(item.Level);
+
+			if (player.UpgradePoints >= price)
+			{
+				player.UpgradePoints -= price;
+				item.AddUpgradeProgress(null);
+				player.UpdateStats();
+
+				UpdateClassOverview(true, true);
 			}
 		}
 
 		public void HideClassOverview()
 		{
+			classOverviewEnabled = false;
+
+			foreach (Transform g in classViewStatsUpgrades.transform)
+			{
+				Destroy(g.gameObject);
+			}
+
 			foreach (Transform g in selectedSkillsPanel.transform)
 			{
 				Destroy(g.gameObject);
@@ -955,6 +1269,12 @@ namespace Assets.scripts.Mono
 			foreach (Transform g in availableSkillsPanelContent.transform)
 			{
 				Destroy(g.gameObject);
+			}
+
+			foreach (Transform g in selectedSkillsPanel.transform.parent.transform)
+			{
+				if (g.name.StartsWith("SkillLabel"))
+					Destroy(g.gameObject);
 			}
 
 			classOverviewCanvas.enabled = false;
@@ -968,6 +1288,8 @@ namespace Assets.scripts.Mono
 				selectedSkillsPanel.SetActive(true);
 				selectedAutoattackPanel.SetActive(false);
 				classOverviewLabel.text = "Selected Skills";
+				switchActiveSkillsPanelButton.interactable = false;
+				switchAutottackPanelButton.interactable = true;
 				UpdateClassOverview(true);
 			}
 			else if (val == 2)
@@ -976,7 +1298,19 @@ namespace Assets.scripts.Mono
 				selectedSkillsPanel.SetActive(false);
 				selectedAutoattackPanel.SetActive(true);
 				classOverviewLabel.text = "";
+				switchActiveSkillsPanelButton.interactable = true;
+				switchAutottackPanelButton.interactable = false;
 				UpdateClassOverview(true);
+			}
+		}
+
+		public void TrySlotUpgrade(int slot)
+		{
+			if (skillUpgradeMode)
+			{
+				((Player) data.GetOwner()).LevelUpSlot(slot);
+				UpdateClassOverview(true, true);
+				return;
 			}
 		}
 
@@ -1858,18 +2192,23 @@ namespace Assets.scripts.Mono
 
 			int count = player.Skills.Skills.Count;
 
+			if (count == 0)
+				return;
+
 			foreach (Image img in skillProgresses)
 			{
 				img.fillAmount = 0;
 			}
 
 			skillButtons = new GameObject[5];
-			timers = new float[count, count];
+			timers = new float[count, 2];
 			skillProgresses = new Image[count];
 
 			for (int i = 0; i < count; i++)
 			{
 				Skill sk = player.Skills.GetSkill(i);
+
+				Debug.Log(count);
 
 				timers[i, 0] = 1;
 				timers[i, 1] = -1;
@@ -2012,7 +2351,7 @@ namespace Assets.scripts.Mono
 			return u;
 		}
 
-		public void OnUpgradeHover(GameObject slot, bool exit, int slotType)
+		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null)
 		{
 			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
 
@@ -2066,9 +2405,12 @@ namespace Assets.scripts.Mono
 				if (currentTooltipObject != null)
 					Destroy(currentTooltipObject);
 
+				if (targetPanel == null)
+					targetPanel = inventoryPanel;
+
 				highlightedObject = slot;
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
-				currentTooltipObject.transform.parent = inventoryPanel.transform;
+				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
 
 				string name = u.VisibleName;

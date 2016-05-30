@@ -23,9 +23,12 @@ namespace Assets.scripts.Actor
 	{
 		public ClassTemplate Template { get; set; }
 		public int DnaPoints { get; private set; }
+		public int UpgradePoints { get; set; }
 
 		public List<Skill> AvailableSkills { get; private set; }
-		public List<Skill> AvailableAutoattacks { get; private set; } 
+		public List<Skill> AvailableAutoattacks { get; private set; }
+
+		public Dictionary<int, int> SkillSlotLevels { get; private set; } 
 
 		public Player(string name, PlayerData dataObject, ClassTemplate template) : base(name)
 		{
@@ -80,6 +83,13 @@ namespace Assets.scripts.Actor
 		{
 			AvailableSkills = new List<Skill>();
 			AvailableAutoattacks = new List<Skill>();
+			SkillSlotLevels = new Dictionary<int, int>();
+			UpgradePoints = 100;
+
+			for (int ii = 0; ii < 9; ii++)
+			{
+				SkillSlotLevels.Add(ii, 1);
+			}
 
 			//TODO temp reseni, prida vsechny skilly
 			foreach (SkillId id in Enum.GetValues(typeof(SkillId)))
@@ -101,7 +111,7 @@ namespace Assets.scripts.Actor
 				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
 
-				newSkill.IsLocked = true;
+				//newSkill.IsLocked = true;
 
 				Skills.AddSkill(newSkill);
 
@@ -133,10 +143,40 @@ namespace Assets.scripts.Actor
 			UpdateStats();
 		}
 
+		public int GetSlotUpgradePrice(int slot, int level)
+		{
+			return 10;
+		}
+
+		public int GetStatUpgradePrice(int level)
+		{
+			return 10;
+		}
+
+		public void LevelUpSlot(int slot)
+		{
+			int val = SkillSlotLevels[slot];
+			int price = GetSlotUpgradePrice(slot, val);
+
+			if (UpgradePoints >= price)
+			{
+				UpgradePoints -= price;
+				val ++;
+				SkillSlotLevels[slot] = val;
+			}
+		}
+
 		public void SwapSkills(Skill firstSkill, string targetSkillName)
 		{
 			int fromIndex = DeactivateSkill(firstSkill.GetName());
 			int toIndex = DeactivateSkill(targetSkillName);
+
+			int slotLevel = SkillSlotLevels[toIndex];
+			if (firstSkill.RequiredSlotLevel > slotLevel)
+			{
+				Message("This skill requires slot of level " + firstSkill.RequiredSlotLevel + ".");
+				return;
+			}
 
 			ActivateSkill(firstSkill, toIndex);
 			Skill sk = SkillTable.Instance.GetSkill((SkillId) Enum.Parse(typeof (SkillId), targetSkillName));
@@ -171,6 +211,35 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		public void TutorialActivateSkill(int level)
+		{
+			Skill sk = null;
+			switch (level)
+			{
+				case 0:
+					sk = SkillTable.Instance.GetSkill(SkillId.SneezeShot);
+					break;
+				case 1:
+					sk = SkillTable.Instance.GetSkill(SkillId.Dodge);
+					break;
+				case 2:
+					sk = SkillTable.Instance.GetSkill(SkillId.ColdPush);
+					break;
+				case 3:
+					sk = SkillTable.Instance.GetSkill(SkillId.CellFury);
+					break;
+				case 4:
+					sk = SkillTable.Instance.GetSkill(SkillId.RhinoBeam);
+					break;
+			}
+
+			if (sk != null)
+			{
+				ActivateSkill(sk, level);
+				GetData().ui.UpdateSkillTimers();
+			}
+		}
+
 		public void ActivateSkill(Skill skill, int targetSlot)
 		{
 			if (Skills.HasSkill(skill.GetSkillId()))
@@ -178,6 +247,13 @@ namespace Assets.scripts.Actor
 
 			if (targetSlot <= 5 && targetSlot >= 0)
 			{
+				int slotLevel = SkillSlotLevels[targetSlot];
+				if (skill.RequiredSlotLevel > slotLevel)
+				{
+					Message("This skill requires slot of level " + skill.RequiredSlotLevel + ".");
+					return;
+				}
+
 				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
 				newSkill.SetOwner(this);
 				newSkill.IsLocked = false;

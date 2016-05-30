@@ -53,6 +53,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Common Cold Melee";
 		}
 
+		public override string GetDescription()
+		{
+			return "Fires a weak projectile.";
+		}
+
 		public override Skill Instantiate()
 		{
 			return new CommonColdAutoattack();

@@ -135,7 +135,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 		{
 			if (conquered)
 			{
-				player.UnlockSkill(1, true);
+				player.TutorialActivateSkill(1);
 				conquered = false;
 
 				Skill sk = (ActiveSkill) player.Skills.GetSkill(1);

@@ -35,6 +35,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			updateFrequency = 0.1f;
 
 			AvailableToPlayer = true;
+			RequiredSlotLevel = 2;
 		}
 
 		public override SkillId GetSkillId()

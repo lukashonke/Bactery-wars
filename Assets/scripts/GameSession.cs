@@ -11,13 +11,13 @@ namespace Assets.scripts
 		public static string difficulty = "Easy";
 		public static string gameType = "Normal";
 		public static string profileName = "Lukas";
-		public static bool skipTutorial = true;
+		public static bool skipTutorial = false;
 
 
 		public static bool repairMap = true;
 
-		public static bool arenaMode = true;
+		public static bool arenaMode = false;
 
-		public static bool testMode = true;
+		public static bool testMode = false;
 	}
 }

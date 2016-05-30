@@ -36,6 +36,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			updateFrequency = 0.01f;
 			requireConfirm = true;
+
+			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()

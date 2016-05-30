@@ -71,7 +71,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public void PostInit()
 		{
-			player.UnlockSkill(0, false);
+			player.TutorialActivateSkill(0);
 
 			bool noTutorial = WorldHolder.instance.skipTutorial;
 
@@ -79,7 +79,7 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				for (int i = 1; i < player.Skills.Skills.Count; i++)
 				{
-					player.UnlockSkill(i, false);
+					player.TutorialActivateSkill(i-1);
 				}
 
 				player.SetLevel(2);
