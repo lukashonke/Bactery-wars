@@ -26,7 +26,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			stunDuration = 1.5f;
 
-			range = 10;
+			range = 8;
 
 			AvailableToPlayer = true;
 		}
@@ -53,7 +53,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectPull(pushbackForce), new EffectStun(stunDuration) };
+			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(stunDuration) };
 		}
 
 		public override void InitTraits()
@@ -122,13 +122,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 			foreach (RaycastHit2D h in hits)
 			{
 				Character ch = h.transform.gameObject.GetChar();
-				if (ch == null || !Owner.CanAttack(ch))
+				if (ch == null || !Owner.CanAttack(ch) || Utils.DistanceSqr(GetPlayerData().GetShootingPosition().transform.position, h.collider.gameObject.transform.position) > (range * range))
 					continue;
 
 				if(Utils.IsInCone(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), h.transform.gameObject, angle, range))
 					ApplyEffects(Owner, h.transform.gameObject);
 			}
-
 
 			//TOOD here
 
