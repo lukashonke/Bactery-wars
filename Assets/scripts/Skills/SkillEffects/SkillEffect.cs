@@ -15,6 +15,7 @@ namespace Assets.scripts.Skills.SkillEffects
 	{
 		public SkillId SourceSkill { get; set; }
 		public Character Source { get; set; }
+		public Skill SourceSkillObject { get; set; }
 
 		public float lastUpdateTime;
 

@@ -129,6 +129,7 @@ namespace Assets.scripts.Skills
 
 			ef.Source = source;
 			ef.SourceSkill = GetSkillId();
+			ef.SourceSkillObject = this;
 
 			if (!allowStackingSameEffect && !(ef is EffectDamage))
 			{
@@ -136,8 +137,11 @@ namespace Assets.scripts.Skills
 
 				if (targetCh != null && targetCh.HasEffectAlready(ef))
 				{
-					targetCh.ProlongeEffectDuration(ef);
-					return;
+					SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+
+					if(oldEf != null)
+						targetCh.RemoveEffect(oldEf);
+					else return;
 				}
 			}
 
@@ -164,6 +168,7 @@ namespace Assets.scripts.Skills
 				{
 					ef.Source = source;
 					ef.SourceSkill = GetSkillId();
+					ef.SourceSkillObject = this;
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
@@ -171,8 +176,11 @@ namespace Assets.scripts.Skills
 
 						if (targetCh != null && targetCh.HasEffectAlready(ef))
 						{
-							targetCh.ProlongeEffectDuration(ef);
-							continue;
+							SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+
+							if (oldEf != null)
+								targetCh.RemoveEffect(oldEf);
+							else continue;
 						}
 					}
 
@@ -191,12 +199,19 @@ namespace Assets.scripts.Skills
 					{
 						ef.Source = source;
 						ef.SourceSkill = GetSkillId();
+						ef.SourceSkillObject = this;
 
 						if (!allowStackingSameEffect && !(ef is EffectDamage))
 						{
 							Character targetCh = target.GetChar();
 							if (targetCh != null && targetCh.HasEffectAlready(ef))
-								continue;
+							{
+								SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+
+								if (oldEf != null)
+									targetCh.RemoveEffect(oldEf);
+								else continue;
+							}
 						}
 
 						ef.ApplyEffect(source, target);
@@ -211,13 +226,20 @@ namespace Assets.scripts.Skills
 				{
 					ef.Source = source;
 					ef.SourceSkill = GetSkillId();
+					ef.SourceSkillObject = this;
 
 					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
 						Character targetCh = target.GetChar();
 
 						if (targetCh != null && targetCh.HasEffectAlready(ef))
-							continue;
+						{
+							SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+
+							if (oldEf != null)
+								targetCh.RemoveEffect(oldEf);
+							else continue;
+						}
 					}
 
 					ef.ApplyEffect(source, target);

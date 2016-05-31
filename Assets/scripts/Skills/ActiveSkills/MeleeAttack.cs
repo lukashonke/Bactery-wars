@@ -30,7 +30,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			resetMoveTarget = false; 
 
 			range = 4;
-			AvailableToPlayerAsAutoattack = true;
 		}
 
 		public override SkillId GetSkillId()

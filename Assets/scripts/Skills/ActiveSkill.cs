@@ -764,6 +764,13 @@ namespace Assets.scripts.Skills
 			return o;
 		}
 
+		public GameObject CreateParticleEffectOnTarget(GameObject target, string particleObjectName)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(GetName(), particleObjectName, false, target.transform.position);
+			o.transform.parent = target.transform;
+			return o;
+		}
+
 		/// <summary>
 		/// Updates the mouseDirection from GetOwnerData().Body
 		/// </summary>
@@ -800,7 +807,7 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Starts or unpauses obj's particle system
 		/// </summary>
-		protected void StartParticleEffect(GameObject obj)
+		public void StartParticleEffect(GameObject obj)
 		{
 			try
 			{
@@ -820,7 +827,7 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Pauses the emmission of the particles 
 		/// </summary>
-		protected void PauseParticleEffect(GameObject obj)
+		public void PauseParticleEffect(GameObject obj)
 		{
 			try
 			{
@@ -838,7 +845,7 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// Deletes the particle effect (change is permanent! - cannot be restarted, need to call CreateParticleEffect() again
 		/// </summary>
-		protected void DeleteParticleEffect(GameObject obj)
+		public void DeleteParticleEffect(GameObject obj)
 		{
 			Object.Destroy(obj);
 		}
@@ -846,7 +853,7 @@ namespace Assets.scripts.Skills
 		/// <summary>
 		/// After delay, deletes the particle effect (change is permanent - cannot be restarted, need to call CreateParticleEffect() again
 		/// </summary>
-		protected void DeleteParticleEffect(GameObject obj, float delay)
+		public void DeleteParticleEffect(GameObject obj, float delay)
 		{
 			if(obj != null)
 			Object.Destroy(obj, delay);

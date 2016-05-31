@@ -16,6 +16,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		private int damage;
 		private bool crit;
 
+		public string effectName = null;
+
 		public EffectDamageOverTime(int damage, int count, float period, bool crit=false)
 		{
 			this.damage = damage;
@@ -37,6 +39,16 @@ namespace Assets.scripts.Skills.SkillEffects
 			ApplyDmg();
 
 			AddToTarget(targetCh, 0);
+
+			if (effectName != null && SourceSkillObject != null && SourceSkillObject is ActiveSkill)
+			{
+				GameObject effect = ((ActiveSkill) SourceSkillObject).CreateParticleEffectOnTarget(target, effectName);
+				if (effect == null)
+					return;
+
+				((ActiveSkill)SourceSkillObject).StartParticleEffect(effect);
+				((ActiveSkill)SourceSkillObject).DeleteParticleEffect(effect, count*period+1.0f);
+			}
 		}
 
 		private void ApplyDmg()
