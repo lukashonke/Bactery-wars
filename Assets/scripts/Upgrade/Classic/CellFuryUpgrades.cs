@@ -77,7 +77,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
 		{
-			if (sk.GetSkillId() == SkillId.CommonColdAutoattack)
+			if (sk.GetSkillId() == SkillId.CellShot)
 			{
 				if (sk.Owner.HasEffectOfSkill(SkillId.CellFury))
 				{
@@ -284,7 +284,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void OnGiveDamage(Character target, int damage, SkillId skillId)
 		{
-			if (target != null && skillId == SkillId.CommonColdAutoattack && damage > 0)
+			if (target != null && skillId == SkillId.CellShot && damage > 0)
 			{
 				if (Owner.HasEffectOfSkill(SkillId.CellFury))
 				{

@@ -21,6 +21,7 @@
 			 	<baseDamage>10</baseDamage>
 			</Projectile>
 		</modify_skills>
+		
 	</monster>
 
 	<monster name="Micocell">

@@ -58,7 +58,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(10),  };
+			return new SkillEffect[] { new EffectDamage(10, 0),  };
 		}
 
 		public override void InitTraits()

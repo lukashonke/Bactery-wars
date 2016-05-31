@@ -496,6 +496,20 @@ namespace Assets.scripts.Actor
 			return false;
 		}
 
+		public SkillEffect GetCopyEffect(SkillEffect ef)
+		{
+			if (ef.Source == null)
+				return null;
+
+			foreach (SkillEffect e in ActiveEffects)
+			{
+				if (ef.GetType().Name.Equals(e.GetType().Name) && ef.Source.Equals(e.Source))
+					return e;
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		/// Returns true if the parameter skill has any skilleffects active on this character
 		/// </summary>
@@ -726,7 +740,7 @@ namespace Assets.scripts.Actor
 		/// <summary>
 		/// Calculate damage done to the target 
 		/// </summary>
-		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit)
+		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit, int critAddChance=0)
 		{
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
 			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
@@ -742,7 +756,7 @@ namespace Assets.scripts.Actor
 				}
 			}
 
-			bool crit = canCrit && Random.Range(1, 1000) <= critRate;
+			bool crit = canCrit && Random.Range(1, 1000) <= (critRate+(critAddChance*10));
 
 			if (crit)
 			{
@@ -817,7 +831,7 @@ namespace Assets.scripts.Actor
 			if (this is Player)
 			{
 				if (wasCrit)
-					((Player)this).GetData().ui.ObjectMessage(target.GetData().GetBody(), "*crit* " + damage, Color.green);
+					((Player)this).GetData().ui.ObjectMessage(target.GetData().GetBody(), "crit! " + damage, Color.yellow);
 				else
 					((Player)this).GetData().ui.DamageMessage(target.GetData().GetBody(), damage, Color.green);
 			}

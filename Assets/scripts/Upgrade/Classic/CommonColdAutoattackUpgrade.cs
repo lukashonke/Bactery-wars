@@ -27,7 +27,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -36,7 +36,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -69,7 +69,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -78,7 +78,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -112,7 +112,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -123,7 +123,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -157,7 +157,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -167,7 +167,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -203,7 +203,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -216,7 +216,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -253,7 +253,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -266,7 +266,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -303,7 +303,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -316,7 +316,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -350,7 +350,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -360,7 +360,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -394,7 +394,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -404,7 +404,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -435,7 +435,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -444,7 +444,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -474,7 +474,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -483,7 +483,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -518,7 +518,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -531,7 +531,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -565,7 +565,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -578,7 +578,7 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
 		{
-			CommonColdAutoattack skill = melee as CommonColdAutoattack;
+			CellShot skill = melee as CellShot;
 			if (skill == null)
 				return;
 
@@ -615,9 +615,9 @@ namespace Assets.scripts.Upgrade.Classic
 
 		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
 		{
-			if (sk.GetSkillId() == SkillId.CommonColdAutoattack)
+			if (sk.GetSkillId() == SkillId.CellShot)
 			{
-				CommonColdAutoattack skill = sk as CommonColdAutoattack;
+				CellShot skill = sk as CellShot;
 				
 				SkillEffect[] newEffects = new SkillEffect[1];
 				newEffects[0] = new EffectSlow((AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) / 100f), AddValueByLevel(DURATION, DURATION_LEVEL_ADD));

@@ -35,6 +35,7 @@ namespace Assets.scripts
 
 			if ((Vector2.Angle(direction, rayDirection)) <= angle * 0.5f)
 			{
+				Debug.Log("angle is " + (Vector2.Angle(direction, rayDirection)));
 				RaycastHit2D hit = Physics2D.Raycast(source.transform.position, rayDirection, range);
 
 				if (hit)

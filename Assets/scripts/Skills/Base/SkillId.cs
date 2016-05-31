@@ -19,10 +19,16 @@ namespace Assets.scripts.Skills.Base
 		AuraAllies,
 		Projectile,
 		BlankProjectile,
+		Smash,
 
 		// player skills
-		CommonColdAutoattack,
+		CellShot,
+		CellSmash,
+		CellJump,
+
 		SneezeShot,
+		CoughBullet,
+		PoisonShot,
 		Dodge,
 		CellFury,
 		MucusWarrior,

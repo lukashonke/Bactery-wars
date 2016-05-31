@@ -83,6 +83,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
+			if (castTime > 0)
+				CreateCastingEffect(true, "SkillTemplate");
 			return true;
 		}
 

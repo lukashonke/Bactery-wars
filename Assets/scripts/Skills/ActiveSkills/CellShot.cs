@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class CommonColdAutoattack : ActiveSkill
+	public class CellShot : ActiveSkill
 	{
 		private GameObject target;
 
@@ -31,7 +31,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 		private int dsCounter = 0;
 		private int shotgunCounter = 0;
 
-		public CommonColdAutoattack()
+		public int criticalRate = 10;
+
+		public CellShot()
 		{
 			castTime = 0;
 			reuse = 1f;
@@ -45,27 +47,27 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.CommonColdAutoattack;
+			return SkillId.CellShot;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Common Cold Melee";
+			return "Cell Shot";
 		}
 
 		public override string GetDescription()
 		{
-			return "Fires a weak projectile.";
+			return "Autoattack that fires a short-range projectile that deals 10 damage with 10% critical rate.";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new CommonColdAutoattack();
+			return new CellShot();
 		}
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(baseDamage, 2) };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 2, criticalRate) };
 		}
 
 		public override void InitTraits()
