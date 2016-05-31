@@ -12,23 +12,23 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class Dodge : ActiveSkill
+	public class Charge : ActiveSkill
 	{
 		public int jumpSpeed = 50;
 
-		public int hitEnemyDamage = 0;
+		public int hitEnemyDamage = 10;
 
 		public int firstEnemyHitDamage = 0;
 		private bool firstEnemyHit;
 		public bool spreadshotOnLand = false;
 		public int spreadshotDamage = 0;
 
-		public bool penetrateThroughTargets = true;
+		public bool penetrateThroughTargets = false;
 
-		public Dodge()
+		public Charge()
 		{
 			castTime = 0f;
-			reuse = 5f;
+			reuse = 7f;
 			coolDown = 0.3f;
 			requireConfirm = true;
 			breaksMouseMovement = false;
@@ -42,22 +42,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.Dodge;
+			return SkillId.Charge;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "Cold Dodge";
+			return "Charge";
 		}
 
 		public override string GetDescription()
 		{
-			return "Makes the player jump in the selected direction, stops on collision.";
+			return "Charges the player forward, damages and pushes away the first enemy you hit.";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new Dodge();
+			return new Charge();
 		}
 
 		public override SkillEffect[] CreateEffects(int param)
@@ -67,19 +67,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (hitEnemyDamage > 0)
 				count ++;
 
-			//SkillEffect[] effects = new SkillEffect[count];
-			//effects[0] = new EffectPushaway(50);
+			SkillEffect[] effects = new SkillEffect[count];
+			effects[0] = new EffectPushaway(50);
 
-			//if (hitEnemyDamage > 0)
-			//	effects[1] = new EffectDamage(hitEnemyDamage);
+			if (hitEnemyDamage > 0)
+				effects[1] = new EffectDamage(hitEnemyDamage);
 
-			//return effects;
-			return null;
+			return effects;
 		}
 
 		public override void InitTraits()
 		{
 			AddTrait(SkillTraits.Jump);
+			AddTrait(SkillTraits.Damage);
 		}
 
 		public override bool OnCastStart()
@@ -94,11 +94,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (penetrateThroughTargets)
 			{
 				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = true;
-				//Owner.GetData().GetBody().GetComponent<Collider2D>().enabled = false;
 			}
-
-			//TODO vyresit, nefunguje tak jak ma !!
-			GetOwnerData().cancelForcedVelocityOnCollision = true;
 
 			firstEnemyHit = false;
 
@@ -115,8 +111,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		}
 
 		public override void OnAbort()
-		{
-			GetOwnerData().cancelForcedVelocityOnCollision = false;
+		{ 
 		}
 
 		public override void OnFinish()
@@ -124,10 +119,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (penetrateThroughTargets)
 			{
 				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;
-				//Owner.GetData().GetBody().GetComponent<Collider2D>().enabled = true;
 			}
-
-			GetOwnerData().cancelForcedVelocityOnCollision = false;
 
 			if (spreadshotOnLand)
 			{

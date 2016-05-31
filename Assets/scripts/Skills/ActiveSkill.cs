@@ -899,14 +899,19 @@ namespace Assets.scripts.Skills
 			}
 		}
 
-		protected void StartPlayerTargetting()
+		protected void StartPlayerTargetting(bool onlyEnemies=true)
 		{
 			GetPlayerData().TargettingActive = true;
+			GetPlayerData().SkillTargetting = true;
+			GetPlayerData().SkillTargettingEnemiesOnly = onlyEnemies;
+			GetPlayerData().SkillTargettingRange = range;
 		}
 
 		protected void StopPlayerTargetting()
 		{
 			//GetPlayerData().TargettingActive = false;
+			GetPlayerData().SkillTargetting = false;
+			GetPlayerData().SkillTargettingRange = -1;
 			GetPlayerData().HighlightTarget(GetPlayerData().Target, false);
 		}
 

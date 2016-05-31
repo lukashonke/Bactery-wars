@@ -1294,6 +1294,9 @@ namespace Assets.scripts.Mono
 			if (!doAttack)
 				range = 4;
 
+			if (GetBody() == null || target == null)
+				return;
+
 			float d = Vector3.Distance(GetBody().transform.position, target.transform.position);
 
 			if (Vector3.Distance(GetBody().transform.position, target.transform.position) < range)
@@ -1451,6 +1454,11 @@ namespace Assets.scripts.Mono
 				}
 			}
 
+			if (GetOwner().MeleeSkill != null)
+			{
+				GetOwner().MeleeSkill.OnCollision(false, coll, coll.collider);
+			}
+
 			if (pullingObject != null)
 			{
 				if (pullingObject.Equals(coll.gameObject))
@@ -1503,6 +1511,17 @@ namespace Assets.scripts.Mono
 				{
 					((ActiveSkill)sk).OnCollision(true, null, obj);
 				}
+			}
+
+			if (GetOwner().MeleeSkill != null)
+			{
+				GetOwner().MeleeSkill.OnCollision(true, null, obj);
+			}
+
+			if (forcedVelocity && cancelForcedVelocityOnCollision)
+			{
+				BreakMovement(true);
+				targetPositionWorld = GetBody().transform.position;
 			}
 		}
 

@@ -18,11 +18,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public CellJump()
 		{
 			castTime = 0f;
-			coolDown = 0f;
+			coolDown = 0.25f;
 			reuse = 2f;
 			updateFrequency = 0.1f;
 			baseDamage = 10;
-			resetMoveTarget = false; 
+			resetMoveTarget = false;
+			triggersOwnerCollision = true;
 
 			range = 5;
 			AvailableToPlayerAsAutoattack = true;
@@ -50,7 +51,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] {  };
+			return new SkillEffect[] {new EffectPushaway(40),};
 		}
 
 		public override void InitTraits()
@@ -96,6 +97,24 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
+			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
+			{
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
+				{
+					ApplyEffects(Owner, coll.gameObject);
+				}
+			}
+		}
+
+		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
+		{
+			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
+			{
+				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
+				{
+					ApplyEffects(Owner, coll.gameObject);
+				}
+			}
 		}
 
 		public override void OnAfterEnd()

@@ -453,6 +453,9 @@ namespace Assets.scripts
 
 		public static string StringWrap(string str, int width)
 		{
+			if (str == null)
+				return null;
+
 			string[] words = Explode(str, splitChars);
 
 			int curLineLength = 0;

@@ -35,6 +35,9 @@ namespace Assets.scripts.Mono
 		// animators
 		private Animator anim;
 
+		private GameObject circleTarget;
+		private GameObject currentCircleObject;
+
 		public int currentTouchAction;
 		public const int TOUCH_MOVEMENT = 1;
 		public const int TOUCH_CONFIRMINGSKILL = 2;
@@ -49,6 +52,8 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			data = GetComponent<PlayerData>();
 			ui = GetComponent<PlayerUI>();
+
+			circleTarget = Resources.Load<GameObject>("Sprite/misc/CircleTarget");
 		}
 
 		public void FixedUpdate()
@@ -441,30 +446,107 @@ namespace Assets.scripts.Mono
 					if (data.TargettingActive)
 					{
 						Vector3 temp = Camera.main.ScreenToWorldPoint(inputPosition);
-						RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
 
 						int layer;
 						Rigidbody2D rb;
 
 						bool target = false;
 
-						foreach (RaycastHit2D hit in hits)
+						if (!data.SkillTargetting)
 						{
-							layer = hit.transform.gameObject.layer;
-							// not target projectiles, environment and background
-							if (layer == 11 || layer == 8 || layer == 9)
-								continue;
-
-							if (hit.transform.gameObject.Equals(data.GetBody()))
-								continue;
-
-							rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
-
-							if (rb != null)
+							if (currentCircleObject != null)
 							{
-								data.Target = hit.transform.gameObject;
-								target = true;
-								break;
+								Destroy(currentCircleObject);
+								currentCircleObject = null;
+							}
+						}
+
+						if (data.SkillTargetting)
+						{
+							Collider2D[] hits = Physics2D.OverlapCircleAll(new Vector2(temp.x, temp.y), 2f);
+
+							if (currentCircleObject == null)
+							{
+								currentCircleObject = Instantiate(circleTarget);
+								currentCircleObject.transform.position = data.GetBody().transform.position;
+								currentCircleObject.transform.localScale = new Vector3(0.2f * data.SkillTargettingRange, 0.2f * data.SkillTargettingRange);
+							}
+
+							if (Utils.DistanceSqr(data.GetBody().transform.position, new Vector3(temp.x, temp.y)) <
+							    (data.SkillTargettingRange*data.SkillTargettingRange))
+							{
+								GameObject circleObj = Instantiate(circleTarget);
+								circleObj.transform.position = new Vector3(temp.x, temp.y, 0);
+								circleObj.transform.localScale = new Vector3(0.2f, 0.2f);
+								Destroy(circleObj, 0.05f);
+							}
+
+							float dist = 99999999;
+
+							foreach (Collider2D hit in hits)
+							{
+								layer = hit.gameObject.layer;
+								// not target projectiles, environment and background
+								if (layer == 11 || layer == 8 || layer == 9)
+									continue;
+
+								if (hit.gameObject.Equals(data.GetBody()))
+									continue;
+
+								rb = hit.gameObject.GetComponent<Rigidbody2D>();
+
+								if (rb != null)
+								{
+									Character ch = hit.gameObject.GetChar();
+
+									if (ch == null)
+										continue;
+
+									float distBetween = Utils.DistanceSqr(hit.gameObject.transform.position, new Vector3(temp.x, temp.y));
+
+									if (data.SkillTargettingRange > 0 &&
+										Utils.DistanceSqr(hit.gameObject.transform.position, data.GetBody().transform.position) > (data.SkillTargettingRange*data.SkillTargettingRange))
+										continue;
+
+									if (data.GetOwner().CanAttack(ch) && data.SkillTargettingEnemiesOnly && distBetween < dist)
+									{
+										data.Target = hit.gameObject;
+										target = true;
+										dist = distBetween;
+										//break;
+									}
+									else if (!data.GetOwner().CanAttack(ch) && !data.SkillTargettingEnemiesOnly && distBetween < dist)
+									{
+										data.Target = hit.gameObject;
+										target = true;
+										dist = distBetween;
+										//break;
+									}
+								}
+							}
+						}
+						else
+						{
+							RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(temp.x, temp.y), Vector2.zero, 0f);
+
+							foreach (RaycastHit2D hit in hits)
+							{
+								layer = hit.transform.gameObject.layer;
+								// not target projectiles, environment and background
+								if (layer == 11 || layer == 8 || layer == 9)
+									continue;
+
+								if (hit.transform.gameObject.Equals(data.GetBody()))
+									continue;
+
+								rb = hit.transform.gameObject.GetComponent<Rigidbody2D>();
+
+								if (rb != null)
+								{
+									data.Target = hit.transform.gameObject;
+									target = true;
+									break;
+								}
 							}
 						}
 

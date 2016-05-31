@@ -30,6 +30,8 @@ namespace Assets.scripts.Skills.Base
 		CoughBullet,
 		PoisonShot,
 		Dodge,
+		Charge,
+		PullTarget,
 		CellFury,
 		MucusWarrior,
 		RhinoBeam,

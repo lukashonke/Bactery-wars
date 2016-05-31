@@ -1418,6 +1418,8 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(skillTooltipObject);
 				currentTooltipObject.transform.parent = classOverviewCanvas.gameObject.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				//currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
+				UpdatePivotForTooltip(currentTooltipObject);
 
 				foreach (Transform child in currentTooltipObject.transform)
 				{
@@ -1429,7 +1431,7 @@ namespace Assets.scripts.Mono
 					}
 					else if (child.name.Equals("Description"))
 					{
-						child.GetComponent<Text>().text = description;
+						child.GetComponent<Text>().text = Utils.StringWrap(description, 40);
 						continue;
 					}
 					else if (child.name.Equals("BaseInfo"))
@@ -1977,6 +1979,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(levelTooltipObject);
 				currentTooltipObject.transform.parent = levelsViewPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				UpdatePivotForTooltip(currentTooltipObject);
 
 				Color titleColor = new Color();
 				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
@@ -2023,12 +2026,12 @@ namespace Assets.scripts.Mono
 					}*/
 					else if (child.name.Equals("Reward"))
 					{
-						child.GetComponent<Text>().text = node.RewardDescription;
+						child.GetComponent<Text>().text = Utils.StringWrap(node.RewardDescription, 40);
 						continue;
 					}
 					else if (child.name.Equals("AdditionalInfo") && additInfo != null)
 					{
-						child.GetComponent<Text>().text = additInfo;
+						child.GetComponent<Text>().text = Utils.StringWrap(additInfo, 40);
 						continue;
 					}
 					else
@@ -2381,6 +2384,22 @@ namespace Assets.scripts.Mono
 			return u;
 		}
 
+		private void UpdatePivotForTooltip(GameObject obj)
+		{
+			RectTransform rect = obj.GetComponent<RectTransform>();
+			
+			float xPos = rect.position.x;
+			float yPos = rect.position.y;
+
+			if(xPos > Screen.width/2f)
+				rect.pivot = new Vector2(1.05f, rect.pivot.y);
+
+			if(yPos > Screen.height/2f)
+				rect.pivot = new Vector2(rect.pivot.x, 1.0f);
+			else
+				rect.pivot = new Vector2(rect.pivot.x, 0);
+		}
+
 		public void OnUpgradeHover(GameObject slot, bool exit, int slotType, GameObject targetPanel=null, bool stashMode=false, bool itemInStash=false)
 		{
 			InventoryItem u = GetUpgradeFromInventory(slot, slotType);
@@ -2411,6 +2430,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				UpdatePivotForTooltip(currentTooltipObject);
 
 				Color titleColor = new Color();
 				titleColor = new Color(86 / 255f, 71 / 255f, 49 / 255f);
@@ -2453,6 +2473,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				UpdatePivotForTooltip(currentTooltipObject);
 
 				string name = u.VisibleName;
 				string typeName = u.TypeName;

@@ -28,6 +28,10 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public bool TargettingActive { get; set; }
 
+		public bool SkillTargetting { get; set; }
+		public bool SkillTargettingEnemiesOnly { get; set; }
+		public int SkillTargettingRange { get; set; }
+
 		public bool MoveButtonDown { get; set; }
 
 
@@ -41,6 +45,9 @@ namespace Assets.scripts.Mono.ObjectData
 			base.Start();
 
 			TargettingActive = true;
+			SkillTargetting = false;
+			SkillTargettingEnemiesOnly = true;
+			SkillTargettingRange = -1;
 
 			player = GameSystem.Instance.RegisterNewPlayer(this, "Player");
 
