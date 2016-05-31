@@ -103,7 +103,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (worldLevel > 0)
 				{
-					param.levelType = MapType.GenericMonster; //TODO
+					param.levelType = MapType. PresentationLevel; //TODO
 					mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 				}
 				else

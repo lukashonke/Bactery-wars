@@ -84,7 +84,7 @@ namespace Assets.scripts.Mono.ObjectData
 
 			if(noTutorial)
 			{
-				for (int i = 1; i < player.Skills.Skills.Count; i++)
+				for (int i = 1; i < 6; i++)
 				{
 					player.TutorialActivateSkill(i-1);
 				}

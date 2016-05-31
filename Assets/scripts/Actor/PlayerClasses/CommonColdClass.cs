@@ -19,7 +19,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 
 		protected override void AddSkillsToTemplate()
 		{
-			TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile)); // the projectile test skill
+			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile)); // the projectile test skill
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.MissileProjectile)); // the projectile test skill
 																			
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.Aura)); // the projectile test skill
@@ -29,7 +29,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.RhinoBeam));
 
-			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CellJump));
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CellSmash));
 		}
 
 		public override ClassId GetClassId()

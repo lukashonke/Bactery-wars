@@ -55,6 +55,12 @@
 
 
 
+
+
+
+
+
+
 	<monster name="Nicitel">
 		<visibleName>Nicitel</visibleName>
 		<template>BasicMeleeCell</template>
@@ -144,7 +150,6 @@
 
 	<monster name="Hop">
 		<visibleName>Hopsan</visibleName>
-		<sprite>hovno</sprite>
 		<size>1</size>
 		<template>CustomCell</template>
 		<stats> 
@@ -179,7 +184,23 @@
 		</add_skills>
 	</monster>
 
-	<MaxHp>100</MaxHp> 
+	<monster name="Kaskader">
+		<visibleName>Kaskader</visibleName>
+		<size>1</size>
+		<template>RogueCell</template>
+
+		<remove_autoattack>
+			<MeleeAttack>
+			</MeleeAttack>
+		</remove_autoattack>
+		<add_skills>
+			<CollisionDamageAttack>
+
+				<add_effect name="KillSelf"/>
+				<add_effect name="AuraDamage" damage="20" randomOffset="5" radius="10.0"/>
+			</CollisionDamageAttack>
+		</add_skills>
+	</monster>
 
 	<monster name="Test">
 		<visibleName>Hopsan</visibleName>

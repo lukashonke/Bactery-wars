@@ -28,7 +28,9 @@ namespace Assets.scripts.Skills.Base
 
 		public Skill GetSkill(int order)
 		{
-			return Skills[order];
+			if(order < Skills.Count)
+				return Skills[order];
+			return null;
 		}
 
 		public Skill GetSkill(SkillId id)

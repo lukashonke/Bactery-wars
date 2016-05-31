@@ -38,6 +38,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		FindBoss,
 
 		GenericMonster,
+
+		PresentationLevel,
 	}
 
     /// <summary>
@@ -271,6 +273,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.GenericMonster:
 					levelData = new GenericMonsterLevel(this, param);
+					break;
+				case MapType.PresentationLevel:
+					levelData = new PresentationLevelData(this);
 					break;
 			}
 

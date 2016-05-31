@@ -34,7 +34,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public float penetrateChangeDamage = 0.5f;
 
 		// kdyz true, tak bude projektil automaticky navigovan k targetu
-		public bool navigateToTarget = true;
+		public bool navigateToTarget = false;
 
 		// jak rychle meni smer pri automatickem navigovani
 		public float navigateAimRate = 0.1f;

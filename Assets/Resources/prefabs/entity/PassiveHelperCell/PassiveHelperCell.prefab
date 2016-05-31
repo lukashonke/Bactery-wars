@@ -15,7 +15,7 @@ GameObject:
   - 114: {fileID: 11439252}
   - 114: {fileID: 11401748}
   - 58: {fileID: 5895428}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: PassiveHelperCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 470118}
   - 212: {fileID: 21294238}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: dmg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - 4: {fileID: 414214}
   - 199: {fileID: 19927884}
   - 198: {fileID: 19868314}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: Die Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ GameObject:
   - 4: {fileID: 469350}
   - 198: {fileID: 19864474}
   - 199: {fileID: 19964386}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: Body Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +81,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 427884}
   - 108: {fileID: 10897012}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - 4: {fileID: 400334}
   - 212: {fileID: 21218680}
   - 114: {fileID: 11427464}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: Healthbar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 455256}
-  m_Layer: 17
+  m_Layer: 0
   m_Name: Healthbar Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,6 +337,65 @@ MonoBehaviour:
   currentPercent: 0
   currentPercentCooldown: 0
   distance: 2.3
+  labelStyle:
+    m_Name: 
+    m_Normal:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Hover:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Active:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Focused:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnNormal:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnHover:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnActive:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_OnFocused:
+      m_Background: {fileID: 0}
+      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+    m_Border:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Margin:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Padding:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Overflow:
+      m_Left: 0
+      m_Right: 0
+      m_Top: 0
+      m_Bottom: 0
+    m_Font: {fileID: 0}
+    m_FontSize: 0
+    m_FontStyle: 0
+    m_Alignment: 0
+    m_WordWrap: 0
+    m_RichText: 1
+    m_TextClipping: 0
+    m_ImagePosition: 0
+    m_ContentOffset: {x: 0, y: 0}
+    m_FixedWidth: 0
+    m_FixedHeight: 0
+    m_StretchWidth: 1
+    m_StretchHeight: 0
 --- !u!114 &11439252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -374,6 +433,7 @@ MonoBehaviour:
   rotateTowardsMouse: 0
   aiType: 
   usesPathfinding: 1
+  showObjectName: 0
   minDistanceClickToMove: 0.2
   nextWaypointDistance: 3
   body: {fileID: 105476}
@@ -391,11 +451,13 @@ MonoBehaviour:
   allowMovePointChange: 0
   forcedVelocity: 0
   cancelForcedVelocityOnCollision: 0
+  cancelMovementTargetOnCollision: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
   repathRate: 0.25
   monsterId: 8
+  monsterTypeName: 
   distanceToFollowLeader: 8
 --- !u!198 &19864474
 ParticleSystem:
