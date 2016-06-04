@@ -271,7 +271,7 @@ namespace Assets.scripts.AI
 			if (Owner.Knownlist.KnownObjects.Count > 0)
 			{
 				// muze si sam vybirat cile pouze pokud nema mastera
-				if (!HasMaster())
+				//if (!HasMaster())
 				{
 					foreach (GameObject o in Owner.Knownlist.KnownObjects)
 					{
@@ -695,6 +695,11 @@ namespace Assets.scripts.AI
 						aggro[ch] = newP;
 				}
 			}
+		}
+
+		public override void RemoveAllAggro()
+		{
+			aggro.Clear();
 		}
 
 		protected virtual Character SelectMostAggroTarget()

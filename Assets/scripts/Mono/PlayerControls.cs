@@ -592,6 +592,8 @@ namespace Assets.scripts.Mono
 
 								data.MeleeInterract(data.Target, true);
 								Input.ResetInputAxes();
+
+								data.MouseClicked();
 							}
 						}
 						else

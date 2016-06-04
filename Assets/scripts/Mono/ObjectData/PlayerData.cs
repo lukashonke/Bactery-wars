@@ -312,6 +312,11 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
+		public void MouseClicked()
+		{
+			GetOwner().SyncSummonTarget();
+		}
+
 		public void OpenShopUI(ShopData data)
 		{
 			ui.ShowShopView(data);

@@ -992,6 +992,23 @@ namespace Assets.scripts.Actor
 			return true;
 		}
 
+		public void SyncSummonTarget()
+		{
+			if (HasSummons() && Data.Target != null)
+			{
+				Character charTarget = Data.Target.GetChar();
+
+				if(charTarget != null)
+				{
+					foreach (Monster m in summons)
+					{
+						m.AI.RemoveAllAggro();
+						m.AI.AddAggro(charTarget, 1000);
+					}
+				}
+			}
+		}
+
 		private void RemoveAllSummons()
 		{
 			for (int i = 0; i < summons.Count; i++)

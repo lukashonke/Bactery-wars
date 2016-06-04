@@ -26,7 +26,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
 
-			lifetime = 15f;
+			lifetime = 60f;
 			AvailableToPlayer = true;
 		}
 

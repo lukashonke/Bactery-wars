@@ -149,6 +149,7 @@ namespace Assets.scripts.AI
 		protected abstract void OnSwitchAttacking();
 		public abstract void AddAggro(Character ch, int points);
 		public abstract void RemoveAggro(Character ch, int points);
+		public abstract void RemoveAllAggro();
 		public abstract int GetAggro(Character ch);
 		public abstract void CopyAggroFrom(AbstractAI sourceAi);
 

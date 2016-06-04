@@ -15,6 +15,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		Neutrophyle_Patrol = 3,
 
 		MucusWarrior = 4,
+		SummonWarrior = 2000,
 
         Lymfocyte_melee = 5,
         Lymfocyte_ranged = 6,

@@ -38,6 +38,10 @@ namespace Assets.scripts.AI
 		{
 		}
 
+		public override void RemoveAllAggro()
+		{
+		}
+
 		public override int GetAggro(Character ch)
 		{
 			return 0;
