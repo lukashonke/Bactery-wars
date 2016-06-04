@@ -426,7 +426,7 @@ namespace Assets.scripts.AI
 				return;
 			}
 
-			if (possibleTarget.Status.IsDead)
+			if (possibleTarget.Status.IsDead || possibleTarget.GetData() == null)
 			{
 				RemoveAggro(possibleTarget);
 				return;
