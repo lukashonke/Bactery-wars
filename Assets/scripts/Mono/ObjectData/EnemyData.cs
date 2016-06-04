@@ -95,6 +95,36 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
+		public void UpdateCollider()
+		{
+			Collider2D coll = null;
+
+			coll = GetComponent<CircleCollider2D>();
+			if (coll != null)
+			{
+				bool trigger = coll.isTrigger;
+
+				Destroy(coll);
+				CircleCollider2D newColl = GetBody().AddComponent<CircleCollider2D>();
+
+				newColl.isTrigger = trigger;
+			}
+			else
+			{
+				coll = GetComponent<BoxCollider2D>();
+
+				if (coll != null)
+				{
+					bool trigger = coll.isTrigger;
+
+					Destroy(coll);
+					BoxCollider2D newColl = GetBody().AddComponent<BoxCollider2D>();
+
+					newColl.isTrigger = trigger;
+				}
+			}
+		}
+
 		public void SetSprite(string name, float scale)
 		{
 			Sprite sprite = Resources.Load<Sprite>(name);

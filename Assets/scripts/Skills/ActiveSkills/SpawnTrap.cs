@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SpawnTrap()
 		{
 			castTime = 1f;
-			reuse = 20f;
+			reuse = 10f;
 			coolDown = 0;
 			requireConfirm = false;
 			canBeCastSimultaneously = true;

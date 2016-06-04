@@ -24,9 +24,39 @@
 			 	<baseDamage>10</baseDamage>
 			 	<remove_effects/>
 			 	<add_effect name="AuraDamage" damage="20" randomOffset="5" radius="10"/>
+			 	<add_effect name="Stun" duration="3.0"/>
 			 	<add_effect name="KillSelf"/>
 			</CollisionDamageAttack>
 		</add_skills>
+		
+	</monster>
+
+	<monster name="Warrior">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<sprite>summon</sprite>
+		<size>2</size>
+		<stats> 
+			<MaxHp>65</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>18</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>15</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Melee">
+		</ai>
+
+		<add_autoattack>
+			<MeleeAttack>
+				<add_effect name="Pushaway" force="50"/>
+			</MeleeAttack>
+		</add_autoattack>
 		
 	</monster>
 

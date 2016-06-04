@@ -633,15 +633,22 @@ namespace Assets.scripts.Actor.MonsterClasses
 				OldTemplate.InitAppearanceData(m, data);
 			}
 
+			bool changed = false;
+
 			if (Sprite != null)
 			{
 				data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
+				changed = true;
 			}
 
 			if (Mass > 0)
 			{
 				data.SetMass(Mass);
+				changed = true;
 			}
+
+			if(changed)
+				data.UpdateCollider();
 		}
 
 		public virtual void OnTalkTo(Character source)

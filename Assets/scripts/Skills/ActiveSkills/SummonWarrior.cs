@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SummonWarrior()
 		{
 			castTime = 1f;
-			reuse = 20f;
+			reuse = 10f;
 			coolDown = 0;
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
@@ -81,12 +81,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private void Spawn()
 		{
-			GameObject mo = CreateSkillObject("Warrior", false, true);
+			Monster m = GameSystem.Instance.SpawnMonster("Warrior", Utils.GenerateRandomPositionOnCircle(GetOwnerData().GetBody().transform.position, 5), false, 1, 1);
+			minion = m;
 
-			mo.transform.position = Utils.GenerateRandomPositionOnCircle(GetOwnerData().GetBody().transform.position, 5);
-			mo.RegisterAsMonster();
-
-			minion = mo.GetChar() as Monster;
 			Owner.AddSummon(minion);
 
 			despawnTask = Owner.StartTask(ScheduleDespawn());
