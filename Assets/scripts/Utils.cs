@@ -374,8 +374,20 @@ namespace Assets.scripts
 
 		public static void RegisterAsMonster(this GameObject o)
 		{
-			Debug.LogError("reg mon");
 			EnemyData d = o.GetData() as EnemyData;
+
+			if (d.monsterTypeName == null || d.monsterTypeName.Length == 0)
+			{
+				try
+				{
+					d.monsterTypeName = Enum.GetName(typeof(MonsterId), d.monsterId);
+				}
+				catch (Exception e)
+				{
+					Debug.LogError("cant get name for monsterId " + d.monsterId);
+					Debug.LogError(e.StackTrace);
+				}
+			}
 			GameSystem.Instance.RegisterNewCustomMonster(d, d.monsterTypeName, false, 1, null);
 		}
 

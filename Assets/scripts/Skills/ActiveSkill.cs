@@ -619,7 +619,7 @@ namespace Assets.scripts.Skills
 
 			if (us == null)
 			{
-				Debug.LogError("a projectile doesnt have UpdateSender " + GetName() + "; adding it automatically");
+				Debug.LogWarning("a projectile doesnt have UpdateSender " + GetName() + "; adding it automatically");
 				obj.AddComponent<UpdateSender>().target = this;
 			}
 			else

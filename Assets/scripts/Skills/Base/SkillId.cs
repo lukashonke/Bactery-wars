@@ -38,6 +38,8 @@ namespace Assets.scripts.Skills.Base
 		ColdShuriken,
 		ColdPush,
 
+		SummonWarrior,
+
         SpecialSkill,
 
         // other, obsolete skills
