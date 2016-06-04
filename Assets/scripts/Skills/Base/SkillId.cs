@@ -39,6 +39,7 @@ namespace Assets.scripts.Skills.Base
 		ColdPush,
 
 		SummonWarrior,
+		SpawnTrap,
 
         SpecialSkill,
 

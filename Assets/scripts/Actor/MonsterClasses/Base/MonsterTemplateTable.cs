@@ -130,7 +130,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		{
 			try
 			{
-				LoadXml();
+				customTypes.Clear();
+				LoadXml("MonsterData.xml");
 			}
 			catch (Exception e)
 			{
@@ -140,14 +141,25 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 				file.WriteLine(e.Message + " \n " + e.StackTrace);
 				file.Close();
 			}
+
+			try
+			{
+				LoadXml("MonsterData_Templates.xml");
+			}
+			catch (Exception e)
+			{
+				Debug.LogError("chyba nacitani xml monsterdata - check monsterdata_templates_errors.txt");
+				Debug.LogError(e.Message + ", " + e.StackTrace);
+				System.IO.StreamWriter file = new System.IO.StreamWriter("MonsterData_Templates_errors.txt");
+				file.WriteLine(e.Message + " \n " + e.StackTrace);
+				file.Close();
+			}
 		}
 
-		private void LoadXml()
+		private void LoadXml(string fileName)
 		{
-			customTypes.Clear();
-
 			XmlDocument doc = new XmlDocument();
-			doc.Load("MonsterData.xml");
+			doc.Load(fileName);
 
 			int nextId = 0;
 

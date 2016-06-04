@@ -154,6 +154,7 @@ namespace Assets.scripts
 
 				string[] args = msg.Split(' ');
 				string type = null;
+				int team = 0;
 
 				try
 				{
@@ -165,12 +166,20 @@ namespace Assets.scripts
 					return;
 				}
 
+				try
+				{
+					team = Int32.Parse(args[2]);
+				}
+				catch (Exception)
+				{
+				}
+
 				Tile t = WorldHolder.instance.activeMap.GetTileFromWorldPosition(CurrentPlayer.GetData().GetBody().transform.position);
 
 				if (t == null)
 					return;
 
-				Monster m = GameSystem.Instance.SpawnMonster(type, Utils.GenerateRandomPositionAround(CurrentPlayer.GetData().GetBody().transform.position, 7, 4), false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(type, Utils.GenerateRandomPositionAround(CurrentPlayer.GetData().GetBody().transform.position, 7, 4), false, 1, team);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 			}
 

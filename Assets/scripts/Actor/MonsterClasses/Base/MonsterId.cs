@@ -62,6 +62,8 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 
 		BasicMeleeCell = 45,
 
+		TrapCell = 46,
+
 		// bosses
 		TestBoss = 200,
 		TankSpreadshooter = 201,

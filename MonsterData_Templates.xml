@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+	<monster name="Trap">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<remove_effects/>
+			 	<add_effect name="AuraDamage" damage="20" randomOffset="5" radius="10"/>
+			 	<add_effect name="KillSelf"/>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+</data>
