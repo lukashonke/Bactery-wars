@@ -38,8 +38,10 @@ namespace Assets.scripts.Skills.Base
 		ColdShuriken,
 		ColdPush,
 
-		// other, obsolete skills
-		ProjectileAllAround,
+        SpecialSkill,
+
+        // other, obsolete skills
+        ProjectileAllAround,
 		ProjectileTriple,
 		ProjectileStrong,
 
