@@ -194,7 +194,7 @@ namespace Assets.scripts.Actor
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, SpawnInfo.SpawnPos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, SpawnInfo.SpawnPos, null, Team);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 
@@ -205,7 +205,7 @@ namespace Assets.scripts.Actor
 		{
 			MapHolder map = SpawnInfo.Map;
 
-			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos);
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos, null, this.Team);
 			info.level = level;
 			info.SetRegion(this.SpawnInfo.Region);
 

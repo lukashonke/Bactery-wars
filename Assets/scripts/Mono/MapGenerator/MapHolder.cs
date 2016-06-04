@@ -1287,7 +1287,7 @@ namespace Assets.scripts.Mono.MapGenerator
 	    {
 	        if (isActive || forceSpawnNow)
 	        {
-                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterTypeName, info.SpawnPos, false, info.level);
+                Monster m = GameSystem.Instance.SpawnMonster(info.MonsterTypeName, info.SpawnPos, false, info.level, info.team);
                 m.SetSpawnInfo(info);
 
                 RegisterMonsterToMap(m, info);
@@ -1305,7 +1305,7 @@ namespace Assets.scripts.Mono.MapGenerator
             if (info == null)
             {
                 Vector3 pos = m.GetData().GetBody().transform.position;
-                info = new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), pos);
+                info = new MonsterSpawnInfo(this, m.Template.GetMonsterTypeName(), pos, null, m.Team);
 
                 MapRegion reg = GetRegionFromWorldPosition(pos);
 

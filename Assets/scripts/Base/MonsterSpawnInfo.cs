@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
+using Assets.scripts.AI.Modules;
 using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
@@ -18,6 +19,7 @@ namespace Assets.scripts.Base
         public Vector3 SpawnPos { get; set; }
         public MapRegion Region { get; private set; }
 	    public int level;
+	    public int team;
 
 		public DropInfo Drop { get; private set; }
 
@@ -27,13 +29,14 @@ namespace Assets.scripts.Base
 
 	    public int tempId;
 
-        public MonsterSpawnInfo(MapHolder map, string monsterTypeName, Vector3 spawnPos, MapRegion region=null)
+        public MonsterSpawnInfo(MapHolder map, string monsterTypeName, Vector3 spawnPos, MapRegion region=null, int team=0)
         {
 	        Map = map;
 			MonsterTypeName = monsterTypeName;
             SpawnPos = spawnPos;
             Region = region;
 	        level = 1;
+			this.team = team;
 			Drop = new DropInfo();
         }
 
