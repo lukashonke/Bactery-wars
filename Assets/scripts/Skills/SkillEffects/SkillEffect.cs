@@ -24,9 +24,12 @@ namespace Assets.scripts.Skills.SkillEffects
 		public float period = -1;
 		public int count = -1;
 
+		public bool removed;
+
 		protected SkillEffect()
 		{
 			isOffensive = true;
+			removed = false;
 		}
 
 		protected void AddToTarget(Character target, float duration)
