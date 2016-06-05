@@ -541,6 +541,7 @@ namespace Assets.scripts.Actor
 		public void RemoveEffect(SkillEffect ef)
 		{
 			ef.OnRemove();
+			ef.removed = true;
 			ActiveEffects.Remove(ef);
 
 			if (ActiveEffects.Count == 0)
@@ -611,7 +612,7 @@ namespace Assets.scripts.Actor
 		private IEnumerator CancelEffect(SkillEffect ef, float duration)
 		{
 			yield return new WaitForSeconds(duration);
-			if(ef != null)
+			if(ef != null && !ef.removed)
 				RemoveEffect(ef);
 		}
 

@@ -12,7 +12,7 @@ namespace Assets.scripts.Skills.SkillEffects
 		protected Character source;
 		protected Character target;
 
-		private float duration;
+		protected float duration;
 
 		public EffectStatus(float duration)
 		{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Skills.Base;
+using UnityEngine;
 
 namespace Assets.scripts.Skills.SkillEffects
 {
@@ -12,6 +13,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		private float mul;
 
 		private float temp;
+
+		public string effectName;
 
 		public EffectSlow(int value, float duration) : base(duration)
 		{
@@ -39,6 +42,30 @@ namespace Assets.scripts.Skills.SkillEffects
 			temp = target.Status.MoveSpeed*mul;
 			if(temp > 0)
 				target.SetMoveSpeed(target.Status.MoveSpeed - temp);
+
+			Debug.Log("current " + target.Status.MoveSpeed + ", temp " + temp + " value " + value);
+
+			if (SourceSkillObject != null && SourceSkillObject is ActiveSkill)
+			{
+				if (effectName != null)
+				{
+					GameObject effect = ((ActiveSkill)SourceSkillObject).CreateParticleEffectOnTarget(target.GetData().GetBody(), effectName);
+					if (effect == null)
+						return;
+
+					((ActiveSkill)SourceSkillObject).StartParticleEffect(effect);
+					((ActiveSkill)SourceSkillObject).DeleteParticleEffect(effect, duration);
+				}
+				else
+				{
+					GameObject effect = ((ActiveSkill)SourceSkillObject).CreateParticleEffectOnTarget(target.GetData().GetBody(), "SkillTemplate", "Slow");
+					if (effect == null)
+						return;
+
+					((ActiveSkill)SourceSkillObject).StartParticleEffect(effect);
+					((ActiveSkill)SourceSkillObject).DeleteParticleEffect(effect, duration);
+				}
+			}
 		}
 
 		protected override void RemoveEffect()
@@ -51,6 +78,8 @@ namespace Assets.scripts.Skills.SkillEffects
 
 			if(temp > 0)
 				target.SetMoveSpeed(target.Status.MoveSpeed + temp);
+
+			Debug.Log("after (mul " + temp + ", mul " + mul + " remove: " + target.Status.MoveSpeed );
 		}
 
 		public override SkillTraits[] GetTraits()

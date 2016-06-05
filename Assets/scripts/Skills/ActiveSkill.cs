@@ -771,6 +771,13 @@ namespace Assets.scripts.Skills
 			return o;
 		}
 
+		public GameObject CreateParticleEffectOnTarget(GameObject target, string folderName, string particleObjectName)
+		{
+			GameObject o = GetOwnerData().CreateSkillResource(folderName, particleObjectName, false, target.transform.position);
+			o.transform.parent = target.transform;
+			return o;
+		}
+
 		/// <summary>
 		/// Updates the mouseDirection from GetOwnerData().Body
 		/// </summary>
