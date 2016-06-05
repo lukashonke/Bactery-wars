@@ -20,7 +20,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public SpawnTrap()
 		{
-			castTime = 1f;
+			castTime = 0f;
 			reuse = 10f;
 			coolDown = 0;
 			requireConfirm = false;
@@ -37,7 +37,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Spawns a trap.";
+			return "Spawns a trap that damages enemies that step on it.";
 		}
 
 		public override string GetVisibleName()

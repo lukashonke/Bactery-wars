@@ -997,7 +997,7 @@ namespace Assets.scripts.Mono
 		/// </summary>
 		public bool CanRotate()
 		{
-			if (GetOwner().Status.IsDead)
+			if (GetOwner().Status.IsDead || GetOwner().Status.Stunned)
 				return false;
 
 			if (!rotationEnabled)

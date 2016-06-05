@@ -3,6 +3,7 @@
 	<monster name="Trap">
 		<visibleName>Trap</visibleName>
 		<template>CustomCell</template>
+		<sprite>trap/shit</sprite>
 		<stats> 
 			<MaxHp>10</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -21,9 +22,9 @@
 
 		<add_skills>
 			<CollisionDamageAttack> 
-			 	<baseDamage>10</baseDamage>
 			 	<remove_effects/>
-			 	<add_effect name="AuraDamage" damage="20" randomOffset="5" radius="10"/>
+			 	<add_effect name="AuraDamage" damage="10" randomOffset="5" radius="10"/>
+			 	<add_effect name="Damage" damage="10" randomOffset="5"/>
 			 	<add_effect name="Stun" duration="3.0"/>
 			 	<add_effect name="KillSelf"/>
 			</CollisionDamageAttack>
