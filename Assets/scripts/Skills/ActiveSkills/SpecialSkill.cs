@@ -85,7 +85,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
             Player player = GameSystem.Instance.CurrentPlayer;
 
-            Monster m = GameSystem.Instance.SpawnMonster("Hop", new Vector3(pozice.x, pozice.y, 0.0f), false, 1, 1);
+            Monster m = GameSystem.Instance.SpawnMonster("Turret", new Vector3(pozice.x, pozice.y, 0.0f), false, 1, 1);
 
             WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 

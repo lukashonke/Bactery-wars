@@ -148,16 +148,17 @@
 		</add_skills>
 	</monster>
 
-	<monster name="Hop">
-		<visibleName>Hopsan</visibleName>
-		<size>1</size>
+	<monster name="Turret">
+		<visibleName>defense_bactery</visibleName>
+		<size>3</size>
+		<sprite>Turret_basic</sprite>
 		<template>CustomCell</template>
 		<stats> 
 			<MaxHp>50</MaxHp>
 			<MaxHp_scale>10</MaxHp_scale>
 			<IsAggressive>true</IsAggressive>
 			<AggressionRange>15</AggressionRange>
-			<RambleAround>true</RambleAround>
+			<RambleAround>false</RambleAround>
 			<RambleAroundMaxDist>4</RambleAroundMaxDist>
 			<AlertsAllies>true</AlertsAllies>
 
@@ -172,33 +173,14 @@
 		</ai>
 
 		<add_skills>
-			<JumpShort>
-				<reuse>0</reuse>
-				<range>5</range>
-			</JumpShort>
+		
 
 			<Projectile>
 				<range>8</range>
-				<add_effect name="HealSelfOverTime" heal="2" count="3" period="1"/>
+				
+				<baseDamage>10</baseDamage>
 			</Projectile>
-		</add_skills>
-	</monster>
 
-	<monster name="Kaskader">
-		<visibleName>Kaskader</visibleName>
-		<size>1</size>
-		<template>RogueCell</template>
-
-		<remove_autoattack>
-			<MeleeAttack>
-			</MeleeAttack>
-		</remove_autoattack>
-		<add_skills>
-			<CollisionDamageAttack>
-
-				<add_effect name="KillSelf"/>
-				<add_effect name="AuraDamage" damage="20" randomOffset="5" radius="10.0"/>
-			</CollisionDamageAttack>
 		</add_skills>
 	</monster>
 
