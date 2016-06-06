@@ -38,7 +38,7 @@
 		<sprite>summon</sprite>
 		<size>2</size>
 		<stats> 
-			<MaxHp>65</MaxHp>
+			<MaxHp>30</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>18</MaxSpeed>
 			<IsAggressive>false</IsAggressive>
@@ -50,14 +50,44 @@
 			<XpReward>1</XpReward>
 		</stats>
 
-		<ai type="Melee">
+		<ai type="Ranged">
 		</ai>
 
-		<add_autoattack>
-			<MeleeAttack>
-				<add_effect name="Pushaway" force="50"/>
-			</MeleeAttack>
-		</add_autoattack>
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			 	<range>4</range>
+			</Projectile>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="RangedTurret">
+		<visibleName>Turret</visibleName>
+		<template>CustomCell</template>
+		<size>2</size>
+		<stats> 
+			<MaxHp>30</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			 	<range>15</range>
+			</Projectile>
+		</add_skills>
 		
 	</monster>
 

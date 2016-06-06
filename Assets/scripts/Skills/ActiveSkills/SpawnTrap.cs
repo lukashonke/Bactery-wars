@@ -37,7 +37,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Spawns a trap that damages enemies that step on it.";
+			return "Spawns a trap that damages and stuns enemies that step on it.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Trap lifetime " + lifetime + " sec";
 		}
 
 		public override string GetVisibleName()

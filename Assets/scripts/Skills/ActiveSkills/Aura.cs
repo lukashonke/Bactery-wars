@@ -26,7 +26,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			reuse = 1f;
 
-			baseDamage = 1;
+			baseDamage = 10;
 
 			range = 15;
 
@@ -58,7 +58,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(10, 0),  };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0),  };
 		}
 
 		public override void InitTraits()
@@ -68,7 +68,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
-			CreateCastingEffect(true, GetName());
+			if (castTime > 0)
+				CreateCastingEffect(true, GetName());
 			return true;
 		}
 

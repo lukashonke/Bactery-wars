@@ -9,9 +9,15 @@ namespace Assets.scripts.Actor.PlayerClasses
 	{
 		public CommonColdClass()
 		{
-			MaxHp = 100;
+			if (GameSession.invisibility)
+			{
+				MaxHp = 99999;	
+			}
+			else 
+				MaxHp = 100;
+
 			MaxMp = 50;
-			MaxSpeed = 30;
+			MaxSpeed = 10;
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
@@ -29,7 +35,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.RhinoBeam));
 
-			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CellSmash));
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CellShot));
 		}
 
 		public override ClassId GetClassId()

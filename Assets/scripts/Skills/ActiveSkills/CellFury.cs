@@ -51,6 +51,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Greatly decreases cooldown of autoattack.";
 		}
 
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Duration " + duration + " sec";
+		}
+
 		public override SkillEffect[] CreateEffects(int param)
 		{
 			int count = 1;

@@ -91,7 +91,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			if (GameSession.testMode)
 			{
-				param.levelType = MapType.Test;
+				param.levelType = MapType.PresentationLevel;
 				mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 			}
 			else if (GameSession.arenaMode)
@@ -103,7 +103,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			{
 				if (worldLevel > 0)
 				{
-					param.levelType = MapType.PresentationLevel; //TODO
+					param.levelType = MapType.GenericMonster;
 					mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 				}
 				else

@@ -48,7 +48,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Pushes enemies in front of you away";
+			return "Pushes enemies in front of you away and stuns them for " + stunDuration + " seconds.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Angle " + angle + " degrees | Range" + range;
 		}
 
 		public override SkillEffect[] CreateEffects(int param)

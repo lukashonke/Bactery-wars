@@ -55,7 +55,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Shoots a missile that navigates itself to a random target.";
+			return "Shoots a missile projectile that navigates itself to a random target.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Damage " + baseDamage + " | Range" + range;
 		}
 
 		public override Skill Instantiate()

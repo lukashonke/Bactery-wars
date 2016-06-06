@@ -55,6 +55,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Charges the player forward, damages and pushes away the first enemy you hit.";
 		}
 
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Damage on hit " + hitEnemyDamage + " | Range" + range;
+		}
+
 		public override Skill Instantiate()
 		{
 			return new Charge();

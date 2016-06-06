@@ -52,7 +52,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Makes the player jump in the selected direction, stops on collision.";
+			return "Makes the player jump in the selected direction, but the player will not push enemies away.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Range" + range;
 		}
 
 		public override Skill Instantiate()

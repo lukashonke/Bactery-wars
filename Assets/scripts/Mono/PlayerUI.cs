@@ -631,7 +631,7 @@ namespace Assets.scripts.Mono
 				GameObject inventoryContentPanel = GameObject.Find("InventoryContent");
 				GameObject activeStatsPanel = GameObject.Find("ActiveStatsPanel");
 
-				GameObject.Find("InvScrollbar").GetComponent<Scrollbar>().value = 1f;
+				//GameObject.Find("InvScrollbar").GetComponent<Scrollbar>().value = 1f;
 
 				inventoryTooltipObject = Resources.Load("Sprite/inventory/UpgradeTooltip") as GameObject;
 				skillTooltipObject = Resources.Load("Sprite/inventory/SkillTooltip") as GameObject;
@@ -837,6 +837,11 @@ namespace Assets.scripts.Mono
 
 			selectedAutoattackPanel.SetActive(false);
 			switchActiveSkillsPanelButton.interactable = false;
+
+			foreach (Scrollbar scrollBar in GameObject.FindObjectsOfType<Scrollbar>())
+			{
+				scrollBar.value = 1;
+			}
 
 			HideLevelsView();
 
@@ -1418,14 +1423,20 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(skillTooltipObject);
 				currentTooltipObject.transform.parent = classOverviewCanvas.gameObject.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
-				//currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
+				currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
 				UpdatePivotForTooltip(currentTooltipObject);
+
+				Color titleColor = GetSkillSlotBgColor(skill.RequiredSlotLevel);
+				currentTooltipObject.GetComponent<Image>().color = titleColor;
 
 				foreach (Transform child in currentTooltipObject.transform)
 				{
 					if (child.name.Equals("Title"))
 					{
+						Color color = GetSkillSlotTitleColor(skill.RequiredSlotLevel);
+
 						child.GetComponent<Text>().text = name;
+						child.GetComponent<Text>().color = color;
 						//child.GetComponent<Text>().color = titleColor;
 						continue;
 					}
@@ -1446,7 +1457,10 @@ namespace Assets.scripts.Mono
 					}
 					else if (child.name.Equals("AdditionalInfo"))
 					{
+						Color color = GetSkillSlotLevelColor(skill.RequiredSlotLevel);
+						
 						child.GetComponent<Text>().text = "Requires slot of level " + skill.RequiredSlotLevel;
+						child.GetComponent<Text>().color = color;
 						continue;
 					}
 					else
@@ -1602,6 +1616,78 @@ namespace Assets.scripts.Mono
 					}
 				}
 			}*/
+		}
+
+		private Color GetSkillSlotLevelColor(int level)
+		{
+			Color color;
+			switch (level)
+			{
+				case 1:
+					color = new Color(113 / 255f, 10 / 255f, 10 / 255f);
+					break;
+				/*case 2:
+					color = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+					break;
+				case 3:
+					color = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+					break;
+				case 4:
+					color = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+					break;
+				case 5:
+					color = new Color(86 / 255f, 71 / 255f, 49 / 255f);
+					break;*/
+				default:
+					color = new Color(113 / 255f, 10 / 255f, 10 / 255f);
+					break;
+			}
+			return color;
+		}
+
+		private Color GetSkillSlotTitleColor(int level)
+		{
+			Color color;
+			switch (level)
+			{
+				case 1:
+					color = new Color(64 / 255f, 83 / 255f, 120 / 255f);
+					break;
+				case 2:
+					color = new Color(42 / 255f, 99 / 255f, 47 / 255f);
+					break;
+				case 3:
+					color = new Color(114 / 255f, 71 / 255f, 24 / 255f);
+					break;
+				case 4:
+					color = new Color(106 / 255f, 24 / 255f, 114 / 255f);
+					break;
+				case 5:
+					color = new Color(114 / 255f, 24 / 255f, 24 / 255f);
+					break;
+				default:
+					color = new Color(114 / 255f, 24 / 255f, 24 / 255f);
+					break;
+			}
+			return color;
+		}
+
+		private Color GetSkillSlotBgColor(int level)
+		{
+			Color color;
+			switch (level)
+			{
+				case 1:
+					color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 224f / 255f);
+					break;
+				case 2:
+					color = new Color(253 / 255f, 255 / 255f, 227 / 255f, 224f / 255f);
+					break;
+				default:
+					color = new Color(253 / 255f, 255 / 255f, 227 / 255f, 224f / 255f);
+					break;
+			}
+			return color;
 		}
 
 		private GameObject levelIconTemplate;
@@ -1979,6 +2065,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(levelTooltipObject);
 				currentTooltipObject.transform.parent = levelsViewPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
 				UpdatePivotForTooltip(currentTooltipObject);
 
 				Color titleColor = new Color();
@@ -2430,6 +2517,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
 				UpdatePivotForTooltip(currentTooltipObject);
 
 				Color titleColor = new Color();
@@ -2473,6 +2561,7 @@ namespace Assets.scripts.Mono
 				currentTooltipObject = Instantiate(inventoryTooltipObject);
 				currentTooltipObject.transform.parent = targetPanel.transform;
 				currentTooltipObject.transform.position = Input.mousePosition;
+				currentTooltipObject.transform.localScale = new Vector3(1, 1, 1);
 				UpdatePivotForTooltip(currentTooltipObject);
 
 				string name = u.VisibleName;
@@ -2843,6 +2932,15 @@ namespace Assets.scripts.Mono
 						else
 						{
 							int currentSlot = player.Skills.GetSkillSlot(targetSkillName);
+
+							int slotLevel = player.SkillSlotLevels[currentSlot];
+
+							if (firstSkill.RequiredSlotLevel > slotLevel)
+							{
+								player.Message("This skill requires slot of level " + firstSkill.RequiredSlotLevel + ".");
+								return;
+							}
+
 							player.DeactivateSkill(targetSkillName);
 							player.ActivateSkill(firstSkill, currentSlot);
 							UpdateSkillTimers();
@@ -3008,8 +3106,8 @@ namespace Assets.scripts.Mono
 
 		private void InitStash()
 		{
-			GameObject.Find("StashScrollbar").GetComponent<Scrollbar>().value = 1f;
-			GameObject.Find("StashScrollbar2").GetComponent<Scrollbar>().value = 1f;
+			//GameObject.Find("StashScrollbar").GetComponent<Scrollbar>().value = 1f;
+			//GameObject.Find("StashScrollbar2").GetComponent<Scrollbar>().value = 1f;
 
 			stashSlots = new GameObject[STASH_CAPACITY];
 			stashInventorySlots = new GameObject[INVENTORY_SIZE];

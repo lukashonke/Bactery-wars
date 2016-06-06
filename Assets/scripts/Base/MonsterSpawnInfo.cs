@@ -38,6 +38,9 @@ namespace Assets.scripts.Base
 	        level = 1;
 			this.team = team;
 			Drop = new DropInfo();
+
+	        if (team == 1)
+		        mustDieToProceed = false;
         }
 
 		public MonsterSpawnInfo AddHealDrop(int chance, int level=1)

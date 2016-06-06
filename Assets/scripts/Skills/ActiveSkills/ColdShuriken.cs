@@ -48,6 +48,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Cold Shuriken";
 		}
 
+		public override string GetDescription()
+		{
+			return ";;";
+		}
+
 		public override Skill Instantiate()
 		{
 			return new ColdShuriken();

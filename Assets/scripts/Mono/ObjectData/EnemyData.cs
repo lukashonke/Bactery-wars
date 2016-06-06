@@ -125,6 +125,26 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
+		public void SetSprite(Sprite sprite, float scale)
+		{
+			SpriteRenderer sr = GetComponent<SpriteRenderer>();
+			sr.sprite = sprite;
+
+			Vector2 sprite_size = GetComponent<SpriteRenderer>().sprite.rect.size;
+			Vector2 local_sprite_size = sprite_size / GetComponent<SpriteRenderer>().sprite.pixelsPerUnit; //TODO use this?
+
+			float newScale = Mathf.Max(sprite_size.x, sprite_size.y) / 200f;
+
+			if (scale > 0)
+			{
+				this.transform.localScale = new Vector3(1 / newScale * scale, 1 / newScale * scale, 1);
+			}
+			else
+			{
+				this.transform.localScale = new Vector3(1 / newScale, 1 / newScale, 1);
+			}
+		}
+
 		public void SetSprite(string name, float scale)
 		{
 			Sprite sprite = Resources.Load<Sprite>(name);

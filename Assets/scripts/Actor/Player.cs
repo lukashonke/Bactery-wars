@@ -172,20 +172,32 @@ namespace Assets.scripts.Actor
 
 		public void SwapSkills(Skill firstSkill, string targetSkillName)
 		{
-			int fromIndex = DeactivateSkill(firstSkill.GetName());
-			int toIndex = DeactivateSkill(targetSkillName);
+			int fromIndex = GetSkillIndex(firstSkill.GetName());
+			int toIndex = GetSkillIndex(targetSkillName);
 
-			int slotLevel = SkillSlotLevels[toIndex];
-			if (firstSkill.RequiredSlotLevel > slotLevel)
+			int firstLevel = SkillSlotLevels[fromIndex];
+			int secondLevel = SkillSlotLevels[toIndex];
+
+			DeactivateSkill(firstSkill.GetName());
+			DeactivateSkill(targetSkillName);
+
+			SkillSlotLevels[fromIndex] = secondLevel;
+			SkillSlotLevels[toIndex] = firstLevel;
+
+			if (fromIndex > toIndex)
 			{
-				Message("This skill requires slot of level " + firstSkill.RequiredSlotLevel + ".");
-				return;
+				ActivateSkill(firstSkill, toIndex);
+				Skill sk = SkillTable.Instance.GetSkill((SkillId)Enum.Parse(typeof(SkillId), targetSkillName));
+
+				ActivateSkill(sk, fromIndex);
 			}
+			else
+			{
+				Skill sk = SkillTable.Instance.GetSkill((SkillId)Enum.Parse(typeof(SkillId), targetSkillName));
+				ActivateSkill(sk, fromIndex);
 
-			ActivateSkill(firstSkill, toIndex);
-			Skill sk = SkillTable.Instance.GetSkill((SkillId) Enum.Parse(typeof (SkillId), targetSkillName));
-
-			ActivateSkill(sk, fromIndex);
+				ActivateSkill(firstSkill, toIndex);
+			}
 		}
 
 		public int DeactivateSkill(string skillName)
@@ -196,6 +208,26 @@ namespace Assets.scripts.Actor
 				if (sk.GetName() == skillName)
 				{
 					Skills.Skills.RemoveAt(index);
+					break;
+				}
+				index++;
+			}
+
+			return index;
+		}
+
+		public void DeactivateSkill(int index)
+		{
+			Skills.Skills.RemoveAt(index);
+		}
+
+		public int GetSkillIndex(string skillName)
+		{
+			int index = 0;
+			foreach (Skill sk in Skills.Skills.ToArray())
+			{
+				if (sk.GetName() == skillName)
+				{
 					break;
 				}
 				index++;
@@ -263,7 +295,7 @@ namespace Assets.scripts.Actor
 				newSkill.IsLocked = false;
 
 				bool set = false;
-				for (int i = 0; i < Skills.Skills.Count; i++)
+				for (int i = 0; i < 10; i++)
 				{
 					if (i == targetSlot)
 					{

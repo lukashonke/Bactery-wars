@@ -29,6 +29,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public bool explodeEffect = false;
 
+		private int duration = 10;
+
 		private List<ProjectileData> projectiles = new List<ProjectileData>();
 
 		public PoisonShot()
@@ -59,6 +61,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return "Shoots a bullet that poisons your target, dealing damage over time.";
 		}
 
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Damage " + baseDamage + "/sec for " + duration + " seconds | Range" + range;
+		}
+
 		public override Skill Instantiate()
 		{
 			return new PoisonShot();
@@ -67,7 +74,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override SkillEffect[] CreateEffects(int param)
 		{
 			SkillEffect[] effs = new SkillEffect[1];
-			EffectDamageOverTime eff = new EffectDamageOverTime(5, 10, 1.0f);
+			EffectDamageOverTime eff = new EffectDamageOverTime(baseDamage, duration, 1.0f);
 			eff.effectName = effectName;
 			effs[0] = eff;
 

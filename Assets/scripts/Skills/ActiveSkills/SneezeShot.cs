@@ -53,7 +53,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Shoots bullet cells in the selected direction.";
+			return "Shoots " + projectilesCount + " bullet cells in the selected direction.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Damage " + baseDamage + " | Range" + range;
 		}
 
 		public override Skill Instantiate()

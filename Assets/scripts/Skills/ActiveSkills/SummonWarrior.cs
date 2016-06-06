@@ -21,12 +21,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public SummonWarrior()
 		{
 			castTime = 1f;
-			reuse = 10f;
+			reuse = 15f;
 			coolDown = 0;
 			requireConfirm = false;
 			canBeCastSimultaneously = true;
 
-			lifetime = 60f;
+			lifetime = 30f;
 			AvailableToPlayer = true;
 		}
 
@@ -37,7 +37,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Spawns a minion that assists you in combat.";
+			return "Spawns one minion that attacks enemies from close range.";
+		}
+
+		public override string GetBaseInfo()
+		{
+			return "Reuse " + reuse + " sec | Summon lifetime " + lifetime + " sec";
 		}
 
 		public override string GetVisibleName()
@@ -81,6 +86,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private void Spawn()
 		{
+			if (minion != null)
+			{
+				minion.DoDie();
+				minion = null;
+			}
+
 			Monster m = GameSystem.Instance.SpawnMonster("Warrior", Utils.GenerateRandomPositionOnCircle(GetOwnerData().GetBody().transform.position, 5), false, 1, 1);
 			minion = m;
 

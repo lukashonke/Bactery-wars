@@ -6,6 +6,7 @@ using System.Text;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.AI.Modules;
+using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator.Levels;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
@@ -637,8 +638,25 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 			if (Sprite != null)
 			{
-				data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
-				changed = true;
+				if (GameSession.loadExternalGraphics)
+				{
+					Sprite spr = CustomGraphics.LoadSprite("monsters/" + Sprite, 500, 500);
+					if (spr != null)
+					{
+						data.SetSprite(spr, SpriteSize);
+						changed = true;
+					}
+					else
+					{
+						data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
+						changed = true;
+					}
+				}
+				else
+				{
+					data.SetSprite("prefabs/entity/CustomCell/" + Sprite, SpriteSize);
+					changed = true;
+				}
 			}
 
 			if (Mass > 0)

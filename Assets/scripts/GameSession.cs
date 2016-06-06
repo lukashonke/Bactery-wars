@@ -17,7 +17,10 @@ namespace Assets.scripts
 		public static bool repairMap = true;
 
 		public static bool arenaMode = false;
+		public static bool invisibility = false;
 
 		public static bool testMode = false;
+
+		public static bool loadExternalGraphics = false;
 	}
 }

@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.Base
 		BlankProjectile,
 		Smash,
 
-		// player skills
+		// player skills - level 1
 		CellShot,
 		CellSmash,
 		CellJump,
@@ -39,7 +39,11 @@ namespace Assets.scripts.Skills.Base
 		ColdPush,
 
 		SummonWarrior,
+		SpawnTurret,
 		SpawnTrap,
+
+		// level 2
+		Explode,
 
         SpecialSkill,
 
