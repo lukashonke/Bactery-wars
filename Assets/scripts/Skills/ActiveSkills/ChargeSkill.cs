@@ -21,7 +21,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public ChargeSkill()
 		{
 			castTime = 0f;
-			reuse = 15f;
+			reuse = 5f;
 			coolDown = 0;
 			requireConfirm = false;
 			canBeCastSimultaneously = true;

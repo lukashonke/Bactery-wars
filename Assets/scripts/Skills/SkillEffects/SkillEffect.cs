@@ -25,11 +25,13 @@ namespace Assets.scripts.Skills.SkillEffects
 		public int count = -1;
 
 		public bool removed;
+		public bool remove;
 
 		protected SkillEffect()
 		{
 			isOffensive = true;
 			removed = false;
+			remove = false;
 		}
 
 		protected void AddToTarget(Character target, float duration)

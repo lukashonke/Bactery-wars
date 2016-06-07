@@ -577,7 +577,16 @@ namespace Assets.scripts.Actor
 				{
 					SkillEffect ef = ActiveEffects[i];
 
-					if (ef == null || ef.period <= 0)
+					if (ef == null)
+						continue;
+
+					if (ef.remove)
+					{
+						RemoveEffect(ef);
+						continue;
+					}
+
+					if (ef.period <= 0)
 						continue;
 
 					if (ef.lastUpdateTime + ef.period <= currentTime)
