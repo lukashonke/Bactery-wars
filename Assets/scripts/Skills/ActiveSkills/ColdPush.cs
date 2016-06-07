@@ -19,7 +19,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public ColdPush()
 		{
 			castTime = 0f;
-			reuse = 6f;
+			reuse = 1f;
 			coolDown = 0;
 			requireConfirm = true;
 			baseDamage = 10;
@@ -81,9 +81,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 				confirmObjects[1] = second;
 				confirmObjects[2] = third;
 
-				UpdateDirectionArrowScale(range > 0 ? range : 5, first);
-				UpdateDirectionArrowScale(range > 0 ? range : 5, second);
-				UpdateDirectionArrowScale(range > 0 ? range : 5, third);
+				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, first);
+				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, second);
+				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, third);
 			}
 
 			UpdateMouseDirection(GetPlayerData().GetShootingPosition().transform);
@@ -132,6 +132,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				if(Utils.IsInCone(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), h.transform.gameObject, angle, range))
 					ApplyEffects(Owner, h.transform.gameObject);
+			}
+
+			GameObject eff = CreateParticleEffect(GetName(), "PushEffect", true,
+				GetOwnerData().GetShootingPosition().transform.position);
+
+			if (eff != null)
+			{
+				eff.transform.rotation = Quaternion.Euler(0, 0, angle);
+				eff.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+				ParticleSystem ps = eff.GetComponent<ParticleSystem>();
+				ParticleSystem.ShapeModule shape = ps.shape;
+				shape.arc = angle;
+				shape.radius = range;
+
+				ps.startLifetime = range/50f*2f;
+
+				StartParticleEffect(eff);
+				DeleteParticleEffect(eff, 1f);
 			}
 
 			//TOOD here

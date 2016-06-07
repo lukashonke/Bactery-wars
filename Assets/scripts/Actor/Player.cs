@@ -261,7 +261,7 @@ namespace Assets.scripts.Actor
 					sk = SkillTable.Instance.GetSkill(SkillId.SneezeShot);
 					break;
 				case 1:
-					sk = SkillTable.Instance.GetSkill(SkillId.Dodge);
+					sk = SkillTable.Instance.GetSkill(SkillId.Charge);
 					break;
 				case 2:
 					sk = SkillTable.Instance.GetSkill(SkillId.ColdPush);

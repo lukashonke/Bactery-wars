@@ -9597,14 +9597,15 @@ TrailRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 436762080}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: f636671cb57e95a4a9d0ef8f1c107a62, type: 2}
+  - {fileID: 2100000, guid: f12662cfbefaf0a41b05767d4b121f34, type: 2}
+  - {fileID: 2100000, guid: 86971c271c8cce046900e3b6da497827, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
+  m_UseLightProbes: 0
   m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
@@ -9617,16 +9618,16 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Time: 5
-  m_StartWidth: 1
-  m_EndWidth: 1
+  m_Time: 0.1
+  m_StartWidth: 3
+  m_EndWidth: 0
   m_Colors:
     m_Color[0]:
       serializedVersion: 2
-      rgba: 4294967295
+      rgba: 4284153832
     m_Color[1]:
       serializedVersion: 2
-      rgba: 4294967295
+      rgba: 4294947156
     m_Color[2]:
       serializedVersion: 2
       rgba: 4294967295
@@ -14012,7 +14013,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2141527457}
   m_HandleRect: {fileID: 2141527456}
   m_Direction: 2
-  m_Value: 0.00000015908381
+  m_Value: 0.00000010605587
   m_Size: 0.31435692
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -21563,8 +21564,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1121412148}
   m_HandleRect: {fileID: 1121412147}
   m_Direction: 2
-  m_Value: 0.13772619
-  m_Size: 0.39899993
+  m_Value: 0.13772614
+  m_Size: 0.39899996
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22401,7 +22402,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 480864283}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.41834837
+  m_Size: 0.4183484
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31681,7 +31682,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 464676, guid: acc9dbb9dcb59c449a8b5d40767b19b1, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 19803286, guid: acc9dbb9dcb59c449a8b5d40767b19b1, type: 2}
       propertyPath: InitialModule.startColor.maxColor.rgba

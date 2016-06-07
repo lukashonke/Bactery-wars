@@ -113,6 +113,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
 			}
+
+			particleSystem = CreateParticleEffect("JumpEffect", true);
+			StartParticleEffect(particleSystem);
 		}
 
 		public override void UpdateLaunched()
@@ -126,6 +129,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnFinish()
 		{
+			PauseParticleEffect(particleSystem);
+			DeleteParticleEffect(particleSystem, 5f);
+
 			if (penetrateThroughTargets)
 			{
 				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;

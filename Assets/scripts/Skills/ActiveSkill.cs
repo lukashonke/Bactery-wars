@@ -948,15 +948,30 @@ namespace Assets.scripts.Skills
 			return GetOwnerData().Target;
 		}
 
-		protected void DestroyProjectile(GameObject proj)
+		protected void DestroyProjectile(GameObject proj, bool critical)
 		{
 			if (proj == null)
 				return;
 
-			ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
+			try
+			{
+				GameObject obj = CreateParticleEffect(GetName(), "ProjectileHit", false, proj.transform.position);
+
+				if (obj != null)
+				{
+					StartParticleEffect(obj);
+					DeleteParticleEffect(obj, 1f);
+				}
+			}
+			catch (Exception)
+			{
+			}
+			
+
+			/*ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
 			if(pd != null)
 				pd.collapse();
-			else
+			else*/
 				Object.Destroy(proj);
 		}
 
