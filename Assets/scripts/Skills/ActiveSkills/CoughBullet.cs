@@ -15,15 +15,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public int projectilesCount = 1;
 		public bool projectilesAim = true;
-		public bool penetrateTargets = false;
+		public bool penetrateTargets = true;
 		public int randomAngle = 0;
 		public bool selectTargetOnLaunch = false;
-		public int aimArea = 10;
+		public int aimArea = 20;
 		public int nullReuseChance = 0;
 
 		public int secondDamage = 0;
-		public int maxPenetratedTargets = 0;
-		public bool navigateAfterPenetration = false;
+		public int maxPenetratedTargets = 2;
+		public bool navigateAfterPenetration = true;
 		public float interpolAdd = 0.1f;
 
 		public bool explodeEffect = false;

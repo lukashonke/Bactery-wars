@@ -74,6 +74,11 @@ namespace Assets.scripts.Skills
 			AvailableToPlayerAsAutoattack = false;
 
 			RequiredSlotLevel = 1;
+		}
+
+		public void Init()
+		{
+			name = Enum.GetName(typeof (SkillId), GetSkillId());
 
 			try
 			{
@@ -83,14 +88,21 @@ namespace Assets.scripts.Skills
 			{
 				Icon = Resources.Load<Sprite>("Sprite/ui/icons/default_skill");
 			}
-		}
-
-		public void Init()
-		{
-			name = Enum.GetName(typeof (SkillId), GetSkillId());
 
 			InitTraits();
 			InitDynamicTraits();
+		}
+
+		public void InitIcon()
+		{
+			try
+			{
+				Icon = GetOwnerData().LoadResourceSprite("skill", GetName(), "Icon");
+			}
+			catch (Exception)
+			{
+				Icon = Resources.Load<Sprite>("Sprite/ui/icons/default_skill");
+			}
 		}
 
 		public Skill AddTrait(SkillTraits t)

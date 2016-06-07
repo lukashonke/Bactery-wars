@@ -30,8 +30,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 			shopData.GenerateRandomShopItems(1, 1);
 
-			start = map.GenerateDungeonRegion(0, 0, 45, true, false, false, null, 1, 1); // 0 0
-			end = map.GenerateDungeonRegion(1, 0, 45, false, true, true, null); // 0, 2
+			start = map.GenerateDungeonRegion(0, 0, 43, true, false, false, null, 2, 2); // 0 0
+			end = map.GenerateDungeonRegion(2, 0, 45, false, true, true, null); // 0, 2
 		}
 
 		public override void SpawnMonsters()

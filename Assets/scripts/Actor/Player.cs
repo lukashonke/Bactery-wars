@@ -114,6 +114,7 @@ namespace Assets.scripts.Actor
 				// vytvorit novy objekt skillu
 				Skill newSkill = SkillTable.Instance.CreateSkill(templateSkill.GetSkillId());
 				newSkill.SetOwner(this);
+				newSkill.InitIcon();
 
 				//newSkill.IsLocked = true;
 
@@ -127,6 +128,7 @@ namespace Assets.scripts.Actor
 			{
 				Skill newSkill = SkillTable.Instance.CreateSkill(Template.MeleeSkill.GetSkillId());
 				newSkill.SetOwner(this);
+				newSkill.InitIcon();
 
 				MeleeSkill = (ActiveSkill) newSkill;
 			}
@@ -242,6 +244,7 @@ namespace Assets.scripts.Actor
 			{
 				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
 				newSkill.SetOwner(this);
+				newSkill.InitIcon();
 
 				MeleeSkill = (ActiveSkill)newSkill;
 			}
@@ -293,6 +296,7 @@ namespace Assets.scripts.Actor
 				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
 				newSkill.SetOwner(this);
 				newSkill.IsLocked = false;
+				newSkill.InitIcon();
 
 				bool set = false;
 				for (int i = 0; i < 10; i++)

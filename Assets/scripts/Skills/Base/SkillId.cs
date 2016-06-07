@@ -33,6 +33,7 @@ namespace Assets.scripts.Skills.Base
 		Charge,
 		PullTarget,
 		CellFury,
+		ChargeSkill,
 		MucusWarrior,
 		RhinoBeam,
 		ColdShuriken,

@@ -84,8 +84,8 @@
 
 		<add_skills>
 			<Projectile> 
-			 	<baseDamage>10</baseDamage>
-			 	<range>15</range>
+			 	<baseDamage>5</baseDamage>
+			 	<range>20</range>
 			</Projectile>
 		</add_skills>
 		
