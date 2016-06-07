@@ -82,7 +82,7 @@ namespace Assets.scripts.Skills
 
 			try
 			{
-				Icon = GetOwnerData().LoadResourceSprite("skill", GetName(), "Icon");
+				Icon = LoadResourceSprite("skill", GetName(), "Icon");
 			}
 			catch (Exception)
 			{
@@ -91,6 +91,16 @@ namespace Assets.scripts.Skills
 
 			InitTraits();
 			InitDynamicTraits();
+		}
+
+		private Sprite LoadResourceSprite(string type, string resourceFolderName, string fileName)
+		{
+			Sprite go = Resources.Load<Sprite>("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName);
+
+			if (go == null)
+				throw new NullReferenceException("Prefabs/" + type + "/" + resourceFolderName + "/" + fileName + " !");
+
+			return go;
 		}
 
 		public void InitIcon()

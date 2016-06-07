@@ -101,8 +101,10 @@ namespace Assets.scripts.Actor
 				Skill sk = SkillTable.Instance.GetSkill(id);
 				if (sk == null)
 					continue;
-				if(sk.AvailableToPlayer)
+				if (sk.AvailableToPlayer)
+				{
 					AvailableSkills.Add(sk);
+				}
 
 				if(sk.AvailableToPlayerAsAutoattack)
 					AvailableAutoattacks.Add(sk);
