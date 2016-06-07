@@ -74,5 +74,10 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 		SimpleBase = 500,
 
 		CustomMonster = 999,
+
+        //turret
+
+      
+
 	}
 }

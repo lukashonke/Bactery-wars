@@ -1,4 +1,4 @@
-The requested value 'Defense_Turret' was not found. 
+The requested value 'TurretClass1' was not found. 
    at System.Enum.Parse (System.Type enumType, System.String value, Boolean ignoreCase) [0x0023b] in /Users/builduser/buildslave/mono/build/mcs/class/corlib/System/Enum.cs:692 
   at System.Enum.Parse (System.Type enumType, System.String value) [0x00000] in /Users/builduser/buildslave/mono/build/mcs/class/corlib/System/Enum.cs:547 
   at Assets.scripts.Actor.MonsterClasses.Base.MonsterTemplateTable.LoadXml (System.String fileName) [0x00276] in C:\Users\Jaroslav\Desktop\Vše Důležité\Bactery\Assets\scripts\Actor\MonsterClasses\Base\MonsterTemplateTable.cs:206 

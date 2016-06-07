@@ -148,41 +148,7 @@
 		</add_skills>
 	</monster>
 
-	<monster name="Turret">
-		<visibleName>defense_bactery</visibleName>
-		<size>3</size>
-		<sprite>Turret_basic</sprite>
-		<template>CustomCell</template>
-		<stats> 
-			<MaxHp>50</MaxHp>
-			<MaxHp_scale>10</MaxHp_scale>
-			<IsAggressive>true</IsAggressive>
-			<AggressionRange>15</AggressionRange>
-			<RambleAround>false</RambleAround>
-			<RambleAroundMaxDist>4</RambleAroundMaxDist>
-			<AlertsAllies>true</AlertsAllies>
 
-			<MaxSpeed>0</MaxSpeed>
-		</stats>
-
-		<ai type="Ranged">
-			<add id_module="1" priority="low" module="JumpMovement" param="interval" value="1"/>
-			<set id_module="1" param="jumpAtEnemy" value="false"/>
-
-			<set module="DamageSkill" param="onlyIfWithinRange" value="true"/>
-		</ai>
-
-		<add_skills>
-		
-
-			<Projectile>
-				<range>8</range>
-				
-				<baseDamage>10</baseDamage>
-			</Projectile>
-
-		</add_skills>
-	</monster>
 
 	<monster name="Test">
 		<visibleName>Hopsan</visibleName>
@@ -220,4 +186,56 @@
 			</Projectile>
 		</add_skills>
 	</monster>
+
+
+
+
+	<monster name="TurretClass1">
+		<visibleName>Attack turret</visibleName>
+		<size>3</size>
+		<sprite>class1</sprite>
+		<template>CustomCell</template>
+		<stats> 
+		
+
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>10</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>15</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>0</RambleAroundMaxDist>
+			<AlertsAllies>true</AlertsAllies>	
+
+
+			
+		</stats>
+
+		<ai type="Ranged">
+			<add id_module="1" priority="low" module="JumpMovement" param="interval" value="1"/>
+		
+
+			<set module="DamageSkill" param="onlyIfWithinRange" value="true"/>
+		</ai>
+
+		<add_skills>
+		
+
+			<Projectile>
+				<range>8</range>
+				<baseDamage>10</baseDamage>
+			</Projectile>
+
+		</add_skills>
+	</monster>
+
+
+
+
+
+
 </data>
+
+
+
+

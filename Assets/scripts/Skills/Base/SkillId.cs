@@ -45,7 +45,7 @@ namespace Assets.scripts.Skills.Base
 		// level 2
 		Explode,
 
-        SpecialSkill,
+       
 
         // other, obsolete skills
         ProjectileAllAround,
@@ -72,5 +72,10 @@ namespace Assets.scripts.Skills.Base
 		PushBeam,
 
 		SwarmSkill,
+
+        // turrety
+        SpawnTurretClass1,
+
+
 	}
 }

@@ -544,4 +544,5 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 			return MonsterId.IdleObstacleCell;
 		}
 	}
+
 }

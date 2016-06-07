@@ -11,12 +11,12 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class SpecialSkill : ActiveSkill
+	public class SpawnTurretClass1 : ActiveSkill
 	{
 		private GameObject targettedPlayer;
 		private GameObject activeProjectile;
 
-		public SpecialSkill()
+        public SpawnTurretClass1()
 		{
 			castTime = 0f;
 			reuse = 1;
@@ -31,22 +31,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillId GetSkillId()
 		{
-			return SkillId.SpecialSkill;
+            return SkillId.SpawnTurretClass1;
 		}
 
 		public override string GetVisibleName()
 		{
-			return "SpecialSkill";
+            return "Turret-Class1";
 		}
 
 		public override string GetDescription()
 		{
-			return "Click on ground and spawn turret.";
+			return "Click on the ground and spawn turret. HP: 50 DMG: 10";
 		}
 
 		public override Skill Instantiate()
 		{
-			return new SpecialSkill();
+            return new SpawnTurretClass1();
 		}
 
 		public override SkillEffect[] CreateEffects(int param)
@@ -85,7 +85,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
             Player player = GameSystem.Instance.CurrentPlayer;
 
-            Monster m = GameSystem.Instance.SpawnMonster("Turret", new Vector3(pozice.x, pozice.y, 0.0f), false, 1, 1);
+            Monster m = GameSystem.Instance.SpawnMonster("TurretClass1", new Vector3(pozice.x, pozice.y, 0.0f), false, 1, 1);
 
             WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 
