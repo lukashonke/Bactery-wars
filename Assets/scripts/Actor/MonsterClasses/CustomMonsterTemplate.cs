@@ -17,11 +17,13 @@ using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses
 {
+
 	public struct SkillModifyInfo
 	{
 		public SkillId id;
 		public string key;
 		public string value;
+	    
 
 		public SkillModifyInfo(SkillId id, string key, string value)
 		{
@@ -99,6 +101,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public List<SkillModifyInfo> AutoattackSkillModifyInfos { get; private set; }
 		public List<SkillEffectInfo> SkillAddEffects { get; private set; } 
 		public List<SkillEffectInfo> MeleeAddEffects { get; private set; }
+
+        private string name_turret; // vložení jména monstra. Pokud je monstrum turreta, nastaví se trigger na false
 
 		public CustomMonsterTemplate()
 		{
@@ -617,6 +621,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 				}
 
 				Debug.Log("Created custom " + ai.GetType().Name + " AI for " + ch.Name);
+			    name_turret = ch.Name;
 				return ai;
 			}
 			else if (OldTemplate != null)
@@ -666,7 +671,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			}
 
 			if(changed)
-				data.UpdateCollider();
+                data.UpdateCollider(name_turret);
 		}
 
 		public virtual void OnTalkTo(Character source)

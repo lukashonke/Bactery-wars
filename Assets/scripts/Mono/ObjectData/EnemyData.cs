@@ -36,6 +36,7 @@ namespace Assets.scripts.Mono.ObjectData
 					Debug.LogError("cant get name for monsterId " + monsterId);
 				}
 			}
+            Debug.Log("Neco:" + monsterTypeName);
 
 			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
 			//Debug.Log("Registering new data for monster ");
@@ -95,7 +96,7 @@ namespace Assets.scripts.Mono.ObjectData
 			}
 		}
 
-		public void UpdateCollider()
+		public void UpdateCollider(string nameTurret)
 		{
 			Collider2D coll = null;
 
@@ -108,6 +109,14 @@ namespace Assets.scripts.Mono.ObjectData
 				CircleCollider2D newColl = GetBody().AddComponent<CircleCollider2D>();
 
 				newColl.isTrigger = trigger;
+
+                if (nameTurret == "Attack turret")
+                {
+                    newColl.isTrigger = true;
+                    Debug.Log("nastaveno");
+
+                }
+
 			}
 			else
 			{
@@ -123,7 +132,10 @@ namespace Assets.scripts.Mono.ObjectData
 					newColl.isTrigger = trigger;
 				}
 			}
-		}
+
+		 
+        
+        }
 
 		public void SetSprite(Sprite sprite, float scale)
 		{
