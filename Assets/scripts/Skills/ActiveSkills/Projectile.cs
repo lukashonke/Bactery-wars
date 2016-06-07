@@ -178,18 +178,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 								if (!navigateLookOnlyForward)
 								{
 									float angle = d.proj.transform.rotation.eulerAngles.z;
-									/*foreach (RaycastHit2D hit in Physics2D.BoxCastAll(d.proj.transform.position, new Vector2(navigateAimArea, navigateAimArea), angle, d.rb.velocity, navigateAimArea))
-									{
-										if (hit.collider.gameObject.Equals(d.proj))
-											continue;
-
-										Character targetCh = hit.collider.gameObject.GetChar();
-										if (targetCh == null || !Owner.CanAttack(targetCh))
-											continue;
-
-										d.target = targetCh;
-										break;
-									}*/
 
 									foreach (Collider2D c in Physics2D.OverlapCircleAll(d.proj.transform.position, navigateAimArea))
 									{
@@ -228,21 +216,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 										d.target = targetCh;
 										break;
 									}
-
-									/*foreach (RaycastHit2D hit in Physics2D.BoxCastAll(d.proj.transform.position, new Vector2(navigateAimArea, navigateAimArea), angle, d.rb.velocity, navigateAimArea))
-									{
-										if (hit.collider.gameObject.Equals(d.proj))
-											continue;
-
-										Character targetCh = hit.collider.gameObject.GetChar();
-										if (targetCh == null || !Owner.CanAttack(targetCh))
-											continue;
-
-										d.target = targetCh;
-										break;
-									}*/
 								}
-								
 							}
 							
 						}

@@ -44,7 +44,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Greatly decreases cooldown of autoattack.";
+			return "The next " + count + " autoattacks will have null reuse and cooldown.";
 		}
 
 		public override string GetBaseInfo()
