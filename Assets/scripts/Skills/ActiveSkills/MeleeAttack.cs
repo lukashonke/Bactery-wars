@@ -96,6 +96,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			GetOwnerData().StopMeleeAnimation();
 
 			meleeHit = CreateParticleEffect("Melee Launch", true, GetOwnerData().GetBody().transform.position);
+			meleeHit.transform.localRotation = Quaternion.Euler(0, 0, 90);
+
 			StartParticleEffect(meleeHit);
 		}
 
