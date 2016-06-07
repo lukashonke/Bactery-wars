@@ -2363,7 +2363,7 @@ namespace Assets.scripts.Mono
 			else
 			{
 				timers[id, 0] = Time.time;
-				timers[id, 1] = ((ActiveSkill)sk).GetReuse();
+				timers[id, 1] = ((ActiveSkill)sk).GetReuse(false);
 			}
 		}
 
@@ -2383,8 +2383,8 @@ namespace Assets.scripts.Mono
 			if (id == -1)
 				return;
 
-			timers[id, 0] = Time.time - ((ActiveSkill)sk).GetReuse();
-			timers[id, 1] = ((ActiveSkill)sk).GetReuse();
+			timers[id, 0] = Time.time - ((ActiveSkill)sk).GetReuse(false);
+			timers[id, 1] = ((ActiveSkill)sk).GetReuse(false);
 		}
 
 		public void NextLevel()

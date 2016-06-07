@@ -306,7 +306,7 @@ namespace Assets.scripts.Mono.ObjectData
 					return;
 			}
 
-			if (GetOwner().MeleeSkill != null && GetOwner().CanCastSkill(GetOwner().MeleeSkill) && GetOwner().MeleeSkill.CanUse())
+			if (GetOwner().MeleeSkill != null && GetOwner().CanCastSkill(GetOwner().MeleeSkill) )
 			{
 				GetOwner().MeleeSkill.DoAutoattack();
 			}

@@ -56,6 +56,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void InitTraits()
 		{
+			AddTrait(SkillTraits.Melee);
 			AddTrait(SkillTraits.Jump);
 		}
 

@@ -281,7 +281,7 @@ namespace Assets.scripts.Skills
 				float time = Time.time;
 
 				// the reuse time has passed
-				if (LastUsed + (GetReuse()) < time)
+				if (LastUsed + (GetReuse(true)) < time)
 				{
 					return true;
 				}
@@ -491,7 +491,7 @@ namespace Assets.scripts.Skills
 
 			OnAfterEnd();
 
-			if (GetReuse() > 0)
+			if (GetReuse(false) > 0)
 				Owner.StartTask(NotifyReuseEnd());
 		}
 
@@ -502,7 +502,7 @@ namespace Assets.scripts.Skills
 
 		private IEnumerator NotifyReuseEnd()
 		{
-			yield return new WaitForSeconds(GetReuse());
+			yield return new WaitForSeconds(GetReuse(false));
 			OnAterReuse();
 		}
 
@@ -1034,7 +1034,7 @@ namespace Assets.scripts.Skills
 			
 		}
 
-		public float GetReuse()
+		public float GetReuse(bool skillBeingCast)
 		{
 			float reuse = this.reuse;
 
@@ -1045,7 +1045,7 @@ namespace Assets.scripts.Skills
 
 			foreach (SkillEffect ef in Owner.ActiveEffects)
 			{
-				ef.ModifySkillReuse(this, ref reuse);
+				ef.ModifySkillReuse(this, ref reuse, skillBeingCast);
 			}
 			return reuse;
 		}

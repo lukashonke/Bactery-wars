@@ -335,5 +335,10 @@ namespace Assets.scripts.Skills
 		{
 
 		}
+
+		public virtual void NotifyEffectRemoved(SkillEffect eff)
+		{
+			
+		}
 	}
 }

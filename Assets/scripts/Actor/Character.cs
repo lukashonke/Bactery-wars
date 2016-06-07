@@ -541,6 +541,7 @@ namespace Assets.scripts.Actor
 		public void RemoveEffect(SkillEffect ef)
 		{
 			ef.OnRemove();
+			ef.Remove();
 			ef.removed = true;
 			ActiveEffects.Remove(ef);
 

@@ -127,7 +127,7 @@ public class Healthbar : MonoBehaviour
 			ActiveSkill sk = ownerData.GetOwner().MeleeSkill;
 
 			float lastUse = sk.LastUsed;
-			float reuse = sk.GetReuse();
+			float reuse = sk.GetReuse(false);
 
 			float passed = Time.time - lastUse;
 			float ratio = passed / reuse;

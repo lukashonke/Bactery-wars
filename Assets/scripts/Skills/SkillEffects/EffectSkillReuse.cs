@@ -14,6 +14,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		private SkillTraits traitToAffect;
 		//private SkillId[] idsToAffect;
 
+		private int uses = -1;
+
 		public EffectSkillReuse(float mul, float value, float duration, SkillTraits toAffect/*, params SkillId[] idsToAffect*/) : base(duration)
 		{
 			this.multiplier = mul;
@@ -41,16 +43,41 @@ namespace Assets.scripts.Skills.SkillEffects
 		{
 		}
 
-		public override void ModifySkillReuse(ActiveSkill sk, ref float reuse)
+		public override void ModifySkillReuse(ActiveSkill sk, ref float reuse, bool skillBeingCast)
 		{
 			if (traitToAffect == SkillTraits.None || sk.HasTrait(traitToAffect))
 			{
-				reuse *= multiplier;
-
-				if (fixedValue > -1)
+				bool allow = false;
+				if (uses > 0)
 				{
-					reuse = fixedValue;
+					if (skillBeingCast)
+					{
+						Exception e = new Exception();
+						Debug.Log(e.StackTrace);
+						uses --;
+					}
+
+					allow = true;
+
+					if(uses <= 0) // remove this effect
+						this.remove = true;
 				}
+				else if (uses == -1)
+				{
+					allow = true;
+				}
+
+				if (allow)
+				{
+					reuse *= multiplier;
+
+					if (fixedValue > -1)
+					{
+						reuse = fixedValue;
+					}
+				}
+				else
+					this.remove = true;
 			}
 		}
 
@@ -65,6 +92,12 @@ namespace Assets.scripts.Skills.SkillEffects
 					reuse = fixedValue;
 				}
 			}*/
+		}
+
+		public EffectSkillReuse SetCountUses(int count)
+		{
+			uses = count;
+			return this;
 		}
 
 		public override SkillTraits[] GetTraits()

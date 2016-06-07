@@ -49,12 +49,20 @@ namespace Assets.scripts.Skills.SkillEffects
 		public abstract void Update();
 		public abstract void OnRemove();
 
+		public void Remove()
+		{
+			if (SourceSkillObject != null)
+			{
+				SourceSkillObject.NotifyEffectRemoved(this);
+			}
+		}
+
 		public virtual void ModifySkillCasttime(ActiveSkill sk, ref float reuse)
 		{
 			
 		}
 
-		public virtual void ModifySkillReuse(ActiveSkill sk, ref float reuse)
+		public virtual void ModifySkillReuse(ActiveSkill sk, ref float reuse, bool skillBeingCast)
 		{
 
 		}
