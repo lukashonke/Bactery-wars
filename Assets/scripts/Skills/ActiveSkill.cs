@@ -948,7 +948,7 @@ namespace Assets.scripts.Skills
 			return GetOwnerData().Target;
 		}
 
-		protected void DestroyProjectile(GameObject proj, bool critical)
+		protected void DestroyProjectile(GameObject proj, bool critical=false)
 		{
 			if (proj == null)
 				return;
