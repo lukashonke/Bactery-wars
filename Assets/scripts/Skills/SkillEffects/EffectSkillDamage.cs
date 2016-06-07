@@ -30,7 +30,6 @@ namespace Assets.scripts.Skills.SkillEffects
 		public override void ModifyCharDamage(ref int damage)
 		{
 			damage = (int)(damage * multiplier);
-			remove = true; // TODO make better
 		}
 
 		public override SkillTraits[] GetTraits()

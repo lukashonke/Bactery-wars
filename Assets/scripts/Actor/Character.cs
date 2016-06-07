@@ -750,8 +750,15 @@ namespace Assets.scripts.Actor
 		/// <summary>
 		/// Calculate damage done to the target 
 		/// </summary>
-		public int CalculateDamage(int baseDamage, Character target, bool canCrit, out bool wasCrit, int critAddChance=0)
+		public int CalculateDamage(int baseDamage, Character target, Skill skill, bool canCrit, out bool wasCrit, int critAddChance = 0)
 		{
+			if (skill != null && skill is ActiveSkill)
+			{
+				float boost = ((ActiveSkill) skill).GetBoostDamage();
+				if (boost > 0)
+					baseDamage = (int) (baseDamage * boost);
+			}
+
 			baseDamage = (int) (baseDamage * Status.DamageOutputMul);
 			baseDamage = (int) (baseDamage + Status.DamageOutputAdd);
 

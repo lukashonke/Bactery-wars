@@ -3,6 +3,7 @@ using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
@@ -16,7 +17,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public float rangeBoost = 1f;
 		public int nullReuseChance = 0;
 
-		public int duration = 5;
+		public float power = 1.5f;
+
+		private bool active = false;
 
 		public ChargeSkill()
 		{
@@ -53,15 +56,29 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetBaseInfo()
 		{
-			return "Reuse " + reuse + " sec | Duration " + duration + " sec";
+			return "Reuse " + reuse + " sec";
+		}
+
+		public override void NotifyAnotherSkillCastStart(Skill sk)
+		{
+			if (active && sk is ActiveSkill)
+			{
+				active = false;
+
+				// boost skills power
+				((ActiveSkill)sk).TempBoostDamage(power);
+
+				// remove particle system
+				DeleteParticleEffect(particleSystem);
+			}
 		}
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			SkillEffect[] effects = new SkillEffect[1];
-			effects[0] = new EffectSkillDamage(1.5f, duration);
-
-			return effects;
+			//SkillEffect[] effects = new SkillEffect[1];
+			//effects[0] = new EffectSkillDamage(2.0f, duration);
+			//return effects;
+			return null;
 		}
 
 		public override void InitTraits()
@@ -80,7 +97,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			StartParticleEffect(particleSystem);
 
 			ApplyEffects(Owner, Owner.GetData().gameObject);
-			DeleteParticleEffect(particleSystem, duration);
+			active = true;
+			//DeleteParticleEffect(particleSystem);
 		}
 
 		public override void OnFinish()

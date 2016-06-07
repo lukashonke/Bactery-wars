@@ -325,5 +325,15 @@ namespace Assets.scripts.Skills
 		public abstract void End();
 
 		public abstract string GetBaseInfo();
+
+		public virtual void NotifyAnotherSkillCastStart(Skill sk)
+		{
+			
+		}
+
+		public virtual void NotifyAnotherSkillCastEnd(Skill sk)
+		{
+
+		}
 	}
 }

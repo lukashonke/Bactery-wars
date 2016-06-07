@@ -69,6 +69,7 @@ namespace Assets.scripts.Skills
 		public int maxConsecutiveCharges;
 		public int currentConsecutiveCharges;
 		public float consecutiveTimelimit;
+		public float tempDamageBoost;
 
 		// custom image for projectile
 		public string image;
@@ -107,6 +108,7 @@ namespace Assets.scripts.Skills
 			consecutiveTimelimit = 3f;
 			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
+			tempDamageBoost = -1;
 
 			image = null;
 
@@ -440,6 +442,18 @@ namespace Assets.scripts.Skills
 				}
 			}
 
+			if (tempDamageBoost > 0)
+			{
+				tempDamageBoost = -1;
+			}
+
+			int count = Owner.Skills.Skills.Count;
+			for (int i = 0; i < count; i++)
+			{
+				Skill sk = Owner.Skills.Skills[i];
+				sk.NotifyAnotherSkillCastStart(this);
+			}
+
 			active = true;
 
 			Owner.Status.ActiveSkills.Add(this);
@@ -467,6 +481,13 @@ namespace Assets.scripts.Skills
 			Task = null;
 
 			state = SkillState.SKILL_IDLE;
+
+			int count = Owner.Skills.Skills.Count;
+			for (int i = 0; i < count; i++)
+			{
+				Skill sk = Owner.Skills.Skills[i];
+				sk.NotifyAnotherSkillCastEnd(this);
+			}
 
 			OnAfterEnd();
 
@@ -1078,6 +1099,20 @@ namespace Assets.scripts.Skills
 		public void SetRange(int r)
 		{
 			this.range = r;
+		}
+
+		/// <summary>
+		/// boost skill damage for one use
+		/// </summary>
+		/// <param name="val">the skill damage multiplier</param>
+		public void TempBoostDamage(float val)
+		{
+			tempDamageBoost = val;
+		}
+
+		public float GetBoostDamage()
+		{
+			return tempDamageBoost;
 		}
 
 		protected int CalcAngleForProjectile(int index, int totalProjectiles, int angleAdd)

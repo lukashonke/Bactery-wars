@@ -59,7 +59,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (source.CanAttack(target))
 			{
 				bool wasCrit;
-				int dmg = source.CalculateDamage(damage, target, crit, out wasCrit);
+				int dmg = source.CalculateDamage(damage, target, SourceSkillObject, crit, out wasCrit);
 
 				source.OnAttack(target);
 
