@@ -1,4 +1,6 @@
-﻿using System.Runtime.Remoting.Messaging;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Runtime.Remoting.Messaging;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;

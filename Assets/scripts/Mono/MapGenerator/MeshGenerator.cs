@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

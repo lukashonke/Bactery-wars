@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System;
 using System.IO;
 using Assets.scripts.Actor;
 using Assets.scripts.Fort;

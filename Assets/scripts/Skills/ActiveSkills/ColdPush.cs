@@ -1,4 +1,6 @@
-﻿using System.Reflection.Emit;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Reflection.Emit;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;

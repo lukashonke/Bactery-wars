@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;

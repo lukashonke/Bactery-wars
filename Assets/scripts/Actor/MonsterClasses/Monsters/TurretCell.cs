@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Runtime.InteropServices;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.AI;
 using Assets.scripts.AI.Modules;

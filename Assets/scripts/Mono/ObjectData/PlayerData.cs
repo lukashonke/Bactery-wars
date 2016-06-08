@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
 using Assets.scripts.Actor;

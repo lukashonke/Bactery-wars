@@ -1,4 +1,6 @@
-﻿namespace Assets.scripts.Upgrade
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+namespace Assets.scripts.Upgrade
 {
 	public enum ItemType
 	{

@@ -1,4 +1,6 @@
-﻿using Assets.scripts.Actor;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using Assets.scripts.Actor;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
 using Assets.scripts.Skills.Base;

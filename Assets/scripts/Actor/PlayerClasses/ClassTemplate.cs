@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Collections.Generic;
 using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using UnityEngine;
 
 namespace Assets.scripts
 {

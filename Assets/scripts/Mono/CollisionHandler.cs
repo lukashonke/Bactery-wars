@@ -1,4 +1,6 @@
-﻿using Assets.scripts.Base;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using Assets.scripts.Base;
 using UnityEngine;
 
 namespace Assets.scripts.Mono

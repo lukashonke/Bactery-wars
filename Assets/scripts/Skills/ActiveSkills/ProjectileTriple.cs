@@ -1,4 +1,6 @@
-﻿using Assets.scripts.Skills.Base;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
 using UnityEngine;
 

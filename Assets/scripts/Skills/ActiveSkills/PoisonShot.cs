@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using System.Collections.Generic;
 using System.Linq;
 using Assets.scripts.Actor;
 using Assets.scripts.Base;

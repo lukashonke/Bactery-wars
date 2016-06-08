@@ -1,4 +1,6 @@
-﻿using Assets.scripts.Actor.MonsterClasses.Base;
+﻿// Copyright (c) 2015, Lukas Honke
+// ========================
+using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Skills;
