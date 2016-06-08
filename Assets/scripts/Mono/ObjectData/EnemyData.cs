@@ -61,14 +61,34 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			if (isDead)
 			{
-				GameObject ch = GetChildByName("Die Effect");
+				//GameObject ch = GetChildByName("Die Effect");
 
-				if (ch != null)
+				/*if (ch != null && ch.activeSelf)
 				{
 					ParticleSystem ps = ch.GetComponent<ParticleSystem>();
 					if (ps != null)
 						ps.Play();
 				}
+				else
+				{*/
+				float size = GetSize();
+
+				GameObject eff;
+
+				if(size < 1.1f) // more than 100f -> turret, small explosion
+					eff = InstantiateObject(LoadResource("entity", "Template", "Die Effect Small"));
+				else if(size < 3.0f)
+					eff = InstantiateObject(LoadResource("entity", "Template", "Die Effect Medium"));
+				else
+					eff = InstantiateObject(LoadResource("entity", "Template", "Die Effect Big"));
+
+				ParticleSystem ps = eff.GetComponent<ParticleSystem>();
+				if (ps != null)
+					ps.Play();
+
+				Destroy(eff, 3f);
+
+				//}
 
 				DisableObjectData();
 
@@ -166,6 +186,8 @@ namespace Assets.scripts.Mono.ObjectData
 				return;
 			}
 
+			this.size = scale;
+
 			SpriteRenderer sr = GetComponent<SpriteRenderer>();
 			sr.sprite = sprite;
 
@@ -190,6 +212,7 @@ namespace Assets.scripts.Mono.ObjectData
 			{
 				Rigidbody2D rb = GetComponent<Rigidbody2D>();
 				rb.mass = mass;
+				this.mass = mass;
 			}
 		}
 

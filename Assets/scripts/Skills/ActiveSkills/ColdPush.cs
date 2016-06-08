@@ -147,7 +147,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				shape.arc = angle;
 				shape.radius = range;
 
-				ps.startLifetime = range/50f*2f;
+				//ps.startLifetime = range/50f*2f;
 
 				StartParticleEffect(eff);
 				DeleteParticleEffect(eff, 1f);

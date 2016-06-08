@@ -351,6 +351,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 					// find next target
 					if (!destroy && navigateChangeTargetAfterHit)
 					{
+						ProjectileHitAnimation(d.proj);
+
 						float angle = d.proj.transform.rotation.eulerAngles.z;
 						if (!navigateLookOnlyForward)
 						{

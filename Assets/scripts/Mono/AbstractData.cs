@@ -120,6 +120,8 @@ namespace Assets.scripts.Mono
 		public bool cancelForcedVelocityOnCollision;
 		public bool cancelMovementTargetOnCollision;
 
+		protected float mass, size;
+
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
 		/// pokud je nastaveno na false, objekt se nebude pohybovat smerem ke svemu cili dokud k nemu nebude natoceny
@@ -150,6 +152,9 @@ namespace Assets.scripts.Mono
 			anim = body.GetComponent<Animator>();
 			shootingPosition = GetChildByName("Shooting Position");
 			particleSystems = GetChildByName("ParticleSystems");
+
+			mass = -1;
+			size = 1;
 
 			if (particleSystems == null)
 				particleSystems = body;
@@ -1488,6 +1493,20 @@ namespace Assets.scripts.Mono
 			{
 				BreakMovement(true);
 			}
+		}
+
+		public float GetMass()
+		{
+			if (mass < 0)
+			{
+				return rb.mass;
+			}
+			else return mass;
+		}
+
+		public float GetSize()
+		{
+			return size;
 		}
 
 		public void ScheduleCheckWalls(float time)

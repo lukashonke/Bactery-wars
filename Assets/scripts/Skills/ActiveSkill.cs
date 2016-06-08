@@ -699,6 +699,7 @@ namespace Assets.scripts.Skills
 				AddMonoReceiver(o);
 
 			AddRangeCheck(o);
+			ProjectileShotAnimation();
 
 			return o;
 		}
@@ -716,6 +717,7 @@ namespace Assets.scripts.Skills
 				AddMonoReceiver(o);
 
 			AddRangeCheck(o);
+			ProjectileShotAnimation();
 
 			return o;
 		}
@@ -733,6 +735,7 @@ namespace Assets.scripts.Skills
 				AddMonoReceiver(o);
 
 			AddRangeCheck(o);
+			ProjectileShotAnimation();
 
 			return o;
 		}
@@ -750,6 +753,7 @@ namespace Assets.scripts.Skills
 				AddMonoReceiver(o);
 
 			AddRangeCheck(o);
+			ProjectileShotAnimation();
 
 			return o;
 		}
@@ -866,7 +870,7 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception e)
 			{
-				Debug.LogError("couldnt pause particle effect" + GetName());
+				//Debug.LogError("couldnt pause particle effect" + GetName());
 			}
 		}
 
@@ -948,11 +952,32 @@ namespace Assets.scripts.Skills
 			return GetOwnerData().Target;
 		}
 
-		protected void DestroyProjectile(GameObject proj, bool critical=false)
+		public void ProjectileShotAnimation()
 		{
-			if (proj == null)
-				return;
+			try
+			{
+				GameObject obj = CreateParticleEffect(GetName(), "ProjectileShot", false, GetOwnerData().GetShootingPosition().transform.position);
 
+				if (obj != null)
+				{
+					StartParticleEffect(obj);
+					DeleteParticleEffect(obj, 1f);
+				}
+			}
+			catch (Exception)
+			{
+				/*GameObject obj = CreateParticleEffect("SkillTemplate", "ProjectileShot", false, proj.transform.position);
+
+				if (obj != null)
+				{
+					StartParticleEffect(obj);
+					DeleteParticleEffect(obj, 1f);
+				}*/
+			}
+		}
+
+		public void ProjectileHitAnimation(GameObject proj)
+		{
 			try
 			{
 				GameObject obj = CreateParticleEffect(GetName(), "ProjectileHit", false, proj.transform.position);
@@ -965,13 +990,37 @@ namespace Assets.scripts.Skills
 			}
 			catch (Exception)
 			{
-			}
-			
+				GameObject obj = CreateParticleEffect("SkillTemplate", "ProjectileHit", false, proj.transform.position);
 
+				if (obj != null)
+				{
+					StartParticleEffect(obj);
+					DeleteParticleEffect(obj, 1f);
+				}
+			}
+		}
+
+		protected void DestroyProjectile(GameObject proj, float delay=1f)
+		{
+			if (proj == null)
+				return;
+
+			ProjectileHitAnimation(proj);
+			
 			/*ProjectileBlackTestData pd = proj.GetComponent<ProjectileBlackTestData>();
 			if(pd != null)
 				pd.collapse();
 			else*/
+
+			if (delay > 0)
+			{
+				proj.GetComponent<SpriteRenderer>().enabled = false;
+				proj.GetComponent<Collider2D>().enabled = false;
+				proj.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+				PauseParticleEffect(proj);
+				Object.Destroy(proj, delay);
+			}
+			else
 				Object.Destroy(proj);
 		}
 

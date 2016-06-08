@@ -35,7 +35,7 @@ namespace Assets.scripts.Actor.PlayerClasses
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.CellFury));
 			//TemplateSkills.Add(SkillTable.Instance.GetSkill(SkillId.RhinoBeam));
 
-			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.MeleeAttack));
+			SetMeleeAttackSkill((ActiveSkill)SkillTable.Instance.GetSkill(SkillId.CellShot));
 		}
 
 		public override ClassId GetClassId()

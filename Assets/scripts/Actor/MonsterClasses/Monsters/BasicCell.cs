@@ -514,7 +514,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 		public IdleObstacleCell()
 		{
 			Name = "Cell";
-			MaxHp = 500;
+			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 4;
 

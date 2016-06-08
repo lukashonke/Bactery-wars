@@ -75,7 +75,7 @@ ParticleSystem:
     minMaxState: 0
   speed: 1
   randomSeed: 0
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 0
@@ -84,7 +84,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 1
+      scalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -245,8 +245,8 @@ ParticleSystem:
         rgba: 4294967295
       maxColor:
         serializedVersion: 2
-        rgba: 4294967295
-      minMaxState: 0
+        rgba: 4289788869
+      minMaxState: 2
     startSize:
       scalar: 5
       maxCurve:
@@ -470,12 +470,12 @@ ParticleSystem:
       maxCurve:
         serializedVersion: 2
         m_Curve:
-        - time: 0.4425
+        - time: 0
           value: 1
-          inSlope: -0.45739046
-          outSlope: -0.45739046
+          inSlope: -2
+          outSlope: -2
           tangentMode: 0
-        - time: 0.76750004
+        - time: 1
           value: 0
           inSlope: 0
           outSlope: 0
@@ -635,7 +635,7 @@ ParticleSystem:
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 65535
+        atime1: 29876
         atime2: 0
         atime3: 0
         atime4: 0
