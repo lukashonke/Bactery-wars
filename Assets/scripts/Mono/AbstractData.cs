@@ -1552,5 +1552,9 @@ namespace Assets.scripts.Mono
 		public virtual void SetSkillReuseTimer(ActiveSkill activeSkill, bool reset=false)
 		{
 		}
+
+		public virtual void ReceivedDamage(int damage, bool wasCrit)
+		{
+		}
 	}
 }

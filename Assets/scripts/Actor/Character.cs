@@ -841,6 +841,8 @@ namespace Assets.scripts.Actor
 				DoDie(source, skillId);
 			}
 
+			GetData().ReceivedDamage(damage, wasCrit);
+
 			GetData().SetVisibleHp(Status.Hp);
 
 			AI.AddAggro(source, damage*5);

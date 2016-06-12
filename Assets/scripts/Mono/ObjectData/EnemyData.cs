@@ -22,6 +22,8 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public int distanceToFollowLeader = 8;
 
+		private GameObject onHitEffect;
+
 		// Use this for initialization
 		public new void Start()
 		{
@@ -39,6 +41,8 @@ namespace Assets.scripts.Mono.ObjectData
 				}
 			}
             Debug.Log("Neco:" + monsterTypeName);
+
+			onHitEffect = LoadResource("entity", "Template", "Onhit Effect");
 
 			//owner = GameSystem.Instance.RegisterNewMonster(this, "Monster", monsterId);
 			//Debug.Log("Registering new data for monster ");
@@ -154,9 +158,6 @@ namespace Assets.scripts.Mono.ObjectData
 					newColl.isTrigger = trigger;
 				}
 			}
-
-		 
-        
         }
 
 		public void SetSprite(Sprite sprite, float scale)
@@ -235,6 +236,18 @@ namespace Assets.scripts.Mono.ObjectData
 
 		public override void OnTriggerStay2D(Collider2D obj)
 		{
+		}
+
+		public override void ReceivedDamage(int damage, bool wasCrit)
+		{
+			GameObject eff;
+			eff = InstantiateObject(onHitEffect);
+
+			ParticleSystem ps = eff.GetComponent<ParticleSystem>();
+			if (ps != null)
+				ps.Play();
+
+			Destroy(eff, 3f);
 		}
 
 		public override void OnCollisionEnter2D(Collision2D coll)
