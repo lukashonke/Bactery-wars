@@ -212,7 +212,7 @@ namespace Assets.scripts.AI
 
 		public bool HasMaster()
 		{
-			return ((Monster) Owner).HasMaster();
+			return ((Monster) Owner).HasMaster() && GetMaster() != null && GetMaster().Status.IsDead == false;
 		}
 
 		private void ThinkIdle()

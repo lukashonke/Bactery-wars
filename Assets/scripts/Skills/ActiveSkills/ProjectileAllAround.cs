@@ -18,6 +18,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 
 			requireConfirm = false;
+			AvailableToPlayer = false;
 		}
 
 		public override SkillId GetSkillId()

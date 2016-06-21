@@ -30,7 +30,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 			resetMoveTarget = false;
 
-			AvailableToPlayer = true;
+			AvailableToPlayer = false;
 		}
 
 		public override SkillId GetSkillId()

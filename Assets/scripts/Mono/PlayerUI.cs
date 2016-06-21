@@ -1162,10 +1162,10 @@ namespace Assets.scripts.Mono
 				{
 					Skill skTemp = sk;
 
-					if (sk == null || sk.Icon == null || (!sk.AvailableToPlayer && currentSkillsView == 1) || (!sk.AvailableToPlayerAsAutoattack && currentSkillsView == 2))
+					if (sk == null || sk.Icon == null || (!sk.AvailableToPlayer && !sk.AvailableToDeveloper && currentSkillsView == 1) || (!sk.AvailableToPlayerAsAutoattack && currentSkillsView == 2))
 						continue;
 
-					if (((Player)data.GetOwner()).Skills.HasSkill(sk.GetSkillId()))
+					if (((Player)data.GetOwner()).Skills.HasSkill(sk.GetSkillId()) || (((Player)data.GetOwner()).MeleeSkill != null && ((Player)data.GetOwner()).MeleeSkill.GetSkillId() == sk.GetSkillId()))
 						continue;
 
 					GameObject itemObject = Instantiate(skillItemTemplate, new Vector3(0, 0), Quaternion.identity) as GameObject;

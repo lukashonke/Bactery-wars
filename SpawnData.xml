@@ -101,55 +101,35 @@
 
 		<group id="1" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
 
-			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id="1" type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
 
-			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
 				
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob id_parent="1" type="HealerCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
 		</group>
 
 		<group id="2" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
 
-			<mob type="TankCell" count="2" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id="1" type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
 				
-		</group>
-
-		<group id="3" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
-
-			<mob type="JumpCell" count="2" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="ChargerCell" count="2" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-				
-		</group>
-
-		<group id="4" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
-
-			<mob type="BasicMeleeCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="BasicMeleeCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="BasicMeleeCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="BasicMeleeCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="BasicMeleeCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
 
 		</group>
 
-
-		<group id="50" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
-
-			<mob id="1" type="JumpCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
-			<mob id="2" type="JumpCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
-			<mob id="3" type="JumpCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
-				
-		</group>
-
-		<group id="51" min_level="1" max_level="99" min_world="1" max_world="4" frequency="1">
-
-			<mob id="1" type="TankCell" count="5" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
-			<mob id="1" type="Neutrophyle_Patrol" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
-			<mob id="2" id_parent="1" type="PassiveHelperCell" count="4" level="1" chance="100" room_size="small" exclude="true" location="largest"/>	
-				
-		</group>
 
 		<group id="52" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
 

@@ -22,6 +22,7 @@ namespace Assets.scripts.Skills
 		public bool IsLocked { get; set; }
 		public bool AvailableToPlayer { get; set; }
 		public bool AvailableToPlayerAsAutoattack { get; set; }
+		public bool AvailableToDeveloper { get; set; }
 
 		public int RequiredSlotLevel { get; set; }
 

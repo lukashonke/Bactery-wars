@@ -22,7 +22,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 
 			range = 10;
-			AvailableToPlayer = true;
+			AvailableToPlayer = false;
 		}
 
 		public override SkillId GetSkillId()

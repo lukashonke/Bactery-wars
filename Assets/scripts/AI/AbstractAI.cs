@@ -286,6 +286,24 @@ namespace Assets.scripts.AI
 			return Owner.MeleeSkill != null;
 		}
 
+		public List<Skill> GetAllSkillsWithTraitOr(params SkillTraits[] traits)
+		{
+			List<Skill> skills = new List<Skill>();
+
+			foreach (Skill sk in Owner.Skills.Skills)
+			{
+				foreach (SkillTraits t in traits)
+				{
+					if (sk.Traits.Contains(t))
+					{
+						skills.Add(sk);
+						break;
+					}
+				}
+			}
+			return skills;
+		}
+
 		public List<Skill> GetAllSkillsWithTrait(params SkillTraits[] traits)
 		{
 			bool containsAll;

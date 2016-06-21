@@ -71,7 +71,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 			baseDamage = 10;
 
 			range = 20;
-			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()

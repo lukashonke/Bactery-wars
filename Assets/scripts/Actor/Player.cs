@@ -108,6 +108,11 @@ namespace Assets.scripts.Actor
 					AvailableSkills.Add(sk);
 				}
 
+				if (sk.AvailableToDeveloper && GameSession.getAllSkills)
+				{
+					AvailableSkills.Add(sk);
+				}
+
 				if(sk.AvailableToPlayerAsAutoattack)
 					AvailableAutoattacks.Add(sk);
 			}
@@ -269,7 +274,7 @@ namespace Assets.scripts.Actor
 					sk = SkillTable.Instance.GetSkill(SkillId.ColdPush);
 					break;
 				case 3:
-					sk = SkillTable.Instance.GetSkill(SkillId.CellFury);
+					sk = SkillTable.Instance.GetSkill(SkillId.Haste);
 					break;
 				case 4:
 					sk = SkillTable.Instance.GetSkill(SkillId.RhinoBeam);

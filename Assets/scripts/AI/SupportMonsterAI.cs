@@ -96,7 +96,7 @@ namespace Assets.scripts.AI
 			if (supportTarget != null)
 			{
 				// try spawn skills
-				List<Skill> supportSkills = GetAllSkillsWithTrait(SkillTraits.BuffDefense, SkillTraits.BuffDamage);
+				List<Skill> supportSkills = GetAllSkillsWithTraitOr(SkillTraits.BuffDefense, SkillTraits.BuffDamage);
 				foreach (Skill s in supportSkills)
 				{
 					if (s.CanUse())

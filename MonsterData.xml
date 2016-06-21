@@ -48,6 +48,36 @@
 		</add_autoattack>
 	</monster>
 
+	<monster name="Leadercell">
+		<visibleName>Leader Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>leaders/ranged_1</sprite>
+		<size>2.0</size>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>12</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+    		
+		</ai>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			</Projectile>
+		</add_skills>
+		
+	</monster>
+
 
 
 

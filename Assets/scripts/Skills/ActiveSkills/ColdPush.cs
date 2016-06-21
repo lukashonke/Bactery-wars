@@ -147,7 +147,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				ParticleSystem ps = eff.GetComponent<ParticleSystem>();
 				ParticleSystem.ShapeModule shape = ps.shape;
 				shape.arc = angle;
-				shape.radius = range;
+				shape.radius = range+1;
 
 				//ps.startLifetime = range/50f*2f;
 

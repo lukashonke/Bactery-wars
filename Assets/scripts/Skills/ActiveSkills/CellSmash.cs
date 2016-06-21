@@ -89,11 +89,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			GetOwnerData().StopMeleeAnimation();
 
-			meleeHit = CreateParticleEffect("Melee Launch", true, GetOwnerData().GetBody().transform.position);
-			meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
+			meleeHit = CreateParticleEffect("Melee Launch", true, GetOwnerData().GetShootingPosition().transform.position);
+			//meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
 			UpdateMouseDirection(meleeHit.transform);
 
-			meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
+			if (meleeHit != null)
+			{
+				meleeHit.transform.rotation = Quaternion.Euler(0, 0, angle);
+				meleeHit.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+				ParticleSystem ps = meleeHit.GetComponent<ParticleSystem>();
+				ParticleSystem.ShapeModule shape = ps.shape;
+				shape.arc = angle;
+				shape.radius = range;
+			}
+
+			//meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
 
 			StartParticleEffect(meleeHit);
 		}
