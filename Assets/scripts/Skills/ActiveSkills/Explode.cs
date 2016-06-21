@@ -35,7 +35,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			//movementAbortsSkill = true;
 			//updateFrequency = 0.01f;
 
-			requireConfirm = true;
+			requireConfirm = false;
 			AvailableToPlayer = true;
 			RequiredSlotLevel = 2;
 		}
@@ -62,7 +62,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(baseDamage, 0), };
+			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectPushaway(20),  };
 		}
 
 		public override void InitTraits()
@@ -130,12 +130,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool CanMove()
 		{
-			return !IsActive();
+			return true;
 		}
 
 		public override bool CanRotate()
 		{
-			return !IsActive();
+			return true;
 		}
 	}
 }

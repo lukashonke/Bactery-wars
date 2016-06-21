@@ -1468,6 +1468,7 @@ namespace Assets.scripts.Mono
 
 			if (pullingObject != null)
 			{
+				// stops the pulling when you hit the target
 				if (pullingObject.Equals(coll.gameObject))
 				{
 					if (pullDamage > 0)

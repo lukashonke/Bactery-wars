@@ -189,11 +189,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			if (Vector3.Distance(GetOwnerData().GetBody().transform.position, target.transform.position) > range+meleeMaxRangeAdd)
 			{
-				if(meleeCasting != null)
+				/*if(meleeCasting != null)
 					DeleteParticleEffect(meleeCasting);
 
 				if(meleeHit != null)
-					DeleteParticleEffect(meleeHit);
+					DeleteParticleEffect(meleeHit);*/
 			}
 		}
 

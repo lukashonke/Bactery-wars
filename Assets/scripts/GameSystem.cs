@@ -107,6 +107,17 @@ namespace Assets.scripts
 				CurrentPlayer.HealMe();
 			}
 
+			if (msg.ToLower().StartsWith("reuse"))
+			{
+				foreach (Skill sk in CurrentPlayer.Skills.Skills)
+				{
+					if (sk is ActiveSkill)
+					{
+						((ActiveSkill) sk).reuse = 0.5f;
+					}
+				}
+			}
+
 			if (msg.ToLower().StartsWith("speed "))
 			{
 				string[] args = msg.Split(' ');

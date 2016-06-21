@@ -24,8 +24,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 0;
 			baseDamage = 15;
 
-			range = 12;
+			range = 24;
 
+			triggersOwnerCollision = true;
 			requireConfirm = true;
 			AvailableToPlayer = true;
 		}
@@ -90,15 +91,25 @@ namespace Assets.scripts.Skills.ActiveSkills
 			return true;
 		}
 
+		private GameObject targetPullEffect;
+
 		public override void OnLaunch()
 		{
 			DeleteCastingEffect();
+
+			particleSystem = CreateParticleEffect("SkillUseEffect", true);
+			StartParticleEffect(particleSystem);
+			DeleteParticleEffect(particleSystem, 5f);
 
 			if (targettedPlayer != null)
 			{
 				Character ch = targettedPlayer.GetChar();
 				if (ch != null && !Owner.CanAttack(ch))
 					return;
+
+				targetPullEffect = CreateParticleEffectOnTarget(targettedPlayer, "TargetHitEffect");
+				StartParticleEffect(targetPullEffect);
+				DeleteParticleEffect(targetPullEffect, 2f);
 
 				ApplyEffects(Owner, targettedPlayer);
 			}
@@ -118,6 +129,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
+		}
+
+		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
+		{
+			if (targettedPlayer != null && coll.gameObject.Equals(targettedPlayer))
+			{
+				PauseParticleEffect(targetPullEffect);
+			}
 		}
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
