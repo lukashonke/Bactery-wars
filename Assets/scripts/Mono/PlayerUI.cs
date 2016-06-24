@@ -2308,8 +2308,6 @@ namespace Assets.scripts.Mono
 			{
 				Skill sk = player.Skills.GetSkill(i);
 
-				Debug.Log(count);
-
 				timers[i, 0] = 1;
 				timers[i, 1] = -1;
 

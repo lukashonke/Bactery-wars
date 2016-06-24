@@ -98,17 +98,18 @@ namespace Assets.scripts.Mono.MapGenerator
 						break;
 				}
 
-				int id = ++nextId;
-				int minLevel = 2;
-				int maxLevel = 99;
-				int minWorld = 1;
-				int maxWorld = 99;
-				int frequency = 5;
-				RegionSize regionSize = RegionSize.NULL;
-
 				foreach (XmlNode groupNode in roomNode.ChildNodes)
 				{
 					if (groupNode.NodeType == XmlNodeType.Comment) continue;
+
+					int id = ++nextId;
+					int minLevel = 2;
+					int maxLevel = 99;
+					int minWorld = 1;
+					int maxWorld = 99;
+					int frequency = 5;
+					RegionSize minRegionSize = RegionSize.NULL;
+					RegionSize maxRegionSize = RegionSize.NULL;
 
 					foreach (XmlAttribute attr in groupNode.Attributes)
 					{
@@ -143,24 +144,40 @@ namespace Assets.scripts.Mono.MapGenerator
 							frequency = Int32.Parse(attr.Value);
 						}
 
-						if (attr.Name == "region_size")
+						if (attr.Name == "max_region_size")
 						{
 							switch (attr.Value)
 							{
 								case "small":
-									regionSize = RegionSize.SMALL;
+									maxRegionSize = RegionSize.SMALL;
 									break;
 								case "medium":
-									regionSize = RegionSize.MEDIUM;
+									maxRegionSize = RegionSize.MEDIUM;
 									break;
 								case "large":
-									regionSize = RegionSize.LARGE;
+									maxRegionSize = RegionSize.LARGE;
+									break;
+							}
+						}
+
+						if (attr.Name == "min_region_size")
+						{
+							switch (attr.Value)
+							{
+								case "small":
+									minRegionSize = RegionSize.SMALL;
+									break;
+								case "medium":
+									minRegionSize = RegionSize.MEDIUM;
+									break;
+								case "large":
+									minRegionSize = RegionSize.LARGE;
 									break;
 							}
 						}
 					}
 
-					MobGroup group = new MobGroup(currentRoomType, id, minLevel, maxLevel, minWorld, maxWorld, frequency, regionSize);
+					MobGroup group = new MobGroup(currentRoomType, id, minLevel, maxLevel, minWorld, maxWorld, frequency, minRegionSize, maxRegionSize);
 
 					Debug.Log("added group id " + id + " to " + currentRoomType);
 
@@ -308,7 +325,10 @@ namespace Assets.scripts.Mono.MapGenerator
 				int soucet = 0;
 				foreach (MobGroup group in mobGroups)
 				{
-					if (group.regionSize != RegionSize.NULL && group.regionSize != size)
+					if (group.minRegionSize != RegionSize.NULL && group.minRegionSize > size)
+						continue;
+
+					if (group.maxRegionSize != RegionSize.NULL && group.maxRegionSize < size)
 						continue;
 
 					if (roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel &&
@@ -323,7 +343,10 @@ namespace Assets.scripts.Mono.MapGenerator
 
 				foreach (MobGroup group in mobGroups)
 				{
-					if (group.regionSize != RegionSize.NULL && group.regionSize != size)
+					if (group.minRegionSize != RegionSize.NULL && group.minRegionSize > size)
+						continue;
+
+					if (group.maxRegionSize != RegionSize.NULL && group.maxRegionSize < size)
 						continue;
 
 					if (roomType == group.roomType && group.minLevel <= playerLevel && group.maxLevel >= playerLevel &&
@@ -350,6 +373,8 @@ namespace Assets.scripts.Mono.MapGenerator
 				Debug.LogError("chyba - nenalezena spravna groupa ");
 				return;
 			}
+
+			bool spawned = false;
 
 			foreach (MobGroup group in mobGroups)
 			{
@@ -451,10 +476,17 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
+					spawned = true;
+
 					Debug.Log("spawnuto " + count + " ze skup. " + selectedId);
 					
 					break;
 				}
+			}
+
+			if (!spawned)
+			{
+				Debug.LogError("nenalezena spawngroup do mistnosti typu " + roomType.ToString() + " " + room.region.x + "-" + room.region.y + " in world " + level.ToString());
 			}
 
 			if(forcedId > 0)
@@ -472,11 +504,12 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int minWorld;
 		public int maxWorld;
 		public int frequency;
-		public MonsterGenerator.RegionSize regionSize;
+		public MonsterGenerator.RegionSize minRegionSize;
+		public MonsterGenerator.RegionSize maxRegionSize;
 
-		public List<MobData> mobs = new List<MobData>(); 
+		public List<MobData> mobs = new List<MobData>();
 
-		public MobGroup(MonsterGenerator.RoomType roomType, int id, int minLevel, int maxLevel, int minWorld, int maxWorld, int frequency, MonsterGenerator.RegionSize regionSize)
+		public MobGroup(MonsterGenerator.RoomType roomType, int id, int minLevel, int maxLevel, int minWorld, int maxWorld, int frequency, MonsterGenerator.RegionSize minRegionSize, MonsterGenerator.RegionSize maxRegionSize)
 		{
 			this.roomType = roomType;
 
@@ -486,13 +519,14 @@ namespace Assets.scripts.Mono.MapGenerator
 			this.minWorld = minWorld;
 			this.maxWorld = maxWorld;
 			this.frequency = frequency;
-			this.regionSize = regionSize;
+			this.minRegionSize = minRegionSize;
+			this.maxRegionSize = maxRegionSize;
 		}
 
 		public void AddMob(MobData mob)
 		{
 			mobs.Add(mob);
-			mob.PrintInfo();
+			//mob.PrintInfo();
 		}
 	}
 

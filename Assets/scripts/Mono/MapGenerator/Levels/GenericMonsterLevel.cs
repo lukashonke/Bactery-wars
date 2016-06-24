@@ -128,6 +128,8 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		public override void Generate()
 		{
+			Debug.Log("generic level variant " + variant);
+			variant = 6;
 			switch (variant)
 			{
 				case 1:

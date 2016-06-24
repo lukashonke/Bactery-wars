@@ -40,7 +40,6 @@ namespace Assets.scripts.Mono.ObjectData
 					Debug.LogError("cant get name for monsterId " + monsterId);
 				}
 			}
-            Debug.Log("Neco:" + monsterTypeName);
 
 			onHitEffect = LoadResource("entity", "Template", "Onhit Effect");
 
