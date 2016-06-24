@@ -370,27 +370,27 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			{
 				if (room.region.GetParentOrSelf().Equals(start))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.START_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.START_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 				else if (mainRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.MAIN_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.MAIN_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 				else if (sideRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.SIDE_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.SIDE_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 				else if (bonusRooms.Contains(room.region.GetParentOrSelf()))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BONUS_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BONUS_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 				else if (room.region.GetParentOrSelf().Equals(boss))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BOSS_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.BOSS_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 				else if (room.region.GetParentOrSelf().Equals(end))
 				{
-					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.END_ROOM, difficulty);
+					MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, this, MonsterGenerator.RoomType.END_ROOM, difficulty, room.region.GetParentOrSelf());
 				}
 			}
 

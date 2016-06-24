@@ -308,7 +308,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			MonsterAI ai = new BouncingAI(ch);
+			MonsterAI ai = new BouncingMonsterAI(ch);
 			//ai.IsAggressive = false;
 			return ai;
 		}
@@ -365,9 +365,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			BouncingAI ai = new BouncingAI(ch);
+			BouncingMonsterAI monsterAi = new BouncingMonsterAI(ch);
 			//ai.IsAggressive = false;
-			return ai;
+			return monsterAi;
 		}
 
 		public override GroupTemplate GetGroupTemplate()
@@ -422,9 +422,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Monsters
 
 		public override MonsterAI CreateAI(Character ch)
 		{
-			BouncingAI ai = new BouncingAI(ch);
+			BouncingMonsterAI monsterAi = new BouncingMonsterAI(ch);
 			//ai.IsAggressive = false;
-			return ai;
+			return monsterAi;
 		}
 
 		public override GroupTemplate GetGroupTemplate()

@@ -13,7 +13,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class Teleport : ActiveSkill
 	{
-		public int jumpSpeed = 100;
+		public float maxRangeAroundTarget = 3f;
+		public float minRangeAroundTarget = 1f;
 
 		public Teleport()
 		{
@@ -118,7 +119,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 						int limit = 15;
 						while (limit > 0)
 						{
-							target = Utils.GenerateRandomPositionAround(targetPos, 3f, 1f);
+							target = Utils.GenerateRandomPositionAround(targetPos, maxRangeAroundTarget, minRangeAroundTarget);
 							if (Utils.IsNotAccessible(GetOwnerData().GetBody().transform.position, target))
 							{
 								limit--;

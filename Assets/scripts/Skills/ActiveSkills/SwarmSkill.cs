@@ -20,11 +20,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class SwarmSkill : ActiveSkill, ISummonNotifyCallback
 	{
-		private Monster[] minions;
-
+		public string mobToSpawn;
 		public int countMinions = 1;
 
-		public string mobToSpawn;
+		public float minRangeToSpawnTo = 3f;
+		public float maxRangeToSpawnTo = 5f;
+
+		private Monster[] minions;
 
 		public List<Monster> lastSpawned; 
 
@@ -89,7 +91,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			for (int i = 0; i < countMinions; i++)
 			{
-				Monster m = GameSystem.Instance.SpawnMonster(mobToSpawn, Utils.GenerateRandomPositionAround(Owner.GetData().GetBody().transform.position, 5, 3), false, 1);
+				Monster m = GameSystem.Instance.SpawnMonster(mobToSpawn, Utils.GenerateRandomPositionAround(Owner.GetData().GetBody().transform.position, maxRangeToSpawnTo, minRangeToSpawnTo), false, 1);
 				WorldHolder.instance.activeMap.RegisterMonsterToMap(m);
 				lastSpawned.Add(m);
 			}

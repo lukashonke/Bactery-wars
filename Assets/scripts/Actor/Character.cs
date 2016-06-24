@@ -84,6 +84,12 @@ namespace Assets.scripts.Actor
 				killer.OnKill(this, skillId);
 		    }
 
+		    int count = Skills.Skills.Count;
+		    for (int i = 0; i < count; i++)
+		    {
+			    Skills.Skills[i].NotifyCharacterDied();
+		    }
+
 		    OnDead(killer, skillId);
 
 		    if (this is Monster)
@@ -465,8 +471,8 @@ namespace Assets.scripts.Actor
 		/// </summary>
 		public void AddEffect(SkillEffect ef, float duration)
 		{
-			if(ActiveEffects.Count > 5)
-				return;
+			//if(ActiveEffects.Count > 5)
+			//	return;
 
 			ActiveEffects.Add(ef);
 

@@ -19,6 +19,8 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		public int CriticalRate { get; set; }
 
+		public bool DamageFriendly = false;
+
 		public EffectDamage(int damage, int randomOffset, int criticalRate)
 		{
 			Dmg = damage;
@@ -48,7 +50,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			{
 				Destroyable d = target.GetComponent<Destroyable>();
 
-				if (d != null && source.CanAttack(d))
+				if (d != null && (source.CanAttack(d) || DamageFriendly))
 				{
 					bool crit;
 					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), null, SourceSkillObject, true, out crit, CriticalRate);
@@ -57,7 +59,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			}
 			else // target may be a character
 			{
-				if (source.CanAttack(targetCh))
+				if (source.CanAttack(targetCh) || DamageFriendly)
 				{
 					bool crit;
 					int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, SourceSkillObject, true, out crit, CriticalRate);

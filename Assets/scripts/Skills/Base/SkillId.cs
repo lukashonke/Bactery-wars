@@ -80,6 +80,7 @@ namespace Assets.scripts.Skills.Base
         // turrety
         SpawnTurretClass1,
 
-
+		DieDamage,
+		DieEffect,
 	}
 }

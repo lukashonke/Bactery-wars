@@ -244,22 +244,24 @@ namespace Assets.scripts.Skills
 				}
 			}
 
-			// add new effect from templates
+			// add new effect from templates // TOOD vytvorit kopii efektu! 
 			if (additionalEffects != null)
 			{
 				foreach (SkillEffect ef in additionalEffects)
 				{
-					ef.Source = source;
-					ef.SourceSkill = GetSkillId();
-					ef.SourceSkillObject = this;
+					SkillEffect newEf = ef.Clone() as SkillEffect;
 
-					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					newEf.Source = source;
+					newEf.SourceSkill = GetSkillId();
+					newEf.SourceSkillObject = this;
+
+					if (!allowStackingSameEffect && !(newEf is EffectDamage))
 					{
 						Character targetCh = target.GetChar();
 
-						if (targetCh != null && targetCh.HasEffectAlready(ef))
+						if (targetCh != null && targetCh.HasEffectAlready(newEf))
 						{
-							SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+							SkillEffect oldEf = targetCh.GetCopyEffect(newEf);
 
 							if (oldEf != null)
 								targetCh.RemoveEffect(oldEf);
@@ -267,7 +269,7 @@ namespace Assets.scripts.Skills
 						}
 					}
 
-					ef.ApplyEffect(source, target);
+					newEf.ApplyEffect(source, target);
 				}
 			}
 		}
@@ -350,6 +352,11 @@ namespace Assets.scripts.Skills
 		}
 
 		public virtual void NotifyEffectRemoved(SkillEffect eff)
+		{
+			
+		}
+
+		public virtual void NotifyCharacterDied()
 		{
 			
 		}

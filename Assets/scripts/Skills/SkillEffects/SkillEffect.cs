@@ -13,7 +13,7 @@ namespace Assets.scripts.Skills.SkillEffects
 	/// <summary>
 	/// Represents an effect of a skill
 	/// </summary>
-	public abstract class SkillEffect
+	public abstract class SkillEffect : ICloneable
 	{
 		public SkillId SourceSkill { get; set; }
 		public Character Source { get; set; }
@@ -95,5 +95,9 @@ namespace Assets.scripts.Skills.SkillEffects
 		}
 
 		public abstract SkillTraits[] GetTraits();
+		public object Clone()
+		{
+			return this.MemberwiseClone();
+		}
 	}
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Assets.scripts.Actor;
 using Assets.scripts.AI.Modules;
+using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
 using UnityEngine;
@@ -19,6 +20,10 @@ namespace Assets.scripts.AI
 	{
 		public ImmobileMonsterAI(Character o) : base(o)
 		{
+			if (o.GetData() != null && o.GetData() is EnemyData)
+			{
+				((EnemyData)o.GetData()).SetMass(200);
+			}
 		}
 
 		public override void CreateModules()

@@ -187,3 +187,43 @@
 
 	</start_room>
 </data>
+
+
+<group id="49" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
+
+			<mob id="1" type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+				
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob id_parent="1" type="HealerCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="50" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
+
+			<mob id="1" type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+				
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob id_parent="1" type="Picocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+
+		<group id="52" min_level="1" max_level="99" min_world="1" max_world="4" frequency="3">
+
+			<mob id="1" type="Neutrophyle_Patrol" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob id="2" id_parent="1" type="PassiveHelperCell" count="4" level="1" chance="100" room_size="small" exclude="true" location="largest"/>	
+
+		</group>

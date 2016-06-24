@@ -112,6 +112,11 @@ namespace Assets.scripts.Mono.MapGenerator
 		    return false;
 	    }
 
+	    public List<MapRegion> GetFamilyRegions()
+	    {
+			return map.GetRegionsInFamilyWith(this);
+	    }
+
 		public void AssignTilesToThisRegion()
 		{
 			for (int i = 0; i < tileMap.GetLength(0); i++)

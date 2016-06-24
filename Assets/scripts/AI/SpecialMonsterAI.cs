@@ -14,9 +14,9 @@ using Random = UnityEngine.Random;
 
 namespace Assets.scripts.AI
 {
-	public class BouncingAI : MonsterAI
+	public class BouncingMonsterAI : MonsterAI
 	{
-		public BouncingAI(Character o) : base(o)
+		public BouncingMonsterAI(Character o) : base(o)
 		{
 			alwaysActive = true;
 			o.GetData().cancelMovementTargetOnCollision = true;
@@ -30,7 +30,7 @@ namespace Assets.scripts.AI
 
 		protected override void ThinkActive()
 		{
-			if (GetTemplate().RambleAround)
+			//if (GetTemplate().RambleAround)
 			{
 				if (Owner.GetData().HasTargetToMoveTo && Owner.GetData().HasZeroVelocity())
 				{

@@ -19,6 +19,7 @@ namespace Assets.scripts.Skills.SkillEffects
 		protected float radius;
 
 		public int attackTeam = -1;
+		public bool attackAll = false;
 
 		public EffectAuraDamage(int damage, int randomOffset, float radius)
 		{
@@ -52,9 +53,9 @@ namespace Assets.scripts.Skills.SkillEffects
 					}
 					else
 					{
-						if (source.CanAttack(targetCh) || attackTeam == targetCh.Team)
+						if (source.CanAttack(targetCh) || attackTeam == targetCh.Team || attackAll)
 						{
-							if (attackTeam >= 0 && targetCh.Team != attackTeam)
+							if (attackTeam >= 0 && targetCh.Team != attackTeam && !attackAll)
 								continue;
 
 							bool crit;
