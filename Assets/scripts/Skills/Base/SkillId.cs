@@ -74,6 +74,7 @@ namespace Assets.scripts.Skills.Base
 		Teleport,
 		HealBeam,
 		PushBeam,
+		Push,
 
 		SwarmSkill,
 

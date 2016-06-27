@@ -18,6 +18,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		protected int RandomOffset { get; set; }
 		protected float radius;
 
+		public bool attackAll = false;
+
 		public EffectAreaDamage(int damage, int randomOffset, float radius)
 		{
 			this.radius = radius;
@@ -50,7 +52,7 @@ namespace Assets.scripts.Skills.SkillEffects
 					}
 					else
 					{
-						if (source.CanAttack(targetCh))
+						if (source.CanAttack(targetCh) || attackAll)
 						{
 							bool crit;
 							int damage = source.CalculateDamage(Dmg + Random.Range(-RandomOffset, RandomOffset), targetCh, SourceSkillObject, true, out crit);

@@ -153,5 +153,10 @@ namespace Assets.scripts.Actor.Status
 
 			return false;
 		}
+
+		public void Revive()
+		{
+			IsDead = false;
+		}
 	}
 }

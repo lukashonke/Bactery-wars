@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2015, Lukas Honke
 // ========================
 using System;
+using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Mono.MapGenerator;
 using UnityEngine;
@@ -97,7 +98,20 @@ namespace Assets.scripts
 
 		public void Restart()
 		{
-			Application.LoadLevel(Application.loadedLevel);
+			GameObject rrPanel = GameObject.Find("GameOver");
+			if (rrPanel != null)
+			{
+				rrPanel.GetComponent<Canvas>().enabled = false;
+			}
+
+			WorldHolder.instance.RegenMap();
+			Player player = GameSystem.Instance.CurrentPlayer;
+
+			player.HealMe();
+			player.Revive();
+
+			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
+			//Application.LoadLevel(Application.loadedLevel);
 		}
 
 		public GameObject Instantiate(GameObject template, Vector3 position)

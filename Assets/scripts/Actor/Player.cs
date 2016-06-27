@@ -4,14 +4,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Assets.scripts.Actor.MonsterClasses;
 using Assets.scripts.Actor.PlayerClasses;
 using Assets.scripts.Actor.Status;
 using Assets.scripts.AI;
 using Assets.scripts.Base;
 using Assets.scripts.Mono;
+using Assets.scripts.Mono.MapGenerator;
 using Assets.scripts.Mono.ObjectData;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 using Assets.scripts.Upgrade;
 using Assets.scripts.Upgrade.Classic;
 using UnityEngine;
@@ -65,7 +68,37 @@ namespace Assets.scripts.Actor
 
 		public override void DoDie(Character killer = null, SkillId skillId = SkillId.SkillTemplate)
 		{
-			base.DoDie(killer, skillId);
+			//base.DoDie(killer, skillId);
+
+			// notify upgrades on dead - TODO add a hook here to maybe ressurect player
+			OnDead(killer, skillId);
+
+			//GetData().SetIsDead(true);
+			WorldHolder.instance.activeMap.NotifyCharacterDied(this);
+
+			try
+			{
+				foreach (Skill sk in Skills.Skills)
+				{
+					if (sk is ActiveSkill)
+					{
+						if (((ActiveSkill)sk).IsActive() || ((ActiveSkill)sk).IsBeingCasted())
+						{
+							((ActiveSkill)sk).AbortCast();
+						}
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+
+			RemoveAllSummons();
+
+			foreach (SkillEffect eff in ActiveEffects.ToArray())
+			{
+				RemoveEffect(eff);
+			}
 
 			GameSystem.Instance.Controller.PlayerDied();
 		}

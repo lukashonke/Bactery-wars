@@ -17,7 +17,7 @@ namespace Assets.scripts.Skills.SkillEffects
 		public EffectAreaDamageAll(int damage, int randomOffset, float radius)
 			: base(damage, randomOffset, radius)
 		{
-			//this.attackAll = true; //TODO
+			this.attackAll = true;
 		}
 	}
 }

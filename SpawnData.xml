@@ -219,7 +219,7 @@
 		<group id="2002">
 
 			<mob type="Floater" count="2" level="1" chance="10" room_size="tiny" exclude="true" location="right"/>
-			<mob type="ChargeCell" count="2" level="1" chance="10" room_size="tiny" exclude="true" location="right"/>
+			<mob type="Charger" count="2" level="1" chance="10" room_size="tiny" exclude="true" location="right"/>
 			<mob type="JumpCell" count="2" level="1" chance="10" room_size="tiny" exclude="true" location="right"/>
 
 		</group>
@@ -394,44 +394,163 @@
 		</group>
 
 
-		
+		<group id="5017">
+
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5018">
+
+			<mob type="SpiderSwarmer" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderSwarmer" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderSwarmer" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5019">
+
+			<mob type="TurretLord" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="TurretLord" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="TurretLord" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5020">
+
+			<mob type="Slower" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Slower" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Slower" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Slower" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5021">
+
+			<mob type="RogueMelee" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueMelee" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueMelee" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueMelee" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5022">
+
+			<mob type="SpiderJumper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderJumper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderJumper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderJumper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="SpiderJumper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5023">
+
+			<mob type="RogueRanged" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueRanged" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueRanged" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="RogueRanged" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5024">
+
+			<mob type="Sniper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Sniper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Sniper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Sniper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Sniper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Sniper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5025">
+
+			<mob type="Stunner" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5026">
+
+			<mob type="JumpingPusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="JumpingPusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="JumpingPusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="JumpingPusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="JumpingPusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="JumpingPusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5027">
+
+			<mob type="Stunner" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Stunner" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5028">
+
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5029">
+
+			<mob type="Charger" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5030">
+
+			<mob type="Jumper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Jumper" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Jumper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Jumper" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5031">
+
+			<mob type="ProjectileTurret" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
+
+		<group id="5032">
+
+			<mob type="Pusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Pusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Pusher" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Pusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Pusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Pusher" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+		</group>
 
 
 	</extra_room>
 	<main_room>
 
 		<!-- ====== UTILITY groups - TODO move to side rooms? ======== -->
-
-		<!-- melee cells + slower cells -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-		<!-- -->
-
-		<group id="70" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
-
-			<extra_group id="5004" chance="100" stack_id="1"/>
-			<extra_group id="5010" chance="40" stack_id="1"/>
-
-			<extra_group id="5005" chance="100" stack_id="2"/>
-			<extra_group id="5006" chance="100" stack_id="2"/>
-			<extra_group id="5007" chance="75" stack_id="2"/>
-			<extra_group id="5008" chance="100" stack_id="2"/>
-			<extra_group id="5009" chance="100" stack_id="2"/>
-
-			<extra_group id="2002" chance="100"/>
-
-		</group>
 
 
 		<!-- ======= strong  groups ====== -->
@@ -1127,7 +1246,7 @@
 		</group>
 
 		<!-- spread snipers, 6-10; chance for stunningdements -->
-		<group id="38" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" min_region_size="large">
+		<group id="38" min_level="1" max_level="99" min_world="1" max_world="10" frequency="4" min_region_size="large">
 
 			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
 
@@ -1149,7 +1268,7 @@
 		</group>
 
 		<!-- chargers 6-10 -->
-		<group id="39" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" min_region_size="large">
+		<group id="39" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" min_region_size="large">
 
 			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
 
@@ -1169,7 +1288,7 @@
 		</group>
 
 		<!-- giant morpher + chargers | dementstunners | turrets | healers -->
-		<group id="40" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" min_region_size="large">
+		<group id="40" min_level="1" max_level="99" min_world="1" max_world="10" frequency="3" min_region_size="large">
 
 			<mob type="MorphGiantShooter" count="1" level="1" chance="100" room_size="large" exclude="true" location="center"/>
 			<mob type="MorphGiantShooter" count="1" level="1" chance="25" room_size="large" exclude="true" location="center"/>
@@ -1183,27 +1302,504 @@
 
 		</group>
 
-		<!-- combined group - ranged, melee, healer, slower -->
-		<!-- 2-3 swarmers in one center area + healers -->
-		<!-- many weak cells + bombs between them -->
-		<!-- one giant morph -> 3 big morphs -> 3x3 medium morphs -> 3x3x3 small morphs -->
+		<!-- strong ranged and melee +  healer | slower -->
+		<group id="41" min_level="1" max_level="99" min_world="1" max_world="10" frequency="4" min_region_size="large">
 
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="LeaderCell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="WeakDurableTank" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			
+			<extra_group id="5005" chance="100" stack_id="1"/>
+			<extra_group id="5006" chance="100" stack_id="1"/>
+
+			<extra_group id="5005" chance="25" stack_id="2"/>
+			<extra_group id="5006" chance="25" stack_id="2"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
+
+		<!-- strong ranged and melee + 3-6 chargers -->
+		<group id="42" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" min_region_size="large">
+
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="LeaderCell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macromicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Macropicocell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Charger" count="1" level="1" chance="100" room_size="large" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="100" room_size="large" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="100" room_size="large" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="large" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="large" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="large" exclude="true" location="center"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
+
+		<!-- spider | turret | kamikadze swarmers + healers | slower -->
+		<group id="43" min_level="1" max_level="99" min_world="1" max_world="10" frequency="3" min_region_size="large">
+
+			<extra_group id="5017" chance="100" stack_id="3"/>
+			<extra_group id="5018" chance="100" stack_id="3"/>
+			<extra_group id="5019" chance="100" stack_id="3"/>
+
+			<extra_group id="5005" chance="100" stack_id="1"/>
+			<extra_group id="5006" chance="50" stack_id="1"/>
+
+			<extra_group id="5005" chance="100" stack_id="2"/>
+			<extra_group id="5006" chance="50" stack_id="2"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
+
+		<!-- many ranged cells + bombs -->
+		<group id="44" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" min_region_size="large">
+
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="LeaderCell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Picocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
+
+		<!-- many melee cells + bombs -->
+		<group id="45" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" min_region_size="large">
+
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="LeaderCell" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Micocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
+
+		<group id="46" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" min_region_size="large">
+
+			<mob type="MorphGiantBlock" count="1" level="1" chance="100" room_size="large" exclude="true" location="center"/>
+			<mob type="MorphGiantBlock" count="1" level="1" chance="25" room_size="large" exclude="true" location="center"/>
+
+			<extra_group id="5000" chance="100" stack_id="1"/>
+			<extra_group id="5001" chance="100" stack_id="1"/>
+
+			<extra_group id="5000" chance="100" stack_id="2"/>
+			<extra_group id="5001" chance="100" stack_id="2"/>
+
+			<extra_group id="2001" chance="100"/>
+
+		</group>
 		
 	</main_room>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<side_room>
 
-		<group id="100" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2">
+		<!-- 2-4 slower cells + melee cells | rogue cells | spider cells-->
+		<group id="70" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
 
-			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
-			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<extra_group id="5020" chance="100" stack_id="1"/>
+
+			<extra_group id="5000" chance="100" stack_id="2"/>
+			<extra_group id="5003" chance="50" stack_id="2"/>
+			<extra_group id="5021" chance="75" stack_id="2"/>
+			<extra_group id="5022" chance="100" stack_id="2"/>
+			<extra_group id="5023" chance="100" stack_id="2"/>
+
+			<extra_group id="2002" chance="100"/>
 
 		</group>
+
+		<!-- 3-6 sniper cells + immobilizer cells | weak melee | weak ranged -->
+		<group id="71" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<extra_group id="5024" chance="100" stack_id="1"/>
+
+			<extra_group id="5025" chance="100" stack_id="2"/>
+			<extra_group id="5000" chance="75" stack_id="2"/>
+			<extra_group id="5001" chance="75" stack_id="2"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 3-6 pusher cells (+random jump) + 15 dement cells -->
+		<group id="72" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<extra_group id="5026" chance="100" stack_id="1"/>
+
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 2-4 stunner cells | stunning dement cells  + 2-4 jump cells | charger cells -->
+		<group id="73" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<extra_group id="5029" chance="100" stack_id="2"/>
+			<extra_group id="5030" chance="100" stack_id="2"/>
+
+			<extra_group id="5027" chance="100" stack_id="1"/>
+			<extra_group id="5028" chance="100" stack_id="1"/>
+			
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 3-4 kamikadze cells + nothing | slower | stunner -->
+		<group id="74" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="Kamikadze" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Kamikadze" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Kamikadze" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="Kamikadze" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+
+			<extra_group id="5027" chance="100" stack_id="1"/>
+			<extra_group id="5020" chance="100" stack_id="1"/>
+			<extra_group id="2002" chance="100" stack_id="1"/>
+			
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 2-4 teleport spreadshooter + 2-4 turret | melee | dement stunners-->
+		<group id="75" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="TeleportSpreadshooter" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="TeleportSpreadshooter" count="1" level="1" chance="100" room_size="small" exclude="true" location="center"/>
+			<mob type="TeleportSpreadshooter" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+			<mob type="TeleportSpreadshooter" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+
+			<extra_group id="5028" chance="100" stack_id="1"/>
+			<extra_group id="5031" chance="100" stack_id="1"/>
+			<extra_group id="5000" chance="100" stack_id="1"/>
+			
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 2-4 turret + charger | jumper | ranged -->
+		<group id="76" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<extra_group id="5031" chance="100" stack_id="2"/>
+
+			<extra_group id="5001" chance="100" stack_id="1"/>
+			<extra_group id="5029" chance="100" stack_id="1"/>
+			<extra_group id="5030" chance="50" stack_id="1"/>
+			
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 3-6 rogues + 5-8 dement stunners-->
+		<group id="77" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<extra_group id="5021" chance="100" stack_id="2"/>
+			<extra_group id="5023" chance="100" stack_id="2"/>
+
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="StunningDement" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- kamikadze swarmer + chance for pusher-->
+		<group id="78" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+			<mob type="KamikadzeSwarmer" count="1" level="1" chance="50" room_size="tiny" exclude="true" location="center"/>
+
+			<extra_group id="5026" chance="50" stack_id="2"/>
+			<extra_group id="5032" chance="50" stack_id="2"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!--  dements-->
+		<group id="79" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="Dement" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- flying bombs -->
+		<group id="80" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="FloatingBomb" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="FloatingBomb" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- ranged with bomb shots + chance for passive bombs -->
+		<group id="81" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+			<mob type="RocketPicocell" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+			<mob type="Bomb" count="1" level="1" chance="100" room_size="tiny" exclude="true" location="center"/>
+
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 1-3 tanks -->
+		<group id="82" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="TankMelee" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="TankMelee" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="TankMelee" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 2-4 turrets-->
+		<group id="83" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="ProjectileTurret" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="ProjectileTurret" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 1-3 worms -->
+		<group id="84" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="Worm" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Worm" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="Worm" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 1-3 worms -->
+		<group id="85" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<extra_group id="5002" chance="100" stack_id="1"/>
+			<extra_group id="5003" chance="100" stack_id="1"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
+		<!-- 3-6 chargers -->
+		<group id="86" min_level="1" max_level="99" min_world="1" max_world="10" frequency="2" max_region_size="medium">
+
+			<mob type="Charger" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="100" room_size="medium" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+			<mob type="Charger" count="1" level="1" chance="50" room_size="medium" exclude="true" location="center"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
 
 	</side_room>
 
 	<bonus_room>
+
+		<group id="300" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<mob id="1" type="ProjectileTurret" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob id="2" id_parent="1" type="PassiveHelperCell" count="4" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+
+			<mob id="3" type="ProjectileTurret" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob id="4" id_parent="3" type="PassiveHelperCell" count="4" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
 
 	</bonus_room>
 
@@ -1213,9 +1809,22 @@
 
 	<end_room>
 
+		<group id="400" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<mob type="Obstacle" count="1" level="1" chance="10" room_size="medium" exclude="true" location="center"/>
+			<mob type="Obstacle" count="1" level="1" chance="10" room_size="medium" exclude="true" location="center"/>
+
+		</group>
+
 	</end_room>
 
 	<start_room>
+
+		<group id="500" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<mob type="Micocell" count="1" level="1" chance="10" room_size="medium" exclude="true" location="center"/>
+
+		</group>
 
 	</start_room>
 </data>

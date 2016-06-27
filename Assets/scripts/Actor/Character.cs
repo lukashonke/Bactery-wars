@@ -892,6 +892,11 @@ namespace Assets.scripts.Actor
 			UpdateHp(Status.MaxHp);
 		}
 
+		public void Revive()
+		{
+			Status.Revive();
+		}
+
 		public void UpdateMaxHp(int newMaxHp)
 		{
 			Status.MaxHp = newMaxHp;
@@ -1037,7 +1042,7 @@ namespace Assets.scripts.Actor
 			}
 		}
 
-		private void RemoveAllSummons()
+		protected void RemoveAllSummons()
 		{
 			for (int i = 0; i < summons.Count; i++)
 			{

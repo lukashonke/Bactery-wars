@@ -10,15 +10,14 @@ using UnityEngine;
 
 namespace Assets.scripts.Skills.ActiveSkills
 {
-	public class ColdPush : ActiveSkill
+	public class Push : ActiveSkill
 	{
 		private GameObject activeProjectile;
 		public int pushbackForce = 100;
 
 		public int angle = 60;
-		public float stunDuration;
 
-		public ColdPush()
+		public Push()
 		{
 			castTime = 0f;
 			reuse = 6f;
@@ -26,31 +25,27 @@ namespace Assets.scripts.Skills.ActiveSkills
 			requireConfirm = true;
 			baseDamage = 10;
 
-			stunDuration = 1.5f;
-
 			range = 8;
-
-			AvailableToPlayer = true;
 		}
 
 		public override SkillId GetSkillId()
 		{
-            return SkillId.ColdPush;
+            return SkillId.Push;
 		}
 
 		public override string GetVisibleName()
 		{
-            return "Cold Push";
+            return "Push";
 		}
 
 		public override Skill Instantiate()
 		{
-            return new ColdPush();
+			return new Push();
 		}
 
 		public override string GetDescription()
 		{
-			return "Pushes enemies in front of you away and stuns them for " + stunDuration + " seconds.";
+			return "Pushes enemies in front of you away.";
 		}
 
 		public override string GetBaseInfo()
@@ -60,7 +55,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectPushaway(pushbackForce), new EffectStun(stunDuration) };
+			return new SkillEffect[] { new EffectPushaway(pushbackForce) };
 		}
 
 		public override void InitTraits()
@@ -129,7 +124,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			foreach (RaycastHit2D h in hits)
 			{
 				Character ch = h.transform.gameObject.GetChar();
-				if (ch == null || !Owner.CanAttack(ch) || Utils.DistanceSqr(GetPlayerData().GetShootingPosition().transform.position, h.collider.gameObject.transform.position) > (range * range))
+				if (ch == null || !Owner.CanAttack(ch) || Utils.DistanceSqr(GetOwnerData().GetShootingPosition().transform.position, h.collider.gameObject.transform.position) > (range * range))
 					continue;
 
 				if(Utils.IsInCone(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), h.transform.gameObject, angle, range))

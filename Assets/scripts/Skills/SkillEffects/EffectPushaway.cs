@@ -15,6 +15,7 @@ namespace Assets.scripts.Skills.SkillEffects
 	public class EffectPushaway : SkillEffect
 	{
 		protected int force;
+		protected bool affectFriendly = false;
 
 		public EffectPushaway(int force)
 		{
@@ -28,7 +29,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (targetCh == null)
 				return;
 
-			if (source.CanAttack(targetCh))
+			if (affectFriendly || source.CanAttack(targetCh))
 			{
 				if (targetCh.GetData().IsConnected)
 					return;
@@ -56,6 +57,14 @@ namespace Assets.scripts.Skills.SkillEffects
 		public override SkillTraits[] GetTraits()
 		{
 			return new SkillTraits[] { SkillTraits.Push, };
+		}
+	}
+
+	public class EffectPushawayAll : EffectPushaway
+	{
+		public EffectPushawayAll(int force) : base(force)
+		{
+			affectFriendly = true;
 		}
 	}
 }

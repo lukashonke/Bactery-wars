@@ -17,6 +17,8 @@ namespace Assets.scripts.Skills.SkillEffects
 		protected int force;
 		protected int pullDamage;
 
+		protected bool affectFriendly = false;
+
 		public EffectPull(int force, int pullDamage =0)
 		{
 			this.force = force;
@@ -30,7 +32,7 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (targetCh == null)
 				return;
 
-			if (source.CanAttack(targetCh))
+			if (affectFriendly || source.CanAttack(targetCh))
 			{
 				if (targetCh.GetData().IsConnected)
 					return;
@@ -59,6 +61,15 @@ namespace Assets.scripts.Skills.SkillEffects
 		public override SkillTraits[] GetTraits()
 		{
 			return new SkillTraits[] { SkillTraits.Pull, };
+		}
+	}
+
+	public class EffectPullAll : EffectPull
+	{
+		public EffectPullAll(int force)
+			: base(force)
+		{
+			affectFriendly = true;
 		}
 	}
 }

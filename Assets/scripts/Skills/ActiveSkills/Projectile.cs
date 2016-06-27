@@ -392,6 +392,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 						return;
 				}
 
+				if (explodeEffect)
+				{
+					GameObject explosion = CreateParticleEffect(explodeEffectName, false, gameObject.transform.position);
+					explosion.GetComponent<ParticleSystem>().Play();
+					Object.Destroy(explosion, 2f);
+				}
+
 				ApplyEffects(Owner, coll.gameObject);
 				DestroyProjectile(gameObject);
 			}

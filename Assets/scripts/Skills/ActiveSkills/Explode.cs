@@ -18,9 +18,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 	{
 		protected GameObject effect;
 
-		public string effectName = "Explosion";
+		public string effectName = "PlayerExplosion";
 
 		public float area = 5f;
+
+		public bool damageAll = false;
 
 		public Explode()
 		{
@@ -30,7 +32,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			baseDamage = 10;
 
-			range = 15;
+			range = 8;
 
 			//movementAbortsSkill = true;
 			//updateFrequency = 0.01f;
@@ -62,7 +64,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override SkillEffect[] CreateEffects(int param)
 		{
-			return new SkillEffect[] { new EffectDamage(baseDamage, 0), new EffectPushaway(20),  };
+			if (damageAll)
+				return new SkillEffect[] {new EffectDamageAll(baseDamage, 0), new EffectPushawayAll(20),};
+			else
+				return new SkillEffect[] {new EffectDamage(baseDamage, 0), new EffectPushaway(20),};
 		}
 
 		public override void InitTraits()
@@ -100,7 +105,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				if (targetCh == null || c.gameObject.Equals(GetOwnerData().GetBody()))
 					continue;
 
-				if (!Owner.CanAttack(targetCh))
+				if (!Owner.CanAttack(targetCh) && !damageAll)
 					continue;
 
 				if (targetCh.IsInteractable())
