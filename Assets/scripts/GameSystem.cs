@@ -239,6 +239,9 @@ namespace Assets.scripts
 					case "start":
 						currentRoomType = MonsterGenerator.RoomType.START_ROOM;
 						break;
+					case "extra":
+						currentRoomType = MonsterGenerator.RoomType.EXTRA_ROOM;
+						break;
 				}
 
 				Tile t = WorldHolder.instance.activeMap.GetTileFromWorldPosition(CurrentPlayer.GetData().GetBody().transform.position);
@@ -247,6 +250,8 @@ namespace Assets.scripts
 					return;
 
 				MapRoom room = t.region.GetParentOrSelf().GetMapRoom();
+
+				room.Unexclude();
 
 				MonsterGenerator.Instance.GenerateGenericEnemyGroup(room, WorldHolder.instance.activeMap.levelData, currentRoomType, 2, t.region.GetParentOrSelf(), id);
 

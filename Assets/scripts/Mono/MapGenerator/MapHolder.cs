@@ -876,7 +876,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			try
 			{
-				foreach (MonsterSpawnInfo info in spawnableMonsters)
+				foreach (MonsterSpawnInfo info in spawnableMonsters.ToArray())
 				{
 				    AddMonsterToMap(info, true);
 				}
@@ -1135,7 +1135,15 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		protected void AddToSceneMap(Tile[,] tiles, int regionX, int regionY)
 		{
-			generatedRegionsMap[regionX, regionY] = 1;
+			try
+			{
+				generatedRegionsMap[regionX, regionY] = 1;
+			}
+			catch (Exception)
+			{
+				Debug.LogError("error when inserting tiles to " + regionX + ", " + regionY);
+				throw new Exception();
+			}
 
 			for (int x = 0; x < tiles.GetLength(0); x++)
 			{
@@ -1328,6 +1336,8 @@ namespace Assets.scripts.Mono.MapGenerator
                 info.SetRegion(reg);
 	            m.SetSpawnInfo(info);
             }
+
+			m.OnAfterSpawned();
 
 			//Debug.Log("monster " + m.Name + " has now region " + m.SpawnInfo.Region.x + ", " + m.SpawnInfo.Region.y + " assigned!");
 

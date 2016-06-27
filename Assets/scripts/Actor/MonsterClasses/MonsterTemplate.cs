@@ -106,6 +106,11 @@ namespace Assets.scripts.Actor.MonsterClasses
 			
 		}
 
+		public virtual void OnAfterSpawned(Monster m)
+		{
+			
+		}
+
 		protected virtual void SetMeleeAttackSkill(ActiveSkill skill)
 		{
 			MeleeSkill = skill;

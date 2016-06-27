@@ -1089,6 +1089,28 @@ namespace Assets.scripts.Actor
 			Status.CanCastSkills = val;
 		}
 
+		public string ForcedStatus { get; set; }
+
+		public string GetMainStatusMessage()
+		{
+			if (ForcedStatus != null)
+			{
+				return ForcedStatus;
+			}
+			else if (Status.Stunned)
+			{
+				return "Stunned!";
+			}
+
+			return null;
+		}
+
+		public void ResetStatus()
+		{
+			if (ForcedStatus != null)
+				ForcedStatus = null;
+		}
+
 		public virtual void Message(string s, int level=1)
 		{
 			Debug.Log("Message: " + s);

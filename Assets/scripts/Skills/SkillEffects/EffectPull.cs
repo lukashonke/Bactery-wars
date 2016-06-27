@@ -32,6 +32,9 @@ namespace Assets.scripts.Skills.SkillEffects
 
 			if (source.CanAttack(targetCh))
 			{
+				if (targetCh.GetData().IsConnected)
+					return;
+
 				Vector3 direction = source.GetData().GetBody().transform.position - target.transform.position;
 				direction.Normalize();
 

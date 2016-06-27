@@ -23,8 +23,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public string mobToSpawn;
 		public int countMinions = 1;
 
-		public float minRangeToSpawnTo = 3f;
-		public float maxRangeToSpawnTo = 5f;
+		public float minRangeToSpawnTo = 2f;
+		public float maxRangeToSpawnTo = 4f;
 
 		private Monster[] minions;
 

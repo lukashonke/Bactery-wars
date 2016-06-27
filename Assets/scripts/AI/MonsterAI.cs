@@ -866,6 +866,10 @@ namespace Assets.scripts.AI
 				{
 					if (currentPrioridyModule.ForceLaunch(target, distSqr, hpPercentage))
 						return true;
+					else
+					{
+						return false;
+					}
 				}
 				else
 				{

@@ -248,6 +248,24 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 							}
 
 							break;
+						case "spawn_on_die":
+
+							foreach (XmlNode mNode in mainParam.ChildNodes)
+							{
+								string name = mNode.Name;
+								newTemplate.AddOnSpawnOnDie(name);
+							}
+
+							break;
+						case "attached_cells":
+
+							foreach (XmlNode mNode in mainParam.ChildNodes)
+							{
+								string name = mNode.Name;
+								newTemplate.AddAttachedCell(name);
+							}
+
+							break;
 						case "ai":
 
 							string aiType = "Blank";
@@ -316,7 +334,7 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 									string module = null;
 									string param = null;
 									string value = null;
-									string priority = "high";
+									string priority = "low";
 
 									if (statNode.Attributes != null)
 									{

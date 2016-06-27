@@ -2,9 +2,10 @@
 <data>
 	<monster name="Picocell">
 		<visibleName>Pico Cell</visibleName>
-		<template>BasicCell</template>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
 		<stats> 
-			<MaxHp>20</MaxHp>
+			<MaxHp>10</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>12</MaxSpeed>
 			<IsAggressive>true</IsAggressive>
@@ -16,17 +17,87 @@
 			<XpReward>1</XpReward>
 		</stats>
 
-		<modify_skills>
+		<ai type="Ranged">
+    		
+		</ai>
+
+		<add_skills>
 			<Projectile> 
 			 	<baseDamage>10</baseDamage>
 			</Projectile>
-		</modify_skills>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Floater">
+		<visibleName>Floating Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>12</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+    		<add id_module="1" module="Float"/>
+			<set id_module="1" param="interval" value="0.5"/>
+			<set id_module="1" param="chance" value="100"/>
+			<set id_module="1" param="floatSpeed" value="5"/>
+			<set module="DamageSkill" param="shootWhileMoving" value="true"/>
+
+		</ai>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			</Projectile>
+		</add_skills>
 		
 	</monster>
 
 	<monster name="Micocell">
 		<visibleName>Mico Cell</visibleName>
-		<template>BasicMeleeCell</template>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>12</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		
+		</ai>
+
+		<add_autoattack>
+			<MeleeAttack>
+				<baseDamage>10</baseDamage>
+				<range>3</range>
+			</MeleeAttack>
+		</add_autoattack>
+	</monster>
+
+	<monster name="Macropicocell">
+		<visibleName>Pico Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>1.5</size>
+		<mass>1.5</mass>
 		<stats> 
 			<MaxHp>20</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -39,6 +110,41 @@
 
 			<XpReward>1</XpReward>
 		</stats>
+
+		<ai type="Ranged">
+    		
+		</ai>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			</Projectile>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Macromicocell">
+		<visibleName>Mico Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>1.5</size>
+		<mass>1.5</mass>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>12</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		
+		</ai>
 
 		<add_autoattack>
 			<MeleeAttack>
@@ -53,6 +159,7 @@
 		<template>CustomCell</template>
 		<sprite>leaders/ranged_1</sprite>
 		<size>2.0</size>
+		<mass>2</mass>
 		<stats> 
 			<MaxHp>20</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -83,6 +190,7 @@
 		<template>CustomCell</template>
 		<sprite>ranged/spreadshooter</sprite>
 		<size>2.0</size>
+		<mass>2</mass>
 		<stats> 
 			<MaxHp>40</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -106,7 +214,7 @@
 			<ProjectileAllAround> 
 			 	<baseDamage>10</baseDamage>
 
-			 	<projectileCount>4</projectileCount>
+			 	<projectileCount>8</projectileCount>
 			 	<range>13</range>
 			 	<reuse>3</reuse>
 			 	<castTime>0.5</castTime>
@@ -121,6 +229,7 @@
 		<template>CustomCell</template>
 		<sprite>ranged/spreadshooter</sprite>
 		<size>2.0</size>
+		<mass>2</mass>
 		<stats> 
 			<MaxHp>40</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -162,17 +271,170 @@
 		
 	</monster>
 
+	<monster name="KamikadzeSwarmer">
+		<visibleName>Turret Lord</visibleName>
+		<template>CustomCell</template>
+		<sprite>special/turretlord</sprite>
+		<size>2.0</size>
+		<mass>2</mass>
+		<stats> 
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>30</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>2</XpReward>
+		</stats>
+
+		<ai type="Summoner">
+			<add id_module="1" module="RambleAround"/>
+			<set id_module="1" param="interval" value="2"/>
+
+			<set module="SpawnMinion" param="maxMinions" value="10"/>
+		</ai>
+
+		<add_skills>
+			<SwarmSkill> 
+			 	<countMinions>2</countMinions>
+
+			 	<mobToSpawn>SwarmKamikadze</mobToSpawn>
+			 	<reuse>3</reuse>
+			 	<castTime>1</castTime>
+			</SwarmSkill>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="SpiderSwarmer">
+		<visibleName>Turret Lord</visibleName>
+		<template>CustomCell</template>
+		<sprite>special/turretlord</sprite>
+		<size>2.0</size>
+		<mass>2</mass>
+		<stats> 
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>30</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>2</XpReward>
+		</stats>
+
+		<ai type="Summoner">
+			<add id_module="1" module="RambleAround"/>
+			<set id_module="1" param="interval" value="2"/>
+
+			<set module="SpawnMinion" param="maxMinions" value="15"/>
+		</ai>
+
+		<add_skills>
+			<SwarmSkill> 
+			 	<countMinions>3</countMinions>
+
+			 	<mobToSpawn>SwarmSpider</mobToSpawn>
+			 	<reuse>3</reuse>
+			 	<castTime>1</castTime>
+			</SwarmSkill>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="SwarmSpider">
+		<visibleName>Spider Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>1.0</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>7</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Blank">
+			<add id_module="2" module="EvasiveMovement"/>
+			<add id_module="1" module="MoveToTarget"/>
+
+			<set id_module="2" param="chanceToEvade" value="75"/>
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<pushForce>20</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+
+			<JumpShort> 
+			 	<range>8</range>
+			 	<reuse>0</reuse>
+			 	<jumpSpeed>50</jumpSpeed>
+			</JumpShort>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="SwarmKamikadze">
+		<visibleName>Kamikadze</visibleName>
+		<template>CustomCell</template>
+		<sprite>special/dement</sprite>
+		<size>1.0</size>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>8</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Melee">
+
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+				<remove_effects/>
+				 	
+				 <add_effect name="Damage" damage="10" randomOffset="2" radius="10"/>
+				 <add_effect name="KillSelf" />
+				 <add_effect name="Pushaway" force="25"/>
+			</CollisionDamageAttack>
+		</add_skills>
+
+	</monster>
+
 	<monster name="TurretLord">
 		<visibleName>Turret Lord</visibleName>
 		<template>CustomCell</template>
 		<sprite>special/turretlord</sprite>
 		<size>2.0</size>
+		<mass>2</mass>
 		<stats> 
-			<MaxHp>40</MaxHp>
+			<MaxHp>50</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>0</MaxSpeed>
 			<IsAggressive>true</IsAggressive>
-			<AggressionRange>10</AggressionRange>
+			<AggressionRange>30</AggressionRange>
 			<RambleAround>true</RambleAround>
 			<RambleAroundMaxDist>4</RambleAroundMaxDist>
 			<AlertsAllies>false</AlertsAllies>
@@ -203,6 +465,7 @@
 		<visibleName>Turret</visibleName>
 		<template>CustomCell</template>
 		<size>2</size>
+		<mass>2</mass>
 		<stats> 
 			<MaxHp>10</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -337,12 +600,13 @@
 		<template>CustomCell</template>
 		<sprite>ranged/slower</sprite>
 		<size>2.0</size>
+		<mass>2</mass>
 		<stats> 
 			<MaxHp>40</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>6</MaxSpeed>
 			<IsAggressive>true</IsAggressive>
-			<AggressionRange>10</AggressionRange>
+			<AggressionRange>20</AggressionRange>
 			<RambleAround>true</RambleAround>
 			<RambleAroundMaxDist>4</RambleAroundMaxDist>
 			<AlertsAllies>false</AlertsAllies>
@@ -398,6 +662,7 @@
 		<template>CustomCell</template>
 		<sprite>special/obstacle</sprite>
 		<size>4</size>
+		<mass>4</mass>
 		<stats> 
 			<MaxHp>20</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
@@ -443,7 +708,41 @@
 			<CollisionDamageAttack> 
 				<remove_effects/>
 				 	
-				<add_effect name="Damage" damage="10" randomOffset="2" radius="10"/>
+				 <add_effect name="Damage" damage="10" randomOffset="2" radius="10"/>
+				 <add_effect name="KillSelf" />
+				 <add_effect name="Pushaway" force="50"/>
+			</CollisionDamageAttack>
+		</add_skills>
+
+	</monster>
+
+	<monster name="Kamikadze">
+		<visibleName>Kamikadze</visibleName>
+		<template>CustomCell</template>
+		<sprite>special/dement</sprite>
+		<size>1</size>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>15</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Melee">
+
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+				<remove_effects/>
+				 	
+				 <add_effect name="Damage" damage="10" randomOffset="2" radius="10"/>
 				 <add_effect name="KillSelf" />
 				 <add_effect name="Pushaway" force="50"/>
 			</CollisionDamageAttack>
@@ -484,6 +783,180 @@
 		
 	</monster>
 
+	<monster name="WeakDurableTank">
+		<visibleName>Chubby Tank</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>2.5</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>80</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>2</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>20</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="MorphTankBig">
+		<visibleName>Morph Tank</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>2.5</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>50</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>2</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		
+		</ai>
+
+		<spawn_on_die>
+			<MorphTankSmall/>
+			<MorphTankSmall/>
+			<MorphTankSmall/>
+		</spawn_on_die>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>20</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="MorphTankSmall">
+		<visibleName>Morph Tank</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>1.3</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>25</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>4</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>20</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Worm">
+		<visibleName>Sniper Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>ranged/sniper</sprite>
+		<size>1.0</size>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>8</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+    		
+		</ai>
+
+		<attached_cells>
+			<WormCell/>
+			<WormCell/>
+			<WormCell/>
+			<WormCell/>
+		</attached_cells>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			 	<range>10</range>
+			</Projectile>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="WormCell">
+		<visibleName>Sniper Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>ranged/sniper</sprite>
+		<size>1.0</size>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>8</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+    		
+		</ai>
+
+		<add_skills>
+			<Projectile> 
+			 	<baseDamage>10</baseDamage>
+			 	<range>10</range>
+			</Projectile>
+		</add_skills>
+		
+	</monster>
+
 
 	<monster name="Sniper">
 		<visibleName>Sniper Cell</visibleName>
@@ -516,6 +989,297 @@
 		
 	</monster>
 
+	<monster name="SpiderJumper">
+		<visibleName>Spider Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>1.0</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Blank">
+			<add id_module="2" module="JumpRandomDirection"/>
+    		<add id_module="3" module="JumpMovement" priority="high"/>
+
+			<set id_module="2" param="maxDistance" value="12"/>
+
+			<set id_module="2" param="chance" value="50"/>
+			<set id_module="2" param="interval" value="1"/>
+			<set id_module="3" param="interval" value="1"/>
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<pushForce>20</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+
+			<JumpShort> 
+			 	<range>8</range>
+			 	<reuse>0</reuse>
+			 	<jumpSpeed>50</jumpSpeed>
+			</JumpShort>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Spider">
+		<visibleName>Spider Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>1.0</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>8</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>15</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Blank">
+			<add id_module="2" module="EvasiveMovement"/>
+			<add id_module="1" module="MoveToTarget"/>
+
+			<set id_module="2" param="chanceToEvade" value="75"/>
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<pushForce>20</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+
+			<JumpShort> 
+			 	<range>8</range>
+			 	<reuse>0</reuse>
+			 	<jumpSpeed>50</jumpSpeed>
+			</JumpShort>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Charger">
+		<visibleName>Charger Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/charger</sprite>
+		<size>1.0</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>1</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>2</XpReward>
+		</stats>
+
+		<ai type="Melee">
+			<add id_module="1" module="JumpSkill"/>
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+
+			<JumpShort> 
+			 	<range>20</range>
+			 	<reuse>5</reuse>
+			 	<castTime>1</castTime>
+			 	<jumpSpeed>30</jumpSpeed>
+			</JumpShort>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Jumper">
+		<visibleName>Charger Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/jumper</sprite>
+		<size>1.0</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>2</XpReward>
+		</stats>
+
+		<ai type="Melee">
+			<add id_module="1" module="JumpMovement"/>
+			<add id_module="2" module="JumpSkill"/>
+
+			<set id_module="1" param="minRangeToJump" value="15"/>
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<baseDamage>10</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1.5</reuse>
+			</CollisionDamageAttack>
+
+			<JumpShort> 
+			 	<range>15</range>
+			 	<reuse>4</reuse>
+			 	<castTime>1</castTime>
+			 	<jumpSpeed>75</jumpSpeed>
+			</JumpShort>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Healer">
+		<visibleName>Healer Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>special/healer</sprite>
+		<size>2.0</size>
+		<mass>1.5</mass>
+		<stats> 
+			<MaxHp>20</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>8</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>30</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Support">
+		</ai>
+
+		<add_skills>
+			<HealBeam> 
+			</HealBeam>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="MorphGiantShooter">
+		<visibleName>Giant Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>4</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>100</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+			<add id_module="1" module="JumpSkill" priority="high"/>
+
+			<set id_module="1" param="interval" value="1"/>
+		</ai>
+
+		<spawn_on_die>
+			<MorphGiantShooterSmaller/>
+			<MorphGiantShooterSmaller/>
+			<MorphGiantShooterSmaller/>
+			<MorphGiantShooterSmaller/>
+		</spawn_on_die>
+
+		<add_skills>
+			<ProjectileShower> 
+			 	<baseDamage>10</baseDamage>
+			 	<reuse>3.0</reuse>
+			 	<castTime>3.0</castTime>
+			 	<coolDown>2.0</coolDown>
+			 	<projectilesCount>3</projectilesCount>
+			 	<fireFrequency>0.2</fireFrequency>
+			</ProjectileShower>
+
+			<JumpShort> 
+			 	<range>3</range>
+			 	<reuse>1</reuse>
+			 	<jumpSpeed>25</jumpSpeed>
+			</JumpShort>
+
+		</add_skills>
+		
+	</monster>
+
+	<monster name="MorphGiantShooterSmaller">
+		<visibleName>Giant Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>1.5</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>25</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>1</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Ranged">
+    		<add id_module="1" module="JumpMovement"/>
+			<add id_module="2" module="JumpSkill"/>
+
+			<set id_module="1" param="minRangeToJump" value="15"/>
+		</ai>
+
+		<add_skills>
+			<ProjectileShower> 
+			 	<baseDamage>10</baseDamage>
+			 	<reuse>3.0</reuse>
+			 	<castTime>3.0</castTime>
+			 	<coolDown>2.0</coolDown>
+			 	<projectilesCount>1</projectilesCount>
+			 	<fireFrequency>0.3</fireFrequency>
+			</ProjectileShower>
+
+		</add_skills>
+		
+	</monster>
 
 
 

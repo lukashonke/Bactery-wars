@@ -20,6 +20,8 @@ namespace Assets.scripts.Skills.SkillEffects
 			if (target == null)
 				return;
 
+			target.ForcedStatus = "Silenced!";
+
 			source.OnAttack(target);
 
 			target.SetCanCastSkills(false);

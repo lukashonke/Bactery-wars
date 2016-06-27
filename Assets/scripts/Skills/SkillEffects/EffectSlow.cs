@@ -45,6 +45,8 @@ namespace Assets.scripts.Skills.SkillEffects
 			if(temp > 0)
 				target.SetMoveSpeed(target.Status.MoveSpeed - temp);
 
+			target.ForcedStatus = "Slow!";
+
 			Debug.Log("current " + target.Status.MoveSpeed + ", temp " + temp + " value " + value);
 
 			if (SourceSkillObject != null && SourceSkillObject is ActiveSkill)

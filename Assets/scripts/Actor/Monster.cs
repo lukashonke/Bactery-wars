@@ -192,6 +192,11 @@ namespace Assets.scripts.Actor
 			}
 		}
 
+		public void OnAfterSpawned()
+		{
+			Template.OnAfterSpawned(this);
+		}
+
 		public void SpawnAssociatedMonster(string monsterTypeName, int level)
 		{
 			MapHolder map = SpawnInfo.Map;
@@ -212,6 +217,19 @@ namespace Assets.scripts.Actor
 			info.SetRegion(this.SpawnInfo.Region);
 
 			return map.AddMonsterToMap(info);
+		}
+
+		public Monster SpawnAndConnectMonster(string monsterTypeName, int level, Vector3 pos)
+		{
+			MapHolder map = SpawnInfo.Map;
+
+			MonsterSpawnInfo info = new MonsterSpawnInfo(map, monsterTypeName, pos, null, this.Team);
+			info.level = level;
+			info.SetRegion(this.SpawnInfo.Region);
+
+			Monster m = map.AddMonsterToMap(info);
+			GetData().ConnectChildCharacter(m.GetData());
+			return m;
 		}
 
 		public override bool IsInteractable()

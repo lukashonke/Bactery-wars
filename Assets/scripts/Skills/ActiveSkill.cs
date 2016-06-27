@@ -1224,7 +1224,12 @@ namespace Assets.scripts.Skills
 
 		public float GetProjectileLifetime(float speed)
 		{
-			return range/(speed) + 0.5f;
+			if(range > 0)
+				return range/(speed) + 0.5f;
+			else
+			{
+				return 7f;
+			}
 		}
 
 		//TODO finish this for other params too

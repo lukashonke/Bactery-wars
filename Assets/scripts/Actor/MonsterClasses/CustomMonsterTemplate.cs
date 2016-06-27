@@ -103,6 +103,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public List<SkillModifyInfo> AutoattackSkillModifyInfos { get; private set; }
 		public List<SkillEffectInfo> SkillAddEffects { get; private set; } 
 		public List<SkillEffectInfo> MeleeAddEffects { get; private set; }
+		public List<string> SpawnOnDie { get; private set; }
+		public List<string> ConnectedMonsters { get; private set; } 
 
         private string name_turret; // vložení jména monstra. Pokud je monstrum turreta, nastaví se trigger na false
 
@@ -118,6 +120,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 			AutoattackSkillModifyInfos = new List<SkillModifyInfo>();
 			SkillAddEffects = new List<SkillEffectInfo>();
 			MeleeAddEffects = new List<SkillEffectInfo>();
+			SpawnOnDie = new List<string>();
+			ConnectedMonsters = new List<string>();
 			NewAutoattack = SkillId.SkillTemplate;
 
 			Sprite = null;
@@ -134,6 +138,16 @@ namespace Assets.scripts.Actor.MonsterClasses
 			RambleAround = false;
 			AlertsAllies = false;
 			XpReward = 3;
+		}
+
+		public void AddOnSpawnOnDie(string name)
+		{
+			SpawnOnDie.Add(name);
+		}
+
+		public void AddAttachedCell(string name)
+		{
+			ConnectedMonsters.Add(name);
 		}
 
 		public void AddAiParam(int id, string module, string key, string value)
@@ -676,11 +690,34 @@ namespace Assets.scripts.Actor.MonsterClasses
                 data.UpdateCollider(name_turret);
 		}
 
-		public virtual void OnTalkTo(Character source)
+		public override void OnTalkTo(Character source)
 		{
 			if (OldTemplate != null)
 			{
 				OldTemplate.OnTalkTo(source);
+			}
+		}
+
+		public override void OnAfterSpawned(Monster m)
+		{
+			foreach (string name in ConnectedMonsters)
+			{
+				Monster child = m.SpawnAssociatedMonster(name, m.Level, Utils.GenerateRandomPositionAround(m.GetData().GetBody().transform.position, 3f, 1f));
+				if (child != null)
+				{
+					m.GetData().ConnectChildCharacter(child.GetData(), SpriteSize);
+					child.AI.CopyAggroFrom(m.AI);
+				}
+			}
+		}
+
+		public override void OnDie(Monster m)
+		{
+			foreach (string name in SpawnOnDie)
+			{
+				Monster child = m.SpawnAssociatedMonster(name, m.Level, Utils.GenerateRandomPositionAround(m.GetData().GetBody().transform.position, 3f, 1f));
+				if(child != null)
+					child.AI.CopyAggroFrom(m.AI);
 			}
 		}
 

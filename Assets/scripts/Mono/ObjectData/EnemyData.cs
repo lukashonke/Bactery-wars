@@ -66,6 +66,16 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			if (isDead)
 			{
+				if (connectedChildData != null)
+				{
+					DisconnectChildCharacter();
+				}
+
+				if (connectedParentData != null)
+				{
+					DisconnectFromParent();
+				}
+
 				//GameObject ch = GetChildByName("Die Effect");
 
 				/*if (ch != null && ch.activeSelf)

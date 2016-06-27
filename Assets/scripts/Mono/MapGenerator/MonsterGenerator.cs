@@ -52,8 +52,9 @@ namespace Assets.scripts.Mono.MapGenerator
 			MAIN_ROOM,
 			SIDE_ROOM,
 			BONUS_ROOM,
+			BOSS_ROOM,
 
-			BOSS_ROOM
+			EXTRA_ROOM // spawned manually
 		}
 
 		public enum RoomSize
@@ -65,6 +66,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public void LoadXmlFile()
 		{
+			mobGroups.Clear();
 			XmlDocument doc = new XmlDocument();
 			doc.Load("SpawnData.xml");
 
@@ -95,6 +97,9 @@ namespace Assets.scripts.Mono.MapGenerator
 						break;
 					case "start_room":
 						currentRoomType = RoomType.START_ROOM;
+						break;
+					case "extra_room":
+						currentRoomType = RoomType.EXTRA_ROOM;
 						break;
 				}
 
@@ -179,106 +184,149 @@ namespace Assets.scripts.Mono.MapGenerator
 
 					MobGroup group = new MobGroup(currentRoomType, id, minLevel, maxLevel, minWorld, maxWorld, frequency, minRegionSize, maxRegionSize);
 
-					Debug.Log("added group id " + id + " to " + currentRoomType);
+					//Debug.Log("added group id " + id + " to " + currentRoomType);
 
 					int mobIds = 0;
 					foreach (XmlNode mobNode in groupNode.ChildNodes)
 					{
 						if (groupNode.NodeType == XmlNodeType.Comment) continue;
 
-						int mobId = ++mobIds;
-						int idParent = -1;
-						string type = null;
-						string location = null;
-
-						int count = 1;
-						int level = 1;
-						int chance = 100;
-						string roomSize = "small";
-						bool exclude = true;
-						RegionSize minSize = RegionSize.NULL;
-
-						foreach (XmlAttribute attr in mobNode.Attributes)
+						if (mobNode.Name == "mob")
 						{
-							if (attr.Name == "type")
-							{
-								type = attr.Value;
-							}
+							int mobId = ++mobIds;
+							int idParent = -1;
+							string type = null;
+							string location = null;
 
-							if (attr.Name == "location")
-							{
-								location = attr.Value;
-							}
+							int count = 1;
+							int level = 1;
+							int chance = 100;
+							string roomSize = "small";
+							bool exclude = true;
+							RegionSize minSize = RegionSize.NULL;
 
-							if (attr.Name == "id")
+							foreach (XmlAttribute attr in mobNode.Attributes)
 							{
-								mobId = Int32.Parse(attr.Value);
-								mobIds = mobId;
-							}
-
-							if (attr.Name == "id_parent")
-							{
-								idParent = Int32.Parse(attr.Value);
-							}
-
-							if (attr.Name == "count")
-							{
-								count = Int32.Parse(attr.Value);
-							}
-
-							if (attr.Name == "level")
-							{
-								level = Int32.Parse(attr.Value);
-							}
-
-							if (attr.Name == "chance")
-							{
-								chance = Int32.Parse(attr.Value);
-							}
-
-							if (attr.Name == "room_size")
-							{
-								roomSize = attr.Value;
-							}
-
-							if (attr.Name == "exclude")
-							{
-								exclude = attr.Value == "true";
-							}
-
-							if (attr.Name == "min_region_size")
-							{
-								switch (attr.Value)
+								if (attr.Name == "type")
 								{
-									case "small":
-										minSize = RegionSize.SMALL;
-										break;
-									case "medium":
-										minSize = RegionSize.MEDIUM;
-										break;
-									case "large":
-										minSize = RegionSize.LARGE;
-										break;
+									type = attr.Value;
+								}
+
+								if (attr.Name == "location")
+								{
+									location = attr.Value;
+								}
+
+								if (attr.Name == "id")
+								{
+									mobId = Int32.Parse(attr.Value);
+									mobIds = mobId;
+								}
+
+								if (attr.Name == "id_parent")
+								{
+									idParent = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "count")
+								{
+									count = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "level")
+								{
+									level = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "chance")
+								{
+									chance = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "room_size")
+								{
+									roomSize = attr.Value;
+								}
+
+								if (attr.Name == "exclude")
+								{
+									exclude = attr.Value == "true";
+								}
+
+								if (attr.Name == "min_region_size")
+								{
+									switch (attr.Value)
+									{
+										case "small":
+											minSize = RegionSize.SMALL;
+											break;
+										case "medium":
+											minSize = RegionSize.MEDIUM;
+											break;
+										case "large":
+											minSize = RegionSize.LARGE;
+											break;
+									}
 								}
 							}
-						}
 
-						if (type == null || location == null)
-						{
-							throw new Exception("type a location musi byt nastaveno");
-						}
+							if (type == null || location == null)
+							{
+								throw new Exception("type a location musi byt nastaveno");
+							}
 
-						try
-						{
-							MobData mob = new MobData(mobId, idParent, type, count, level, chance, location, roomSize, exclude, minSize);
-							group.AddMob(mob);
+							try
+							{
+								MobData mob = new MobData(mobId, idParent, type, count, level, chance, location, roomSize, exclude, minSize);
+								group.AddMob(mob);
+							}
+							catch (Exception e)
+							{
+								Debug.LogError("chyba vnacitani - check spawndata_errors.txt");
+								System.IO.StreamWriter file = new System.IO.StreamWriter("SpawnData_errors.txt");
+								file.WriteLine(e.Message);
+								file.Close();
+							}
 						}
-						catch (Exception e)
+						else if (mobNode.Name == "extra_group")
 						{
-							Debug.LogError("chyba vnacitani - check spawndata_errors.txt");
-							System.IO.StreamWriter file = new System.IO.StreamWriter("SpawnData_errors.txt");
-							file.WriteLine(e.Message);
-							file.Close();
+							int groupId = -1;
+							int chance = 100;
+
+							int stackId = -1;
+
+							foreach (XmlAttribute attr in mobNode.Attributes)
+							{
+								if (attr.Name == "id")
+								{
+									groupId = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "chance")
+								{
+									chance = Int32.Parse(attr.Value);
+								}
+
+								if (attr.Name == "stack_id")
+								{
+									stackId = Int32.Parse(attr.Value);
+								}
+							}
+
+							if (id == -1)
+								throw new Exception("extra grup - id musi byt nastaveno (" + id + " = group Id)");
+
+							try
+							{
+								group.AddExtraGroup(groupId, chance, stackId);
+							}
+							catch (Exception e)
+							{
+								Debug.LogError("chyba v nacitani extragroup - check spawndata_errors.txt");
+								System.IO.StreamWriter file = new System.IO.StreamWriter("SpawnData_errors.txt");
+								file.WriteLine(e.Message);
+								file.Close();
+							}
 						}
 					}
 
@@ -476,6 +524,59 @@ namespace Assets.scripts.Mono.MapGenerator
 						}
 					}
 
+					if (group.extraGroups.Any())
+					{
+						int minStack = 10000;
+						int maxStack = 0;
+
+						foreach (ExtraGroupData extraGroup in group.extraGroups)
+						{
+							// spawn all -1 groups
+							if (extraGroup.stackId == -1)
+							{
+								if (Random.Range(0, 100) < extraGroup.chance)
+								{
+									GenerateGenericEnemyGroup(room, level, RoomType.EXTRA_ROOM, difficulty, regionData, extraGroup.groupId);
+								}
+							}
+							else // optimize for next for loop 
+							{
+								if (extraGroup.stackId > maxStack)
+								{
+									maxStack = extraGroup.stackId;
+								}
+
+								if (extraGroup.stackId < minStack)
+								{
+									minStack = extraGroup.stackId;
+								}
+							}
+						}
+
+						// are there any groups that have stackid set?
+						if (maxStack > 0)
+						{
+							// shuffle
+							System.Random rnd = new System.Random();
+							IOrderedEnumerable<ExtraGroupData> shuffled = group.extraGroups.OrderBy(item => rnd.Next());
+
+							for (int i = minStack; i <= maxStack; i++)
+							{
+								foreach (ExtraGroupData extraGroup in shuffled)
+								{
+									if (extraGroup.stackId == i)
+									{
+										if (Random.Range(0, 100) < extraGroup.chance)
+										{
+											GenerateGenericEnemyGroup(room, level, RoomType.EXTRA_ROOM, difficulty, regionData, extraGroup.groupId);
+											break; // only one spawned group per stack
+										}
+									}
+								}
+							}
+						}
+					}
+
 					spawned = true;
 
 					Debug.Log("spawnuto " + count + " ze skup. " + selectedId);
@@ -489,7 +590,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				Debug.LogError("nenalezena spawngroup do mistnosti typu " + roomType.ToString() + " " + room.region.x + "-" + room.region.y + " in world " + level.ToString());
 			}
 
-			if(forcedId > 0)
+			if(forcedId > 0 && WorldHolder.instance.activeMap != null)
 				WorldHolder.instance.activeMap.ConfigureMonstersAfterSpawn();
 		}
 	}
@@ -508,6 +609,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public MonsterGenerator.RegionSize maxRegionSize;
 
 		public List<MobData> mobs = new List<MobData>();
+		public List<ExtraGroupData> extraGroups = new List<ExtraGroupData>(); 
 
 		public MobGroup(MonsterGenerator.RoomType roomType, int id, int minLevel, int maxLevel, int minWorld, int maxWorld, int frequency, MonsterGenerator.RegionSize minRegionSize, MonsterGenerator.RegionSize maxRegionSize)
 		{
@@ -527,6 +629,25 @@ namespace Assets.scripts.Mono.MapGenerator
 		{
 			mobs.Add(mob);
 			//mob.PrintInfo();
+		}
+
+		public void AddExtraGroup(int groupId, int chance, int stackId)
+		{
+			extraGroups.Add(new ExtraGroupData(groupId, chance, stackId));
+		}
+	}
+
+	public class ExtraGroupData
+	{
+		public int groupId;
+		public int chance;
+		public int stackId;
+
+		public ExtraGroupData(int groupId, int chance, int stackId)
+		{
+			this.groupId = groupId;
+			this.chance = chance;
+			this.stackId = stackId;
 		}
 	}
 

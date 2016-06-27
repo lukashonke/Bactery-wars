@@ -39,7 +39,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			coolDown = 4f;
 			reuse = 1f;
 
-			baseDamage = 1;
+			baseDamage = 10;
 
 			range = 15;
 
@@ -82,6 +82,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override bool OnCastStart()
 		{
+			CreateCastingEffect(true, GetName());
+
 			return true;
 		}
 
@@ -130,6 +132,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void UpdateLaunched()
 		{
+			if (IsBeingCasted())
+				return;
+
 			Vector3 target;
 
 			if (GetPlayerData() != null)

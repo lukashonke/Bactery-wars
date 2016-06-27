@@ -138,6 +138,13 @@ namespace Assets.scripts.Mono
 
 		public bool IsCasting { get; set; }
 
+		private float lastStatusMessageDisplay;
+		private const float statusMsgInterval = 3f;
+
+		public AbstractData connectedChildData;
+		public AbstractData connectedParentData;
+		public bool IsConnected { get; set; }
+
 		protected AbstractData()
 		{
 			childs = new Dictionary<string, GameObject>();
@@ -393,6 +400,9 @@ namespace Assets.scripts.Mono
 		//private List<PhysicsPush> physicsPushes = new List<PhysicsPush>();
 		public void AddPhysicsPush(Vector2 force, ForceMode2D mode, Character source)
 		{
+			if (IsConnected)
+				return;
+
 			explosionForce += force/rb.mass;
 
 			if (this is EnemyData && source != null)
@@ -460,6 +470,17 @@ namespace Assets.scripts.Mono
 			else if (!currentlyVisible && IsVisibleToPlayer)
 			{
 				SetVisibility(true);
+			}
+
+			string msg = GetOwner().GetMainStatusMessage();
+			if (msg != null)
+			{
+				if (lastStatusMessageDisplay + statusMsgInterval < Time.time)
+				{
+					lastStatusMessageDisplay = Time.time;
+					GameSystem.Instance.CurrentPlayer.GetData().ui.ObjectMessage(GetBody(), msg, Color.gray);
+					GetOwner().ResetStatus();
+				}
 			}
 
 			if (!HasTargetToMoveTo && keyboardMovementAllowed)
@@ -978,6 +999,9 @@ namespace Assets.scripts.Mono
 			if (GetOwner().Status.IsImmobilized())
 				return false;
 
+			if (IsConnected)
+				return false;
+
 			foreach (Skill skill in GetOwner().Skills.Skills)
 			{
 				if (skill is ActiveSkill)
@@ -1011,6 +1035,9 @@ namespace Assets.scripts.Mono
 				return false;
 
 			if (fixedRotation)
+				return false;
+
+			if (IsConnected)
 				return false;
 
 			foreach (Skill skill in GetOwner().Skills.Skills)
@@ -1098,6 +1125,16 @@ namespace Assets.scripts.Mono
 		{
 			if (isDead)
 			{
+				if (connectedChildData != null)
+				{
+					DisconnectChildCharacter();
+				}
+
+				if (connectedParentData != null)
+				{
+					DisconnectFromParent();
+				}
+
 				DisableObjectData();
 
 				Destroy(gameObject, 5f);
@@ -1556,6 +1593,80 @@ namespace Assets.scripts.Mono
 
 		public virtual void ReceivedDamage(int damage, bool wasCrit)
 		{
+		}
+
+		public void ConnectChildCharacter(AbstractData data, float distance = 2f)
+		{
+			if (connectedChildData == null)
+			{
+				connectedChildData = data;
+				connectedChildData.IsConnected = true;
+				connectedChildData.connectedParentData = this;
+				connectedChildData.rb.mass = 0.01f;
+
+				SpringJoint2D joint = GetBody().AddComponent<SpringJoint2D>();
+				/*joint.autoConfigureOffset = false;
+				joint.connectedBody = data.rb;
+				joint.linearOffset = new Vector2(0, -distance);
+				joint.autoConfigureOffset = false;*/
+
+				joint.autoConfigureConnectedAnchor = false;
+				joint.connectedBody = data.rb;
+				joint.connectedAnchor = new Vector2(0, -distance);
+				joint.frequency = 500;
+				joint.autoConfigureDistance = false;
+				joint.distance = 1;
+				joint.autoConfigureConnectedAnchor = false;
+
+				/*joint.autoConfigureConnectedAnchor = false;
+				joint.connectedBody = data.rb;
+				joint.connectedAnchor = new Vector2(0, -distance);
+				joint.autoConfigureConnectedAnchor = false;*/
+
+				/*joint.autoConfigureConnectedAnchor = false;
+				joint.connectedBody = data.rb;
+				joint.connectedAnchor = new Vector2(0, -distance);
+				joint.autoConfigureConnectedAnchor = false;
+				joint.useLimits = true;
+				JointAngleLimits2D l = new JointAngleLimits2D();
+				l.max = 20;
+				l.min = 0;
+				joint.limits = l;*/
+			}
+			else
+			{
+				connectedChildData.ConnectChildCharacter(data, connectedChildData.GetSize());
+			}
+		}
+
+		public void DisconnectChildCharacter(AbstractData ch)
+		{
+			if (connectedChildData == null)
+				return;
+
+			if (ch == null || ch.Equals(connectedChildData))
+			{
+				connectedChildData.IsConnected = false;
+				connectedChildData.connectedParentData = null;
+				connectedChildData.rb.mass = connectedChildData.mass;
+				connectedChildData = null;
+
+				RelativeJoint2D joint = GetBody().GetComponent<RelativeJoint2D>();
+				Destroy(joint);
+			}
+		}
+
+		public void DisconnectChildCharacter()
+		{
+			DisconnectChildCharacter(null);
+		}
+
+		public void DisconnectFromParent()
+		{
+			if (IsConnected)
+			{
+				connectedParentData.DisconnectChildCharacter();
+			}
 		}
 	}
 }
