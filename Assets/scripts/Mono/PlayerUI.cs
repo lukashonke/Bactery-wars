@@ -1756,7 +1756,7 @@ namespace Assets.scripts.Mono
 			const int maxNodesDown = 5;
 
 			int spacingY = Screen.height / maxNodesDown;
-			int spacingX = Math.Min(spacingY, Screen.width / 6);
+			int spacingX = Math.Min(spacingY, Screen.width / 7);
 			int rndHeight = spacingY / 5;
 			int rndWidth = spacingX / 2;
 
@@ -1881,12 +1881,12 @@ namespace Assets.scripts.Mono
 								childDrawData.mainDirection = 1;
 								break;
 							case 2:
-								x = mainX + 2 * spacingX;
+								x = mainX + spacingX;
 								y -= (spacingY / 2f);
 								childDrawData.mainDirection = 0;
 								break;
 							case 3:
-								x = mainX - 2 * spacingX;
+								x = mainX - spacingX;
 								y -= (spacingY / 2f);
 								childDrawData.mainDirection = 1;
 								break;
