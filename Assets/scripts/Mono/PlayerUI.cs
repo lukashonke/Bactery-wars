@@ -1700,178 +1700,233 @@ namespace Assets.scripts.Mono
 
 		private Dictionary<GameObject, LevelTree> levelsViewIcons = new Dictionary<GameObject, LevelTree>();
 
-		public void ShowLevelsView()
+		private DrawData[] nodeDrawData; // index = id of the node
+		private bool isDrawn = false;
+
+		public class DrawData
 		{
-			levelsViewCanvas.enabled = true;
-			shopButtonTemplate.SetActive(true);
-			SetMouseOverUi();
+			public LevelTree node;
+
+			// 0 = right, 1 = left
+			public int mainDirection;
+			public int children;
+
+			public DrawData(LevelTree n)
+			{
+				this.node = n;
+				mainDirection = 0;
+				children = 0;
+			}
+		}
+
+		public void DrawLevelsView()
+		{
+			// delete if not empty
+			if (levelsViewIcons.Any())
+			{
+				foreach (GameObject o in levelsViewIcons.Keys)
+				{
+					Destroy(o);
+				}
+
+				foreach (GameObject o in dots)
+				{
+					Destroy(o);
+				}
+
+				dots.Clear();
+
+				levelsViewIcons.Clear();
+			}
 
 			levelsViewTitle.GetComponent<Text>().text = "World " + WorldHolder.instance.worldLevel;
 
-			float x = 0;
-			float y = 0;
-
 			LevelTree main = WorldHolder.instance.mapTree;
 
-			int depth;
+			List<LevelTree> mainNodes = main.GetAllMainNodes();
+			List<LevelTree> nodes = main.GetAllNodes();
+
+			nodeDrawData = new DrawData[nodes.Count];
+
+			foreach (LevelTree n in nodes)
+			{
+				nodeDrawData[n.Id] = new DrawData(n);
+			}
 
 			const int maxNodesDown = 5;
 
 			int spacingY = Screen.height / maxNodesDown;
-			int spacingX = Math.Min(spacingY, Screen.width/6);
-			int rndHeight = spacingY/5;
+			int spacingX = Math.Min(spacingY, Screen.width / 6);
+			int rndHeight = spacingY / 5;
 			int rndWidth = spacingX / 2;
 
-			List<LevelTree> mainNodes = main.GetAllMainNodes();
-			List<LevelTree> nodes = main.GetAllNodes();
-			bool done = false;
+			float x = 0;
+			float y = 0;
+			int depth;
+			bool done;
 
-			int temp = 0;
-
-			// draw all main nodes first
+			// draw main nodes
 			for (int i = 0; i < 100; i++)
 			{
-				temp = 0;
-
+				done = false;
 				foreach (LevelTree t in mainNodes)
 				{
-					if (t.Depth == i)
+					depth = t.Depth;
+
+					y = (Screen.height / 2f) - (spacingY) * (depth + 1) + Random.Range(-rndHeight, rndHeight) + (spacingY / 2f);
+					x = Random.Range(-rndWidth, rndWidth);
+
+					Debug.Log(y);
+
+					GameObject newImg = Instantiate(levelIconTemplate);
+					newImg.GetComponent<Image>().enabled = true;
+					newImg.name = "Main" + t.Name + "IconD" + t.Depth;
+					newImg.transform.parent = levelsViewPanel.transform;
+					RectTransform trans = newImg.GetComponent<RectTransform>();
+					trans.localPosition = new Vector3(x, y);
+
+					if (t.levelData != null && t.levelData.shopData != null)
 					{
-						temp++;
-						depth = t.Depth;
+						GameObject textObj = Instantiate(shopButtonTemplate);
+						textObj.GetComponent<Image>().enabled = true;
+						textObj.GetComponent<Button>().enabled = true;
+						textObj.transform.parent = newImg.transform;
+						textObj.transform.localPosition = new Vector3(newImg.GetComponent<RectTransform>().sizeDelta.x, 0);
 
-						y = (Screen.height/2f) - (spacingY)*(depth + 1) + Random.Range(-rndHeight, rndHeight) + (spacingY/2f);
-						x = Random.Range(-rndWidth, rndWidth);
-
-						Debug.Log(y);
-
-						GameObject newImg = Instantiate(levelIconTemplate);
-						newImg.GetComponent<Image>().enabled = true;
-						newImg.name = "Main" + t.Name + "IconD" + t.Depth;
-						newImg.transform.parent = levelsViewPanel.transform;
-						RectTransform trans = newImg.GetComponent<RectTransform>();
-						trans.localPosition = new Vector3(x, y);
-
-						if (t.levelData != null && t.levelData.shopData != null)
-						{
-							GameObject textObj = Instantiate(shopButtonTemplate);
-							textObj.GetComponent<Image>().enabled = true;
-							textObj.GetComponent<Button>().enabled = true;
-							textObj.transform.parent = newImg.transform;
-							textObj.transform.localPosition = new Vector3(newImg.GetComponent<RectTransform>().sizeDelta.x, 0);
-
-							var t1 = t;
-							textObj.GetComponent<Button>().onClick.AddListener(delegate { OnShopButtonClick(t1); });
-						}
-
-						if (!t.Unlocked)
-						{
-							newImg.GetComponent<Image>().color = Color.gray;
-						}
-
-						if (t.CurrentlyActive)
-						{
-							newImg.GetComponent<Image>().color = Color.yellow;
-						}
-
-						AddLevelHoverAction(newImg);
-						levelsViewIcons.Add(newImg, t);
-
-						if (t.IsLastNode)
-							done = true;
+						var t1 = t;
+						textObj.GetComponent<Button>().onClick.AddListener(delegate { OnShopButtonClick(t1); });
 					}
+
+					if (!t.Unlocked)
+					{
+						newImg.GetComponent<Image>().color = Color.gray;
+					}
+
+					if (t.CurrentlyActive)
+					{
+						newImg.GetComponent<Image>().color = Color.yellow;
+					}
+
+					AddLevelHoverAction(newImg);
+					levelsViewIcons.Add(newImg, t);
+
+					if (t.IsLastNode)
+						done = true;
 				}
 
-				if (done)
+				if (done) // all main nodes done
 					break;
 			}
 
-			shopButtonTemplate.SetActive(false);
-
+			// draw secondary nodes
 			done = false;
 
 			// draw the secondary nodes
 			for (int i = 0; i < 100; i++)
 			{
-				temp = 0;
-				foreach (LevelTree t in nodes)
+				foreach (LevelTree node in nodes)
 				{
-					if (t.Depth == i && t.LevelNodeType == LevelTree.LEVEL_EXTRA)
+					if (node.Depth == i && node.LevelNodeType == LevelTree.LEVEL_EXTRA)
 					{
-						GameObject mainNodeObj = null;
-						LevelTree mainNode = null;
+						GameObject parentNodeObj = null;
+						LevelTree parentNode = node.Parent;
 
+						// get the main node for the current node
 						foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
 						{
-							if (e.Value.Depth == t.Depth && e.Value.LevelNodeType == LevelTree.LEVEL_MAIN)
+							if (e.Value.Depth == node.Depth && node.Parent.Equals(e.Value))
 							{
-								mainNodeObj = e.Key;
-								mainNode = e.Value;
+								parentNodeObj = e.Key;
 							}
 						}
 
-						if (mainNodeObj == null)
+						if (parentNodeObj == null || parentNode == null)
+						{
+							Debug.LogError("main or parent node are null");
 							continue;
-							
-						temp++;
-						depth = t.Depth;
+						}
 
-						float mainX = mainNodeObj.transform.localPosition.x;
+						depth = node.Depth;
+
+						//TODO optimize - draw only once then on update
+						//TODO if main node has more than 2 childs, place them well
+						//TODO if special node has one child, put it on the same side
+
+						DrawData parentDrawData = nodeDrawData[parentNode.Id];
+						DrawData childDrawData = nodeDrawData[node.Id];
+
+						float mainX = parentNodeObj.transform.localPosition.x;
 
 						x = 0;
-						y = mainNodeObj.transform.localPosition.y - Random.Range(rndHeight/2, rndHeight);
+						y = parentNodeObj.transform.localPosition.y - Random.Range(rndHeight / 2, rndHeight);
 
-						switch (temp)
+						switch (parentDrawData.children)
 						{
-							case 1:
-								x = mainX + spacingX;
-								Debug.Log("1X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+							case 0: // no childs, place to the right
+
+								if (parentDrawData.mainDirection == 0)
+								{
+									x = mainX + spacingX;
+									childDrawData.mainDirection = 0;
+								}
+								else
+								{
+									x = mainX - spacingX;
+									childDrawData.mainDirection = 0;
+								}
+
+								break;
+							case 1: // place to the left
+								x = mainX - spacingX;
+								childDrawData.mainDirection = 1;
 								break;
 							case 2:
-								x = mainX - spacingX;
-								Debug.Log("2X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								x = mainX + 2 * spacingX;
+								y -= (spacingY / 2f);
+								childDrawData.mainDirection = 0;
 								break;
 							case 3:
-								x = mainX + 2* spacingX;
-								Debug.Log("3X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								x = mainX - 2 * spacingX;
+								y -= (spacingY / 2f);
+								childDrawData.mainDirection = 1;
 								break;
 							case 4:
-								x = mainX - 2* spacingX;
-								Debug.Log("4X for " + t.Name + "" + t.Depth + " is " + x + " (orig " + mainX + ")");
+								x = mainX + 1.5f * spacingX;
+								y -= (spacingY / 2f);
+								childDrawData.mainDirection = 0;
 								break;
 							case 5:
-								x = mainX + 1.5f* spacingX;
-								y -= (spacingY/2f);
-								break;
-							case 6:
-								x = mainX + 1.5f* spacingX;
+								x = mainX + 1.5f * spacingX;
 								y -= (spacingY / 2f);
+								childDrawData.mainDirection = 1;
 								break;
 						}
+
+						parentDrawData.children ++;
 
 						GameObject newImg = Instantiate(levelIconTemplate);
 						newImg.GetComponent<Image>().enabled = true;
 						//newImg.GetComponent<Image>().color = Color.red;
 
-						if (t.CurrentlyActive)
+						if (node.CurrentlyActive)
 						{
 							newImg.GetComponent<Image>().color = Color.yellow;
 						}
 
-						newImg.name = "Extra" + t.Name + "IconD" + t.Depth;
+						newImg.name = "Extra" + node.Name + "IconD" + node.Depth;
 						newImg.transform.parent = levelsViewPanel.transform;
 						RectTransform trans = newImg.GetComponent<RectTransform>();
 						trans.localPosition = new Vector3(x, y);
 
-						if (!t.Unlocked)
+						if (!node.Unlocked)
 						{
 							newImg.GetComponent<Image>().color = Color.gray;
 						}
 
 						AddLevelHoverAction(newImg);
-						levelsViewIcons.Add(newImg, t);
+						levelsViewIcons.Add(newImg, node);
 
-						if (t.IsLastNode)
+						if (node.IsLastNode)
 							done = true;
 					}
 				}
@@ -1880,7 +1935,9 @@ namespace Assets.scripts.Mono
 					break;
 			}
 
-			Utils.Timer.StartTimer("line");
+			
+
+			// draw lines
 
 			foreach (KeyValuePair<GameObject, LevelTree> e in levelsViewIcons)
 			{
@@ -1913,8 +1970,20 @@ namespace Assets.scripts.Mono
 
 				first = null;
 			}
+		}
 
-			Utils.Timer.EndTimer("line");
+		public void ShowLevelsView()
+		{
+			if (!isDrawn)
+			{
+				shopButtonTemplate.SetActive(true);
+				DrawLevelsView();
+				shopButtonTemplate.SetActive(false);
+			}
+
+			levelsViewCanvas.enabled = true;
+			SetMouseOverUi();
+			//END here
 		}
 
 		public void OnShopButtonClick(LevelTree node)
@@ -2020,21 +2089,24 @@ namespace Assets.scripts.Mono
 			trigger.triggers.Add(entry);
 		}
 
-		public void HideLevelsView()
+		public void HideLevelsView(bool clear=false)
 		{
-			foreach (GameObject o in levelsViewIcons.Keys)
+			if (clear)
 			{
-				Destroy(o);
+				foreach (GameObject o in levelsViewIcons.Keys)
+				{
+					Destroy(o);
+				}
+
+				foreach (GameObject o in dots)
+				{
+					Destroy(o);
+				}
+
+				dots.Clear();
+
+				levelsViewIcons.Clear();
 			}
-
-			foreach (GameObject o in dots)
-			{
-				Destroy(o);
-			}
-
-			dots.Clear();
-
-			levelsViewIcons.Clear();
 
 			levelsViewCanvas.enabled = false;
 			SetMouseNotOverUi();

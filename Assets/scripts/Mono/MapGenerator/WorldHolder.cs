@@ -162,7 +162,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			int counter = levelsCount;
 
-			if (worldLevel > 0)
+			if (worldLevel > 0) // main line for all worlds
 			{
 				int shopLevel = Random.Range(0, mainLineCount-1);
 
@@ -198,7 +198,7 @@ namespace Assets.scripts.Mono.MapGenerator
 					counter--;
 				}
 			}
-			else
+			else // main line for tutorial world
 			{
 				// main line - tutorial levels - all easy
 				for (int i = 0; i < mainLineCount; i++)

@@ -9852,7 +9852,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Inventory
+  m_Text: Bactery Overview
 --- !u!222 &456857484
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21908,7 +21908,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
 --- !u!114 &1064541409
 MonoBehaviour:
   m_ObjectHideFlags: 0

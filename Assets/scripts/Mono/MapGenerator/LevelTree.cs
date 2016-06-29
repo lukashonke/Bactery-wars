@@ -21,6 +21,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			get { return childs; }
 		}
 
+		public LevelTree Parent { get; set; }
+
 		public AbstractLevelData levelData;
 
 		public DropInfo LevelReward { get; private set; }
@@ -96,6 +98,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		public void AddChild(LevelTree child)
 		{
 			childs.Add(child);
+			child.Parent = this;
 		}
 
 		public LevelTree GetLastMainNode()
