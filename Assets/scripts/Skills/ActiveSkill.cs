@@ -1039,7 +1039,12 @@ namespace Assets.scripts.Skills
 			List<GameObject> temp = new List<GameObject>(RangeChecks.Keys);
 			foreach (GameObject proj in temp)
 			{
-				Vector3 init = RangeChecks[proj];
+				//Vector3 init = RangeChecks[proj];
+				Vector3 init;
+				bool found = RangeChecks.TryGetValue(proj, out init);
+				if (!found)
+					continue;
+
 				bool far = CheckRange(proj, init, range);
 
 				if (far)
