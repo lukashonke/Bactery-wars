@@ -69,7 +69,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 
 		private int variant;
 		private int difficulty;
-		private const int maxVariant = 14;
+		private const int maxMediumVariant = 14;
 		private int bossChance = 50;
 		private int bonusRoomChance = 50;
 		private int regionsX = 4;
@@ -82,11 +82,27 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			variant = param.variant;
 			difficulty = param.difficulty;
 
-			if (variant == 1)
+			// easy
+			if (difficulty == 1)
 			{
-				variant = Random.Range(1, maxVariant + 1);
+				variant = Random.Range(15, 17+1);
+
+				regionsX = 4;
+				regionsY = 3;
+			}
+			else if (difficulty == 3)
+			{
+				
+			}
+			else
+			{
+				if (variant == 1)
+				{
+					variant = Random.Range(1, maxMediumVariant + 1);
+				}
 			}
 
+			// adjust settings
 			if (variant >= 1 && variant <= 4)
 			{
 				regionsX = 4;
@@ -359,6 +375,45 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					}
 
 					mainRooms.Add(map.GenerateDungeonRegion(1, 0, mainFillPercent, false, true, true, mainRoomTallHorizontalSeeds, 3, 1));
+					break;
+
+
+
+
+				case 15: // easy levels
+					start = map.GenerateDungeonRegion(0, 0, startFillPercent, true, false, false, startSeeds, 1, 1);
+					sideRooms.Add(map.GenerateDungeonRegion(1, 0, sideFillPercent, false, true, false, sideRoomSeeds, 1, 1));
+					mainRooms.Add(map.GenerateDungeonRegion(1, 1, mainFillPercent, false, true, false, mainRoomVerticalSeeds, 2, 1));
+
+					//if (ChanceCheck(bonusRoomChance))
+					{
+						bonusRooms.Add(map.GenerateDungeonRegion(1, 2, bonusRoomFillPercent, false, true, false, bonusSeeds, 1, 1));
+					}
+
+					end = map.GenerateDungeonRegion(3, 1, endFillPercent, false, true, true, endSeeds, 1, 1);
+					break;
+				case 16: // easy levels
+					start = map.GenerateDungeonRegion(0, 1, startFillPercent, true, false, false, startSeeds, 1, 1);
+					sideRooms.Add(map.GenerateDungeonRegion(1, 1, sideFillPercent, false, true, false, sideRoomSeeds, 1, 1));
+					mainRooms.Add(map.GenerateDungeonRegion(1, 0, mainFillPercent, false, true, false, mainRoomVerticalSeeds, 2, 1));
+
+					//if (ChanceCheck(bonusRoomChance))
+					{
+						bonusRooms.Add(map.GenerateDungeonRegion(1, 2, bonusRoomFillPercent, false, true, false, bonusSeeds, 1, 1));
+					}
+
+					end = map.GenerateDungeonRegion(3, 0, endFillPercent, false, true, true, endSeeds, 1, 1);
+					break;
+				case 17: // easy levels
+					start = map.GenerateDungeonRegion(0, 1, startFillPercent, true, false, false, startSeeds, 1, 1);
+					sideRooms.Add(map.GenerateDungeonRegion(1, 1, sideFillPercent, false, true, false, sideRoomSeeds, 1, 1));
+					mainRooms.Add(map.GenerateDungeonRegion(2, 0, mainFillPercent, false, true, true, mainRoomVerticalSeeds, 1, 2));
+
+					if (ChanceCheck(bonusRoomChance))
+					{
+						bonusRooms.Add(map.GenerateDungeonRegion(1, 2, bonusRoomFillPercent, false, true, false, bonusSeeds, 1, 1));
+					}
+
 					break;
 			}
 		}

@@ -23,6 +23,7 @@ namespace Assets.scripts.Actor.Status
 		public int MaxHp { get; set; }
 		public int MaxMp { get; set; }
 		public float MoveSpeed { get; set; }
+		public float RotationSpeed { get; set; }
 
 		public float Shield { get; set; }
 		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
@@ -39,7 +40,7 @@ namespace Assets.scripts.Actor.Status
 
 		public bool CanCastSkills { get; set; }
 
-		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
+		protected CharStatus(bool isDead, int hp, int mp, int maxHp, int maxMp, float moveSpeed, float rotationSpeed, float shield, int criticalRate, float criticalDamageMul, float damageMul, float damageAdd)
 		{
 			IsDead = isDead;
 			Hp = hp;
@@ -47,6 +48,7 @@ namespace Assets.scripts.Actor.Status
 			MaxHp = maxHp;
 			MaxMp = maxMp;
 			MoveSpeed = moveSpeed;
+			RotationSpeed = rotationSpeed;
 
 			DamageOutputAdd = damageAdd;
 			DamageOutputMul = damageMul;

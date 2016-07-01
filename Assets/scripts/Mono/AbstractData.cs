@@ -124,6 +124,10 @@ namespace Assets.scripts.Mono
 
 		protected float mass, size;
 
+		public bool HasRotationToDo { get; set; }
+		public Quaternion rotationTarget;
+		public int targetRotationSpeed;
+
 		/// <summary>
 		/// true pokud se objekt muze pohybovat i kdyz jeste neni natoceny ke svemu cili, 
 		/// pokud je nastaveno na false, objekt se nebude pohybovat smerem ke svemu cili dokud k nemu nebude natoceny
@@ -185,6 +189,7 @@ namespace Assets.scripts.Mono
 
 			IsCasting = false;
 			HasTargetToMoveTo = false;
+			HasRotationToDo = false;
 			QueueMelee = false;
 			allowMovePointChange = true;
 			forcedVelocity = false;
@@ -535,6 +540,8 @@ namespace Assets.scripts.Mono
 				// update movement
 				if (HasTargetToMoveTo && (dist > minRangeToTarget) && dist > minDistanceClickToMove)
 				{
+					HasRotationToDo = false; // stop rotation only
+
 					Vector3 currentDestination = targetPositionWorld;
 					if (usesPathfinding && currentPath != null && allowMovePointChange)
 					{
@@ -616,6 +623,22 @@ namespace Assets.scripts.Mono
 					if (move || rotate)
 					{
 						UpdateHeading();
+					}
+				}
+				else if (HasRotationToDo)
+				{
+					if (CanRotate())
+					{
+						float rotAngle = Quaternion.Angle(body.transform.rotation, rotationTarget);
+
+						if (rotAngle - 90 <= 1) // rotation finished
+						{
+							HasRotationToDo = false;
+						}
+						else
+						{
+							SetRotation(Quaternion.Lerp(body.transform.rotation, rotationTarget, Time.deltaTime * targetRotationSpeed), false);
+						}
 					}
 				}
 				else
@@ -965,6 +988,41 @@ namespace Assets.scripts.Mono
 				UpdateHeading();
 		}
 
+		public void Rotate(Quaternion newRot, int rotateSpeed)
+		{
+			rotationTarget = newRot;
+			targetRotationSpeed = rotateSpeed;
+			HasRotationToDo = true;
+		}
+
+		public void Rotate(Vector3 target, int rotateSpeed)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(body.transform.position - target, Vector3.forward);
+			newRotation.x = 0;
+			newRotation.y = 0;
+
+			Rotate(newRotation, rotateSpeed);
+		}
+
+		public bool IsRotatedTowards(Vector3 target, int tolerance=1)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(body.transform.position - target, Vector3.forward);
+			newRotation.x = 0;
+			newRotation.y = 0;
+
+			float angle = Quaternion.Angle(body.transform.rotation, newRotation);
+
+			if (angle - 90 > tolerance)
+				return false;
+
+			return true;
+		}
+
+		public bool IsRotating()
+		{
+			return HasRotationToDo;
+		}
+
 		public void SetRotation(Quaternion newRot, bool updateHeading)
 		{
 			if (USE_VELOCITY_MOVEMENT)
@@ -1193,6 +1251,16 @@ namespace Assets.scripts.Mono
 		public void UpdateHeading()
 		{
 			float angleRad = (body.transform.rotation.eulerAngles.z + 90)*Mathf.Deg2Rad;
+			SetHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
+		}
+
+		public void UpdateHeading(Vector3 target)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(body.transform.position - target, Vector3.forward);
+			newRotation.x = 0;
+			newRotation.y = 0;
+
+			float angleRad = (newRotation.eulerAngles.z + 90) * Mathf.Deg2Rad;
 			SetHeading(new Vector3(Mathf.Cos(angleRad), Mathf.Sin(angleRad), 0));
 		}
 

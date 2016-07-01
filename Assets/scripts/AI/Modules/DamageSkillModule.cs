@@ -85,6 +85,7 @@ namespace Assets.scripts.AI.Modules
 					rangeCheck = false;
 
 				ai.StartAction(ai.CastSkill(target, topSkill, distSqr, !rangeCheck, true, boostShootRange), topSkill.GetSkillActiveDuration() * 2, false, shootWhileMoving);
+
 				return true;
 			}
 

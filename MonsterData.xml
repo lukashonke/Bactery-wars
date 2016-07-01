@@ -3,6 +3,7 @@
 	<monster name="Picocell">
 		<visibleName>Pico Cell</visibleName>
 		<template>CustomCell</template>
+		<target_rotation_speed>10</target_rotation_speed>
 		<sprite>melee/basic</sprite>
 		<stats> 
 			<MaxHp>10</MaxHp>
@@ -280,6 +281,7 @@
 			<MaxHp>20</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>12</MaxSpeed>
+			<RotationSpeed>25</RotationSpeed>
 			<IsAggressive>true</IsAggressive>
 			<AggressionRange>10</AggressionRange>
 			<RambleAround>true</RambleAround>
@@ -902,6 +904,7 @@
 
 	<monster name="ProjectileTurret">
 		<visibleName>Turret</visibleName>
+		<target_rotation_speed>5</target_rotation_speed>
 		<template>CustomCell</template>
 		<sprite>ranged/turret</sprite>
 		<size>2</size>

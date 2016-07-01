@@ -194,6 +194,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 						case "visibleName":
 							newTemplate.Name = mainParam.InnerText;
 							break;
+						case "target_rotation_speed":
+							newTemplate.TargetRotationSpeed = int.Parse(mainParam.InnerText);
+							break;
 						case "sprite":
 							newTemplate.Sprite = mainParam.InnerText;
 							break;
@@ -225,6 +228,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 										break;
 									case "MaxSpeed":
 										newTemplate.MaxSpeed = Int32.Parse(statNode.InnerText);
+										break;
+									case "RotationSpeed":
+										newTemplate.RotationSpeed = Int32.Parse(statNode.InnerText);
 										break;
 									case "IsAggressive":
 										newTemplate.IsAggressive = statNode.InnerText.ToLower() == "true";

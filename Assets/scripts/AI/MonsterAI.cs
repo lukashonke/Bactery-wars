@@ -19,6 +19,8 @@ namespace Assets.scripts.AI
 {
 	public abstract class MonsterAI : AbstractAI
 	{
+		public bool instantRotation = true;
+
 		protected List<AIAttackModule> attackModules;
 		protected AIAttackModule currentPrioridyModule;
 		private float currentPrioridyModuleTime;
@@ -830,30 +832,53 @@ namespace Assets.scripts.AI
 
 		public virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
-			if (target != null && !noRangeCheck && sk.range != 0)
+			if (target != null)
 			{
-				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f+skillRangeAdd) < distSqrToTarget)
+				if (!noRangeCheck && sk.range != 0)
 				{
-					distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
+					while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f + skillRangeAdd) < distSqrToTarget)
+					{
+						distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 
-					if (moveTowardsIfRequired)
-					{
-						MoveTo(target);
-						yield return null;
+						if (moveTowardsIfRequired)
+						{
+							MoveTo(target);
+							yield return null;
+						}
+						else // too far, cant move closer - break the action
+						{
+							currentAction = null;
+							yield break;
+						}
 					}
-					else // too far, cant move closer - break the action
+				}
+
+				if (GetTemplate().TargetRotationSpeed > 0)
+				{
+					// not rotated towards target
+					if (!Owner.GetData().IsRotatedTowards(target.GetData().GetBody().transform.position, 3))
 					{
-						currentAction = null;
-						yield break;
+						Owner.GetData().Rotate(target.GetData().GetBody().transform.position, GetTemplate().TargetRotationSpeed);
+						while (Owner.GetData().IsRotating())
+						{
+							// wait till rotation is finished
+							yield return null;
+						}
 					}
 				}
 			}
+			
 
 			Owner.GetData().BreakMovement(true);
 
 			if (target != null)
-				RotateToTarget(target);
-
+			{
+				if (GetTemplate().TargetRotationSpeed < 0)
+					RotateToTarget(target);
+				else
+					UpdateDirection(target);
+			}
+			
 			Owner.CastSkill(sk);
 			currentAction = null;
 		}

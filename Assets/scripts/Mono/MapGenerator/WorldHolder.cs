@@ -303,6 +303,8 @@ namespace Assets.scripts.Mono.MapGenerator
 			if(rnd < 50)
 				difficulty = LevelTree.DIFF_HARD;
 
+			param.difficulty = difficulty;
+
 			LevelTree newNode = new LevelTree(LevelTree.LEVEL_EXTRA, id, difficulty, depth, param, "Extra Level " + id, "This level is filled with random monsters.");
 
 			switch (difficulty)

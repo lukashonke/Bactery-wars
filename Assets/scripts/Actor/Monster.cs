@@ -126,6 +126,7 @@ namespace Assets.scripts.Actor
 			GetData().SetVisibleHp(st.Hp);
 			GetData().SetVisibleMaxHp(st.MaxHp);
 			GetData().SetMoveSpeed(st.MoveSpeed);
+			GetData().SetRotateSpeed((int) st.RotationSpeed);
 
 			return st;
 		}

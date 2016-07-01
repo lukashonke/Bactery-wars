@@ -328,6 +328,16 @@ namespace Assets.scripts.AI
 			return skills;
 		}
 
+		public void UpdateDirection(Character target)
+		{
+			Owner.GetData().UpdateHeading(target.GetData().GetBody().transform.position);
+		}
+
+		public void UpdateDirection(Vector3 target)
+		{
+			Owner.GetData().UpdateHeading(target);
+		}
+
 		public void RotateToTarget(Character target)
 		{
 			Owner.GetData().SetRotation(target.GetData().GetBody().transform.position, true);

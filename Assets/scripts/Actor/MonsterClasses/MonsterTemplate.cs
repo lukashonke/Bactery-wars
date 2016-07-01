@@ -24,9 +24,12 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 		public string Name { get; set; }
 
+		public int TargetRotationSpeed { get; set; }
+
 		public int MaxHp { get; set; }
 		public int MaxMp { get; set; }
 		public float MaxSpeed { get; set; }
+		public float RotationSpeed { get; set; }
 		public float Shield { get; set; }
 		public int CriticalRate { get; set; } // 1000 equals 100% to critical strike
 		public float CriticalDamageMul { get; set; } // if critical strike, damage is multiplied by this value
@@ -62,11 +65,13 @@ namespace Assets.scripts.Actor.MonsterClasses
 			MaxHp = 50;
 			MaxMp = 50;
 			MaxSpeed = 10;
+			RotationSpeed = 25;
 			Shield = 1.0f;
 			CriticalRate = 0;
 			CriticalDamageMul = 2f;
 			XpReward = 1;
 			XpLevelMul = 0.5f; // 50% more XP per each next level
+			TargetRotationSpeed = 10;
 
 			HpLevelScale = 0;
 		}
