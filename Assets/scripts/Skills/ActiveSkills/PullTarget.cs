@@ -74,6 +74,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (target == null)
 				target = initTarget;
 
+			int range = GetRange();
+
 			if (target == null || Utils.DistanceSqr(target.transform.position, GetOwnerData().GetBody().transform.position) > (range*range))
 			{
 				Owner.Message("Select a target.");

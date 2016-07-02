@@ -92,7 +92,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			ray = CreateParticleEffect(effectName, true, GetOwnerData().GetShootingPosition().transform.position);
 			ParticleSystem ps = ray.GetComponent<ParticleSystem>();
 
-			ps.startLifetime = (0.0266f*range);
+			ps.startLifetime = (0.0266f * GetRange());
 
 			ParticleSystem.ShapeModule shape = ps.shape;
 			shape.radius = width/2f;
@@ -157,9 +157,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 					RaycastHit2D[] hits;
 
 					if(width > 1.0f)
-						hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, width, true);
+						hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, GetRange(), width, true);
 					else
-						hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, width);
+						hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, GetRange(), width);
 
 					foreach (RaycastHit2D hit in hits)
 					{

@@ -83,9 +83,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 				confirmObjects[1] = second;
 				confirmObjects[2] = third;
 
-				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, first);
-				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, second);
-				UpdateDirectionArrowScale(range > 0 ? range+2 : 5, third);
+				int range = GetRange();
+
+				UpdateDirectionArrowScale(range > 0 ? range+1 : 5, first);
+				UpdateDirectionArrowScale(range > 0 ? range+1 : 5, second);
+				UpdateDirectionArrowScale(range > 0 ? range+1 : 5, third);
 			}
 
 			UpdateMouseDirection(GetPlayerData().GetShootingPosition().transform);
@@ -123,6 +125,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			DeleteCastingEffect();
+
+			int range = GetRange();
 
 			RaycastHit2D[] hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), range, range);
 

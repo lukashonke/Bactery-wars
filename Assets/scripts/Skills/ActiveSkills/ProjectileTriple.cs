@@ -40,7 +40,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				confirmObject = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);
 				UpdateMouseDirection(confirmObject.transform);
-				UpdateDirectionArrowScale(range, confirmObject);
+				UpdateDirectionArrowScale(GetRange(), confirmObject);
 				RotateArrowToMouseDirection(confirmObject, 0);
 
 				/*GameObject arrow2 = GetPlayerData().CreateSkillResource(GetName(), "directionarrow", true, GetOwnerData().GetShootingPosition().transform.position);

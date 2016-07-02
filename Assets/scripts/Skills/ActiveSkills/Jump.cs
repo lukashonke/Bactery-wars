@@ -66,17 +66,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 			DeleteCastingEffect();
 
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
+				GetOwnerData().JumpForward(mouseDirection, GetRange(), jumpSpeed);
 			else
 			{
 				if (initTarget != null)
 				{
 					Vector3 pos = Utils.GetDirectionVector(Owner.GetData().GetBody().transform.position, initTarget.transform.position)*-1;
-					GetOwnerData().JumpForward(pos, range, jumpSpeed);
+					GetOwnerData().JumpForward(pos, GetRange(), jumpSpeed);
 				}
 				else
 				{
-					GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
+					GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), GetRange(), jumpSpeed);
 				}
 			}
 		}

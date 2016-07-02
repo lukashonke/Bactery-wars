@@ -51,6 +51,7 @@
 		</stats>
 
 		<ai type="Ranged">
+			<set module="DamageSkill" param="boostShootRange" value="0.35"/>
 		</ai>
 
 		<add_skills>
@@ -65,6 +66,8 @@
 	<monster name="RangedTurret">
 		<visibleName>Turret</visibleName>
 		<template>CustomCell</template>
+		<check_visibility>true</check_visibility>
+		<attack_closest>true</attack_closest>
 		<size>2</size>
 		<stats> 
 			<MaxHp>30</MaxHp>

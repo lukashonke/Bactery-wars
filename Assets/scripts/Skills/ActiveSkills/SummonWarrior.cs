@@ -94,6 +94,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 				minion = null;
 			}
 
+			if (despawnTask != null)
+			{
+				Owner.StopTask(despawnTask);
+			}
+
 			Monster m = GameSystem.Instance.SpawnMonster("Warrior", Utils.GenerateRandomPositionOnCircle(GetOwnerData().GetBody().transform.position, 5), false, 1, 1);
 			minion = m;
 

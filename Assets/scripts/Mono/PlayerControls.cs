@@ -470,6 +470,7 @@ namespace Assets.scripts.Mono
 							if (currentCircleObject == null)
 							{
 								currentCircleObject = Instantiate(circleTarget);
+								currentCircleObject.transform.parent = data.transform;
 								currentCircleObject.transform.position = data.GetBody().transform.position;
 								currentCircleObject.transform.localScale = new Vector3(0.2f * data.SkillTargettingRange, 0.2f * data.SkillTargettingRange);
 							}

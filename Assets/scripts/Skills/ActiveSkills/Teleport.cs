@@ -64,9 +64,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override void OnLaunch()
 		{
 			DeleteCastingEffect();
+			int range = GetRange();
 
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
 			{
+
 				Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				targetPos.z = 0;
 

@@ -197,6 +197,12 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 						case "target_rotation_speed":
 							newTemplate.TargetRotationSpeed = int.Parse(mainParam.InnerText);
 							break;
+						case "check_visibility":
+							newTemplate.CheckVisibility = bool.Parse(mainParam.InnerText);
+							break;
+						case "attack_closest":
+							newTemplate.AttackClosest = bool.Parse(mainParam.InnerText);
+							break;
 						case "sprite":
 							newTemplate.Sprite = mainParam.InnerText;
 							break;

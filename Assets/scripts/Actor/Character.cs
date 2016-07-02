@@ -1120,5 +1120,16 @@ namespace Assets.scripts.Actor
 		{
 			Debug.Log("Message: " + s);
 		}
+
+		public float tempBoostRangeForAllSkills = -1;
+		public void IncreaseRangeTillSkillLaunched(float boost)
+		{
+			tempBoostRangeForAllSkills = boost;
+		}
+
+		public void ResetRangeBoost()
+		{
+			tempBoostRangeForAllSkills = -1;
+		}
 	}
 }

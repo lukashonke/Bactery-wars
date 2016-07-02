@@ -299,9 +299,9 @@ namespace Assets.scripts.Mono.MapGenerator
 
 			int difficulty = LevelTree.DIFF_MEDIUM;
 			int rnd = Random.Range(0, 100);
-			if (rnd < 25)
+			if (rnd < 50)
 				difficulty = LevelTree.DIFF_EASY;
-			else if(rnd < 50)
+			else if(rnd < 80)
 				difficulty = LevelTree.DIFF_HARD;
 
 			param.difficulty = difficulty;

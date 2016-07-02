@@ -25,6 +25,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public string Name { get; set; }
 
 		public int TargetRotationSpeed { get; set; }
+		public bool CheckVisibility { get; set; }
+		public bool AttackClosest { get; set; }
 
 		public int MaxHp { get; set; }
 		public int MaxMp { get; set; }
@@ -72,6 +74,8 @@ namespace Assets.scripts.Actor.MonsterClasses
 			XpReward = 1;
 			XpLevelMul = 0.5f; // 50% more XP per each next level
 			TargetRotationSpeed = -1;
+			CheckVisibility = false;
+			AttackClosest = false;
 
 			HpLevelScale = 0;
 		}

@@ -88,10 +88,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			DeleteCastingEffect();
 
-			if (minion != null)
+			if (minion != null && !minion.Status.IsDead)
 			{
 				minion.DoDie();
 				minion = null;
+			}
+
+			if (despawnTask != null)
+			{
+				Owner.StopTask(despawnTask);
 			}
 
 			Vector3 pozice = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -115,7 +120,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private void Despawn()
 		{
-			if (minion != null)
+			if (minion != null && !minion.Status.IsDead)
 			{
 				minion.DoDie();
 			}

@@ -130,6 +130,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			// vybere target pri vypusteni
 			if (selectTargetOnLaunch)
 			{
+				int range = GetRange();
+
 				List<RaycastHit2D> hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range*2).ToList();
 				List<Character> targets = new List<Character>();
 

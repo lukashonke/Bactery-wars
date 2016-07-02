@@ -58,7 +58,7 @@ namespace Assets.scripts.AI
 					{
 						float dist = Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, initTarget.transform.position);
 
-						if (dist > Math.Pow(castedSkill.range, 2))
+						if (dist > Math.Pow(castedSkill.GetRange(), 2))
 						{
 							castedSkill.AbortCast();
 						}

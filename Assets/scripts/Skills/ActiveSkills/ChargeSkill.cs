@@ -53,7 +53,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Your next skill will have +50% damage (applies only to pure damage and not effects, such as Poison).";
+			return "Your next skill will have +50% damage and +50% range (doesn't affect effects, such as Poison or Slow).";
 		}
 
 		public override string GetBaseInfo()
@@ -69,6 +69,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				// boost skills power
 				((ActiveSkill)sk).TempBoostDamage(power);
+				((ActiveSkill)sk).TempBoostRange(power);
 
 				// remove particle system
 				DeleteParticleEffect(particleSystem);
@@ -97,6 +98,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			particleSystem = CreateParticleEffect("ActiveEffect", true);
 			StartParticleEffect(particleSystem);
+
+			Owner.IncreaseRangeTillSkillLaunched(power);
 
 			ApplyEffects(Owner, Owner.GetData().gameObject);
 			active = true;

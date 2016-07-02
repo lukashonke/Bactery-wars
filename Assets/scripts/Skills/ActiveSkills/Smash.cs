@@ -103,6 +103,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if(meleeHit != null)
 				DeleteParticleEffect(meleeHit, 1.0f);
 
+			int range = GetRange();
+
 			RaycastHit2D[] hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), range, range);
 
 			foreach (RaycastHit2D h in hits)

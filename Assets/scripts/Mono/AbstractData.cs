@@ -1402,7 +1402,7 @@ namespace Assets.scripts.Mono
 				return;
 
 
-			int range = sk.GetUpgradableRange();
+			int range = sk.GetRange();
 			if (!doAttack)
 				range = 4;
 

@@ -72,6 +72,7 @@ namespace Assets.scripts.Skills
 		public int currentConsecutiveCharges;
 		public float consecutiveTimelimit;
 		public float tempDamageBoost;
+		public float tempRangeBoost;
 
 		// custom image for projectile
 		public string image;
@@ -111,6 +112,7 @@ namespace Assets.scripts.Skills
 			skillToBeRechargedOnThisUse = 0;
 			LastUsed = -1000f;
 			tempDamageBoost = -1;
+			tempRangeBoost = -1;
 
 			image = null;
 
@@ -146,6 +148,7 @@ namespace Assets.scripts.Skills
 		{
 			if (confirmObject == null)
 			{
+				int range = GetRange();
 				confirmObject = GetPlayerData().CreateSkillResource("SkillTemplate", "directionarrow", true, GetPlayerData().GetShootingPosition().transform.position);
 				UpdateDirectionArrowScale(range > 0 ? range : 5, confirmObject);
 			}
@@ -173,8 +176,8 @@ namespace Assets.scripts.Skills
 
 		protected void UpdateDirectionArrowScale(int range, GameObject o)
 		{
-			if (range > 10)
-				range = 10;
+			if (range > 15)
+				range = 15;
 
 			o.transform.localScale = new Vector3(0.24f, 0.145f*range, 0);
 		}
@@ -449,12 +452,19 @@ namespace Assets.scripts.Skills
 				tempDamageBoost = -1;
 			}
 
+			if (tempRangeBoost > 0)
+			{
+				tempRangeBoost = -1;
+			}
+
 			int count = Owner.Skills.Skills.Count;
 			for (int i = 0; i < count; i++)
 			{
 				Skill sk = Owner.Skills.Skills[i];
 				sk.NotifyAnotherSkillCastStart(this);
 			}
+
+			Owner.ResetRangeBoost();
 
 			active = true;
 
@@ -938,7 +948,7 @@ namespace Assets.scripts.Skills
 			GetPlayerData().TargettingActive = true;
 			GetPlayerData().SkillTargetting = true;
 			GetPlayerData().SkillTargettingEnemiesOnly = onlyEnemies;
-			GetPlayerData().SkillTargettingRange = range;
+			GetPlayerData().SkillTargettingRange = GetRange();
 		}
 
 		protected void StopPlayerTargetting()
@@ -1034,7 +1044,7 @@ namespace Assets.scripts.Skills
 
 		protected void CheckRanges()
 		{
-			int range = GetUpgradableRange();
+			int range = GetRange();
 
 			List<GameObject> temp = new List<GameObject>(RangeChecks.Keys);
 			foreach (GameObject proj in temp)
@@ -1155,13 +1165,22 @@ namespace Assets.scripts.Skills
 			return casttime;
 		}
 
-		public int GetUpgradableRange()
+		public int GetRange()
 		{
 			int newRange = this.range;
 
-			foreach (SkillEffect ef in Owner.ActiveEffects)
+			float boost = GetBoostRange();
+			if (boost > 0)
+				newRange = (int)(newRange * boost);
+			else if (Owner.tempBoostRangeForAllSkills > 0)
+				newRange = (int) (newRange*Owner.tempBoostRangeForAllSkills);
+
+			if (Owner.ActiveEffects.Count > 0)
 			{
-				ef.ModifySkillRange(this, ref newRange);
+				foreach (SkillEffect ef in Owner.ActiveEffects)
+				{
+					ef.ModifySkillRange(this, ref newRange);
+				}
 			}
 
 			return newRange;
@@ -1184,6 +1203,20 @@ namespace Assets.scripts.Skills
 		public float GetBoostDamage()
 		{
 			return tempDamageBoost;
+		}
+
+		/// <summary>
+		/// boost skill damage for one use
+		/// </summary>
+		/// <param name="val">the skill damage multiplier</param>
+		public void TempBoostRange(float val)
+		{
+			tempRangeBoost = val;
+		}
+
+		public float GetBoostRange()
+		{
+			return tempRangeBoost;
 		}
 
 		protected int CalcAngleForProjectile(int index, int totalProjectiles, int angleAdd)
@@ -1229,6 +1262,7 @@ namespace Assets.scripts.Skills
 
 		public float GetProjectileLifetime(float speed)
 		{
+			int range = GetRange();
 			if(range > 0)
 				return range/(speed) + 0.5f;
 			else

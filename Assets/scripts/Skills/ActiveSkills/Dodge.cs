@@ -110,10 +110,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 			firstEnemyHit = false;
 
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, range, jumpSpeed);
+				GetOwnerData().JumpForward(mouseDirection, GetRange(), jumpSpeed);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), range, jumpSpeed);
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), GetRange(), jumpSpeed);
 			}
 
 			particleSystem = CreateParticleEffect("JumpEffect", true);

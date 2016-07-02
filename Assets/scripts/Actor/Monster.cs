@@ -96,6 +96,9 @@ namespace Assets.scripts.Actor
 
 		public override void DoDie(Character killer=null, SkillId skillId=0)
 		{
+			if (GetData() == null)
+				return;
+
 			if (killer != null && killer is Player)
 			{
 				((Player)killer).AddXp(Template.GetXp(this));

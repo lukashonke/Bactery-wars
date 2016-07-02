@@ -35,7 +35,7 @@ namespace Assets.scripts.AI.Modules
 				{
 					ActiveSkill teleport = (ActiveSkill)ai.GetSkillWithTrait(SkillTraits.Teleport);
 					// if range too high, teleport
-					if (teleport.CanUse() && !ai.Owner.GetData().forcedVelocity && (!checkTeleportSkillRange || (distSqr >= ((teleport.range * teleport.range) / 4f) && distSqr <= (teleport.range * teleport.range))))
+					if (teleport.CanUse() && !ai.Owner.GetData().forcedVelocity && (!checkTeleportSkillRange || (distSqr >= ((Math.Pow(teleport.GetRange(), 2)) / 4f) && distSqr <= (Math.Pow(teleport.GetRange(), 2)))))
 					{
 						if (ai.StartAction(ai.CastSkill(target, teleport, distSqr, true, false, 0f, 0f), 0.5f))
 						{

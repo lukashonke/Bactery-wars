@@ -101,7 +101,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				ParticleSystem ps = meleeHit.GetComponent<ParticleSystem>();
 				ParticleSystem.ShapeModule shape = ps.shape;
 				shape.arc = angle;
-				shape.radius = range;
+				shape.radius = GetRange();
 			}
 
 			//meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
@@ -118,7 +118,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 				DeleteParticleEffect(meleeHit, 1.0f);
 
 			DeleteCastingEffect();
-
+			int range = GetRange();
 			RaycastHit2D[] hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetOwnerData().GetForwardVector(), range, range);
 
 			foreach (RaycastHit2D h in hits)

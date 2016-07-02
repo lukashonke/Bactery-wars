@@ -296,7 +296,7 @@ namespace Assets.scripts.AI
 								//NotifyNearbyAggroAdded(ch);
 							}
 
-							break;
+							//break;
 						}
 					}
 				}
@@ -711,18 +711,51 @@ namespace Assets.scripts.AI
 			if (aggro.Count == 0)
 				return null;
 
-			int top = 0;
 			Character topCh = null;
-			foreach (KeyValuePair<Character, int> e in aggro)
+
+			// select target based on distance
+			if (GetTemplate().AttackClosest)
 			{
-				if (e.Value > top)
+				int top = Int32.MaxValue;
+				foreach (KeyValuePair<Character, int> e in aggro)
 				{
-					top = e.Value;
-					topCh = e.Key;
+					if (e.Key == null || e.Key.GetData() != null)
+					{
+						int dist = (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, e.Key.GetData().GetBody().transform.position);
+
+						if (dist < top && IsItSmartToAttack(e.Key))
+						{
+							top = dist;
+							topCh = e.Key;
+						}
+					}
+				}
+			}
+			else // select target based on most aggro
+			{
+				int top = 0;
+				foreach (KeyValuePair<Character, int> e in aggro)
+				{
+					if (e.Value > top && IsItSmartToAttack(e.Key))
+					{
+						top = e.Value;
+						topCh = e.Key;
+					}
 				}
 			}
 
 			return topCh;
+		}
+
+		private bool IsItSmartToAttack(Character target)
+		{
+			if (GetTemplate().CheckVisibility)
+			{
+				if (!Utils.CanSee(Owner.GetData().GetBody(), target.GetData().GetBody()))
+					return false;
+			}
+			
+			return true;
 		}
 
 		protected abstract void AttackTarget(Character target);
@@ -772,9 +805,10 @@ namespace Assets.scripts.AI
 
 		public virtual IEnumerator CastSkillWithTargetSet(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd = 0, float randomSkilLRangeAdd = 0)
 		{
-			if (!noRangeCheck && sk.range != 0)
+			int range = sk.GetRange();
+			if (!noRangeCheck && range != 0)
 			{
-				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
+				while (Mathf.Pow((range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
 				{
 					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
 					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
@@ -819,9 +853,10 @@ namespace Assets.scripts.AI
 
 		public virtual IEnumerator CastSkill(Vector3 target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
-			if (!noRangeCheck && sk.range != 0)
+			int range = sk.GetRange();
+			if (!noRangeCheck && range != 0)
 			{
-				while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
+				while (Mathf.Pow((range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) < distSqrToTarget)
 				{
 					//distSqrToTarget = Vector3.Distance(target, Owner.GetData().transform.position);
 					distSqrToTarget = Utils.DistanceSqr(target, Owner.GetData().transform.position);
@@ -866,11 +901,12 @@ namespace Assets.scripts.AI
 
 		public virtual IEnumerator CastSkill(Character target, ActiveSkill sk, float distSqrToTarget, bool noRangeCheck, bool moveTowardsIfRequired=true, float skillRangeAdd=0, float randomSkilLRangeAdd=0)
 		{
+			int range = sk.GetRange();
 			if (target != null)
 			{
-				if (!noRangeCheck && sk.range != 0)
+				if (!noRangeCheck && range != 0)
 				{
-					while (Mathf.Pow((sk.range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f + skillRangeAdd) < distSqrToTarget)
+					while (Mathf.Pow((range + Random.Range(-randomSkilLRangeAdd, randomSkilLRangeAdd)), 2) * (0.6f + skillRangeAdd) < distSqrToTarget)
 					{
 						distSqrToTarget = Utils.DistanceSqr(target.GetData().transform.position, Owner.GetData().transform.position);
 
@@ -919,35 +955,42 @@ namespace Assets.scripts.AI
 
 		public bool LaunchAttackModule(Character target, float distSqr, float hpPercentage)
 		{
-			if (currentPrioridyModule != null)
+			try
 			{
-				if (currentPrioridyModuleTime + currentPrioridyModule.keepActiveFor >= Time.time)
+				if (currentPrioridyModule != null)
 				{
-					if (currentPrioridyModule.ForceLaunch(target, distSqr, hpPercentage))
-						return true;
+					if (currentPrioridyModuleTime + currentPrioridyModule.keepActiveFor >= Time.time)
+					{
+						if (currentPrioridyModule.ForceLaunch(target, distSqr, hpPercentage))
+							return true;
+						else
+						{
+							return false;
+						}
+					}
 					else
 					{
-						return false;
+						currentPrioridyModule = null;
 					}
 				}
-				else
+
+				foreach (AIAttackModule module in attackModules)
 				{
-					currentPrioridyModule = null;
+					if (module.Launch(target, distSqr, hpPercentage, attackStartedTime))
+					{
+						if (module.keepActiveFor > 0)
+						{
+							currentPrioridyModule = module;
+							currentPrioridyModuleTime = Time.time;
+						}
+
+						return true;
+					}
 				}
 			}
-
-			foreach (AIAttackModule module in attackModules)
+			catch (Exception e)
 			{
-				if (module.Launch(target, distSqr, hpPercentage, attackStartedTime))
-				{
-					if (module.keepActiveFor > 0)
-					{
-						currentPrioridyModule = module;
-						currentPrioridyModuleTime = Time.time;
-					}
-
-					return true;
-				}
+				Debug.LogError("error while doing ai module: " + e.StackTrace);
 			}
 
 			return false;

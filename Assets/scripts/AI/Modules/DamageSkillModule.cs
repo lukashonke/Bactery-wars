@@ -99,7 +99,7 @@ namespace Assets.scripts.AI.Modules
 				return true;
 
 			// 0 range means infinite range
-			if (skill.range == 0 || distSqr <= skill.range * skill.range)
+			if (skill.GetRange() == 0 || distSqr <= Math.Pow(skill.GetRange(), 2))
 				return true;
 			return false;
 		}

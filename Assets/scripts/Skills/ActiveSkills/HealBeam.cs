@@ -146,7 +146,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				if (lastHeal + baseDamageFrequency < Time.time)
 				{
-					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, range, width);
+					RaycastHit2D[] hits = Utils.DoubleRaycast(ray.transform.position, aimingDirection, GetRange(), width);
 
 					foreach (RaycastHit2D hit in hits)
 					{
