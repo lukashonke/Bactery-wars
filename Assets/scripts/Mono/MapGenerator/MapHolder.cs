@@ -38,6 +38,7 @@ namespace Assets.scripts.Mono.MapGenerator
 		SixRegions,
 		FourRegion,
 		FindBoss,
+		FinalBoss,
 
 		GenericMonster,
 
@@ -274,6 +275,9 @@ namespace Assets.scripts.Mono.MapGenerator
 					break;
 				case MapType.FindBoss:
 					levelData = new FindBossLevel(this, param);
+					break;
+				case MapType.FinalBoss:
+					levelData = new FinalBossData(this, param);
 					break;
 				case MapType.BossRush:
 					levelData = new LevelBossRush(this, mapLevel);

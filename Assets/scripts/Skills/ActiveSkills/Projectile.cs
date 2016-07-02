@@ -53,7 +53,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public bool navigateUnreliable = true;
 
 		// pri narazu do nepritele vybouchne - spusti explodeEffectName
-		public bool explodeEffect = true;
+		public bool explodeEffect = false;
 
 		// jmeno efektu ktery se spusti pri explozi
 		public string explodeEffectName = "Explosion";

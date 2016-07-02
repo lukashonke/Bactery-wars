@@ -792,9 +792,26 @@ namespace Assets.scripts.AI
 				}
 			}
 
+			if (GetTemplate().TargetRotationSpeed > 0)
+			{
+				// not rotated towards target
+				if (!Owner.GetData().IsRotatedTowards(target, 3))
+				{
+					Owner.GetData().Rotate(target, GetTemplate().TargetRotationSpeed);
+					while (Owner.GetData().IsRotating())
+					{
+						// wait till rotation is finished
+						yield return null;
+					}
+				}
+			}
+
 			Owner.GetData().BreakMovement(true);
 
-			RotateToTarget(target);
+			if (GetTemplate().TargetRotationSpeed < 0)
+				RotateToTarget(target);
+			else
+				UpdateDirection(target);
 
 			Owner.CastSkill(sk, target);
 			currentAction = null;
@@ -822,9 +839,26 @@ namespace Assets.scripts.AI
 				}
 			}
 
+			if (GetTemplate().TargetRotationSpeed > 0)
+			{
+				// not rotated towards target
+				if (!Owner.GetData().IsRotatedTowards(target, 3))
+				{
+					Owner.GetData().Rotate(target, GetTemplate().TargetRotationSpeed);
+					while (Owner.GetData().IsRotating())
+					{
+						// wait till rotation is finished
+						yield return null;
+					}
+				}
+			}
+
 			Owner.GetData().BreakMovement(true);
 
-			RotateToTarget(target);
+			if (GetTemplate().TargetRotationSpeed < 0)
+				RotateToTarget(target);
+			else
+				UpdateDirection(target);
 
 			Owner.CastSkill(sk, null, true);
 			currentAction = null;

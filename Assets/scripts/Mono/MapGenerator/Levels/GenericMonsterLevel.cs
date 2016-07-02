@@ -92,7 +92,7 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			}
 			else if (difficulty == 3)
 			{
-				
+				variant = Random.Range(18, 20 + 1);
 			}
 			else
 			{
@@ -125,6 +125,16 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 			{
 				regionsX = 5;
 				regionsY = 3;
+			}
+
+			switch (variant)
+			{
+				case 18:
+				case 19:
+				case 20:
+					regionsX = 4;
+					regionsY = 4;
+					break;
 			}
 		}
 
@@ -413,6 +423,46 @@ namespace Assets.scripts.Mono.MapGenerator.Levels
 					{
 						bonusRooms.Add(map.GenerateDungeonRegion(1, 2, bonusRoomFillPercent, false, true, false, bonusSeeds, 1, 1));
 					}
+
+					break;
+
+
+				// hard levels: 
+				case 18: // hard levels
+					start = map.GenerateDungeonRegion(0, 0, startFillPercent, true, false, false, startSeeds, 1, 1);
+					mainRooms.Add(map.GenerateDungeonRegion(1, 0, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(1, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+
+					sideRooms.Add(map.GenerateDungeonRegion(3, 2, sideFillPercent, false, true, false, sideRoomSeeds, 1, 2));
+					sideRooms.Add(map.GenerateDungeonRegion(0, 2, sideFillPercent, false, true, false, sideRoomSeeds, 1, 2));
+
+					boss = map.GenerateDungeonRegion(3, 1, bossFillPercent, false, true, false, bossRoomSeeds, 1, 1);
+
+					end = map.GenerateDungeonRegion(3, 0, endFillPercent, false, true, true, endSeeds, 1, 1);
+
+					break;
+				case 19: // hard levels
+					start = map.GenerateDungeonRegion(0, 0, startFillPercent, true, false, false, startSeeds, 1, 1);
+					mainRooms.Add(map.GenerateDungeonRegion(1, 0, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(0, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(2, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+
+					boss = map.GenerateDungeonRegion(3, 1, bossFillPercent, false, true, false, bossRoomSeeds, 1, 1);
+
+					end = map.GenerateDungeonRegion(3, 0, endFillPercent, false, true, true, endSeeds, 1, 1);
+
+					break;
+				case 20: // hard levels
+					start = map.GenerateDungeonRegion(0, 0, startFillPercent, true, false, false, startSeeds, 1, 1);
+					mainRooms.Add(map.GenerateDungeonRegion(1, 0, mainFillPercent, false, true, false, mainRoomSquareSeeds, 2, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(0, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 1, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(1, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 1, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(2, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 1, 2));
+					mainRooms.Add(map.GenerateDungeonRegion(3, 2, mainFillPercent, false, true, false, mainRoomSquareSeeds, 1, 2));
+
+					boss = map.GenerateDungeonRegion(3, 1, bossFillPercent, false, true, false, bossRoomSeeds, 1, 1);
+
+					end = map.GenerateDungeonRegion(3, 0, endFillPercent, false, true, true, endSeeds, 1, 1);
 
 					break;
 			}

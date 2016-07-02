@@ -53,7 +53,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Your next skill will have +50% damage.";
+			return "Your next skill will have +50% damage (applies only to pure damage and not effects, such as Poison).";
 		}
 
 		public override string GetBaseInfo()

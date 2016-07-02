@@ -106,6 +106,7 @@ namespace Assets.scripts.Mono.MapGenerator
 				if (worldLevel > 0)
 				{
 					param.levelType = MapType.GenericMonster;
+					//param.levelType = MapType.FinalBoss;
 					mapTree = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, 0, param, "Start level", "Unknown");
 				}
 				else
@@ -176,10 +177,10 @@ namespace Assets.scripts.Mono.MapGenerator
 					// grand boss is the last level
 					if (i + 1 == mainLineCount)
 					{
-						param.levelType = MapType.FindBoss; // TODO change
+						param.levelType = MapType.FinalBoss; // TODO change
 						param.mapLevel = worldLevel;
 						param.worldLevel = worldLevel;
-						newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, i + 1, param, "Main" + id);
+						newNode = new LevelTree(LevelTree.LEVEL_MAIN, id++, LevelTree.DIFF_MEDIUM, i + 1, param, "Main" + id, "The final boss.");
 					}
 					else
 					{
@@ -300,7 +301,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			int rnd = Random.Range(0, 100);
 			if (rnd < 25)
 				difficulty = LevelTree.DIFF_EASY;
-			if(rnd < 50)
+			else if(rnd < 50)
 				difficulty = LevelTree.DIFF_HARD;
 
 			param.difficulty = difficulty;
@@ -379,7 +380,7 @@ namespace Assets.scripts.Mono.MapGenerator
 
 		public bool CanSelectLevel(LevelTree node)
 		{
-			if (node.Unlocked == false)
+			if (node.Unlocked == false && !GameSession.enableAllLevels)
 				return false;
 
 			if (node.CurrentlyActive)
@@ -610,6 +611,23 @@ namespace Assets.scripts.Mono.MapGenerator
 			}
 
 			SetActiveLevel(newC.x, newC.y, onlyReload);
+
+			// unlock child levels
+			LevelTree currentNode = null;
+
+			foreach (LevelTree t in mapTree.GetAllNodes())
+			{
+				if (activeMap.levelData.Equals(t.levelData))
+				{
+					currentNode = t;
+					break;
+				}
+			}
+
+			foreach (LevelTree ch in currentNode.Childs)
+			{
+				ch.Unlocked = true;
+			}
 		}
 
 		// temp output from mobile

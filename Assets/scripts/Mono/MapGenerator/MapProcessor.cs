@@ -598,11 +598,7 @@ namespace Assets.scripts.Mono.MapGenerator
 						Queue<MapRegion> neighbours = new Queue<MapRegion>();
 						foreach (MapRegion reg in mapHolder.GetNeighbourRegions(toConnectRoom.region))
 						{
-							if (reg.hasOutTeleporter)
-							{
-								Debug.LogWarning("out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
-							}
-
+							// pokud to neni empty region, pridat jeho sousedy do fronty
 							if (!reg.empty)
 								neighbours.Enqueue(reg);
 						}
@@ -625,17 +621,13 @@ namespace Assets.scripts.Mono.MapGenerator
 							{
 								//Debug.Log("region " + reg.x + ", " + reg.y + " je ve family s toConnect (" + toConnectRoom.region.x + ", " + toConnectRoom.region.y + ")");
 								foreach (MapRoom r in GetRoomsInRegion(reg))
-									connectedToStart.Add(r);
+									if(!connectedToStart.Contains(r))
+										connectedToStart.Add(r); // maybe add duplicity check
 
 								// pridat vsechny sousedy child regionu
 								foreach (MapRegion r in mapHolder.GetNeighbourRegions(reg))
 								{
-									if (reg.hasOutTeleporter)
-									{
-										Debug.Log("2 out reg is neighbour of " + toConnectRoom.region.x + "," + toConnectRoom.region.y);
-									}
-
-									if (r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !r.IsInFamily(reg) && !checks.Contains(r))
+									if (r != null && r.isAccessibleFromStart && !neighbours.Contains(r) && !checks.Contains(r))
 									{
 										//Debug.Log("pridavam souseda (reg " + reg.x + ", " + reg.y + ")  : " + r.x + ", " + r.y);
 										neighbours.Enqueue(r);

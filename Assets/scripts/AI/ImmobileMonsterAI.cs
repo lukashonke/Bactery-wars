@@ -30,6 +30,7 @@ namespace Assets.scripts.AI
 		{
 			AddAttackModule(new DamageSkillModule(this));
 			AddAttackModule(new AutoattackModule(this));
+			AddAttackModule(new RotateToTargetModule(this));
 
 			GetAttackModule<DamageSkillModule>().boostShootRange = 0.2f;
 		}

@@ -71,7 +71,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 			CriticalDamageMul = 2f;
 			XpReward = 1;
 			XpLevelMul = 0.5f; // 50% more XP per each next level
-			TargetRotationSpeed = 10;
+			TargetRotationSpeed = -1;
 
 			HpLevelScale = 0;
 		}

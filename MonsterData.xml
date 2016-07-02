@@ -3,7 +3,6 @@
 	<monster name="Picocell">
 		<visibleName>Pico Cell</visibleName>
 		<template>CustomCell</template>
-		<target_rotation_speed>10</target_rotation_speed>
 		<sprite>melee/basic</sprite>
 		<stats> 
 			<MaxHp>10</MaxHp>

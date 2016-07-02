@@ -15,7 +15,7 @@ namespace Assets.scripts
 		public static string profileName = "Lukas";
 		public static bool skipTutorial = true;
 
-
+		public static bool enableAllLevels = true;
 		public static bool repairMap = true;
 
 		public static bool arenaMode = false;

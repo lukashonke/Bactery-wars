@@ -16,6 +16,8 @@ namespace Assets.scripts.Mono.MapGenerator
 		public int mapLevel = 1;
 		public int worldLevel = 1;
 
+		public object typeParameter;
+
 		public ShopData shop = null;
 
 		public LevelParams(MapType t)
