@@ -38,7 +38,7 @@
 		<sprite>summon</sprite>
 		<size>2</size>
 		<stats> 
-			<MaxHp>30</MaxHp>
+			<MaxHp>50</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>18</MaxSpeed>
 			<IsAggressive>false</IsAggressive>
@@ -86,10 +86,119 @@
 		</ai>
 
 		<add_skills>
-			<Projectile> 
+			<ProjectileShower> 
+				<remove_effects/>
+				 	
+				<add_effect name="Damage" damage="5" randomOffset="2"/>
+
 			 	<baseDamage>5</baseDamage>
-			 	<range>20</range>
-			</Projectile>
+			 	<reuse>1.0</reuse>
+			 	<coolDown>2.0</coolDown>
+			 	<projectilesCount>1</projectilesCount>
+			 	<fireFrequency>0.5</fireFrequency>
+			 	<projectilesAngleRandomAdd>0</projectilesAngleRandomAdd>
+			 	<projectilesAngle>0</projectilesAngle>
+			</ProjectileShower>
+		</add_skills>
+		
+	</monster>
+
+
+
+
+
+	<monster name="Test1">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<sprite>gtest/char</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<remove_effects/>
+			 	<add_effect name="AuraDamage" damage="10" randomOffset="5" radius="10"/>
+			 	<add_effect name="Damage" damage="10" randomOffset="5"/>
+			 	<add_effect name="Stun" duration="3.0"/>
+			 	<add_effect name="KillSelf"/>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Test2">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<sprite>gtest/char2</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<remove_effects/>
+			 	<add_effect name="AuraDamage" damage="10" randomOffset="5" radius="10"/>
+			 	<add_effect name="Damage" damage="10" randomOffset="5"/>
+			 	<add_effect name="Stun" duration="3.0"/>
+			 	<add_effect name="KillSelf"/>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+	<monster name="Test3">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<sprite>gtest/char3</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<remove_effects/>
+			 	<add_effect name="AuraDamage" damage="10" randomOffset="5" radius="10"/>
+			 	<add_effect name="Damage" damage="10" randomOffset="5"/>
+			 	<add_effect name="Stun" duration="3.0"/>
+			 	<add_effect name="KillSelf"/>
+			</CollisionDamageAttack>
 		</add_skills>
 		
 	</monster>

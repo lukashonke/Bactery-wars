@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!--
 	Umisteni v danem tagu xxx_room (main_room, side_room, bonus_room, atd.) udava, v jakych mistnostech se skupina muze spawnout
@@ -831,6 +831,17 @@
 			<mob type="Picocell" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
 			<mob type="Picocell" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
 			<mob type="Picocell" count="1" level="1" chance="50" room_size="small" exclude="true" location="center"/>
+
+			<extra_group id="2000" chance="100"/>
+
+		</group>
+
+		<group id="899" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="medium">
+
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+			<mob type="LeaderCell" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
 
 			<extra_group id="2000" chance="100"/>
 
@@ -1806,6 +1817,7 @@
 	<boss_room>
 
 	</boss_room>
+	
 
 	<end_room>
 

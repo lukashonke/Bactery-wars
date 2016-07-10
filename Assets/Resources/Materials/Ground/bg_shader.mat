@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: bg_shader
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
+  m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -19,15 +19,15 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 1916221967, guid: b8e856313b0881940b3c5e3a9256f06a,
+          m_Texture: {fileID: 1215447233, guid: 91e04810d6d8dee458cbadc34e774cc4,
             type: 3}
-          m_Scale: {x: 20, y: 20}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _BumpMap
         second:
-          m_Texture: {fileID: 343389469, guid: b8e856313b0881940b3c5e3a9256f06a, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -41,8 +41,7 @@ Material:
         first:
           name: _ParallaxMap
         second:
-          m_Texture: {fileID: 1086312151, guid: b8e856313b0881940b3c5e3a9256f06a,
-            type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -57,7 +56,7 @@ Material:
           name: _EmissionMap
         second:
           m_Texture: {fileID: 0}
-          m_Scale: {x: 20, y: 20}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
@@ -171,7 +170,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.25, g: 0.24448529, b: 0.24448529, a: 1}
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SpecColor

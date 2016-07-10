@@ -242,13 +242,13 @@ ParticleSystem:
         m_NumAlphaKeys: 2
       minColor:
         serializedVersion: 2
-        rgba: 4284613938
+        rgba: 4278190080
       maxColor:
         serializedVersion: 2
-        rgba: 4294918464
+        rgba: 4278190080
       minMaxState: 2
     startSize:
-      scalar: 1
+      scalar: 3
       maxCurve:
         serializedVersion: 2
         m_Curve:

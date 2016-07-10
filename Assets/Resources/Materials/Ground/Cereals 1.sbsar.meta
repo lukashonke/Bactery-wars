@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: b8e856313b0881940b3c5e3a9256f06a
-timeCreated: 1467827127
+guid: 3bd699c595dddee45895414e96dc6472
+timeCreated: 1467827044
 licenseType: Free
 SubstanceImporter:
   serializedVersion: 5
@@ -140,8 +140,7 @@ SubstanceImporter:
           first:
             name: _BumpMap
           second:
-            texture: {fileID: 1504313670, guid: 36c3cfdb6108afc48a605e29ae9b4a33,
-              type: 3}
+            texture: {instanceID: 0}
             scale: {x: 10, y: 10}
             offset: {x: 0, y: 0}
         data:
@@ -279,8 +278,8 @@ SubstanceImporter:
       baseUID: 3836037186
     - shaderProp:
         name: _BumpMap
-      material: {fileID: 1241579121, guid: 36c3cfdb6108afc48a605e29ae9b4a33, type: 3}
-      baseUID: 679316513
+      material: {instanceID: 0}
+      baseUID: 3836037212
     - shaderProp:
         name: _ParallaxMap
       material: {instanceID: 0}

@@ -129,6 +129,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.18, y: 5, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 470118}
   m_Father: {fileID: 424148}
@@ -142,6 +143,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 469350}
   m_Father: {fileID: 424148}
@@ -155,6 +157,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.564956, y: 4.7597723, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 427884}
   - {fileID: 455256}
@@ -171,6 +174,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -3.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 424148}
   m_RootOrder: 0
@@ -183,6 +187,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 424148}
   m_RootOrder: 1
@@ -195,6 +200,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3.3333335, y: 3.3333335, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 414214}
   m_RootOrder: 0
@@ -207,6 +213,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.3511963, y: 0.007, z: 0}
   m_LocalScale: {x: 0, y: 0.68, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 400334}
   m_RootOrder: 0
@@ -264,7 +271,7 @@ Light:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 137916}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 6
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -336,7 +343,6 @@ MonoBehaviour:
   percent: 0
   currentPercent: 0
   currentPercentCooldown: 0
-  showObjectName: 0
   distance: 2.3
   labelStyle:
     m_Name: 
@@ -453,9 +459,13 @@ MonoBehaviour:
   forcedVelocity: 0
   cancelForcedVelocityOnCollision: 0
   cancelMovementTargetOnCollision: 0
+  rotationTarget: {x: 0, y: 0, z: 0, w: 0}
+  targetRotationSpeed: 0
   canMoveWhenNotRotated: 0
   movementEnabled: 1
   rotationEnabled: 1
+  connectedChildData: {fileID: 0}
+  connectedParentData: {fileID: 0}
   repathRate: 0.25
   monsterId: 300
   monsterTypeName: 
