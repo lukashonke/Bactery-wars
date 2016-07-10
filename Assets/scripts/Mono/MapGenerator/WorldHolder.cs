@@ -52,8 +52,6 @@ namespace Assets.scripts.Mono.MapGenerator
 		public const int WALL = 1;
 		public const int GROUND = 0;
 
-		public GameObject darkPlaneTemplate;
-
 		void Start()
 		{
 			if (instance == null)
@@ -68,7 +66,7 @@ namespace Assets.scripts.Mono.MapGenerator
 			else
 				worldLevel = 0;
 
-			darkPlaneTemplate = GameObject.Find("Total Background");
+			//darkPlaneTemplate = GameObject.Find("Total Background");
 
 			GenerateWorldLevels();
 
