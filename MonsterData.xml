@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
+
+	<monster name="Static">
+		<visibleName>Pico Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/basic</sprite>
+		<size>2</size>
+		<mass>1</mass>
+		<stats> 
+			<MaxHp>100</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Blank">
+    		
+		</ai>
+
+	</monster>
+
+
 	<monster name="Picocell">
 		<visibleName>Pico Cell</visibleName>
 		<template>CustomCell</template>

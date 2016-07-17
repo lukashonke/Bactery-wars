@@ -90,6 +90,14 @@ namespace Assets.scripts.Actor
 			    Skills.Skills[i].NotifyCharacterDied();
 		    }
 
+		    if (ActiveEffects.Count > 0)
+		    {
+				foreach (SkillEffect ef in ActiveEffects.ToArray())
+				{
+					ef.OnCharDie();
+				}
+		    }
+
 		    OnDead(killer, skillId);
 
 		    if (this is Monster)
@@ -113,6 +121,9 @@ namespace Assets.scripts.Actor
 
 		public virtual void OnDead(Character killer, SkillId skillId)
 		{
+			if (onKillHooks != null)
+				onKillHooks(this, killer, skillId);
+
 			//TODO perhaps add onDead on upgrades
 		}
 
@@ -830,9 +841,20 @@ namespace Assets.scripts.Actor
 			if (Status.IsDead || damage <= 0)
 				return;
 
+			int shieldReduction = (int)(damage * Status.Shield - damage);
+			damage -= shieldReduction;
+
 			if (this is Player)
 			{
 				((Player)this).GetData().ui.DamageMessage(GetData().GetBody(), damage, Color.red);
+			}
+
+			if (ActiveEffects.Count > 0)
+			{
+				foreach (SkillEffect ef in ActiveEffects.ToArray())
+				{
+					ef.OnReceiveDamage(source, damage, skillId, wasCrit);
+				}
 			}
 
 			Status.ReceiveDamage(damage);
@@ -1130,6 +1152,19 @@ namespace Assets.scripts.Actor
 		public void ResetRangeBoost()
 		{
 			tempBoostRangeForAllSkills = -1;
+		}
+
+		// hooks
+		public delegate void OnKillDelegate(Character ch, Character killer, SkillId skillId);
+
+		public OnKillDelegate onKillHooks;
+
+		public void AddOnKillHook(OnKillDelegate del)
+		{
+			if (onKillHooks == null)
+				onKillHooks = del;
+			else
+				onKillHooks += del;
 		}
 	}
 }

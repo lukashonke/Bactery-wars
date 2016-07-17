@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.scripts.Mono.MapGenerator.Levels;
 
 namespace Assets.scripts.Skills
 {
@@ -30,7 +31,7 @@ namespace Assets.scripts.Skills
 			ApplyEffect();
 		}
 
-		public override bool CanUse()
+		public override bool CanUse(bool beingCast=true)
 		{
 			return false;
 		}

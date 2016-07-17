@@ -74,8 +74,8 @@ namespace Assets.scripts.Actor.Status
 
 		public void ReceiveDamage(int dmg)
 		{
-			int shieldReduction = (int) (dmg*Shield - dmg);
-			dmg -= shieldReduction;
+			//int shieldReduction = (int) (dmg*Shield - dmg);
+			//dmg -= shieldReduction;
 
 			Hp -= dmg;
 

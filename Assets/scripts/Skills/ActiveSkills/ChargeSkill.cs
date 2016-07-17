@@ -21,6 +21,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public float power = 1.5f;
 
+		public int uses = 2;
+		private int currentUses = 0;
+
+		public int resetSkillSlotId = 0;
+		public int resetSkillMaxReuse = 10;
+
 		private bool active = false;
 
 		public ChargeSkill()
@@ -65,14 +71,30 @@ namespace Assets.scripts.Skills.ActiveSkills
 		{
 			if (active && sk is ActiveSkill)
 			{
-				active = false;
+				currentUses --;
 
 				// boost skills power
 				((ActiveSkill)sk).TempBoostDamage(power);
 				((ActiveSkill)sk).TempBoostRange(power);
 
-				// remove particle system
-				DeleteParticleEffect(particleSystem);
+				if (currentUses == 0)
+				{
+					active = false;
+
+					// remove particle system
+					DeleteParticleEffect(particleSystem);
+
+					if(Owner.ActiveEffects.Count > 0)
+					{
+						foreach (SkillEffect ef in Owner.ActiveEffects.ToArray())
+						{
+							if (ef.SourceSkill == GetSkillId())
+							{
+								Owner.RemoveEffect(ef);
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -96,6 +118,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			currentUses = uses;
+
 			particleSystem = CreateParticleEffect("ActiveEffect", true);
 			StartParticleEffect(particleSystem);
 
@@ -103,6 +127,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			ApplyEffects(Owner, Owner.GetData().gameObject);
 			active = true;
+
+			if (resetSkillSlotId > -1)
+			{
+				Skill sk = Owner.Skills.GetSkill(resetSkillSlotId);
+
+				if (sk != null && sk is ActiveSkill)
+				{
+					ActiveSkill ask = sk as ActiveSkill;
+
+					if (ask.reuse <= resetSkillMaxReuse)
+					{
+						ask.LastUsed = -10000;
+						GetOwnerData().SetSkillReuseTimer(ask, true);
+					}
+				}
+			}
 			//DeleteParticleEffect(particleSystem);
 		}
 
@@ -112,7 +152,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				if (Random.Range(0, 100) < nullReuseChance)
 				{
-					this.LastUsed = 0;
+					this.LastUsed = -10000;
 					GetOwnerData().SetSkillReuseTimer(this, true);
 				}
 			}

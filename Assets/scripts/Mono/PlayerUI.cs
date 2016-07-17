@@ -773,7 +773,8 @@ namespace Assets.scripts.Mono
 
 				foreach (UpgradeTable.UpgradeInfo o in UpgradeTable.Instance.upgrades)
 				{
-					temp.Add(o.upgrade.Name);
+					if(o.enabled)
+						temp.Add(o.upgrade.Name);
 				}
 
 				upgradesDropdownPanel.AddOptions(temp);

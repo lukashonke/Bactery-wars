@@ -13,7 +13,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 {
 	public class CoughBullet : ActiveSkill
 	{
-		public int force = 20;
+		public int force = 2;
 
 		public int projectilesCount = 1;
 		public bool navigateToTarget = true;
@@ -36,6 +36,13 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public bool explodeEffect = false;
 
+		public bool returnBack = false;
+
+		public bool chainEffect = false;
+		public int chainProjectilesCount = 1;
+		public int chainPenetrations = 1;
+
+		private bool returningBack = false;
 		private List<ProjectileData> projectiles = new List<ProjectileData>();
 
 		public CoughBullet()
@@ -43,10 +50,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 			castTime = 0f;
 			reuse = 4f;
 			coolDown = 0;
-			requireConfirm = true;
+			requireConfirm = false;
 			baseDamage = 10;
 
-			range = 20;
+			range = 25;
 
 			AvailableToPlayer = true;
 		}
@@ -69,6 +76,26 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public override string GetBaseInfo()
 		{
 			return "Reuse " + reuse + " sec | Damage " + baseDamage + " | Range" + range;
+		}
+
+		public override void DestroyProjectile(GameObject proj, float delay = 1)
+		{
+			if (!returnBack)
+				base.DestroyProjectile(proj, delay);
+			else
+			{
+				returningBack = true;
+
+				ProjectileData d = GetProjectileData(proj);
+
+				if(d != null)
+					AdjustToTarget(d);
+			}
+		}
+
+		private void ForceDestroyProjectile(GameObject proj)
+		{
+			base.DestroyProjectile(proj);
 		}
 
 		public override Skill Instantiate()
@@ -104,6 +131,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			if (projectiles.Count > 0)
+			{
+				foreach (ProjectileData d in projectiles)
+				{
+					if (d.proj != null)
+					{
+						ForceDestroyProjectile(d.proj);
+					}
+				}
+			}
+
+			projectiles.Clear();
+
 			DeleteCastingEffect();
 
 			GameObject activeProjectile;
@@ -127,11 +167,16 @@ namespace Assets.scripts.Skills.ActiveSkills
 						data.interpolTimer = 0;
 						data.rb = rb;
 						data.penetratedTargets = 0;
+						data.maxPenetrateTargets = maxPenetratedTargets;
 
 						if(maxPenetratedTargets > 0)
 							data.hits = new GameObject[maxPenetratedTargets];
 
+						if(returnBack)
+							data.waypoints.Push(Owner.GetData().GetBody().transform.position);
+
 						projectiles.Add(data);
+						MonoUpdate(rb.gameObject, true);
 					}
 				}
 			}
@@ -142,35 +187,74 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		}
 
-		private float lastUpdate;
 		private float updateInterval = 0.1f;
 
 		private float chooseTargetInterval = 0.15f;
 
 		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
+			if (returningBack)
+			{
+				ProjectileData d = GetProjectileData(gameObject);
+				if (d == null || d.proj == null)
+					return;
+
+				if (d.lastUpdateTime + updateInterval <= Time.time)
+				{
+					d.lastUpdateTime = Time.time;
+
+					if(!d.hasNextWaypoint)
+						AdjustToTarget(d);
+
+					if (d.hasNextWaypoint)
+					{
+						float dist = Utils.DistanceSqr(d.nextWaypoint, d.proj.transform.position);
+						if (dist < 2*2)
+						{
+							d.hasNextWaypoint = false;
+						}
+					}
+					else
+					{
+						returningBack = false;
+
+						if (explodeEffect)
+						{
+							GameObject explosion = CreateParticleEffect(explodeEffectName, false, gameObject.transform.position);
+							explosion.GetComponent<ParticleSystem>().Play();
+							Object.Destroy(explosion, 2f);
+						}
+
+						ForceDestroyProjectile(gameObject);
+						return;
+					}
+				}
+			}
+
 			if (navigateToTarget)
 			{
-				if (fixedUpdate)
+				//if (fixedUpdate)
 				{
-					if (lastUpdate + updateInterval <= Time.time)
-					{
-						ProjectileData d = GetProjectileData(gameObject);
-						if (d == null || d.proj == null)
-							return;
+					ProjectileData d = GetProjectileData(gameObject);
+					if (d == null || d.proj == null)
+						return;
 
-						lastUpdate = Time.time;
+					if (d.lastUpdateTime + updateInterval <= Time.time)
+					{
+						d.lastUpdateTime = Time.time;
 
 						// find new target
 						if (d.target == null)
 						{
-							if (d.lastChooseTarget + chooseTargetInterval < Time.time)
+							//if (d.lastChooseTarget + chooseTargetInterval < Time.time)
 							{
 								d.lastChooseTarget = Time.time;
 
 								if (!navigateLookOnlyForward)
 								{
 									float angle = d.proj.transform.rotation.eulerAngles.z;
+
+									List<GameObject> candidates = new List<GameObject>();
 
 									foreach (Collider2D c in Physics2D.OverlapCircleAll(d.proj.transform.position, navigateAimArea))
 									{
@@ -180,12 +264,27 @@ namespace Assets.scripts.Skills.ActiveSkills
 										if (d.HasHit(c.gameObject))
 											continue;
 
+										if (!Utils.CanSee(c.gameObject, d.proj.transform.position))
+											continue;
+
 										Character targetCh = c.gameObject.GetChar();
+										if (targetCh == null || !Owner.CanAttack(targetCh))
+											continue;
+
+										candidates.Add(c.gameObject);
+									}
+
+									candidates.Sort((x, y) => (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, x.transform.position) - (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, y.transform.position));
+
+									foreach (GameObject c in candidates)
+									{
+										Character targetCh = c.GetChar();
 										if (targetCh == null || !Owner.CanAttack(targetCh))
 											continue;
 
 										d.target = targetCh;
 										d.SaveHit(c.gameObject);
+										AdjustToTarget(d);
 										break;
 									}
 								}
@@ -201,6 +300,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 									Debug.DrawLine(d.proj.transform.position, d.proj.transform.position + perpend * navigateAimArea / 2f + direction.normalized * navigateAimArea, Color.green, 1f);
 									Debug.DrawLine(d.proj.transform.position, d.proj.transform.position + perpend * (-navigateAimArea / 2f), Color.blue, 1f);
 
+									List<GameObject> candidates = new List<GameObject>();
+
 									foreach (Collider2D c in Physics2D.OverlapAreaAll(d.proj.transform.position + perpend * navigateAimArea / 2f + direction.normalized * navigateAimArea, d.proj.transform.position + perpend * (-navigateAimArea / 2f)))
 									{
 										if (c.gameObject.Equals(d.proj))
@@ -209,12 +310,23 @@ namespace Assets.scripts.Skills.ActiveSkills
 										if (d.HasHit(c.gameObject))
 											continue;
 
-										Character targetCh = c.gameObject.GetChar();
+										if (!Utils.CanSee(c.gameObject, d.proj.transform.position))
+											continue;
+
+										candidates.Add(c.gameObject);
+									}
+
+									candidates.Sort((x, y) => (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, x.transform.position) - (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, y.transform.position));
+
+									foreach (GameObject c in candidates)
+									{
+										Character targetCh = c.GetChar();
 										if (targetCh == null || !Owner.CanAttack(targetCh))
 											continue;
 
 										d.target = targetCh;
 										d.SaveHit(c.gameObject);
+										AdjustToTarget(d);
 										break;
 									}
 								}
@@ -231,26 +343,57 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		private void AdjustToTarget(ProjectileData data)
 		{
-			if (data.target.Status.IsDead)
+			if (returningBack)
 			{
-				data.target = null;
-				return;
+				if (!data.hasNextWaypoint && data.waypoints.Count > 0)
+				{
+					data.nextWaypoint = data.waypoints.Pop();
+					data.hasNextWaypoint = true;
+				}
+
+				if (data.hasNextWaypoint)
+				{
+					Vector3 target = data.nextWaypoint;
+
+					Vector3 currentVelocity = data.rb.velocity.normalized;
+					Vector3 targetDir = Utils.GetDirectionVector(target, data.proj.transform.position).normalized;
+
+					data.interpolTimer += navigateAimRate;
+
+					if (data.interpolTimer > 1)
+						data.interpolTimer = 1f;
+
+					Vector3 newDir = Vector3.Lerp(currentVelocity, targetDir, data.interpolTimer);
+
+					if (navigateUnreliable)
+						newDir = Utils.RotateDirectionVector(newDir, Random.Range(-30, 30));
+
+					data.rb.velocity = newDir * 15;
+				}
 			}
+			else
+			{
+				if (data.target.Status.IsDead || (data.ignore != null && data.ignore.Equals(data.target.GetData().GetBody())))
+				{
+					data.target = null;
+					return;
+				}
 
-			Vector3 currentVelocity = data.rb.velocity.normalized;
-			Vector3 targetDir = Utils.GetDirectionVector(data.target.GetData().GetBody().transform.position, data.proj.transform.position).normalized;
+				Vector3 currentVelocity = data.rb.velocity.normalized;
+				Vector3 targetDir = Utils.GetDirectionVector(data.target.GetData().GetBody().transform.position, data.proj.transform.position).normalized;
 
-			data.interpolTimer += navigateAimRate;
+				data.interpolTimer += navigateAimRate;
 
-			if (data.interpolTimer > 1)
-				data.interpolTimer = 1f;
+				if (data.interpolTimer > 1)
+					data.interpolTimer = 1f;
 
-			Vector3 newDir = Vector3.Lerp(currentVelocity, targetDir, data.interpolTimer);
+				Vector3 newDir = Vector3.Lerp(currentVelocity, targetDir, data.interpolTimer);
 
-			if (navigateUnreliable)
-				newDir = Utils.RotateDirectionVector(newDir, Random.Range(-30, 30));
+				if (navigateUnreliable)
+					newDir = Utils.RotateDirectionVector(newDir, Random.Range(-30, 30));
 
-			data.rb.velocity = newDir * 15;
+				data.rb.velocity = newDir * 15;
+			}
 		}
 
 		public class ProjectileData
@@ -260,10 +403,17 @@ namespace Assets.scripts.Skills.ActiveSkills
 			public Rigidbody2D rb;
 			public float interpolTimer;
 			public int penetratedTargets;
+			public int maxPenetrateTargets;
 
 			public float lastUpdateTime;
 			public float lastChooseTarget;
 			public GameObject[] hits;
+
+			public Stack<Vector3> waypoints = new Stack<Vector3>();
+			public Vector3 nextWaypoint;
+			public bool hasNextWaypoint = false;
+			public bool chained = false;
+			public GameObject ignore = null;
 
 			public bool HasHit(GameObject obj)
 			{
@@ -283,7 +433,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				if (penetratedTargets >= hits.Length)
 					return;
+
 				hits[penetratedTargets] = obj;
+				waypoints.Push(obj.transform.position);
 			}
 		}
 
@@ -321,7 +473,14 @@ namespace Assets.scripts.Skills.ActiveSkills
 				if (ch == null)
 				{
 					Destroyable des = coll.gameObject.GetComponent<Destroyable>();
-					if (des != null && !Owner.CanAttack(des))
+
+					if (des == null)
+					{
+						ForceDestroyProjectile(d.proj);
+						return;
+					}
+
+					if (!Owner.CanAttack(des))
 						return;
 				}
 				else if (!Owner.CanAttack(ch))
@@ -336,18 +495,64 @@ namespace Assets.scripts.Skills.ActiveSkills
 					}
 				}
 
-				if (maxPenetratedTargets > 0 && d.penetratedTargets > 0 && (penetrateChangeDamage < 0 || penetrateChangeDamage > 0))
+				if (d.ignore != null && d.ignore.Equals(coll.gameObject))
+					return;
+
+				if (chainEffect && !d.chained)
+				{
+					for (int i = 0; i < chainProjectilesCount; i++)
+					{
+						GameObject activeProjectile;
+
+						activeProjectile = CreateSkillProjectile("projectile_00", true, d.proj.transform);
+						if (activeProjectile != null)
+						{
+							Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+
+							Vector3 nv = Quaternion.Euler(new Vector3(0, 0, Random.Range(-90, 90)))*d.rb.velocity.normalized;
+							rb.velocity = nv*force;
+
+							Object.Destroy(activeProjectile, GetProjectileLifetime(force));
+
+							if (SaveProjectiles())
+							{
+								ProjectileData data = new ProjectileData();
+								data.proj = activeProjectile;
+								data.target = null;
+								data.interpolTimer = 0;
+								data.rb = rb;
+								data.penetratedTargets = 0;
+								data.maxPenetrateTargets = chainPenetrations+1;
+								data.chained = true;
+								data.ignore = coll.gameObject;
+
+								if (chainPenetrations > 0)
+									data.hits = new GameObject[chainPenetrations+1];
+
+								if (returnBack)
+									data.waypoints.Push(activeProjectile.transform.position);
+
+								data.SaveHit(coll.gameObject);
+								data.penetratedTargets++;
+								projectiles.Add(data);
+								MonoUpdate(rb.gameObject, true);
+							}
+						}
+					}
+				}
+
+				if (d.maxPenetrateTargets > 0 && d.penetratedTargets > 0 && (penetrateChangeDamage < 0 || penetrateChangeDamage > 0))
 					ApplyEffects(Owner, coll.gameObject, false, d.penetratedTargets);
 				else
 					ApplyEffects(Owner, coll.gameObject);
 
 				bool destroy = false;
 
-				if (maxPenetratedTargets > 0)
+				if (maxPenetratedTargets > 0 && d.maxPenetrateTargets > 0)
 				{
 					// check if penetrated too many
 					d.penetratedTargets++;
-					if (d.penetratedTargets >= maxPenetratedTargets)
+					if (d.penetratedTargets >= d.maxPenetrateTargets)
 						destroy = true;
 
 					// find next target
@@ -372,6 +577,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 								break;
 							}*/
 
+							List<GameObject> candidates = new List<GameObject>();
+
 							foreach (Collider2D c in Physics2D.OverlapCircleAll(d.proj.transform.position, navigateAimArea))
 							{
 								if (c.gameObject.Equals(d.proj))
@@ -380,8 +587,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 								if (d.HasHit(c.gameObject))
 									continue;
 
+								if (!Utils.CanSee(c.gameObject, d.proj.transform.position))
+									continue;
+
 								Character targetCh = c.gameObject.GetChar();
-								if (targetCh == null || !Owner.CanAttack(targetCh) || c.gameObject.Equals(coll.gameObject))
+								if (targetCh == null || !Owner.CanAttack(targetCh))
+									continue;
+
+								candidates.Add(c.gameObject);
+							}
+
+							candidates.Sort((x, y) => (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, x.transform.position) - (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, y.transform.position));
+
+							foreach (GameObject c in candidates)
+							{
+								Character targetCh = c.GetChar();
+								if (targetCh == null || !Owner.CanAttack(targetCh))
 									continue;
 
 								d.target = targetCh;
@@ -395,6 +616,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 							Vector3 direction = new Vector3(d.rb.velocity.x, d.rb.velocity.y);
 							Vector3 perpend = Utils.GetPerpendicularVector(d.proj.transform.position, direction + d.proj.transform.position);
 
+							List<GameObject> candidates = new List<GameObject>();
+
 							foreach (Collider2D c in Physics2D.OverlapAreaAll(d.proj.transform.position + perpend * navigateAimArea / 2f + direction.normalized * navigateAimArea, d.proj.transform.position + perpend * (-navigateAimArea / 2f)))
 							{
 								if (c.gameObject.Equals(d.proj))
@@ -403,8 +626,19 @@ namespace Assets.scripts.Skills.ActiveSkills
 								if (d.HasHit(c.gameObject))
 									continue;
 
-								Character targetCh = c.gameObject.GetChar();
-								if (targetCh == null || !Owner.CanAttack(targetCh) || c.gameObject.Equals(coll.gameObject))
+								if (!Utils.CanSee(c.gameObject, d.proj.transform.position))
+									continue;
+
+								candidates.Add(c.gameObject);
+								break;
+							}
+
+							candidates.Sort((x, y) => (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, x.transform.position) - (int)Utils.DistanceSqr(Owner.GetData().GetBody().transform.position, y.transform.position));
+
+							foreach (GameObject c in candidates)
+							{
+								Character targetCh = c.GetChar();
+								if (targetCh == null || !Owner.CanAttack(targetCh))
 									continue;
 
 								d.target = targetCh;
@@ -418,14 +652,22 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 				if (maxPenetratedTargets == 0 || destroy)
 				{
-					if (explodeEffect)
+					if (returnBack)
 					{
-						GameObject explosion = CreateParticleEffect(explodeEffectName, false, gameObject.transform.position);
-						explosion.GetComponent<ParticleSystem>().Play();
-						Object.Destroy(explosion, 2f);
+						returningBack = true;
+						AdjustToTarget(d);
 					}
+					else
+					{
+						if (explodeEffect)
+						{
+							GameObject explosion = CreateParticleEffect(explodeEffectName, false, gameObject.transform.position);
+							explosion.GetComponent<ParticleSystem>().Play();
+							Object.Destroy(explosion, 2f);
+						}
 
-					DestroyProjectile(gameObject);
+						DestroyProjectile(gameObject);
+					}
 				}
 			}
 			else

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) 2015, Lukas Honke
 // ========================
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.scripts.Actor;
@@ -25,6 +27,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public int maxPenetratedTargets = 0;
 		public bool navigateAfterPenetration = false;
 		public float interpolAdd = 0.1f;
+
+		public int shots = 1;
 
 		public bool explodeEffect = false;
 
@@ -91,14 +95,40 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void OnLaunch()
 		{
+			DeleteCastingEffect();
+
+			if (shots == 1)
+			{
+				ShotProjectiles();
+			}
+			else
+			{
+				float wait = 0f;
+				for (int i = 0; i < shots; i++)
+				{
+					Owner.StartTask(DelayedShotProjectile(wait));
+
+					wait += 0.15f;
+				}
+			}
+		}
+
+		private IEnumerator DelayedShotProjectile(float timeSec)
+		{
+			if (timeSec > 0)
+				yield return new WaitForSeconds(timeSec);
+
+			ShotProjectiles();
+		}
+
+		private void ShotProjectiles()
+		{
 			bool saveProjectiles = projectilesAim || selectTargetOnLaunch || maxPenetratedTargets > 0;
 
 			if (saveProjectiles)
 			{
 				projectiles.Clear();
 			}
-
-			DeleteCastingEffect();
 
 			GameObject activeProjectile;
 
@@ -132,7 +162,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 			{
 				int range = GetRange();
 
-				List<RaycastHit2D> hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range*2).ToList();
+				List<RaycastHit2D> hits = Utils.CastBoxInDirection(Owner.GetData().GetBody(), GetPlayerData().GetForwardVector(), range, range * 2).ToList();
 				List<Character> targets = new List<Character>();
 
 				for (int i = 0; i < hits.Count; i++)

@@ -178,30 +178,26 @@ namespace Assets.scripts.Skills
 		/// </summary>
 		/// <param name="source">who casted the skill (usually the Owner of this skill)</param>
 		/// <param name="target">who receives the effects</param>
-		protected void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false, int param=0)
+		public void ApplyEffects(Character source, GameObject target, bool allowStackingSameEffect=false, int param=0)
 		{
-			SkillEffect[] efs = CreateEffects(param);
-
-			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
+			// add new effect from templates // TOOD vytvorit kopii efektu! 
+			if (additionalEffects != null)
 			{
-				u.ModifySkillEffects(this, efs);
-			}
-
-			if (efs != null && !originalEffectsDisabled)
-			{
-				foreach (SkillEffect ef in efs)
+				foreach (SkillEffect ef in additionalEffects)
 				{
-					ef.Source = source;
-					ef.SourceSkill = GetSkillId();
-					ef.SourceSkillObject = this;
+					SkillEffect newEf = ef.Clone() as SkillEffect;
 
-					if (!allowStackingSameEffect && !(ef is EffectDamage))
+					newEf.Source = source;
+					newEf.SourceSkill = GetSkillId();
+					newEf.SourceSkillObject = this;
+
+					if (!allowStackingSameEffect && !(newEf is EffectDamage))
 					{
 						Character targetCh = target.GetChar();
 
-						if (targetCh != null && targetCh.HasEffectAlready(ef))
+						if (targetCh != null && targetCh.HasEffectAlready(newEf))
 						{
-							SkillEffect oldEf = targetCh.GetCopyEffect(ef);
+							SkillEffect oldEf = targetCh.GetCopyEffect(newEf);
 
 							if (oldEf != null)
 								targetCh.RemoveEffect(oldEf);
@@ -209,9 +205,11 @@ namespace Assets.scripts.Skills
 						}
 					}
 
-					ef.ApplyEffect(source, target);
+					newEf.ApplyEffect(source, target);
 				}
 			}
+
+			SkillEffect[] efs = CreateEffects(param);
 
 			// add new effects from ugprades
 			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
@@ -244,24 +242,26 @@ namespace Assets.scripts.Skills
 				}
 			}
 
-			// add new effect from templates // TOOD vytvorit kopii efektu! 
-			if (additionalEffects != null)
+			foreach (EquippableItem u in Owner.Inventory.ActiveUpgrades)
 			{
-				foreach (SkillEffect ef in additionalEffects)
+				u.ModifySkillEffects(this, efs);
+			}
+
+			if (efs != null && !originalEffectsDisabled)
+			{
+				foreach (SkillEffect ef in efs)
 				{
-					SkillEffect newEf = ef.Clone() as SkillEffect;
+					ef.Source = source;
+					ef.SourceSkill = GetSkillId();
+					ef.SourceSkillObject = this;
 
-					newEf.Source = source;
-					newEf.SourceSkill = GetSkillId();
-					newEf.SourceSkillObject = this;
-
-					if (!allowStackingSameEffect && !(newEf is EffectDamage))
+					if (!allowStackingSameEffect && !(ef is EffectDamage))
 					{
 						Character targetCh = target.GetChar();
 
-						if (targetCh != null && targetCh.HasEffectAlready(newEf))
+						if (targetCh != null && targetCh.HasEffectAlready(ef))
 						{
-							SkillEffect oldEf = targetCh.GetCopyEffect(newEf);
+							SkillEffect oldEf = targetCh.GetCopyEffect(ef);
 
 							if (oldEf != null)
 								targetCh.RemoveEffect(oldEf);
@@ -269,7 +269,7 @@ namespace Assets.scripts.Skills
 						}
 					}
 
-					newEf.ApplyEffect(source, target);
+					ef.ApplyEffect(source, target);
 				}
 			}
 		}
@@ -330,7 +330,7 @@ namespace Assets.scripts.Skills
 
 		public abstract void SkillAdded();
 
-		public abstract bool CanUse();
+		public abstract bool CanUse(bool beingCast=true);
 		public abstract void SetReuseTimer();
 		public abstract bool IsActive();
 		public abstract bool IsBeingCasted();

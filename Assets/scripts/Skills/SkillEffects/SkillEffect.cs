@@ -89,6 +89,16 @@ namespace Assets.scripts.Skills.SkillEffects
 			
 		}
 
+		public virtual void OnCharDie()
+		{
+			
+		}
+
+		public virtual void OnReceiveDamage(Character source, int damage, SkillId skillId = 0, bool wasCrit = false)
+		{
+			
+		}
+
 		protected bool IsOffensive()
 		{
 			return isOffensive;

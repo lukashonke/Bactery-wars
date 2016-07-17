@@ -109,6 +109,29 @@ namespace Assets.scripts.Skills.ActiveSkills
 			StartParticleEffect(meleeHit);
 		}
 
+		public override void TriggerSkill(Vector3 direction) // TODO not working well
+		{
+			meleeHit = CreateParticleEffect("Melee Launch", true, GetOwnerData().GetShootingPosition().transform.position);
+			//meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
+			UpdateMouseDirection(meleeHit.transform);
+
+			if (meleeHit != null)
+			{
+				meleeHit.transform.rotation = Quaternion.Euler(0, 0, angle);
+				meleeHit.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+				ParticleSystem ps = meleeHit.GetComponent<ParticleSystem>();
+				ParticleSystem.ShapeModule shape = ps.shape;
+				shape.arc = angle;
+				shape.radius = GetRange();
+			}
+
+			//meleeHit.transform.rotation = Utils.GetRotationToMouse(meleeHit.transform);
+
+			StartParticleEffect(meleeHit);
+			DeleteParticleEffect(meleeHit, 1.0f);
+		}
+
 		public override void OnFinish()
 		{
 			if (meleeCasting != null)

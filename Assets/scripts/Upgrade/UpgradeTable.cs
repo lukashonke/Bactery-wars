@@ -33,12 +33,14 @@ namespace Assets.scripts.Upgrade
 			public Type upgrade;
 			public ItemType upgradeType;
 			public int rarity;
+			public bool enabled;
 
-			public UpgradeInfo(Type u, ItemType type, int rarity)
+			public UpgradeInfo(Type u, ItemType type, int rarity, bool enabled)
 			{
 				this.upgrade = u;
 				this.upgradeType = type;
 				this.rarity = rarity;
+				this.enabled = enabled;
 			}
 		}
 
@@ -89,10 +91,20 @@ namespace Assets.scripts.Upgrade
 				}
 				catch (Exception)
 				{
-					Debug.LogWarning("upgrade Type " + t.Name + " deosnt have static property 'rarity' - setting to default 1");
+					Debug.LogWarning("upgrade Type " + t.Name + " deosnt have static property 'rarity' or 'type' - setting to default");
 				}
 
-				UpgradeInfo info = new UpgradeInfo(t, uType, rarity);
+				bool enabled = false;
+				try
+				{
+					enabled = (bool)t.GetField("enabled").GetValue(null);
+				}
+				catch (Exception)
+				{
+					enabled = false;
+				}
+
+				UpgradeInfo info = new UpgradeInfo(t, uType, rarity, enabled);
 				upgrades.Add(info);
 			}
 		}
@@ -108,14 +120,21 @@ namespace Assets.scripts.Upgrade
 			List<UpgradeInfo> possible = new List<UpgradeInfo>();
 			foreach (UpgradeInfo info in upgrades)
 			{
+				if (!info.enabled)
+					continue;
+
 				if (info.upgradeType == type && (info.rarity >= minRarity && info.rarity <= maxRarity))
 				{
 					possible.Add(info);
 				}
 			}
 
-			UpgradeInfo final = possible[Random.Range(0, possible.Count)];
-			return GenerateUpgrade(final.upgrade, level);
+			if (possible.Count > 0)
+			{
+				UpgradeInfo final = possible[Random.Range(0, possible.Count)];
+				return GenerateUpgrade(final.upgrade, level);
+			}
+			else return null;
 		}
 
 		public void DropItem(InventoryItem upgrade, Vector3 position, int radius=1)

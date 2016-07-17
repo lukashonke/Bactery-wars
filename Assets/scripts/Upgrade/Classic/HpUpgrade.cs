@@ -16,6 +16,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class HpUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public HpUpgrade(int level) : base(level)
 		{
@@ -60,6 +61,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class HpPotion : ActivableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.CONSUMABLE;
 
 		public HpPotion(int level) : base(level)
 		{

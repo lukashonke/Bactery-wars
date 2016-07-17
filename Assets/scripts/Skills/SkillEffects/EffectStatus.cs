@@ -16,9 +16,19 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		protected float duration;
 
+		protected bool targetOwner;
+
 		public EffectStatus(float duration)
 		{
 			this.duration = duration;
+
+			targetOwner = false;
+		}
+
+		public EffectStatus TargetOwner()
+		{
+			targetOwner = true;
+			return this;
 		}
 
 		public override void ApplyEffect(Character source, GameObject target)
@@ -31,6 +41,9 @@ namespace Assets.scripts.Skills.SkillEffects
 				return;
 
 			this.target = targetCh;
+
+			if (targetOwner)
+				this.target = source;
 
 			Update();
 

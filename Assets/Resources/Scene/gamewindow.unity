@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.63235295, g: 0.63235295, b: 0.63235295, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 3.11
+  m_AmbientIntensity: 2.96
   m_AmbientMode: 3
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
@@ -11889,7 +11889,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 564373242}
   m_HandleRect: {fileID: 564373241}
   m_Direction: 2
-  m_Value: 0.99974793
+  m_Value: 0.9997478
   m_Size: 0.52497065
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -14087,7 +14087,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2141527457}
   m_HandleRect: {fileID: 2141527456}
   m_Direction: 2
-  m_Value: 0.12684634
+  m_Value: 0.12684631
   m_Size: 0.31435692
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -22476,7 +22476,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 480864283}
   m_Direction: 2
   m_Value: 0.99875313
-  m_Size: 0.41834837
+  m_Size: 0.4183484
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -32449,7 +32449,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1798589376}
   m_HandleRect: {fileID: 1798589375}
   m_Direction: 2
-  m_Value: 0.24534312
+  m_Value: 0.24534306
   m_Size: 0.34344542
   m_NumberOfSteps: 0
   m_OnValueChanged:

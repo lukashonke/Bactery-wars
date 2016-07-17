@@ -16,15 +16,89 @@ using Object = UnityEngine.Object;
 
 namespace Assets.scripts.Upgrade.Classic
 {
+	public class SneezeShotPenetrateUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		public SneezeShotPenetrateUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.penetrateTargets = true;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.penetrateTargets = false;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Penetration Upgrade";
+			Description = "Sneeze Shot penetrates through your targets to hit multiple enemies.";
+		}
+	}
+
+	public class SneezeShotPushUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		public SneezeShotPushUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
+		{
+			if (sk.GetSkillId() == SkillId.SneezeShot)
+			{
+				SkillEffect[] newEffects = new SkillEffect[1];
+				newEffects[0] = new EffectPushaway(50);
+				//newEffects[1] = new EffectStun(1f);
+
+				return newEffects;
+			}
+
+			return null;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Push Upgrade";
+			Description = "Enemies hit by Sneeze Shot will be pushed away by the projectile.";
+		}
+	}
+
 	public class SneezeShotThreeProjectiles : EquippableItem
 	{
 		public static int rarity = 1;
 		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
 
 		public SneezeShotThreeProjectiles(int level)
 			: base(level)
 		{
-			RequiredClass = ClassId.CommonCold;
 			MaxLevel = 1;
 		}
 
@@ -52,6 +126,126 @@ namespace Assets.scripts.Upgrade.Classic
 			TypeName = "Sneeze Shot";
 			VisibleName = "Projectile Module";
 			Description = "Sneeze Shot fires one extra projectile.";
+		}
+	}
+
+	public class SneezeShotReuseUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		private float temp;
+
+		public SneezeShotReuseUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			temp = skill.reuse*0.3f;
+			skill.reuse -= temp;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.reuse += temp;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Reuse Module";
+			Description = "Decreases the reuse rate of Sneeze Shot by 30%.";
+		}
+	}
+
+	public class SneezeShotTwoChargesUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+		public static bool enabled = true;
+
+		public SneezeShotTwoChargesUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges += 1;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges -= 1;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Charge Module";
+			Description = "You can cast Sneeze Shot twice quickly one after another before the skill starts reuse state.";
+		}
+	}
+
+	public class SneezeShotDoubleshotUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+		public static bool enabled = true;
+
+		public SneezeShotDoubleshotUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.shots += 1;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
+			if (skill == null)
+				return;
+
+			skill.shots -= 1;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "sneezeshot_upgrade";
+			TypeName = "Sneeze Shot";
+			VisibleName = "Doubleshot Module";
+			Description = "You will fire each Sneeze Shot projectile twice (doubleshot).";
 		}
 	}
 
@@ -228,82 +422,6 @@ namespace Assets.scripts.Upgrade.Classic
 			TypeName = "Sneeze Shot";
 			VisibleName = "Poison Module";
 			Description = "Sneeze Shot gives your target additional " + AddValueByLevel(DAMAGE, LEVEL_ADD) + " dmg/sec for 5 seconds and slows him by " + AddValueByLevel(SLOW_AMMOUNT_PERCENT, SLOW_LEVEL_ADD) + "% for 5 seconds.";
-		}
-	}
-
-	public class SneezeShotPenetrateUpgrade : EquippableItem
-	{
-		public static int rarity = 1;
-		public static ItemType type = ItemType.RARE_UPGRADE;
-
-		public SneezeShotPenetrateUpgrade(int level)
-			: base(level)
-		{
-			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
-		}
-
-		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
-		{
-			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
-			if (skill == null)
-				return;
-
-			skill.penetrateTargets = true;
-		}
-
-		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
-		{
-			SneezeShot skill = set.GetSkill(SkillId.SneezeShot) as SneezeShot;
-			if (skill == null)
-				return;
-
-			skill.penetrateTargets = false;
-		}
-
-		protected override void InitInfo()
-		{
-			FileName = "sneezeshot_upgrade";
-			TypeName = "Sneeze Shot";
-			VisibleName = "Penetration Module";
-			Description = "Sneeze Shot penetrates through your targets to hit multiple enemies.";
-		}
-	}
-
-	public class SneezeShotPushUpgrade : EquippableItem
-	{
-		public static int rarity = 1;
-		public static ItemType type = ItemType.CLASSIC_UPGRADE;
-
-		public SneezeShotPushUpgrade(int level)
-			: base(level)
-		{
-			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
-		}
-
-		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
-		{
-			if (sk.GetSkillId() == SkillId.SneezeShot)
-			{
-				SneezeShot skill = sk as SneezeShot;
-
-				SkillEffect[] newEffects = new SkillEffect[2];
-				newEffects[0] = new EffectPushaway(50);
-				newEffects[1] = new EffectStun(1f);
-
-				return newEffects;
-			}
-
-			return null;
-		}
-
-		protected override void InitInfo()
-		{
-			FileName = "sneezeshot_upgrade";
-			TypeName = "Sneeze Shot";
-			VisibleName = "Push Module";
-			Description = "Enemies hit by Sneeze Shot will be pushed away by the projectile.";
 		}
 	}
 

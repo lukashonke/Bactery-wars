@@ -27,6 +27,8 @@ namespace Assets.scripts.Skills.Base
 
 		Melee,
 
+		Explode,
+
 		Heal,
 		HealSelf,
 

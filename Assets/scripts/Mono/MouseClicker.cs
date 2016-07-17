@@ -16,7 +16,7 @@ namespace Assets.scripts.Mono
 		}
 
 		// Update is called once per frame
-		public void Update()
+		public void FixedUpdate()
 		{
 			if (smaller)
 			{

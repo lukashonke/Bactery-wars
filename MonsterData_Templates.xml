@@ -32,6 +32,36 @@
 		
 	</monster>
 
+	<monster name="StunTrap">
+		<visibleName>Trap</visibleName>
+		<template>CustomCell</template>
+		<sprite>trap/shit</sprite>
+		<stats> 
+			<MaxHp>10</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>0</MaxSpeed>
+			<IsAggressive>false</IsAggressive>
+			<AggressionRange>10</AggressionRange>
+			<RambleAround>false</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>1</XpReward>
+		</stats>
+
+		<ai type="Immobile">
+		</ai>
+
+		<add_skills>
+			<CollisionDamageAttack> 
+			 	<remove_effects/>
+			 	<add_effect name="Stun" duration="5.0"/>
+			 	<add_effect name="KillSelf"/>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
 	<monster name="Warrior">
 		<visibleName>Trap</visibleName>
 		<template>CustomCell</template>
@@ -41,7 +71,7 @@
 			<MaxHp>50</MaxHp>
 			<MaxHp_scale>5</MaxHp_scale>
 			<MaxSpeed>18</MaxSpeed>
-			<IsAggressive>false</IsAggressive>
+			<IsAggressive>true</IsAggressive>
 			<AggressionRange>15</AggressionRange>
 			<RambleAround>false</RambleAround>
 			<RambleAroundMaxDist>4</RambleAroundMaxDist>

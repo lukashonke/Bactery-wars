@@ -289,6 +289,15 @@ namespace Assets.scripts
 			return pos;
 		}
 
+		public static Vector3 RotateVector(Vector3 v, int angle)
+		{
+			if (angle == 0)
+				return v;
+
+			Vector3 nv = Quaternion.Euler(new Vector3(0, 0, angle)) * v;
+			return nv;
+		}
+
 		public static bool IsNotAccessible(Vector3 v)
 		{
 			Vector3 start = WorldHolder.instance.activeMap.GetStartPosition();

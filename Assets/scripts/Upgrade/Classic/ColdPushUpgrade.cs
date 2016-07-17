@@ -17,19 +17,18 @@ namespace Assets.scripts.Upgrade.Classic
 {
 	public class ColdPushForceUpgrade : EquippableItem
 	{
-		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+		public static bool enabled = true;
 
-		public const int POWER = 50;
-		public const float LEVEL_ADD = 5;
+		public const int POWER = 100;
 
 		private int temp;
 
 		public ColdPushForceUpgrade(int level)
 			: base(level)
 		{
-			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 5;
+			MaxLevel = 1;
 		}
 
 		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
@@ -39,7 +38,7 @@ namespace Assets.scripts.Upgrade.Classic
 				return;
 
 			temp = skill.pushbackForce;
-			skill.pushbackForce = (int) (skill.pushbackForce * (AddValueByLevel(POWER, LEVEL_ADD)/100f+1));
+			skill.pushbackForce = (int) (skill.pushbackForce * (POWER/100f+1));
 		}
 
 		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
@@ -56,7 +55,135 @@ namespace Assets.scripts.Upgrade.Classic
 			FileName = "coldpush_upgrade";
 			TypeName = "Cold Push";
 			VisibleName = "Force Module";
-			Description = "Cold Push pushes enemies further because it has increased force by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
+			Description = "The strength of Cold Push effect is increased by " + POWER + "%.";
+		}
+	}
+
+	public class ColdPushAngleUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		private int temp;
+
+		public ColdPushAngleUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			temp = skill.angle;
+			skill.angle = 360;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			skill.angle = temp;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Force Module";
+			Description = "Cold Push effect angle is set to 360 degrees.";
+		}
+	}
+
+	public class ColdPushStunUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		public const float DURATION = 2f;
+
+		private float temp;
+
+		public ColdPushStunUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			temp = skill.stunDuration;
+			skill.stunDuration *= DURATION;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			skill.stunDuration = temp;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "coldpush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = " Stun Module";
+			Description = "Stun duration of Cold Push will be doubled.";
+		}
+	}
+
+	public class ColdPushReuseUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		private float temp;
+
+		public ColdPushReuseUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			temp = skill.reuse * 0.3f;
+			skill.reuse -= temp;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
+			if (skill == null)
+				return;
+
+			skill.reuse += temp;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdPush_upgrade";
+			TypeName = "Cold Push";
+			VisibleName = "Reuse Module";
+			Description = "Decreases the reuse rate of Cold Push by 30%.";
 		}
 	}
 
@@ -102,48 +229,6 @@ namespace Assets.scripts.Upgrade.Classic
 			TypeName = "Cold Push";
 			VisibleName = "Force Module";
 			Description = "Cold Push has increased range by " + AddValueByLevel(POWER, LEVEL_ADD) + "%.";
-		}
-	}
-
-	public class ColdPushAngleUpgrade : EquippableItem
-	{
-		public static int rarity = 2;
-		public static ItemType type = ItemType.CLASSIC_UPGRADE;
-
-		private int temp;
-
-		public ColdPushAngleUpgrade(int level)
-			: base(level)
-		{
-			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 1;
-		}
-
-		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
-		{
-			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
-			if (skill == null)
-				return;
-
-			temp = skill.angle;
-			skill.angle = 180;
-		}
-
-		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
-		{
-			ColdPush skill = set.GetSkill(SkillId.ColdPush) as ColdPush;
-			if (skill == null)
-				return;
-
-			skill.angle = temp;
-		}
-
-		protected override void InitInfo()
-		{
-			FileName = "coldpush_upgrade";
-			TypeName = "Cold Push";
-			VisibleName = "Force Module";
-			Description = "Cold Push effect angle is set to 180 degrees from in front of you.";
 		}
 	}
 
@@ -194,48 +279,6 @@ namespace Assets.scripts.Upgrade.Classic
 			TypeName = "Cold Push";
 			VisibleName = "Stun Module";
 			Description = "Targets hit by Cold Push will be stunned for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds, but the reuse of the skill is doubled.";
-		}
-	}
-
-	public class ColdPushStunUpgrade : EquippableItem //TODO not done
-	{
-		public static int rarity = 10;
-		public static ItemType type = ItemType.EPIC_UPGRADE;
-
-		public const int SLOWAMMOUNT = 50;
-		public const int LEVEL_ADD = 4;
-
-		public const float DURATION = 4f;
-		public const float DURATION_LEVEL_ADD = 0.4f;
-
-		public ColdPushStunUpgrade(int level)
-			: base(level)
-		{
-			RequiredClass = ClassId.CommonCold;
-			MaxLevel = 5;
-		}
-
-		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
-		{
-			if (sk.GetSkillId() == SkillId.ColdPush)
-			{
-				ColdPush skill = sk as ColdPush;
-
-				SkillEffect[] newEffects = new SkillEffect[1];
-				newEffects[0] = new EffectSlow((AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) / 100f), AddValueByLevel(DURATION, DURATION_LEVEL_ADD));
-
-				return newEffects;
-			}
-
-			return null;
-		}
-
-		protected override void InitInfo()
-		{
-			FileName = "coldpush_upgrade";
-			TypeName = "Cold Push";
-			VisibleName = " Slow Module";
-			Description = "UNFINISHED Targets hit with Cold Push skill will be stunned down by " + AddValueByLevel(SLOWAMMOUNT, LEVEL_ADD) + "% for " + AddValueByLevel(DURATION, DURATION_LEVEL_ADD) + " seconds.";
 		}
 	}
 }

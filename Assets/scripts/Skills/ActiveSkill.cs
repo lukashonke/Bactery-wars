@@ -212,6 +212,8 @@ namespace Assets.scripts.Skills
 		public virtual void OnAfterEnd() { }
 		public virtual void OnAterReuse() { }
 
+		public virtual void TriggerSkill(Vector3 direction) { }
+
 		protected override void InitDynamicTraits()
 		{
 			if (castTime <= 1f)
@@ -254,7 +256,7 @@ namespace Assets.scripts.Skills
 
 		}
 
-		public override bool CanUse()
+		public override bool CanUse(bool beingCast=true)
 		{
 			if (IsLocked)
 				return false;
@@ -286,7 +288,7 @@ namespace Assets.scripts.Skills
 				float time = Time.time;
 
 				// the reuse time has passed
-				if (LastUsed + (GetReuse(true)) < time)
+				if (LastUsed + (GetReuse(beingCast)) < time)
 				{
 					return true;
 				}
@@ -1012,7 +1014,7 @@ namespace Assets.scripts.Skills
 			}
 		}
 
-		protected void DestroyProjectile(GameObject proj, float delay=1f)
+		public virtual void DestroyProjectile(GameObject proj, float delay=1f)
 		{
 			if (proj == null)
 				return;

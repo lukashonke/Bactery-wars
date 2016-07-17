@@ -834,7 +834,7 @@ namespace Assets.scripts.Mono
 			HasTargetToMoveTo = false;
 		}
 
-		public void JumpForward(Vector3 direction, float dist, float jumpSpeed)
+		public void JumpForward(Vector3 direction, float dist, float jumpSpeed) //TODO add check against wall
 		{
 			MovementChanged();
 			SetRotation(body.transform.position + direction.normalized*dist, true);
@@ -1398,9 +1398,8 @@ namespace Assets.scripts.Mono
 			//TODO pridat zpetnou vazbu pokud melee utok jeste neni mozny - idealne ho zretezit co nejdrive nebo to vyresi animace?
 
 			// no melee attack
-			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse()))
+			if (doAttack && (sk == null || sk.IsActive() || sk.IsBeingCasted() || !sk.CanUse(false)))
 				return;
-
 
 			int range = sk.GetRange();
 			if (!doAttack)

@@ -301,6 +301,133 @@ namespace Assets.scripts.Skills.ActiveSkills
 			}
 		}
 
+		public override void TriggerSkill(Vector3 direction)
+		{
+			int range = GetRange();
+
+			// no double shoot
+			if (doubleAttackChance == 0 && consecutiveDoubleattackCounter == 0 && shotgunChance == 0 && consecutiveShotgunCounter == 0)
+			{
+				if (!toAllDirections)
+				{
+					if (thunder) // deprecated
+					{
+						GameObject thunderObject = CreateSkillObject("Thunder", true, false, GetOwnerData().GetShootingPosition().transform.position);
+						if (thunderObject != null)
+						{
+							LineRenderer line = thunderObject.GetComponent<LineRenderer>();
+							line.SetPosition(1, new Vector3(0, range + 2, 0));
+							thunderObject.transform.rotation = Owner.GetData().GetBody().transform.rotation;
+
+							CalcThunderTargets(GetOwnerData().GetShootingPosition().transform.position, range + 1, GetOwnerData().GetForwardVector());
+
+							Object.Destroy(thunderObject, 0.25f);
+						}
+					}
+					else
+					{
+						GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+						if (activeProjectile != null)
+						{
+							Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+							rb.velocity = (Utils.RotateVector(direction, Random.Range(-deviationAngle, deviationAngle)) * projectileForce);
+
+							Object.Destroy(activeProjectile, 5f);
+						}
+					}
+				}
+				else
+				{
+					for (int i = 0; i < 4; i++)
+					{
+						if (thunder) // deprecated
+						{
+							GameObject thunderObject = CreateSkillObject("Thunder", true, false, GetOwnerData().GetShootingPosition().transform.position);
+							if (thunderObject != null)
+							{
+								LineRenderer line = thunderObject.GetComponent<LineRenderer>();
+								line.SetPosition(1, new Vector3(0, range + 2, 0));
+								thunderObject.transform.rotation = Quaternion.Euler(new Vector3(0, 0, GetOwnerData().GetBody().transform.rotation.eulerAngles.z + i * 90));
+
+								CalcThunderTargets(GetOwnerData().GetShootingPosition().transform.position, range + 1, GetOwnerData().GetForwardVector(i * 90));
+
+								Object.Destroy(thunderObject, 0.25f);
+							}
+						}
+						else
+						{
+							GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+							if (activeProjectile != null)
+							{
+								Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+								rb.velocity = (Utils.RotateVector(direction, i * 90) * projectileForce);
+
+								Object.Destroy(activeProjectile, 5f);
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				bool shotgun = false;
+
+				int count = 1;
+				if (doubleAttackChance > 0 && Random.Range(0, 100) < doubleAttackChance)
+				{
+					count = doubleAttackProjectileCount;
+				}
+				else if (consecutiveDoubleattackCounter > 0 && dsCounter >= consecutiveDoubleattackCounter)
+				{
+					dsCounter = 0;
+					count = doubleAttackProjectileCount;
+				}
+				else if (shotgunChance > 0 && Random.Range(0, 100) < shotgunChance)
+				{
+					shotgun = true;
+					count = shotgunProjectilesCount;
+				}
+				else if (consecutiveShotgunCounter > 0 && shotgunCounter >= consecutiveShotgunCounter)
+				{
+					shotgun = true;
+					shotgunCounter = 0;
+					count = shotgunProjectilesCount;
+				}
+
+				if (!shotgun)
+				{
+					float wait = 0;
+					for (int i = 0; i < count; i++)
+					{
+						for (int j = 0; j < (toAllDirections ? 4 : 1); j++)
+						{
+							Owner.StartTask(ShootDelayedProjectile(wait, Utils.RotateVector(direction, j * 90 + Random.Range(-deviationAngle, deviationAngle)) * projectileForce));
+						}
+
+						wait += 0.05f;
+					}
+				}
+				else
+				{
+					int temp = 30 / count;
+					for (int i = 0; i < count; i++)
+					{
+						for (int j = 0; j < (toAllDirections ? 4 : 1); j++)
+						{
+							GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+							if (activeProjectile != null)
+							{
+								Rigidbody2D rb = activeProjectile.GetComponent<Rigidbody2D>();
+								rb.velocity = (Utils.RotateVector(direction, j * 90 + (0 - (count / 2) * temp) + (i * temp)) * projectileForce);
+
+								Object.Destroy(activeProjectile, 5f);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		public override void OnMove()
 		{
 			 AbortCast();

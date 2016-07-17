@@ -31,7 +31,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public bool explodeEffect = false;
 
-		private int duration = 10;
+		public int duration = 10;
+
+		public bool areaEffect = false;
+		public int areaEffectRange = 8;
 
 		private List<ProjectileData> projectiles = new List<ProjectileData>();
 
@@ -281,7 +284,36 @@ namespace Assets.scripts.Skills.ActiveSkills
 			if (d != null && maxPenetratedTargets > 0 && d.penetratedTargets > 0 && secondDamage > 0)
 				ApplyEffects(Owner, coll.gameObject, false, 1);
 			else
-				ApplyEffects(Owner, coll.gameObject);
+			{
+				if (!areaEffect)
+					ApplyEffects(Owner, coll.gameObject);
+				else
+				{
+					Collider2D[] colls = Physics2D.OverlapCircleAll(gameObject.transform.position, areaEffectRange);
+
+					// explosion effect
+					GameObject explosion = CreateParticleEffect("AreaTargetExplosion", false, gameObject.transform.position);
+					explosion.GetComponent<ParticleSystem>().Play();
+					Object.Destroy(explosion, 2f);
+
+					// give damages
+					foreach (Collider2D col in colls)
+					{
+						if (col != null && col.gameObject != null)
+						{
+							Character targetCh = col.gameObject.GetChar();
+
+							if (targetCh != null)
+							{
+								if (Owner.CanAttack(targetCh))
+								{
+									ApplyEffects(Owner, col.gameObject);
+								}
+							}
+						}
+					}
+				}
+			}
 
 			bool destroy = false;
 

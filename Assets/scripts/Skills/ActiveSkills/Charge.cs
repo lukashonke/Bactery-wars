@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2015, Lukas Honke
 // ========================
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,15 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public int spreadshotDamage = 0;
 
 		public bool penetrateThroughTargets = false;
+
+		public bool areaDamage = false;
+		public float areaDamageRadius = 4f;
+
+		public bool jumpBack = false;
+		private Vector3 jumpFrom;
+
+		public bool rechargeOnKill = false;
+		public int autoattacksOnJump = 0;
 
 		public Charge()
 		{
@@ -78,7 +88,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 			effects[0] = new EffectPushaway(50);
 
 			if (hitEnemyDamage > 0)
-				effects[1] = new EffectDamage(hitEnemyDamage);
+			{
+				if(!areaDamage)
+					effects[1] = new EffectDamage(hitEnemyDamage);
+			}
 
 			return effects;
 		}
@@ -106,6 +119,8 @@ namespace Assets.scripts.Skills.ActiveSkills
 			GetOwnerData().cancelForcedVelocityOnCollision = true;
 
 			firstEnemyHit = false;
+
+			jumpFrom = Owner.GetData().GetBody().transform.position;
 
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
 				GetOwnerData().JumpForward(mouseDirection, GetRange(), jumpSpeed);
@@ -136,11 +151,28 @@ namespace Assets.scripts.Skills.ActiveSkills
 				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;
 			}
 
-			if (spreadshotOnLand)
+			if (areaDamage)
 			{
-				for (int i = 0; i < 4; i++)
+				SkillEffect auraDmg = new EffectAuraDamage(hitEnemyDamage, 0, areaDamageRadius);
+				ApplyEffect(Owner, Owner.GetData().GetBody(), auraDmg);
+
+				GameObject explosion = CreateParticleEffect("Explosion", false, Owner.GetData().GetBody().transform.position);
+				explosion.GetComponent<ParticleSystem>().Play();
+				Object.Destroy(explosion, 2f);
+			}
+
+			if (autoattacksOnJump > 0)
+			{
+				for (int i = 0; i < autoattacksOnJump; i++)
 				{
-					GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
+					ActiveSkill sk = Owner.GetMeleeAttackSkill();
+
+					if (sk != null)
+					{
+						sk.TriggerSkill(Owner.GetData().GetForwardVector(i*45));
+					}
+
+					/*GameObject activeProjectile = CreateSkillProjectile("projectile_00", true);
 					if (activeProjectile != null)
 					{
 						activeProjectile.name = "DodgeProjectile";
@@ -148,17 +180,60 @@ namespace Assets.scripts.Skills.ActiveSkills
 						rb.velocity = (GetOwnerData().GetForwardVector(i * 90) * 30);
 
 						Object.Destroy(activeProjectile, 5f);
-					}
+					}*/
 				}
 			}
+
+			if (jumpBack)
+			{
+				float range = (Owner.GetData().GetBody().transform.position - jumpFrom).magnitude;
+
+				Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = true;
+				GetOwnerData().cancelForcedVelocityOnCollision = false;
+
+				if (GetOwnerData().GetOwner().AI is PlayerAI)
+					GetOwnerData().JumpForward(-mouseDirection, range, jumpSpeed);
+				else
+				{
+					GetOwnerData().JumpForward(-GetOwnerData().GetForwardVector(), range, jumpSpeed);
+				}
+
+				particleSystem = CreateParticleEffect("JumpEffect", true);
+				StartParticleEffect(particleSystem);
+
+				Owner.StartTask(StopJumpBack());
+			}
+		}
+
+		private IEnumerator StopJumpBack()
+		{
+			yield return new WaitForSeconds(coolDown);
+
+			Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger = false;
+			GetOwnerData().cancelForcedVelocityOnCollision = true;
+
+			PauseParticleEffect(particleSystem);
+			DeleteParticleEffect(particleSystem, 5f);
 		}
 
 		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
 		{
 		}
 
+		public void OnTargetKilled(Character ch, Character killer, SkillId skillId)
+		{
+			if (rechargeOnKill && ch != null && killer != null && killer.Equals(Owner) && skillId == GetSkillId())
+			{
+				this.LastUsed = -10000;
+				GetOwnerData().SetSkillReuseTimer(this, true);
+			}
+		}
+
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)
 		{
+			if (Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger)
+				return;
+
 			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
 			{
 				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
@@ -167,6 +242,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 					{
 						ApplyEffect(Owner, coll.gameObject, new EffectDamage(firstEnemyHitDamage));
 						firstEnemyHit = true;
+
+						Character ch = coll.gameObject.GetChar();
+						if (ch != null)
+						{
+							ch.AddOnKillHook(OnTargetKilled);
+						}
 					}
 
 					ApplyEffects(Owner, coll.gameObject);
@@ -195,6 +276,9 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override void MonoCollisionEnter(GameObject gameObject, Collision2D coll)
 		{
+			if (Owner.GetData().GetBody().GetComponent<Collider2D>().isTrigger)
+				return;
+
 			if (IsActive() && coll != null && coll.gameObject != null && gameObject != null)
 			{
 				if (coll.gameObject.GetChar() != null && GetOwnerData().GetOwner().CanAttack(coll.gameObject.GetChar()))
@@ -203,6 +287,12 @@ namespace Assets.scripts.Skills.ActiveSkills
 					{
 						ApplyEffect(Owner, coll.gameObject, new EffectDamage(firstEnemyHitDamage));
 						firstEnemyHit = true;
+
+						Character ch = coll.gameObject.GetChar();
+						if (ch != null)
+						{
+							ch.AddOnKillHook(OnTargetKilled);
+						}
 					}
 
 					ApplyEffects(Owner, coll.gameObject);

@@ -8,9 +8,209 @@ using Assets.scripts.Actor.PlayerClasses.Base;
 using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
+using Assets.scripts.Skills.SkillEffects;
 
 namespace Assets.scripts.Upgrade.Classic
 {
+	public class DodgeSpeedUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		private const float DURATION = 5f;
+
+		public DodgeSpeedUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override SkillEffect[] CreateAdditionalSkillEffects(Skill sk, SkillEffect[] effects)
+		{
+			if (sk.GetSkillId() == SkillId.Dodge)
+			{
+				Dodge dg = sk as Dodge;
+				SkillEffect[] newEffects = new SkillEffect[1];
+				newEffects[0] = new EffectDash(0.3f, DURATION);
+
+				return newEffects;
+			}
+
+			return null;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdDodge_upgrade";
+			TypeName = "Cold Dodge";
+			VisibleName = "Speed Upgrade";
+			Description = "Increases your movement speed by 33% after jump for " + DURATION + " seconds.";
+		}
+	}
+
+	public class DodgeReuseUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		private float temp;
+
+		public DodgeReuseUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			temp = skill.reuse * 0.3f;
+			skill.reuse -= temp;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.reuse += temp;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdDodge_upgrade";
+			TypeName = "Cold Dodge";
+			VisibleName = "Reuse Module";
+			Description = "Decreases Cold Dodge reuse by 30%.";
+		}
+	}
+
+	public class DodgeDoublejumpUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.CLASSIC_UPGRADE;
+		public static bool enabled = true;
+
+		public DodgeDoublejumpUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges += 1;
+			skill.consecutiveTimelimit = 3f;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.maxConsecutiveCharges -= 1;
+			skill.consecutiveTimelimit -= 3f;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdDodge_upgrade";
+			TypeName = "Cold Dodge";
+			VisibleName = "Doublejump Module";
+			Description = "You can use Cold Dodge twice in a row.";
+		}
+	}
+
+	public class DodgeTrapUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+		public static bool enabled = true;
+
+		public DodgeTrapUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.numOfTraps += 1;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.numOfTraps -= 1;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdDodge_upgrade";
+			TypeName = "Cold Dodge";
+			VisibleName = "Trap Module";
+			Description = "You will spawn a trap"; //TODO description
+		}
+	}
+
+	public class DodgeRangeUpgrade : EquippableItem
+	{
+		public static int rarity = 1;
+		public static ItemType type = ItemType.EPIC_UPGRADE;
+		public static bool enabled = true;
+
+		public DodgeRangeUpgrade(int level)
+			: base(level)
+		{
+			MaxLevel = 1;
+		}
+
+		public override void ApplySkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.infiniteRange = true;
+		}
+
+		public override void RestoreSkillChanges(SkillSet set, ActiveSkill melee)
+		{
+			Dodge skill = set.GetSkill(SkillId.Dodge) as Dodge;
+			if (skill == null)
+				return;
+
+			skill.infiniteRange = false;
+		}
+
+		protected override void InitInfo()
+		{
+			FileName = "ColdDodge_upgrade";
+			TypeName = "Cold Dodge";
+			VisibleName = "Range Module";
+			Description = "You will spawn a trap"; //TODO description
+		}
+	}
+
+
 	public class DodgeFirstHitDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;

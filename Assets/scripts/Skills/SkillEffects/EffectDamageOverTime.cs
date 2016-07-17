@@ -55,13 +55,15 @@ namespace Assets.scripts.Skills.SkillEffects
 
 		private void ApplyDmg()
 		{
-			if (source == null || target == null)
+			if (source == null || target == null || target.Status.IsDead)
 				return;
 
 			if (source.CanAttack(target))
 			{
 				bool wasCrit;
 				int dmg = source.CalculateDamage(damage, target, SourceSkillObject, crit, out wasCrit);
+
+				Debug.Log(dmg);
 
 				source.OnAttack(target);
 

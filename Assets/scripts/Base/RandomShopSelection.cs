@@ -46,6 +46,10 @@ namespace Assets.scripts.Base
 			for (int i = 0; i < classicItems; i++)
 			{
 				InventoryItem it = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC_UPGRADE, 1, 2, 1);
+
+				if (it == null)
+					continue;
+
 				it.Init();
 
 				bool alreadyInShop = false;
@@ -72,6 +76,10 @@ namespace Assets.scripts.Base
 			for (int i = 0; i < rareItems; i++)
 			{
 				InventoryItem it = UpgradeTable.Instance.GenerateUpgrade(ItemType.RARE_UPGRADE, 1, 2, 1);
+
+				if (it == null)
+					continue;
+
 				it.Init();
 
 				bool alreadyInShop = false;
@@ -98,6 +106,10 @@ namespace Assets.scripts.Base
 			for (int i = 0; i < epicItems; i++)
 			{
 				InventoryItem it = UpgradeTable.Instance.GenerateUpgrade(ItemType.EPIC_UPGRADE, 1, 2, 1);
+
+				if (it == null)
+					continue;
+
 				it.Init();
 
 				bool alreadyInShop = false;

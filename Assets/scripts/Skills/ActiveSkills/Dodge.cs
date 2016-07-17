@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2015, Lukas Honke
 // ========================
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,11 @@ namespace Assets.scripts.Skills.ActiveSkills
 		public int spreadshotDamage = 0;
 
 		public bool penetrateThroughTargets = true;
+
+		public int numOfTraps = 0;
+		public bool infiniteRange = false;
+
+		private Vector3 jumpOrigin;
 
 		public Dodge()
 		{
@@ -54,7 +60,7 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public override string GetDescription()
 		{
-			return "Makes the player jump in the selected direction, but the player will not push enemies away.";
+			return "Makes the player jump in the selected direction, but the player will not push enemies away. The player is invulnerable to all damage during the jump.";
 		}
 
 		public override string GetBaseInfo()
@@ -109,15 +115,47 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			firstEnemyHit = false;
 
+			jumpOrigin = Owner.GetData().GetBody().transform.position;
+
+			float jumpRange = GetRange();
+
+			if (infiniteRange && GetOwnerData().GetOwner().AI is PlayerAI)
+			{
+				jumpRange = mouseDirection.magnitude;
+
+				if (jumpRange > 30)
+					jumpRange = 30;
+			}
+
 			if (GetOwnerData().GetOwner().AI is PlayerAI)
-				GetOwnerData().JumpForward(mouseDirection, GetRange(), jumpSpeed);
+				GetOwnerData().JumpForward(mouseDirection, jumpRange, jumpSpeed);
 			else
 			{
-				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), GetRange(), jumpSpeed);
+				GetOwnerData().JumpForward(GetOwnerData().GetForwardVector(), jumpRange, jumpSpeed);
 			}
+
+			//SkillEffect invisEfect = new EffectShield(1, coolDown);
+			//ApplyEffect(Owner, Owner.GetData().GetBody(), invisEfect);
 
 			particleSystem = CreateParticleEffect("JumpEffect", true);
 			StartParticleEffect(particleSystem);
+		}
+
+		private IEnumerator ScheduleDespawn(Monster m)
+		{
+			yield return new WaitForSeconds(15f);
+
+			if(m != null && !m.Status.IsDead)
+				Despawn(m);
+		}
+
+		private void Despawn(Monster m)
+		{
+			m.DoDie();
+		}
+
+		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
+		{
 		}
 
 		public override void UpdateLaunched()
@@ -142,6 +180,18 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 			GetOwnerData().cancelForcedVelocityOnCollision = false;
 
+			ApplyEffects(Owner, Owner.GetData().GetBody());
+
+			if (numOfTraps > 0)
+			{
+				for (int i = 0; i < numOfTraps; i++)
+				{
+					Monster m = GameSystem.Instance.SpawnMonster("Trap", Vector3.Lerp(jumpOrigin, Owner.GetData().GetBody().transform.position, 0.75f), false, 1, 1);
+
+					Owner.StartTask(ScheduleDespawn(m));
+				}
+			}
+
 			if (spreadshotOnLand)
 			{
 				for (int i = 0; i < 4; i++)
@@ -157,10 +207,6 @@ namespace Assets.scripts.Skills.ActiveSkills
 					}
 				}
 			}
-		}
-
-		public override void MonoUpdate(GameObject gameObject, bool fixedUpdate)
-		{
 		}
 
 		public override void MonoTriggerEnter(GameObject gameObject, Collider2D coll)

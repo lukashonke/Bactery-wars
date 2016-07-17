@@ -7,6 +7,8 @@ namespace Assets.scripts.Upgrade
 		STAT_UPGRADE,
 		CLASSIC_UPGRADE,
 		RARE_UPGRADE,
-		EPIC_UPGRADE
+		EPIC_UPGRADE,
+
+		CONSUMABLE
 	}
 }
