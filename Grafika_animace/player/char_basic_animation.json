@@ -1,0 +1,123 @@
+﻿{"frames": {
+
+"char10000":
+{
+	"frame": {"x":0,"y":0,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10001":
+{
+	"frame": {"x":0,"y":0,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10002":
+{
+	"frame": {"x":167,"y":0,"w":167,"h":239},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10003":
+{
+	"frame": {"x":167,"y":0,"w":167,"h":239},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10004":
+{
+	"frame": {"x":334,"y":0,"w":167,"h":234},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10005":
+{
+	"frame": {"x":334,"y":0,"w":167,"h":234},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10006":
+{
+	"frame": {"x":0,"y":242,"w":167,"h":241},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10007":
+{
+	"frame": {"x":0,"y":242,"w":167,"h":241},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10008":
+{
+	"frame": {"x":167,"y":242,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10009":
+{
+	"frame": {"x":167,"y":242,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10010":
+{
+	"frame": {"x":334,"y":242,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10011":
+{
+	"frame": {"x":334,"y":242,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10012":
+{
+	"frame": {"x":0,"y":484,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+},
+"char10013":
+{
+	"frame": {"x":0,"y":484,"w":167,"h":242},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":167,"h":242},
+	"sourceSize": {"w":167,"h":242}
+}},
+"meta": {
+	"app": "Adobe Flash Professional",
+	"version": "15.0.0.173",
+	"image": "char_basic_animation.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":1024},
+	"scale": "1"
+}
+}

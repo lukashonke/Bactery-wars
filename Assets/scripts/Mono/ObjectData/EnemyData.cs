@@ -5,6 +5,8 @@ using Assets.scripts.Actor;
 using Assets.scripts.Actor.MonsterClasses.Base;
 using Assets.scripts.Base;
 using Assets.scripts.Mono.MapGenerator;
+using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -173,6 +175,48 @@ namespace Assets.scripts.Mono.ObjectData
 		{
 			SpriteRenderer sr = GetComponent<SpriteRenderer>();
 			sr.sprite = sprite;
+
+			Vector2 sprite_size = GetComponent<SpriteRenderer>().sprite.rect.size;
+			Vector2 local_sprite_size = sprite_size / GetComponent<SpriteRenderer>().sprite.pixelsPerUnit; //TODO use this?
+
+			float newScale = Mathf.Max(sprite_size.x, sprite_size.y) / 200f;
+
+			if (scale > 0)
+			{
+				this.transform.localScale = new Vector3(1 / newScale * scale, 1 / newScale * scale, 1);
+			}
+			else
+			{
+				this.transform.localScale = new Vector3(1 / newScale, 1 / newScale, 1);
+			}
+		}
+
+		public void SetAnimation(string name, string folder, float scale)
+		{
+			AnimatorController ac = Resources.Load<AnimatorController>(folder + "" + name + "_controller");
+			if (ac == null)
+			{
+				Debug.LogError("chybejici animace " + folder + "" + name);
+				return;
+			}
+
+			Animator anim = GetBody().GetComponent<Animator>();
+
+			if (anim == null)
+			{
+				anim = GetBody().AddComponent<Animator>();
+			}
+
+			if (!anim.enabled)
+				anim.enabled = true;
+
+			anim.runtimeAnimatorController = ac;
+
+			// update spriterenderer
+			SpriteRenderer sr = GetBody().GetComponent<SpriteRenderer>();
+
+			Sprite[] sprites = Resources.LoadAll<Sprite>(folder + "" + name + "_spritesheet");
+			sr.sprite = sprites[0];
 
 			Vector2 sprite_size = GetComponent<SpriteRenderer>().sprite.rect.size;
 			Vector2 local_sprite_size = sprite_size / GetComponent<SpriteRenderer>().sprite.pixelsPerUnit; //TODO use this?

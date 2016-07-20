@@ -15,6 +15,7 @@ using Assets.scripts.Skills;
 using Assets.scripts.Skills.ActiveSkills;
 using Assets.scripts.Skills.Base;
 using Assets.scripts.Skills.SkillEffects;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Assets.scripts.Actor.MonsterClasses
@@ -88,6 +89,7 @@ namespace Assets.scripts.Actor.MonsterClasses
 		public string Sprite { get; set; }
 		public float SpriteSize { get; set; }
 		public float Mass { get; set; }
+		public string Animation { get; set; }
 
 		public string AiType { get; set; }
 		public List<AiParamInfo> AiParams { get; set; }
@@ -657,7 +659,12 @@ namespace Assets.scripts.Actor.MonsterClasses
 
 			bool changed = false;
 
-			if (Sprite != null)
+			if (Animation != null)
+			{
+				data.SetAnimation(Animation, "prefabs/animation/" + Animation + "/", SpriteSize);
+				changed = true;
+			}
+			else if (Sprite != null)
 			{
 				if (GameSession.loadExternalGraphics)
 				{

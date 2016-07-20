@@ -206,6 +206,9 @@ namespace Assets.scripts.Actor.MonsterClasses.Base
 						case "sprite":
 							newTemplate.Sprite = mainParam.InnerText;
 							break;
+						case "animation":
+							newTemplate.Animation = mainParam.InnerText;
+							break;
 						case "size":
 							newTemplate.SpriteSize = float.Parse(mainParam.InnerText);
 							break;

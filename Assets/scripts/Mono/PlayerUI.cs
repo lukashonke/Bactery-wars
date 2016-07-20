@@ -598,7 +598,7 @@ namespace Assets.scripts.Mono
 			for (int i = 1; i <= 9; i++)
 			{
 				GameObject sko = skillButtons[i - 1];
-				skillProgresses[i - 1] = sko.transform.GetChild(0).GetComponent<Image>();
+				skillProgresses[i - 1] = sko.transform.GetChild(1).GetComponent<Image>();
 				skillProgresses[i - 1].sprite = sko.GetComponent<Image>().sprite;
 			}
 
@@ -2394,7 +2394,7 @@ namespace Assets.scripts.Mono
 				}
 
 				GameObject sko = skillButtons[i];
-				skillProgresses[i] = sko.transform.GetChild(0).GetComponent<Image>();
+				skillProgresses[i] = sko.transform.GetChild(1).GetComponent<Image>();
 				skillProgresses[i].sprite = sko.GetComponent<Image>().sprite;
 				skillProgresses[i].fillAmount = 0;
 			}

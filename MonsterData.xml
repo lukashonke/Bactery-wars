@@ -5,6 +5,7 @@
 		<visibleName>Pico Cell</visibleName>
 		<template>CustomCell</template>
 		<sprite>melee/basic</sprite>
+		<animation>shield</animation>
 		<size>2</size>
 		<mass>1</mass>
 		<stats> 
