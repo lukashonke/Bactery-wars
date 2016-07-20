@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.scripts.Upgrade;
+using Assets.scripts.Upgrade.Classic;
 using Random = UnityEngine.Random;
 
 namespace Assets.scripts.Base
@@ -37,12 +38,22 @@ namespace Assets.scripts.Base
 		/// <param name="mapDifficulty">1=easy, 2=medium, 3=hard</param>
 		public void GenerateRandomShopItems(int worldLevel, int mapDifficulty)
 		{
-			int classicItems = Random.Range(4, 6);
-			int rareItems = Random.Range(1, 2);
-			int epicItems = Random.Range(0, worldLevel);
+			int classicItems = Random.Range(3, 5+1);
+			//int rareItems = Random.Range(1, 2);
+			int rareItems = 0;
+			int epicItems = Random.Range(1, 2+1);
 
 			List<InventoryItem> selected = new List<InventoryItem>();
 
+			// add heal
+			InventoryItem pot = UpgradeTable.Instance.GenerateUpgrade(typeof (HpPotion), 5, ItemType.CONSUMABLE);
+			if (pot != null)
+			{
+				pot.Init();
+				AddItem(pot, 50);
+			}
+
+			// add skill upgrades
 			for (int i = 0; i < classicItems; i++)
 			{
 				InventoryItem it = UpgradeTable.Instance.GenerateUpgrade(ItemType.CLASSIC_UPGRADE, 1, 2, 1);
@@ -70,7 +81,7 @@ namespace Assets.scripts.Base
 
 				selected.Add(it);
 				
-				AddItem(it, 10);
+				AddItem(it, 250);
 			}
 
 			for (int i = 0; i < rareItems; i++)
@@ -100,7 +111,7 @@ namespace Assets.scripts.Base
 
 				selected.Add(it);
 
-				AddItem(it, 20);
+				AddItem(it, 250);
 			}
 
 			for (int i = 0; i < epicItems; i++)
@@ -130,7 +141,7 @@ namespace Assets.scripts.Base
 
 				selected.Add(it);
 
-				AddItem(it, 50);
+				AddItem(it, 500);
 			}
 		}
 	}

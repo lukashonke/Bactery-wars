@@ -26,9 +26,21 @@ namespace Assets.scripts.Actor
 	/// </summary>
 	public class Player : Character
 	{
+		private int lifes;
 		public ClassTemplate Template { get; set; }
 		public int DnaPoints { get; private set; }
 		public int UpgradePoints { get; set; }
+
+		public int Lifes
+		{
+			get { return lifes; }
+			set
+			{
+				lifes = value;
+				if(GetData() != null && GetData().ui != null)
+					GetData().ui.UpdateLifes(lifes);
+			}
+		}
 
 		public List<Skill> AvailableSkills { get; private set; }
 		public List<Skill> AvailableAutoattacks { get; private set; }
@@ -70,6 +82,8 @@ namespace Assets.scripts.Actor
 		{
 			//base.DoDie(killer, skillId);
 
+			Lifes --;
+
 			// notify upgrades on dead - TODO add a hook here to maybe ressurect player
 			OnDead(killer, skillId);
 
@@ -100,7 +114,12 @@ namespace Assets.scripts.Actor
 				RemoveEffect(eff);
 			}
 
-			GameSystem.Instance.Controller.PlayerDied();
+			if (Lifes == 0)
+			{
+				GameSystem.Instance.Controller.RestartGame();
+			}
+			else
+				GameSystem.Instance.Controller.PlayerDied();
 		}
 
 		public new PlayerData GetData()
@@ -120,10 +139,18 @@ namespace Assets.scripts.Actor
 		{
 			ItemStash = new Stash(this, 50);
 
+			DnaPoints = 100;
+
+			Lifes = 3;
+
 			AvailableSkills = new List<Skill>();
 			AvailableAutoattacks = new List<Skill>();
 			SkillSlotLevels = new Dictionary<int, int>();
-			UpgradePoints = 100;
+
+			if(GameSession.skipTutorial) // player starts with level 2
+				UpgradePoints = 10;
+			else
+				UpgradePoints = 0;
 
 			for (int ii = 0; ii < 9; ii++)
 			{
@@ -193,12 +220,21 @@ namespace Assets.scripts.Actor
 
 		public int GetSlotUpgradePrice(int slot, int level)
 		{
-			return 10;
+			if(level == 2)
+				return 10;
+			else if(level == 3)
+				return 20;
+			else if (level == 4)
+				return 30;
+			else
+				return 40;
 		}
 
 		public int GetStatUpgradePrice(int level)
 		{
-			return 10;
+			if (level <= 2)
+				return 5;
+			else return 10;
 		}
 
 		public void LevelUpSlot(int slot)
@@ -335,6 +371,8 @@ namespace Assets.scripts.Actor
 					return;
 				}
 
+				Inventory.TempDisableAll();
+
 				Skill newSkill = SkillTable.Instance.CreateSkill(skill.GetSkillId());
 				newSkill.SetOwner(this);
 				newSkill.IsLocked = false;
@@ -355,6 +393,8 @@ namespace Assets.scripts.Actor
 				{
 					Skills.Skills.Add(newSkill);
 				}
+
+				Inventory.TempEnableAll();
 			}
 		}
 

@@ -54,7 +54,7 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			FileName = "hp_upgrade";
 			VisibleName = "Heal";
-			Description = "Heals you.";
+			Description = "Immediately restore " + Level + " HP.";
 		}
 	}
 
@@ -78,7 +78,7 @@ namespace Assets.scripts.Upgrade.Classic
 		{
 			FileName = "hp_upgrade";
 			VisibleName = "Healing Potion";
-			Description = "Heals you.";
+			Description = "Heals you for " + Level + " HP.";
 		}
 	}
 

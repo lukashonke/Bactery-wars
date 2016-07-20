@@ -68,6 +68,17 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
+		public void TempRemove()
+		{
+			Remove();
+		}
+
+		public void TempAddBack()
+		{
+			Init();
+			Apply();
+		}
+
 		public float MulValueByLevel(int baseDamage, float levelMultiplier)
 		{
 			int add = (int) (baseDamage*(Level - 1)*levelMultiplier - baseDamage);

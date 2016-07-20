@@ -315,7 +315,7 @@
 			<RambleAroundMaxDist>4</RambleAroundMaxDist>
 			<AlertsAllies>false</AlertsAllies>
 
-			<XpReward>1</XpReward>
+			<XpReward>2</XpReward>
 		</stats>
 
 		<ai type="Ranged">

@@ -21,10 +21,10 @@ namespace Assets.scripts.Skills.ActiveSkills
 
 		public float power = 1.5f;
 
-		public int uses = 2;
+		public int uses = 1;
 		private int currentUses = 0;
 
-		public int resetSkillSlotId = 0;
+		public int resetSkillSlotId = -1;
 		public int resetSkillMaxReuse = 10;
 
 		private bool active = false;

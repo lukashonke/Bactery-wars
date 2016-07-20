@@ -23,7 +23,7 @@ namespace Assets.scripts.Upgrade
 
 		public bool CollectableByPlayer { get; protected set; }
 
-		public ItemType Type { get; protected set; }
+		public ItemType Type { get; set; }
 
 		public int Level { get; set; }
 		public int MaxLevel { get; set; }
@@ -76,6 +76,16 @@ namespace Assets.scripts.Upgrade
 					//Debug.LogError(e.StackTrace);
 					MainSprite = Resources.Load<Sprite>("Sprite/Upgrades/default");
 				}
+			}
+
+			try
+			{
+				ItemType uType = (ItemType)GetType().GetField("type").GetValue(null);
+				this.Type = uType;
+			}
+			catch (Exception)
+			{
+				Debug.LogError("cant set item type of " + GetType().ToString());
 			}
 
 			switch (Type)

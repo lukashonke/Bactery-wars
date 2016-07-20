@@ -179,6 +179,22 @@ namespace Assets.scripts.Upgrade
 			return true;
 		}
 
+		public void TempEnableAll()
+		{
+			foreach (EquippableItem upg in activeUpgrades)
+			{
+				upg.TempAddBack();
+			}
+		}
+
+		public void TempDisableAll()
+		{
+			foreach (EquippableItem upg in activeUpgrades)
+			{
+				upg.TempRemove();
+			}
+		}
+
 		public bool ForceEquipUpgrade(EquippableItem u)
 		{
 			foreach (EquippableItem upg in activeUpgrades)

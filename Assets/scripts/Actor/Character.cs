@@ -1107,6 +1107,10 @@ namespace Assets.scripts.Actor
 		{
 			Status.XP -= GameProgressTable.GetXpForLevel(Level + 1);
 			SetLevel(Level + 1);
+			if (this is Player)
+			{
+				((Player) this).UpgradePoints += 10;
+			}
 			Message("Level up! You are now level " + Level);
 		}
 

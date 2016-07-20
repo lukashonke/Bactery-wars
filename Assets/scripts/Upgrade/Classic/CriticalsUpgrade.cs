@@ -38,6 +38,7 @@ namespace Assets.scripts.Upgrade.Classic
 	public class CriticalDamageUpgrade : EquippableItem
 	{
 		public static int rarity = 1;
+		public static ItemType type = ItemType.STAT_UPGRADE;
 
 		public CriticalDamageUpgrade(int level)
 			: base(level)

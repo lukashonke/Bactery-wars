@@ -109,9 +109,10 @@ namespace Assets.scripts.Upgrade
 			}
 		}
 
-		public InventoryItem GenerateUpgrade(Type type, int level)
+		public InventoryItem GenerateUpgrade(Type type, int level, ItemType uType=ItemType.CLASSIC_UPGRADE)
 		{
 			InventoryItem u = Activator.CreateInstance(type, level) as InventoryItem;
+			u.Type = uType;
 			return u;
 		}
 
@@ -132,7 +133,7 @@ namespace Assets.scripts.Upgrade
 			if (possible.Count > 0)
 			{
 				UpgradeInfo final = possible[Random.Range(0, possible.Count)];
-				return GenerateUpgrade(final.upgrade, level);
+				return GenerateUpgrade(final.upgrade, level, type);
 			}
 			else return null;
 		}
@@ -146,6 +147,12 @@ namespace Assets.scripts.Upgrade
 
 		public void GiveItem(InventoryItem upgrade, Character target)
 		{
+			if (upgrade == null)
+			{
+				Debug.LogError("null upgrade?");
+				return;
+			}
+
 			upgrade.Init();
 			GameSystem.Instance.BroadcastMessage("Received " + upgrade.VisibleName);
 			target.GiveItem(upgrade);

@@ -325,6 +325,11 @@ namespace Assets.scripts.Mono
 			}
 		}
 
+		public void UpdateLifes(int lifes)
+		{
+			GameObject.Find("Lifes").GetComponent<Text>().text = "Lifes: " + lifes;
+		}
+
 		public void ObjectMessage(GameObject target, String text, Color color)
 		{
 			if (!showObjectMessages)
@@ -926,8 +931,8 @@ namespace Assets.scripts.Mono
 							float shield = ((Player)data.GetOwner()).Status.Shield;
 							t.text = "Shield " + (int)(shield * 100 - 100) + "%";
 							break;
-						case "DNA": //TODO add to inventory
-							t.text = ((Player)data.GetOwner()).DnaPoints + "p";
+						case "DNA":
+							t.text = "DNA: " + ((Player)data.GetOwner()).DnaPoints + " points";
 							break;
 					}
 				}
@@ -2645,7 +2650,7 @@ namespace Assets.scripts.Mono
 
 				if (u.Level == 0)
 				{
-					description = "No bonus effect yet.\nKill enemies to evolve this module.";
+					description = "No effect yet.\nLevel up this module to get effects.";
 				}
 
 				if (u.IsUpgrade())
@@ -2671,6 +2676,11 @@ namespace Assets.scripts.Mono
 					{
 						addInfo = "Dispose value: " + u.DisposePrice + " DNA";
 					}
+
+					if (u.Type == ItemType.STAT_UPGRADE)
+					{
+						addInfo = "Level up using Upgrade points.";
+					}
 				}
 				
 				ItemType type = u.Type;
@@ -2691,6 +2701,14 @@ namespace Assets.scripts.Mono
 						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
 						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
 						break;
+					case ItemType.STAT_UPGRADE:
+						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
+						break;
+					case ItemType.CONSUMABLE:
+						titleColor = new Color(64 / 255f, 72 / 255f, 120 / 255f);
+						currentTooltipObject.GetComponent<Image>().color = new Color(1, 1, 1);
+						break;
 				}
 
 				foreach (Transform child in currentTooltipObject.transform)
@@ -2703,7 +2721,19 @@ namespace Assets.scripts.Mono
 					}
 					else if (child.name.Equals("Type") && description != null)
 					{
-						child.GetComponent<Text>().text = "[" + typeName + " Upgrade] [" + price + "]";
+						if (type == ItemType.STAT_UPGRADE)
+						{
+							child.GetComponent<Text>().text = "Bactery Upgrade";							
+						}
+						else if (type == ItemType.CLASSIC_UPGRADE)
+						{
+							child.GetComponent<Text>().text = "[" + typeName + " upgrade]";
+						}
+						else
+						{
+							child.GetComponent<Text>().text = "[" + typeName + " upgrade] [" + price + "]";
+						}
+
 						continue;
 					}
 					else if (child.name.Equals("Description") && description != null)
@@ -3622,7 +3652,7 @@ namespace Assets.scripts.Mono
 						t.text = "Shield " + (int)(shield * 100 - 100) + "%";
 						break;
 					case "DNA": //TODO add to inventory
-						t.text = ((Player) data.GetOwner()).DnaPoints + "p";
+						t.text = "DNA: " + ((Player) data.GetOwner()).DnaPoints + " points";
 						break;
 				}
 			}
@@ -3967,12 +3997,12 @@ namespace Assets.scripts.Mono
 				{
 					case "Money":
 						txt = child.GetComponent<Text>();
-						txt.text = ((Player) data.GetOwner()).DnaPoints + " DNA";
+						txt.text = "You have " + ((Player) data.GetOwner()).DnaPoints + " DNA";
 						break;
 					case "Slots":
 						txt = child.GetComponent<Text>();
 						int taken = ((Player) data.GetOwner()).Inventory.Items.Count;
-						txt.text = "Inventory slots: " + taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
+						txt.text = "Inventory: " + taken + "/" + ((Player) data.GetOwner()).Inventory.Capacity + " slots";
 						break;
 				}
 			}

@@ -96,7 +96,7 @@ namespace Assets.scripts
 			}
 		}
 
-		public void Restart()
+		public void RestartLevel()
 		{
 			GameObject rrPanel = GameObject.Find("GameOver");
 			if (rrPanel != null)
@@ -111,7 +111,11 @@ namespace Assets.scripts
 			player.Revive();
 
 			player.GetData().GetBody().transform.position = WorldHolder.instance.GetStartPosition();
-			//Application.LoadLevel(Application.loadedLevel);
+		}
+
+		public void RestartGame()
+		{
+			Application.LoadLevel(Application.loadedLevel);
 		}
 
 		public GameObject Instantiate(GameObject template, Vector3 position)

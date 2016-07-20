@@ -16,20 +16,22 @@ namespace Assets.scripts.Base
 				case 2:
 					return 100;
 				case 3:
-					return 300;
+					return 125;
 				case 4:
-					return 1000;
+					return 150;
 				case 5:
-					return 2500;
+					return 175;
 				case 6:
-					return 6000;
+					return 200;
 				case 7:
-					return 15000;
+					return 250;
 				case 8:
-					return 25000;
+					return 300;
 				case 9:
-					return 40000;
+					return 350;
 				case 10:
+					return 350;
+				case 11:
 					return 100000;
 			}
 			return (nextLevel-10+1)*100000;
@@ -47,7 +49,7 @@ namespace Assets.scripts.Base
 			}
 			else if (slotId == 5)
 			{
-				return -1;
+				return 20;
 			}
 			else if (slotId == 6)
 			{
@@ -71,7 +73,7 @@ namespace Assets.scripts.Base
 				}
 				else if (slotId == 5)
 				{
-					return "Unlocked on rebirth.";
+					return "Unlocked on level 20.";
 				}
 				else if (slotId == 6)
 				{

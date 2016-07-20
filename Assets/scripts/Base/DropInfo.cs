@@ -128,6 +128,10 @@ namespace Assets.scripts.Base
 				{
 					sb.Append(d.level + " DNA");
 				}
+				else if (d.type == typeof(XpItem))
+				{
+					sb.Append(d.level + " XP");
+				}
 				else 
 					sb.Append(d.type.Name);
 
