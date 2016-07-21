@@ -32,6 +32,9 @@ namespace Assets.scripts.AI.Modules
 		public float minDistance;
 		public float maxDistance;
 
+		public bool canSeeTarget;
+		public bool cannotSeeTarget;
+
 		public float keepActiveFor;
 		public float keepActiveForInterval; // pokud je aktivovan pres parametr keepActiveFor, pouzije se keepActiveForInterval jako casovac misto prom. interval
 		public float tryInterval;
@@ -58,6 +61,9 @@ namespace Assets.scripts.AI.Modules
 
 			minDistance = -1;
 			maxDistance = -1;
+
+			canSeeTarget = false;
+			cannotSeeTarget = false;
 
 			keepActiveFor = -1;
 			keepActiveForInterval = -1;
@@ -121,18 +127,24 @@ namespace Assets.scripts.AI.Modules
 								{
 									if (activateAfterTime < 0 || (attackStartedTime + activateAfterTime <= Time.time))
 									{
-										// vsechny podminky splnene, cas zkontrolovat sanci
-										if (chanceCheckReuse < 0 || lastChanceTryTime + chanceCheckReuse < Time.time)
+										if (!canSeeTarget || Utils.CanSee(ai.Owner.GetData().GetBody(), target.GetData().GetBody()))
 										{
-											if (chance < 0 || UnityEngine.Random.Range(1, 100) < chance)
+											if (!cannotSeeTarget || !Utils.CanSee(ai.Owner.GetData().GetBody(), target.GetData().GetBody()))
 											{
-												lastChanceTryTime = Time.time;
-												return true;
-											}
-											// neproslo pres kontrolu sance
-											else if (chance > 0)
-											{
-												lastChanceTryTime = Time.time;
+												// vsechny podminky splnene, cas zkontrolovat sanci
+												if (chanceCheckReuse < 0 || lastChanceTryTime + chanceCheckReuse < Time.time)
+												{
+													if (chance < 0 || UnityEngine.Random.Range(1, 100) < chance)
+													{
+														lastChanceTryTime = Time.time;
+														return true;
+													}
+													// neproslo pres kontrolu sance
+													else if (chance > 0)
+													{
+														lastChanceTryTime = Time.time;
+													}
+												}
 											}
 										}
 									}

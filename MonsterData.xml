@@ -1693,6 +1693,98 @@
 
 
 
+
+	<monster name="BossSpreadshooter">
+		<visibleName>Tank Cell</visibleName>
+		<template>CustomCell</template>
+		<sprite>melee/tank</sprite>
+		<size>3.0</size>
+		<mass>10</mass>
+		<stats> 
+			<MaxHp>100</MaxHp>
+			<MaxHp_scale>5</MaxHp_scale>
+			<MaxSpeed>5</MaxSpeed>
+			<IsAggressive>true</IsAggressive>
+			<AggressionRange>20</AggressionRange>
+			<RambleAround>true</RambleAround>
+			<RambleAroundMaxDist>4</RambleAroundMaxDist>
+			<AlertsAllies>false</AlertsAllies>
+
+			<XpReward>5</XpReward>
+		</stats>
+
+		<ai type="Melee">
+    		<add id_module="1" module="JumpMovement" />
+    		<set id_module="1" param="jumpAtEnemy" value="true"/>
+    		<set id_module="1" param="interval" value="4"/>
+
+    		<add id_module="2" module="DamageSkill" />
+    		<set id_module="2" param="skill" value="ProjectileAllAround"/>
+    		<set id_module="2" param="interval" value="3"/>
+    		<set id_module="2" param="onlyIfWithinRange" value="false"/>
+    		<set id_module="2" param="maxDistance" value="12"/>
+
+    		<add id_module="3" module="RunRandomDirection" />
+    		<set id_module="3" param="aroundTarget" value="false"/>
+
+    		<add id_module="4" priority="high" module="MoveToTarget" />
+    		<set id_module="4" param="cannotSeeTarget" value="true"/>
+		</ai>
+
+		<add_skills>
+			<ProjectileAllAround> 
+			 	<baseDamage>10</baseDamage>
+			 	<projectileCount>15</projectileCount>
+			 	<range>30</range>
+			 	<castTime>0</castTime>
+			 	<force>30</force>
+			 	<reuse>0</reuse>
+			</ProjectileAllAround>
+
+			<JumpShort> 
+			 	<jumpSpeed>45</jumpSpeed>
+			 	<range>20</range>
+			 	<reuse>0</reuse>
+			</JumpShort>
+
+			<CollisionDamageAttack> 
+			 	<baseDamage>20</baseDamage>
+			 	<pushForce>100</pushForce>
+			 	<reuse>1</reuse>
+			</CollisionDamageAttack>
+		</add_skills>
+		
+	</monster>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<monster name="Nicitel">
 		<visibleName>Nicitel</visibleName>
 		<template>BasicMeleeCell</template>

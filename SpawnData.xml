@@ -1816,6 +1816,14 @@
 
 	<boss_room>
 
+		<group id="750" min_level="1" max_level="99" min_world="1" max_world="10" frequency="1" max_region_size="large">
+
+			<mob id="1" type="BossSpreadshooter" count="1" level="1" chance="100" room_size="small" exclude="true" location="largest"/>
+
+			<extra_group id="2002" chance="100"/>
+
+		</group>
+
 	</boss_room>
 	
 

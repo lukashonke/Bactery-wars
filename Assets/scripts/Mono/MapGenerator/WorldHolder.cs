@@ -268,11 +268,11 @@ namespace Assets.scripts.Mono.MapGenerator
 			LevelParams param = new LevelParams(MapType.GenericMonster);
 			param.difficulty = difficulty;
 
-			if (addShop)
+			/*if (addShop) // already added to the first level
 			{
 				param.shop = new ShopData();
 				param.shop.GenerateRandomShopItems(worldLevel, 2);
-			}
+			}*/
 
 			LevelTree newNode = new LevelTree(LevelTree.LEVEL_MAIN, id, difficulty, depth, param, "Level " + id, "This level is filled with random monsters.");
 
