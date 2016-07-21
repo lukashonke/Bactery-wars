@@ -79,7 +79,7 @@ public class Healthbar : MonoBehaviour
 			{
 				labelStyle = new GUIStyle(GUI.skin.label);
 				labelStyle.alignment = TextAnchor.UpperCenter;
-				labelStyle.normal.textColor = Color.white;
+				labelStyle.normal.textColor = Color.black;
 				labelStyle.fontSize = 15;
 			}
 
@@ -103,6 +103,9 @@ public class Healthbar : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (ownerData != null && ownerData.GetOwner().IsInteractable())
+			return;
+
 		if (center != null)
 		{
 			Vector3 pos = center.transform.position + new Vector3(0, distance, 0);

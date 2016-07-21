@@ -20,7 +20,7 @@ namespace Assets.scripts.Base
 				{
 					case "game_start":
 						{
-							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "Alfa version {0}", "Tab to open admin console (write help for info)" }, o);
+							return CreateHelpMessageData("Welcome to Bactery Wars", new string[] { "You have 3 lifes, if you die, you lose one.", "If you die, you respawn and the current level is restarted.", "There is a shop close to you. Select your skills in Bactery Overview (button in the top part of the screen)." }, o);
 						}
 					case "game_start_controls":
 						{
